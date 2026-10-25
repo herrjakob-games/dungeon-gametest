@@ -308,19 +308,20 @@
       },
       {
         "id": "kueche_kochbuch",
-        "weight": 3,
+        "weight": 2,
+        "once": true,
         "hostile": false,
         "rating": "neutral"
       },
       {
         "id": "kueche_fettbrand",
-        "weight": 3,
+        "weight": 2,
         "hostile": true,
         "rating": "hostile"
       },
       {
         "id": "kueche_chef",
-        "weight": 3,
+        "weight": 2,
         "hostile": true,
         "rating": "hostile"
       }
@@ -348,7 +349,8 @@
       },
       {
         "id": "speisesaal_gastgeber",
-        "weight": 3,
+        "weight": 2,
+        "once": true,
         "hostile": false,
         "rating": "neutral"
       },
@@ -372,7 +374,7 @@
       },
       {
         "id": "speisesaal_gaeste",
-        "weight": 3,
+        "weight": 2,
         "hostile": true,
         "rating": "hostile"
       }
@@ -405,19 +407,20 @@
       },
       {
         "id": "brunnen_kroete",
-        "weight": 3,
+        "weight": 2,
+        "once": true,
         "hostile": false,
         "rating": "neutral"
       },
       {
         "id": "brunnen_echo",
-        "weight": 3,
+        "weight": 2,
         "hostile": false,
         "rating": "neutral"
       },
       {
         "id": "brunnen_rand",
-        "weight": 3,
+        "weight": 4,
         "hostile": true,
         "rating": "hostile"
       }
