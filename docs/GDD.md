@@ -196,22 +196,40 @@ Der Dungeon führt durch Themen, die alle drei Ebenen wechseln. Das Thema bestim
 
 ### Raumtypen
 
-| Raumtyp | Bewertung | Regel |
-| --- | --- | --- |
-| Vorkammer (Start) | neutral | fest, Begrüßungs-Event, in jedem Thema |
-| Abstieg | neutral | Raum mit dem größten Abstand zum Start |
-| Bossraum | feindlich | auf Ebene 6, 12, 18 … statt des Abstiegs; der Abstieg öffnet sich erst nach dem Sieg über den Boss |
-| Schatzkammer | feindlich | nur in Sackgassen, höchstens eine pro Ebene, in jedem Thema |
-| Rastplatz | neutral | genau einer auf jeder zweiten Ebene (2, 4, 6 …), heilt einmal auf volle Lebenspunkte, in jedem Thema |
-| Händler | neutral | höchstens einer pro Ebene, kaufen und verkaufen mit Gold, in jedem Thema |
-| Wachstube | feindlich | liegt immer direkt neben dem Start |
-| Gruft | feindlich | nie direkt neben dem Start |
-| Folterkammer, Kerker, Goblin-Lager, Ork-Lager, Gefangenen-Lager, Wolfs-Höhle | feindlich | |
-| Vorratskammer, Küche, Speisesaal, Brunnenraum, Säulenhalle, Schrein, Bibliothek, Schmiede, Vorratshöhle, Pilzzucht, Friedhof | neutral | |
+| Raumtyp | Bewertung | Lage | Anzahl pro Ebene |
+| --- | --- | --- | --- |
+| Vorkammer (Start) | neutral | fest, Begrüßungs-Event, in jedem Thema | 1 |
+| Abstieg | neutral | Raum mit dem größten Abstand zum Start | 1 |
+| Bossraum | feindlich | am Ende jeder Themenwelt (Ebene 3, 6, 9, 12, 15) statt des Abstiegs; der Abstieg öffnet sich erst nach dem Sieg über den Boss | 1 auf Boss-Ebenen |
+| Schatzkammer | feindlich | nur in Sackgassen, in jedem Thema | höchstens 1 |
+| Rastplatz | neutral | etwa auf halber Strecke zwischen Start und Abstieg, in jedem Thema | 1 auf jeder zweiten Ebene |
+| Händler | neutral | beliebig, in jedem Thema | genau 1 |
+| Wachstube | feindlich | immer direkt neben dem Start (Keller, Zwergenminen) | – |
+| Gruft | feindlich | nie direkt neben dem Start | – |
+| Küche | neutral | neben einem Speisesaal | höchstens 1 |
+| Speisesaal | neutral | nie in Sackgassen | höchstens 1 |
+| Vorratskammer | neutral | bevorzugt in Sackgassen, neben einer Küche | höchstens 2 |
+| Brunnenraum | neutral | – | höchstens 1 |
+| Säulenhalle | neutral | nie in Sackgassen, bevorzugt an Kreuzungen (3–4 Türen) | höchstens 3 |
+| Schrein | neutral | – | höchstens 1 |
+| Kerker | feindlich | bevorzugt in Sackgassen, neben einer Folterkammer; in den Katakomben direkt neben dem Start | höchstens 2 |
+| Bibliothek | neutral | bevorzugt in Sackgassen | höchstens 1 |
+| Schmiede | neutral | neben einer Wachstube | höchstens 1 |
+| Folterkammer | feindlich | nie neben dem Start, neben einem Kerker oder Gefangenen-Lager | – |
+| Goblin-Lager | feindlich | in den Goblin-Höhlen direkt neben dem Start | höchstens 3 |
+| Vorratshöhle | neutral | bevorzugt in Sackgassen, neben einem Goblin-Lager | – |
+| Pilzzucht | neutral | bevorzugt in Sackgassen, neben einer Vorratshöhle | höchstens 2 |
+| Ork-Lager | feindlich | im Ork-Lager direkt neben dem Start | höchstens 3 |
+| Gefangenen-Lager | feindlich | bevorzugt in Sackgassen, neben einer Folterkammer | – |
+| Friedhof | neutral | bevorzugt in Sackgassen | – |
+| Wolfs-Höhle | feindlich | bevorzugt in Sackgassen | höchstens 2 |
 
+- **Lesart der Lage:** „nur“, „nie“ und „direkt neben dem Start“ sind feste Regeln. „Bevorzugt“ und „neben X“ gelten, wenn der Grundriss es zulässt und der andere Raumtyp auf der Ebene vorkommt.
 - **Feindlich:** Events mit Kämpfen und Fallen. **Neutral:** Rätsel, Gespräche, Fundstücke oder gar kein Event.
 - **Anteil feindlicher Räume:** steigt von etwa 40 % auf Ebene 1 auf 70 % ab Ebene 13.
 - **Sackgassen:** Sackgassen, die keine Schatzkammer werden, bekommen einen anderen Raumtyp des Themas.
+- **Händler:** bietet 4 zufällige Gegenstände der aktuellen Beutestufe und Heiltränke an. Verkaufen bringt den halben Preis.
+- **Bosse:** passend zum Thema, einer am Ende jeder Themenwelt.
 
 ### Ebenen
 
@@ -223,9 +241,9 @@ Der Dungeon führt durch Themen, die alle drei Ebenen wechseln. Das Thema bestim
 
 ### Noch offen
 
-- [ ] Händler: Sortiment, Preise und wie oft er vorkommt. Vorschlag: 4 zufällige Gegenstände der aktuellen Beutestufe plus Heiltränke, Verkauf zum halben Preis.
-- [ ] Wachstube neben dem Start: Die Wachstube gibt es nur im Keller und in den Zwergenminen. Vorschlag: In den anderen Themen übernimmt ein entsprechender Raum diese Rolle (Katakomben: Kerker, Goblin-Höhlen: Goblin-Lager, Ork-Lager: Ork-Lager).
-- [ ] Bosse: welche Bosse es gibt und wie stark sie sind.
+- [ ] Bosse: Vorschlag je Thema: Keller Rattenkönig, Katakomben Knochenfürst, Zwergenminen Dunkelzwerg-Schmiedemeister, Goblin-Höhlen Goblin-König, Ork-Lager Ork-Kriegsherr. Werte und Texte entstehen im Content-Projekt.
+- [ ] Endloses Ork-Lager ab Ebene 16: Vorschlag, dort kommt weiterhin alle drei Ebenen ein Boss.
+- [ ] Preise der Gegenstände für den Händler.
 
 ## Grafik und Animation
 
@@ -295,3 +313,8 @@ Sieben Schritte, jeder endet mit etwas Spielbarem, das Christian im Browser test
 - [x] Bossraum alle sechs Ebenen statt des Abstiegs
 - [x] Beutestufen verschieben sich mit dem Thema
 - [x] Ergebnis ist die erreichte Ebene, Gold ist Zahlungsmittel
+- [x] Bossraum am Ende jeder Themenwelt (Ebene 3, 6, 9, 12, 15) statt alle sechs Ebenen, Boss passend zum Thema
+- [x] Händler auf jeder Ebene genau einmal, Lage beliebig; 4 Gegenstände der Beutestufe plus Heiltränke, Verkauf zum halben Preis
+- [x] Rastplatz etwa auf halber Strecke zwischen Start und Abstieg
+- [x] Ersatz für die Wachstube neben dem Start: Kerker (Katakomben), Goblin-Lager (Goblin-Höhlen), Ork-Lager (Ork-Lager)
+- [x] Lage- und Anzahlregeln für alle Raumtypen (Tabelle im Abschnitt Raumtypen)
