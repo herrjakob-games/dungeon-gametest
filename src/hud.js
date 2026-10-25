@@ -2,7 +2,7 @@
 import { DIR, DIRKEYS, key } from "./config.js";
 import { TYPES } from "./roomTypes.js";
 import { state } from "./state.js";
-import { ATTRS, ATTR_NAMES } from "./eventLogic.js";
+import { ATTRS, ATTR_NAMES, xpForLevel } from "./character.js";
 
 export const ui = {
   room: document.getElementById("roomName"),
@@ -12,6 +12,9 @@ export const ui = {
   visited: document.getElementById("visited"),
   gold: document.getElementById("gold"),
   hp: document.getElementById("hp"),
+  hero: document.getElementById("hero"),
+  depth: document.getElementById("depth"),
+  ability: document.getElementById("ability"),
   xp: document.getElementById("xp"),
   attrs: document.getElementById("attrs"),
   seedInput: document.getElementById("seedInput"),
@@ -28,14 +31,19 @@ export function setHover(text) { ui.hover.textContent = text || "–"; }
 export function updatePos() { ui.pos.textContent = "Kachel " + (state.pTile[0] + 1) + " / " + (state.pTile[1] + 1); }
 const signed = (n) => (n < 0 ? "−" + Math.abs(n) : "+" + n);
 
-// Werte des Zwergs: Lebenspunkte, Erfahrung, Gold, Attribute
+// Werte der Figur: Volk, Stufe, Ebene, Lebenspunkte, Erfahrung, Gold, Attribute, Fähigkeit
 export function updateStats() {
   const p = state.player;
+  if (!p) return;
+  ui.hero.textContent = p.name + " · Stufe " + p.level;
+  ui.depth.textContent = state.depth;
   ui.hp.textContent = p.hp + " / " + p.maxHp;
   ui.hp.classList.toggle("low", p.hp <= 4);
-  ui.xp.textContent = p.xp;
+  ui.xp.textContent = p.xp + " / " + xpForLevel(p.level);
   ui.gold.textContent = p.gold;
   ui.attrs.textContent = ATTRS.map(a => ATTR_NAMES[a] + " " + signed(p.attrs[a])).join(" · ");
+  ui.ability.textContent = p.ability.name + ": " + (p.abilityUsed ? "in diesem Dungeon verbraucht" : "bereit");
+  ui.ability.classList.toggle("used", p.abilityUsed);
 }
 
 export function updateHud() {

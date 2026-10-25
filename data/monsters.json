@@ -1,6 +1,6 @@
 [
-  { "id": "skeleton", "name": "Skelett", "hp": 8, "armor": 12, "attack": 2, "damage": "W6" },
-  { "id": "rat", "name": "Riesenratte", "hp": 5, "armor": 10, "attack": 1, "damage": "W4" },
-  { "id": "goblin", "name": "Goblin-Wache", "hp": 7, "armor": 12, "attack": 2, "damage": "W6" },
-  { "id": "mimic", "name": "Mimik", "hp": 12, "armor": 14, "attack": 3, "damage": "W8" }
+  { "id": "skeleton", "name": "Skelett", "hp": 6, "armor": 11, "attack": 1, "damage": "W6", "deathText": "Von einem Skelett erschlagen, das eigentlich nur seine Ruhe wollte. Es hat jetzt Gesellschaft." },
+  { "id": "rat", "name": "Riesenratte", "hp": 4, "armor": 9, "attack": 0, "damage": "W4", "deathText": "Von einer Ratte besiegt. Die Ratte erzählt es heute noch auf jeder Party." },
+  { "id": "goblin", "name": "Goblin-Wache", "hp": 6, "armor": 11, "attack": 1, "damage": "W4+1", "deathText": "Von einer Goblin-Wache erledigt, kurz vor ihrer Mittagspause. Sie macht jetzt Überstunden für den Papierkram." },
+  { "id": "mimic", "name": "Mimik", "hp": 10, "armor": 12, "attack": 2, "damage": "W6", "deathText": "Von einer Truhe gefressen. Die Truhe war hinterher sehr zufrieden und ein bisschen voller." }
 ]

@@ -3,20 +3,25 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import {
-  indexData, validateData, newPlayer, newRun, rollDice, doCheck, checkCondition,
-  pickEvent, applyEffects, releaseIfTrapped
+  indexData, validateData, newRun, rollDice, doCheck, checkCondition,
+  pickEvent, applyEffects, releaseIfTrapped, rollLoot, visibleOptions
 } from "../src/eventLogic.js";
+import { newCharacter } from "../src/character.js";
 import { generate } from "../src/generator.js";
 
 const read = (f) => JSON.parse(readFileSync(new URL("../data/" + f, import.meta.url), "utf8"));
-const DATA = indexData({ roomTypes: read("room-types.json"), events: read("events.json"), monsters: read("monsters.json") });
+const DATA = indexData({
+  roomTypes: read("room-types.json"), events: read("events.json"), monsters: read("monsters.json"),
+  items: read("items.json"), characters: read("characters.json"), texts: read("texts.json")
+});
+const newPlayer = (volk = "zwerg") => newCharacter(DATA.characters[volk]);
 
 // Zufallsfunktion, die der Reihe nach feste Werte liefert
 const seq = (...vals) => { let i = 0; return () => vals[i++ % vals.length]; };
 // Würfelwert w auf einem W-sides als rand()-Wert
 const face = (w, sides) => (w - 0.5) / sides;
 const ctx = (player, room) => ({
-  player, run: newRun(), monsters: DATA.monsters,
+  player, run: newRun(), items: DATA.items,
   room: room || { doors: 1 | 4, locked: new Set(), back: "S" }
 });
 
@@ -34,13 +39,15 @@ test("Raumtypen passen zum Generator und haben 2 bis 3 Events", () => {
 });
 
 test("Datenprüfung findet Fehler", () => {
-  const bad = structuredClone({ roomTypes: {}, monsters: DATA.monsters, events: {} });
+  const bad = structuredClone({ roomTypes: {}, monsters: DATA.monsters, events: {}, items: DATA.items, characters: DATA.characters });
   bad.events.x = { id: "x", type: "quatsch", title: "X", text: "X", options: [
-    { label: "A", check: { attr: "charme", dc: 10 }, success: { effects: [{ teleport: 1 }] }, failure: { next: "fehlt" } }
+    { label: "A", check: { category: "charme", dc: 10 }, success: { effects: [{ teleport: 1 }] }, failure: { next: "fehlt" } },
+    { label: "B", condition: "volk:ork" }
   ] };
   const errs = validateData(bad);
   assert.ok(errs.some(e => e.includes("unbekannter Typ")));
-  assert.ok(errs.some(e => e.includes("unbekanntes Attribut")));
+  assert.ok(errs.some(e => e.includes("unbekannte Kategorie")));
+  assert.ok(errs.some(e => e.includes("unbekanntes Volk")));
   assert.ok(errs.some(e => e.includes("8, 12 oder 16")));
   assert.ok(errs.some(e => e.includes("unbekannter Effekt")));
   assert.ok(errs.some(e => e.includes("Folge-Event")));
@@ -58,19 +65,21 @@ test("Würfel", () => {
   }
 });
 
-test("Startwerte des Zwergs", () => {
-  const p = newPlayer();
-  assert.equal(p.hp, 12);
-  assert.deepEqual(p.attrs, { kraft: 2, geschick: 1, verstand: -1 });
+test("Jede Probe in den Events nennt eine Kategorie", () => {
+  for (const ev of Object.values(DATA.events)) for (const o of ev.options) {
+    if (o.check) assert.ok(o.check.category && !o.check.attr, ev.id + ": " + o.label);
+  }
 });
 
-test("Probe: W20 + Attribut gegen Schwierigkeit", () => {
+test("Probe: W20 + Attribut der Kategorie gegen Schwierigkeit", () => {
   const p = newPlayer();
-  const r = doCheck(p, { attr: "verstand", dc: 12 }, () => face(13, 20));
+  const r = doCheck(p, { category: "diplomatie", dc: 12 }, () => face(13, 20));
+  assert.equal(r.attr, "verstand");
   assert.equal(r.d, 13);
   assert.equal(r.total, 12);
   assert.equal(r.ok, true);
-  assert.equal(doCheck(p, { attr: "verstand", dc: 12 }, () => face(12, 20)).ok, false);
+  assert.equal(doCheck(p, { category: "wissen", dc: 12 }, () => face(12, 20)).ok, false);
+  assert.equal(doCheck(p, { category: "kraftakt", dc: 12 }, () => face(10, 20)).ok, true);
 });
 
 test("Bedingungen", () => {
@@ -80,7 +89,19 @@ test("Bedingungen", () => {
   assert.equal(checkCondition("notFlag:kerze", run), true);
   run.flags.add("kerze");
   assert.equal(checkCondition("flag:kerze", run), true);
-  assert.equal(checkCondition("hasItem:fackel", run), false);
+  const zwerg = newPlayer("zwerg"), elf = newPlayer("elf");
+  assert.equal(checkCondition("volk:zwerg", run, zwerg), true);
+  assert.equal(checkCondition("volk:zwerg", run, elf), false);
+  assert.equal(checkCondition("hasItem:streitaxt", run, zwerg), true);
+  assert.equal(checkCondition("hasItem:streitaxt", run, elf), false);
+  assert.equal(checkCondition("hasItem:heiltrank", run, elf), true);
+});
+
+test("Volks-Optionen sieht nur das passende Volk", () => {
+  const ev = DATA.events.gruft_sarkophag;
+  const labels = (v) => visibleOptions(ev, newRun(), newPlayer(v)).map(o => o.label);
+  assert.ok(labels("zwerg").includes("Die Steinmetzarbeit begutachten"));
+  assert.ok(!labels("elf").includes("Die Steinmetzarbeit begutachten"));
 });
 
 test("Event-Auswahl: Chance, Gewichte, once und Bedingungen", () => {
@@ -102,15 +123,16 @@ test("Startraum hat immer ein Event", () => {
 });
 
 test("Schaden, Heilung, Gold, Erfahrung", () => {
-  const p = newPlayer();
+  const p = newPlayer(); // Zwerg, 14 LP
   const c = ctx(p);
   let res = applyEffects([{ damage: 5 }, { heal: 2 }, { loot: "tier1" }, { gainXp: 3 }, { setFlag: "k" }], c, () => 0.999);
-  assert.equal(p.hp, 9);
+  assert.equal(p.hp, 11);
   assert.equal(p.gold, 12); // 2W6 mit zwei Sechsen
+  assert.deepEqual(res.items, [], "kein Gegenstand bei einem Wurf über 1/3");
   assert.equal(p.xp, 3);
   assert.ok(c.run.flags.has("k"));
   res = applyEffects([{ heal: 10 }], c, Math.random);
-  assert.equal(p.hp, 12, "Heilung nur bis zum Maximum");
+  assert.equal(p.hp, 14, "Heilung nur bis zum Maximum");
   assert.equal(res.lines[0].amount, 3);
   res = applyEffects([{ damage: 20 }, { loot: "tier2" }], c, Math.random);
   assert.equal(p.hp, 0, "LP fallen nicht unter 0");
@@ -118,20 +140,28 @@ test("Schaden, Heilung, Gold, Erfahrung", () => {
   assert.equal(p.gold, 12, "nach dem Tod keine weiteren Effekte");
 });
 
-test("Ersatz-Kampf: Kraft-Probe gegen Rüstung", () => {
-  // Skelett: Rüstung 12, Schaden W6. W20 10 + Kraft 2 = 12 → Sieg
-  let p = newPlayer();
-  let res = applyEffects([{ combat: "skeleton" }, { loot: "tier1" }], ctx(p), seq(face(10, 20), 0.999, 0.999));
-  assert.equal(res.lines[0].roll.ok, true);
-  assert.equal(p.hp, 12);
-  assert.equal(p.gold, 12);
-  // W20 9 + 2 = 11 → Niederlage, W6 = 4 Schaden, danach keine Beute
-  p = newPlayer();
-  res = applyEffects([{ combat: "skeleton" }, { loot: "tier1" }], ctx(p), seq(face(9, 20), face(4, 6)));
-  assert.equal(res.lines[0].roll.ok, false);
-  assert.equal(p.hp, 8);
+test("Kampf unterbricht die Effekte, der Rest gilt erst nach dem Sieg", () => {
+  const p = newPlayer();
+  const res = applyEffects([{ gainXp: 2 }, { combat: "skeleton" }, { loot: "tier1" }], ctx(p), Math.random);
+  assert.equal(p.xp, 2);
+  assert.equal(res.combat.monster, "skeleton");
+  assert.deepEqual(res.combat.rest, [{ loot: "tier1" }]);
   assert.equal(p.gold, 0);
-  assert.equal(res.lines.length, 1);
+});
+
+test("Beute: Gold und Gegenstand der Stufe", () => {
+  // tier1: Gegenstand nur, wenn der dritte Wurf unter 1/3 liegt
+  let l = rollLoot("tier1", DATA.items, seq(0, 0, 0.1, 0));
+  assert.equal(l.gold, 2);
+  assert.ok(DATA.items[l.item].loot.tier1);
+  l = rollLoot("tier1", DATA.items, seq(0, 0, 0.5));
+  assert.equal(l.item, null);
+  // tier2: immer ein Gegenstand
+  for (let i = 0; i < 200; i++) {
+    const t2 = rollLoot("tier2", DATA.items, Math.random);
+    assert.ok(t2.gold >= 4 && t2.gold <= 24);
+    assert.ok(DATA.items[t2.item].loot.tier2);
+  }
 });
 
 test("Türen verschließen und öffnen", () => {

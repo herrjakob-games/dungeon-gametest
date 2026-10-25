@@ -15,10 +15,10 @@
 
   <aside class="hud" aria-label="Spielinfo">
     <div>
-      <p class="sub">Meilenstein 4 · Prototyp</p>
+      <p class="sub">Meilenstein 5 · Prototyp</p>
       <h1 id="roomName">Die Vorkammer</h1>
     </div>
-    <p class="help">Klicke auf eine Kachel, um zu laufen, und auf Türen, Truhen oder den Torbogen. Klicke auf besuchte Räume in der Karte, um dorthin zu reisen. In manchen Räumen wartet ein Ereignis. Finde den Abstieg. Mausrad zoomt.</p>
+    <p class="help">Klicke auf eine Kachel, um zu laufen, und auf Türen, Truhen oder den Torbogen. Klicke auf besuchte Räume in der Karte, um dorthin zu reisen. In manchen Räumen wartet ein Ereignis. Steig so tief hinab, wie du kannst. Mausrad zoomt.</p>
     <hr>
     <div class="map">
       <span class="label">Karte</span>
@@ -27,11 +27,14 @@
     </div>
     <hr>
     <dl class="stats">
-      <dt>Lebenspunkte</dt><dd id="hp">12 / 12</dd>
+      <dt>Figur</dt><dd id="hero">–</dd>
+      <dt>Ebene</dt><dd id="depth">1</dd>
+      <dt>Lebenspunkte</dt><dd id="hp">–</dd>
       <dt>Erfahrung</dt><dd id="xp">0</dd>
       <dt>Gold</dt><dd id="gold">0</dd>
     </dl>
     <p class="attrs" id="attrs"></p>
+    <p class="ability" id="ability"></p>
     <hr>
     <dl class="stats">
       <dt>Position</dt><dd id="pos">–</dd>
@@ -49,12 +52,32 @@
     <p id="seedHelp" style="font-size: 13px;">Gleicher Seed ergibt den gleichen Dungeon.</p>
   </aside>
 
+  <aside class="inv" id="inv" aria-label="Ausrüstung und Rucksack"></aside>
+
   <section class="dialog" id="dialog" hidden aria-live="polite">
     <h2 id="dlgTitle"></h2>
     <p id="dlgText"></p>
     <p class="roll" id="dlgRoll" hidden></p>
     <ul class="fx" id="dlgFx" hidden></ul>
     <div class="opts" id="dlgOpts"></div>
+  </section>
+
+  <section class="screen" id="select" hidden aria-labelledby="selectTitle">
+    <div class="screen-inner">
+      <p class="sub">Neuer Durchlauf</p>
+      <h2 id="selectTitle">Wähle dein Volk</h2>
+      <div class="cards" id="selectCards"></div>
+    </div>
+  </section>
+
+  <section class="screen" id="endscreen" hidden aria-labelledby="endDepth">
+    <div class="screen-inner narrow">
+      <p class="sub">Erreicht</p>
+      <h2 id="endDepth">Ebene 1</h2>
+      <p class="end-cause" id="endCause"></p>
+      <dl class="stats" id="endStats"></dl>
+      <button type="button" id="endRestart">Neues Volk wählen</button>
+    </div>
   </section>
 
   <!-- Three.js als globale Variable THREE, danach das Spiel als ES-Modul -->
