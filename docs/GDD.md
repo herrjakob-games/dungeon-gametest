@@ -76,7 +76,7 @@ Der Spieler wählt vor dem ersten Dungeon ein Volk. Das Volk legt Attribute, Leb
 | --- | --- | --- | --- | --- | --- |
 | Zwerg | +2 | +1 | −1 | 14 | Kraftprotz |
 | Elf | −1 | +2 | +1 | 10 | Scharfe Sinne |
-| Mensch | +1 | +1 | 0 | 12 | Wacher Geist |
+| Mensch | 0 | 0 | +2 | 12 | Wacher Geist |
 
 - **Fähigkeiten:** Jedes Volk darf einmal pro Dungeon eine misslungene Probe seines Hauptattributs als bestanden werten, ohne neu zu würfeln. Das gilt für alle Kategorien dieses Attributs, also auch im Kampf (Nahkampf, Flucht). Kraftprotz (Zwerg) gilt für Kraft, Scharfe Sinne (Elf) für Geschick, Wacher Geist (Mensch) für Verstand.
 - **Auswahl:** Nach einer misslungenen passenden Probe bietet das Textfenster an, die Fähigkeit einzusetzen. Der Spieler entscheidet.
