@@ -60,15 +60,34 @@ Das Spiel kennt zwei Modi: freie Erkundung in Echtzeit und rundenbasierte Events
 
 Drei Attribute, ein W20 und feste Schwierigkeiten. Das Regelwerk ist so beschlossen.
 
-| Attribut | Wofür | Wertebereich |
+| Attribut | Kategorien | Wertebereich |
 | --- | --- | --- |
-| Kraft | Nahkampf, Türen aufbrechen, schwere Dinge bewegen | −1 bis +3 |
-| Geschick | Ausweichen, Fallen entschärfen, Schlösser, Flucht | −1 bis +3 |
-| Verstand | Magie, Rätsel, Wahrnehmung, Gespräche | −1 bis +3 |
+| Kraft | Nahkampf; Kraftakt (Türen und Schlösser aufbrechen, schwere Dinge bewegen); Widerstand (Gift, Krankheit) | −1 bis +3 |
+| Geschick | Ausweichen (Fallen, Steinschlag); Fingerfertigkeit (Schlösser, Fallen entschärfen); Flucht | −1 bis +3 |
+| Verstand | Diplomatie (Gespräche, Überzeugen, Handeln); Wahrnehmung; Wissen (Rätsel, Runen, Magie) | −1 bis +3 |
 
-- **Probe:** W20 + Attribut gegen Schwierigkeit. Leicht 8, mittel 12, schwer 16. Der Wurf wird im Textfenster angezeigt.
-- **Startwerte des Zwergenkriegers:** Kraft +2, Geschick +1, Verstand −1.
-- **Lebenspunkte:** Start mit 12, Heilung höchstens bis zum Maximum. Bei 0 Lebenspunkten ist der Durchlauf vorbei, es folgt ein neuer Dungeon mit frischem Zwerg. Tränke und Rasten heilen.
+Jede Probe gehört zu genau einer dieser Kategorien und damit zu einem Attribut.
+
+### Völker
+
+Der Spieler wählt vor dem ersten Dungeon ein Volk. Das Volk legt Attribute, Lebenspunkte und Fähigkeit fest. Es gibt bewusst keine Klassen: Ob ein Charakter eine Waffe, Rüstung oder einen Zauber nutzen kann, hängt allein von seinen Attributen ab (zum Beispiel schwere Rüstung erst ab Kraft +3).
+
+| Volk | Kraft | Geschick | Verstand | Lebenspunkte | Fähigkeit |
+| --- | --- | --- | --- | --- | --- |
+| Zwerg | +2 | +1 | −1 | 14 | Kraftprotz |
+| Elf | −1 | +2 | +1 | 10 | Scharfe Sinne |
+| Mensch | +1 | +1 | 0 | 12 | Wacher Geist |
+
+- **Fähigkeiten:** Jedes Volk darf einmal pro Dungeon eine misslungene Probe seines Hauptattributs als bestanden werten, ohne neu zu würfeln. Das gilt für alle Kategorien dieses Attributs, also auch im Kampf (Nahkampf, Flucht). Kraftprotz (Zwerg) gilt für Kraft, Scharfe Sinne (Elf) für Geschick, Wacher Geist (Mensch) für Verstand.
+- **Auswahl:** Nach einer misslungenen passenden Probe bietet das Textfenster an, die Fähigkeit einzusetzen. Der Spieler entscheidet.
+- **Daten:** Völker stehen in `data/characters.json` mit Name, Attributen, Lebenspunkten, Fähigkeit, Startausrüstung und Modell.
+- **Auswahlbildschirm:** Vor dem ersten Dungeon und nach jedem Tod.
+
+### Proben, Kampf und Fortschritt
+
+- **Probe:** W20 + Attribut gegen Schwierigkeit. Leicht 8, mittel 12, schwer 16. Jede Probe nennt ihre Kategorie. Der Wurf wird im Textfenster angezeigt.
+- **Lebenspunkte:** Startwert je nach Volk, Heilung höchstens bis zum Maximum. Bei 0 Lebenspunkten ist der Durchlauf vorbei, es folgt die Volkswahl und ein neuer Dungeon. Tränke und Rasten heilen.
+- **Ausrüstung:** Waffen, Rüstungen und Zauber können ein Mindestattribut verlangen. Konkrete Werte folgen mit Meilenstein 5.
 - **Kampfrunde:** Der Spieler wählt Angreifen (Kraft gegen Rüstung des Gegners), Verteidigen (Rüstung +2 bis zur nächsten Runde), Gegenstand nutzen oder Fliehen (Geschick-Probe, Rückzug durch die zuletzt genutzte Tür). Danach handelt der Gegner.
 - **Gegner:** Lebenspunkte, Rüstungswert, Angriffsbonus, Schaden (z. B. W6).
 - **Ersatz-Kampf bis Meilenstein 5:** Der Effekt `combat` ist eine einzige Kraft-Probe (W20 + Kraft) gegen die Rüstung des Monsters. Erfolg ist ein Sieg. Fehlschlag kostet den Schaden des Monsters, die übrigen Effekte des Ergebnisses (etwa Beute) entfallen dann.
@@ -106,7 +125,7 @@ Jeder Raumtyp hat eine Event-Chance und eine gewichtete Event-Tabelle. Jedes Eve
   "options": [
     {
       "label": "Deckel aufstemmen",
-      "check": { "attr": "kraft", "dc": 12 },
+      "check": { "category": "kraftakt", "dc": 12 },
       "success": { "text": "Darin liegt ein Amulett.", "effects": [{ "loot": "tier1" }] },
       "failure": { "text": "Knochen regen sich.", "effects": [{ "combat": "skeleton" }] }
     },
@@ -116,11 +135,13 @@ Jeder Raumtyp hat eine Event-Chance und eine gewichtete Event-Tabelle. Jedes Eve
 ```
 
 - **Ablauf:** Beim ersten Betreten eines Raums würfelt das Spiel gegen die Event-Chance und wählt dann gewichtet ein Event, dessen Bedingung erfüllt ist. Der Startraum hat die Chance 100 %: Jeder Dungeon beginnt mit einem kurzen, harmlosen Begrüßungs-Event.
-- **Dateien:** `data/room-types.json`, `data/events.json`, `data/monsters.json`. Ein Event hat zusätzlich einen `title` für das Textfenster. Ein Ergebnis kann mit `next` ein Folge-Event starten, so laufen Proben Runde für Runde.
+- **Dateien:** `data/room-types.json`, `data/events.json`, `data/monsters.json`, `data/characters.json`. Ein Event hat zusätzlich einen `title` für das Textfenster. Ein Ergebnis kann mit `next` ein Folge-Event starten, so laufen Proben Runde für Runde.
+- **Proben in Events:** Jede Probe nennt ihre Kategorie, zum Beispiel `{ "category": "kraftakt", "dc": 12 }`. Das Attribut ergibt sich aus der Kategorie.
 - **Event-Typen:** combat, choice, trap, treasure, npc. Bossgegner und Artefakte laufen als normale Events über die Tabellen.
 - **Effekte:** damage, heal, loot, combat, gainXp, lockDoor, unlockDoor, setFlag. Mengen als Zahl oder Würfel, etwa `"W4"` oder `"2W6"`.
 - **once:** Das Event kommt höchstens einmal pro Dungeon vor.
-- **Bedingungen:** `flag:name` (Flag ist gesetzt) und `notFlag:name` (Flag fehlt). Flags gelten pro Dungeon. `hasItem:name` kommt mit dem Inventar in Meilenstein 5.
+- **Bedingungen:** `flag:name` (Flag ist gesetzt), `notFlag:name` (Flag fehlt) und `volk:zwerg`, `volk:elf`, `volk:mensch`. Flags gelten pro Dungeon. `hasItem:name` kommt mit dem Inventar in Meilenstein 5.
+- **Volks-Bedingungen:** Ein ganzes Event kann an ein Volk gebunden sein, dann erscheint es nur für dieses Volk. Bei ausgewählten Events kann auch eine einzelne Option an ein Volk gebunden sein, andere Völker sehen sie nicht.
 - **Türen:** `lockDoor` und `unlockDoor` nennen eine Richtung (`N`, `E`, `S`, `W`) oder `back`, die Tür, durch die der Spieler kam. Eine verschlossene Tür zeigt ein Schloss und lässt sich nicht benutzen, bis `unlockDoor` sie öffnet. Sind am Ende eines Events alle Türen eines Raums zu, öffnet sich die Rück-Tür von selbst.
 - **Monster:** Name, Lebenspunkte, Rüstung, Angriffsbonus, Schaden (z. B. W6).
 - **Regel:** Neue Effekt-Typen oder Bedingungen werden zuerst im Game Design festgelegt, dann programmiert, dann in Events genutzt.
@@ -160,7 +181,7 @@ Sieben Schritte, jeder endet mit etwas Spielbarem, das Christian im Browser test
 - [x] Tod: Neustart mit neuem Dungeon (Permadeath)
 - [x] Verhalten beim erneuten Betreten eines Raums: Durchlaufen ohne neues Event
 - [x] Nur Desktop
-- [x] Startwerte des Zwergenkriegers: Kraft +2, Geschick +1, Verstand −1
+- [x] Schnellreise über die Minimap: nur besuchte Räume, sofort mit Abblende, ohne Kosten, Ankunft in der Raummitte, gesperrt während Events
 - [x] Lebenspunkte gelten ab Meilenstein 4, bei 0 neuer Dungeon
 - [x] Beute bis Meilenstein 5 nur Gold: tier1 = 2W6, tier2 = 4W6
 - [x] Ersatz-Kampf bis Meilenstein 5: eine Kraft-Probe gegen die Rüstung des Monsters
@@ -168,3 +189,8 @@ Sieben Schritte, jeder endet mit etwas Spielbarem, das Christian im Browser test
 - [x] lockDoor/unlockDoor mit Richtung oder „back“, Rück-Tür öffnet sich, wenn sonst alles zu ist
 - [x] Startraum: Begrüßungs-Event zu Beginn jedes Dungeons
 - [x] once gilt pro Dungeon; Bedingungen flag und notFlag
+- [x] Volkswahl statt Klassen: Zwerg, Elf, Mensch legen Attribute, Lebenspunkte und Fähigkeit fest (ersetzt die festen Startwerte des Zwergenkriegers)
+- [x] Ausrüstung und Zauber über Mindestattribute, Skala bleibt −1 bis +3
+- [x] Fähigkeit pro Volk, einmal pro Dungeon: misslungene Probe des Hauptattributs gilt als bestanden (Kraftprotz, Scharfe Sinne, Wacher Geist)
+- [x] Jede Probe hat eine von neun Kategorien unter den drei Attributen
+- [x] Volks-Bedingungen für ganze Events und für einzelne Optionen bei ausgewählten Events
