@@ -226,17 +226,19 @@ Der Dungeon führt durch Themen, die alle drei Ebenen wechseln. Das Thema bestim
 
 - **Lesart der Lage:** „nur“, „nie“ und „direkt neben dem Start“ sind feste Regeln. „Bevorzugt“ und „neben X“ gelten, wenn der Grundriss es zulässt und der andere Raumtyp auf der Ebene vorkommt.
 - **Feindlich:** Events mit Kämpfen und Fallen. **Neutral:** Rätsel, Gespräche, Fundstücke oder gar kein Event, nur Start, Abstieg, Rastplatz und Händler sind verlässlich sicher. **Gemischt:** Wenn ein Event auslöst, ist es in etwa 30 % der Fälle ein Gegner oder eine Falle, sonst harmlos. Dafür trägt jedes Event in der Tabelle eines gemischten Raumtyps die Markierung feindlich oder neutral. Für den Anteil feindlicher Räume zählen gemischte Räume nicht als feindlich.
-- **Anteil feindlicher Räume:** steigt von etwa 40 % auf Ebene 1 auf 70 % ab Ebene 13.
+- **Anteil feindlicher Räume:** steigt gleichmäßig von 40 % auf Ebene 1 auf 70 % ab Ebene 13 (+2,5 Prozentpunkte je Ebene).
 - **Sackgassen:** Sackgassen, die keine Schatzkammer werden, bekommen einen anderen Raumtyp des Themas.
-- **Händler:** bietet 4 zufällige Gegenstände der aktuellen Beutestufe und Heiltränke an. Verkaufen bringt den halben Preis.
+- **Händler:** bietet 4 zufällige Ausrüstungsteile der Stufe des Themas an (ohne Doppelte; gibt es weniger, dann alle), dazu immer Heiltrank, Feuerball- und Schild-Schriftrolle in beliebiger Menge. Gekaufte Ausrüstung verschwindet aus dem Angebot. Verkaufen bringt den halben Preis, angelegte Ausrüstung muss vorher abgelegt werden. Das Angebot hängt am Seed des Raums.
+- **Rastplatz:** auf jeder geraden Ebene (2, 4, 6 …). Ein Lagerfeuer im Raum heilt einmal auf volle Lebenspunkte, danach ist es aus.
+- **Bossraum:** Betreten startet den Bosskampf, auch bei jedem weiteren Betreten, bis der Boss besiegt ist. Flucht ist erlaubt, der Boss wartet dann mit vollen Lebenspunkten. Sieg: Beute `tier2` und 10 Erfahrung, danach erscheint in der Raummitte der Torbogen zum Abstieg.
 - **Bosse:** passend zum Thema, einer am Ende jeder Themenwelt.
 
 ### Ebenen
 
 - **Größe:** Ebene 1 hat 8 bis 12 Räume, jede weitere Ebene 2 mehr. Ab Ebene 9 bleibt es bei 24 bis 28 Räumen.
-- **Proben:** Pro Thema +1 auf jede Schwierigkeit: Keller ±0, Katakomben +1, Zwergenminen +2, Goblin-Höhlen +3, Ork-Lager +4. In den Event-Daten bleiben die Werte 8, 12 und 16, der Zuschlag kommt automatisch dazu und wird im Textfenster angezeigt.
+- **Proben:** Pro Thema +1 auf jede Schwierigkeit: Keller ±0, Katakomben +1, Zwergenminen +2, Goblin-Höhlen +3, Ork-Lager +4. In den Event-Daten bleiben die Werte 8, 12 und 16, der Zuschlag kommt automatisch dazu und wird im Textfenster angezeigt. Der Zuschlag gilt auch für die Flucht im Kampf (SG 12 plus Zuschlag).
 - **Monster:** Jedes Thema hat eigene Monster. Innerhalb eines Themas bekommen Gegner +1 Lebenspunkt pro Ebene (erste Ebene des Themas +0, zweite +1, dritte +2), im endlosen Ork-Lager wächst das weiter. Das ersetzt das bisherige Wachstum von +2 Lebenspunkten und +1 Angriff je Ebene.
-- **Beute:** Die Beutestufen verschieben sich mit dem Thema. `tier1` ergibt Beute der Stufe des Themas (Keller 1 bis Ork-Lager 5), `tier2` eine Stufe höher. Dafür braucht `data/items.json` Gegenstände bis Stufe 6.
+- **Beute:** Die Beutestufen verschieben sich mit dem Thema. `tier1` ergibt Beute der Stufe des Themas (Keller 1 bis Ork-Lager 5), `tier2` eine Stufe höher. Dafür braucht `data/items.json` Gegenstände bis Stufe 6. Verbrauchsgegenstände haben keine Stufe und kommen in jeder Beutestufe vor (Heiltrank häufig, Schriftrollen seltener).
 - **Ergebnis:** Der Endbildschirm zeigt die erreichte Ebene als Ergebnis.
 
 ### Bosse, Gold und Händler
@@ -348,3 +350,7 @@ Sieben Schritte, jeder endet mit etwas Spielbarem, das Christian im Browser test
 - [x] Gold der Beute ×Stufe des Themas, Gegenstände mit Stufe 1–6
 - [x] Händlerpreise nach Stufe (20 bis 220 Gold), Verbrauchsgegenstände zum Festpreis
 - [x] Dritte Bewertung „gemischt“ für elf bisher neutrale Raumtypen: 30 % feindliche Events, sonst harmlos; neutral bleiben nur Start, Abstieg, Rastplatz und Händler
+- [x] Rastplatz auf geraden Ebenen, Lagerfeuer heilt einmal voll
+- [x] Bosskampf: Flucht erlaubt, Boss wartet bei jedem Betreten; Sieg bringt tier2-Beute und 10 Erfahrung, dann erscheint der Abstieg
+- [x] Proben-Zuschlag des Themas gilt auch für die Flucht
+- [x] Händler: 4 Ausrüstungsteile der Themenstufe plus alle Verbrauchsgegenstände in beliebiger Menge; Verbrauchsgegenstände in jeder Beutestufe

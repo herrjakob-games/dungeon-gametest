@@ -20,8 +20,12 @@ export const CATEGORY_NAMES = {
   diplomatie: "Diplomatie", wahrnehmung: "Wahrnehmung", wissen: "Wissen"
 };
 
-// Beute: Gold wie bisher, dazu ein Gegenstand der Stufe (tier1 mit 1/3 Chance, tier2 immer)
-export const LOOT = { tier1: { gold: "2W6", itemChance: 1 / 3 }, tier2: { gold: "4W6", itemChance: 1 } };
+// Beute: Gold, dazu ein Gegenstand (tier1 mit 1/3 Chance, tier2 immer). Die Stufe des Gegenstands ist
+// die Stufe des Themas (tier1) oder eine höher (tier2); das Gold wird mit der Stufe des Themas malgenommen.
+export const LOOT = { tier1: { gold: "2W6", itemChance: 1 / 3, step: 0 }, tier2: { gold: "4W6", itemChance: 1, step: 1 } };
+export const MAX_ITEM_STAGE = 6;
+export const RATINGS = ["hostile", "mixed", "neutral"];
+export const MIXED_HOSTILE_CHANCE = 0.3; // gemischte Raumtypen: so oft ein feindliches Event
 
 // Zustand, der pro Dungeon gilt
 export const newRun = () => ({ flags: new Set(), usedOnce: new Set() });
@@ -31,7 +35,8 @@ export function indexData(raw) {
   const byId = (list) => Object.fromEntries((list || []).map(o => [o.id, o]));
   return {
     roomTypes: byId(raw.roomTypes), events: byId(raw.events), monsters: byId(raw.monsters),
-    items: byId(raw.items), characters: byId(raw.characters), texts: raw.texts || {}
+    items: byId(raw.items), characters: byId(raw.characters), texts: raw.texts || {},
+    themes: raw.themes || [] // Liste in der Reihenfolge der Ebenen
   };
 }
 
@@ -76,7 +81,13 @@ export function checkCondition(cond, run, player) {
 // Würfelt gegen die Event-Chance und wählt dann gewichtet aus den erlaubten Events. Ergebnis: id oder null.
 export function pickEvent(roomType, run, rand, player) {
   if (!(rand() < roomType.eventChance)) return null;
-  const allowed = roomType.events.filter(e => !(e.once && run.usedOnce.has(e.id)) && checkCondition(e.condition, run, player));
+  let allowed = roomType.events.filter(e => !(e.once && run.usedOnce.has(e.id)) && checkCondition(e.condition, run, player));
+  // Gemischte Raumtypen: in etwa 30 % der Fälle ein feindliches Event, sonst ein harmloses
+  if (roomType.rating === "mixed") {
+    const want = rand() < MIXED_HOSTILE_CHANCE ? "hostile" : "neutral";
+    const pool = allowed.filter(e => e.rating === want);
+    if (pool.length) allowed = pool;
+  }
   const total = allowed.reduce((s, e) => s + e.weight, 0);
   if (!total) return null;
   let r = rand() * total;
@@ -88,14 +99,20 @@ export function pickEvent(roomType, run, rand, player) {
 export const visibleOptions = (ev, run, player) => ev.options.filter(o => checkCondition(o.condition, run, player));
 
 // ---------- Beute ----------
-export function rollLoot(tier, items, rand) {
+// Beutepool einer Stufe: Ausrüstung genau dieser Stufe (Gewicht 1) und Verbrauchsgegenstände (lootWeight)
+export const lootPool = (items, stage) => Object.values(items)
+  .filter(i => i.type === "consumable" || i.stage === stage)
+  .map(i => ({ id: i.id, weight: i.type === "consumable" ? i.lootWeight : 1 }));
+
+// stage: Stufe des Themas (Keller 1 bis Ork-Lager 5)
+export function rollLoot(tier, items, rand, stage = 1) {
   const t = LOOT[tier];
-  const gold = rollDice(t.gold, rand);
+  const gold = rollDice(t.gold, rand) * stage;
   let item = null;
   if (rand() < t.itemChance) {
-    const pool = Object.values(items).filter(i => i.loot && i.loot[tier]);
-    let r = rand() * pool.reduce((s, i) => s + i.loot[tier], 0);
-    for (const i of pool) { if ((r -= i.loot[tier]) < 0) { item = i.id; break; } }
+    const pool = lootPool(items, Math.min(MAX_ITEM_STAGE, stage + t.step));
+    let r = rand() * pool.reduce((s, i) => s + i.weight, 0);
+    for (const i of pool) { if ((r -= i.weight) < 0) { item = i.id; break; } }
     if (!item && pool.length) item = pool[pool.length - 1].id;
   }
   return { gold, item };
@@ -107,7 +124,7 @@ export const resolveDoor = (dir, back) => (dir === "back" ? back : dir);
 // ---------- Effekte ----------
 /**
  * Wendet Effekte der Reihe nach an und liefert lesbare Zeilen für das Textfenster.
- * ctx: { player, run, items, room: { doors (Bitmaske), locked (Set), back } }
+ * ctx: { player, run, items, stage (Stufe des Themas), room: { doors (Bitmaske), locked (Set), back } }
  * Ergebnis: { lines, died, items, combat }
  *  - items: gefundene Gegenstände; der Ablauf legt sie in den Rucksack (oder fragt, was liegen bleibt)
  *  - combat: { monster, rest } bei einem Kampf; die Effekte danach (rest) gelten erst nach einem Sieg
@@ -128,7 +145,7 @@ export function applyEffects(effects, ctx, rand) {
       player.hp += n;
       lines.push({ type, amount: n });
     } else if (type === "loot") {
-      const l = rollLoot(value, ctx.items, rand);
+      const l = rollLoot(value, ctx.items, rand, ctx.stage || 1);
       player.gold += l.gold;
       lines.push({ type, amount: l.gold });
       if (l.item) found.push(l.item);
@@ -181,12 +198,30 @@ export function validateData(data) {
     const w = "Raumtyp " + rt.id;
     if (!rt.name) err(w, "Name fehlt");
     if (!(rt.eventChance >= 0 && rt.eventChance <= 1)) err(w, "eventChance muss zwischen 0 und 1 liegen");
+    if (!RATINGS.includes(rt.rating)) err(w, "Bewertung muss hostile, mixed oder neutral sein");
+    if (!rt.layout) err(w, "layout fehlt");
+    if (rt.deadEnd !== undefined && !["only", "never", "prefer"].includes(rt.deadEnd)) err(w, "deadEnd muss only, never oder prefer sein");
+    (rt.near || []).forEach(n => { if (!data.roomTypes[n]) err(w, "unbekannter Nachbar-Raumtyp " + n); });
     if (!Array.isArray(rt.events)) { err(w, "events fehlt"); continue; }
+    if (rt.eventChance > 0 && !rt.events.length) err(w, "Event-Chance ohne Events");
     for (const e of rt.events) {
       if (!data.events[e.id]) err(w, "unbekanntes Event " + e.id);
       if (!(e.weight > 0)) err(w, "Gewicht von " + e.id + " muss größer als 0 sein");
       checkCond(w, e.condition);
+      if (rt.rating === "mixed" && !["hostile", "neutral"].includes(e.rating)) err(w, e.id + " braucht die Markierung hostile oder neutral");
     }
+    if (rt.rating === "mixed" && !["hostile", "neutral"].every(r => rt.events.some(e => e.rating === r))) {
+      err(w, "gemischter Raumtyp braucht feindliche und harmlose Events");
+    }
+  }
+
+  for (const th of data.themes || []) {
+    const w = "Thema " + th.id;
+    if (!th.name) err(w, "Name fehlt");
+    if (!(Number.isInteger(th.stage) && th.stage >= 1 && th.stage < MAX_ITEM_STAGE)) err(w, "Stufe muss zwischen 1 und 5 liegen");
+    if (!Number.isInteger(th.dcBonus)) err(w, "dcBonus fehlt");
+    [th.startNeighbor].concat(th.roomTypes || []).forEach(t => { if (!data.roomTypes[t]) err(w, "unbekannter Raumtyp " + t); });
+    [th.boss].concat(th.endlessBosses || []).concat(th.monsters || []).forEach(m => { if (!data.monsters[m]) err(w, "unbekanntes Monster " + m); });
   }
 
   for (const m of Object.values(data.monsters)) {
@@ -195,6 +230,7 @@ export function validateData(data) {
     ["hp", "armor", "attack"].forEach(k => { if (typeof m[k] !== "number") err(w, k + " fehlt"); });
     if (!isDice(m.damage)) err(w, "Schaden ist kein Würfel");
     if (!m.deathText) err(w, "deathText fehlt");
+    if (m.boss && !m.intro) err(w, "Boss braucht einen intro-Text");
   }
 
   for (const it of Object.values(data.items)) {
@@ -206,16 +242,19 @@ export function validateData(data) {
       if (!["kraft", "geschick"].includes(it.hit)) err(w, "hit muss kraft oder geschick sein");
     } else if (it.type === "armor") {
       if (!(Number.isInteger(it.armor) && it.armor > 0)) err(w, "armor braucht eine positive Zahl");
+      if (!(Number.isInteger(it.stage) && it.stage >= 1 && it.stage <= MAX_ITEM_STAGE)) err(w, "Stufe muss zwischen 1 und 6 liegen");
+      if (!(Number.isInteger(it.stage) && it.stage >= 1 && it.stage <= MAX_ITEM_STAGE)) err(w, "Stufe muss zwischen 1 und 6 liegen");
     } else if (it.type === "consumable") {
+      if (!(it.price > 0)) err(w, "Preis fehlt");
+      if (!(it.lootWeight > 0)) err(w, "lootWeight fehlt");
       const u = Object.entries(it.use || {});
       if (u.length !== 1 || !["heal", "damage", "shield"].includes(u[0][0])) err(w, "use braucht genau heal, damage oder shield");
       else if (!isDice(u[0][1])) err(w, "use braucht Zahl oder Würfel");
       if (u.length && u[0][0] !== "heal" && !it.combatOnly) err(w, "damage und shield gehen nur im Kampf (combatOnly)");
     } else err(w, "unbekannter Typ " + it.type);
-    Object.keys(it.loot || {}).forEach(t => { if (!LOOT[t]) err(w, "unbekannte Beutestufe " + t); });
   }
-  for (const t of Object.keys(LOOT)) {
-    if (!Object.values(data.items).some(i => i.loot && i.loot[t])) err("Beute " + t, "kein Gegenstand in dieser Stufe");
+  for (let st = 1; st <= MAX_ITEM_STAGE; st++) {
+    if (!Object.values(data.items).some(i => i.stage === st)) err("Stufe " + st, "keine Ausrüstung in dieser Stufe");
   }
 
   for (const c of Object.values(data.characters)) {

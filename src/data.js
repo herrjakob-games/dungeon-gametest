@@ -11,9 +11,9 @@ async function load(name) {
 }
 
 export async function loadData() {
-  const names = ["room-types", "events", "monsters", "items", "characters", "texts"];
-  const [roomTypes, events, monsters, items, characters, texts] = await Promise.all(names.map(n => load(n + ".json")));
-  DATA = indexData({ roomTypes, events, monsters, items, characters, texts });
+  const names = ["room-types", "events", "monsters", "items", "characters", "texts", "themes"];
+  const [roomTypes, events, monsters, items, characters, texts, themes] = await Promise.all(names.map(n => load(n + ".json")));
+  DATA = indexData({ roomTypes, events, monsters, items, characters, texts, themes });
   const errors = validateData(DATA);
   if (errors.length) console.error("Fehler in data/:\n" + errors.join("\n"));
   for (const rt of roomTypes) {

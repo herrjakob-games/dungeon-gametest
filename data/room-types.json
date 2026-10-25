@@ -2,85 +2,636 @@
   {
     "id": "start",
     "name": "Die Vorkammer",
-    "floor": { "h": 0.07, "s": 0.12 },
+    "floor": {
+      "h": 0.07,
+      "s": 0.12
+    },
     "torch": "#ff9a3c",
+    "layout": "start",
+    "rating": "neutral",
     "eventChance": 1,
     "events": [
-      { "id": "start_schild", "weight": 3 },
-      { "id": "start_zettel", "weight": 3 },
-      { "id": "start_dehnen", "weight": 2 }
-    ]
-  },
-  {
-    "id": "halle",
-    "name": "Die Säulenhalle",
-    "floor": { "h": 0.08, "s": 0.06 },
-    "torch": "#ff9a3c",
-    "eventChance": 0.4,
-    "events": [
-      { "id": "halle_saeule", "weight": 3 },
-      { "id": "halle_echo", "weight": 3 },
-      { "id": "halle_fliese", "weight": 2 }
-    ]
-  },
-  {
-    "id": "gruft",
-    "name": "Die Gruft",
-    "floor": { "h": 0.32, "s": 0.06 },
-    "torch": "#7fdc9a",
-    "eventChance": 0.7,
-    "events": [
-      { "id": "gruft_sarkophag", "weight": 5 },
-      { "id": "gruft_stimme", "weight": 3 },
-      { "id": "gruft_kerze", "weight": 3, "once": true, "condition": "notFlag:grabkerze" }
-    ]
-  },
-  {
-    "id": "wache",
-    "name": "Die Wachstube",
-    "floor": { "h": 0.05, "s": 0.20 },
-    "torch": "#ffb060",
-    "eventChance": 0.7,
-    "events": [
-      { "id": "wache_goblin", "weight": 4 },
-      { "id": "wache_karten", "weight": 3 },
-      { "id": "wache_kerze", "weight": 6, "once": true, "condition": "flag:grabkerze" }
-    ]
-  },
-  {
-    "id": "vorrat",
-    "name": "Die Vorratskammer",
-    "floor": { "h": 0.09, "s": 0.16 },
-    "torch": "#ff9a3c",
-    "eventChance": 0.5,
-    "events": [
-      { "id": "vorrat_kaese", "weight": 2, "once": true },
-      { "id": "vorrat_ratte", "weight": 4 },
-      { "id": "vorrat_brot", "weight": 3 }
-    ]
-  },
-  {
-    "id": "schatz",
-    "name": "Die Schatzkammer",
-    "floor": { "h": 0.11, "s": 0.26 },
-    "torch": "#ffc85a",
-    "eventChance": 0.8,
-    "events": [
-      { "id": "schatz_mimik", "weight": 3 },
-      { "id": "schatz_tuer", "weight": 3, "once": true },
-      { "id": "schatz_steuer", "weight": 2, "once": true }
+      {
+        "id": "start_schild",
+        "weight": 3
+      },
+      {
+        "id": "start_zettel",
+        "weight": 3
+      },
+      {
+        "id": "start_dehnen",
+        "weight": 2
+      }
     ]
   },
   {
     "id": "exit",
     "name": "Der Abstieg",
-    "floor": { "h": 0.58, "s": 0.08 },
+    "floor": {
+      "h": 0.58,
+      "s": 0.08
+    },
     "torch": "#9fd0ff",
+    "layout": "exit",
+    "rating": "neutral",
     "eventChance": 0.5,
     "events": [
-      { "id": "exit_tuersteher", "weight": 3 },
-      { "id": "exit_souvenir", "weight": 3 },
-      { "id": "exit_bank", "weight": 2 }
+      {
+        "id": "exit_tuersteher",
+        "weight": 3
+      },
+      {
+        "id": "exit_souvenir",
+        "weight": 3
+      },
+      {
+        "id": "exit_bank",
+        "weight": 2
+      }
+    ]
+  },
+  {
+    "id": "boss",
+    "name": "Der Bossraum",
+    "floor": {
+      "h": 0.0,
+      "s": 0.18
+    },
+    "torch": "#ff5a3c",
+    "layout": "boss",
+    "rating": "hostile",
+    "eventChance": 0,
+    "events": []
+  },
+  {
+    "id": "schatz",
+    "name": "Die Schatzkammer",
+    "floor": {
+      "h": 0.11,
+      "s": 0.26
+    },
+    "torch": "#ffc85a",
+    "layout": "schatz",
+    "rating": "hostile",
+    "eventChance": 0.8,
+    "max": 1,
+    "deadEnd": "only",
+    "events": [
+      {
+        "id": "schatz_mimik",
+        "weight": 3
+      },
+      {
+        "id": "schatz_tuer",
+        "weight": 3,
+        "once": true
+      },
+      {
+        "id": "schatz_steuer",
+        "weight": 2,
+        "once": true
+      }
+    ]
+  },
+  {
+    "id": "rast",
+    "name": "Der Rastplatz",
+    "floor": {
+      "h": 0.1,
+      "s": 0.14
+    },
+    "torch": "#ffb050",
+    "layout": "rast",
+    "rating": "neutral",
+    "eventChance": 0,
+    "events": []
+  },
+  {
+    "id": "haendler",
+    "name": "Der Händler",
+    "floor": {
+      "h": 0.13,
+      "s": 0.16
+    },
+    "torch": "#ffd070",
+    "layout": "haendler",
+    "rating": "neutral",
+    "eventChance": 0,
+    "events": []
+  },
+  {
+    "id": "wache",
+    "name": "Die Wachstube",
+    "floor": {
+      "h": 0.05,
+      "s": 0.2
+    },
+    "torch": "#ffb060",
+    "layout": "wache",
+    "rating": "hostile",
+    "eventChance": 0.7,
+    "events": [
+      {
+        "id": "wache_goblin",
+        "weight": 4
+      },
+      {
+        "id": "wache_karten",
+        "weight": 3
+      },
+      {
+        "id": "wache_kerze",
+        "weight": 6,
+        "once": true,
+        "condition": "flag:grabkerze"
+      }
+    ]
+  },
+  {
+    "id": "gruft",
+    "name": "Die Gruft",
+    "floor": {
+      "h": 0.32,
+      "s": 0.06
+    },
+    "torch": "#7fdc9a",
+    "layout": "gruft",
+    "rating": "hostile",
+    "eventChance": 0.7,
+    "nextToStart": "never",
+    "events": [
+      {
+        "id": "gruft_sarkophag",
+        "weight": 5
+      },
+      {
+        "id": "gruft_stimme",
+        "weight": 3
+      },
+      {
+        "id": "gruft_kerze",
+        "weight": 3,
+        "once": true,
+        "condition": "notFlag:grabkerze"
+      }
+    ]
+  },
+  {
+    "id": "halle",
+    "name": "Die Säulenhalle",
+    "floor": {
+      "h": 0.08,
+      "s": 0.06
+    },
+    "torch": "#ff9a3c",
+    "layout": "halle",
+    "rating": "mixed",
+    "eventChance": 0.4,
+    "max": 3,
+    "deadEnd": "never",
+    "crossroads": "prefer",
+    "events": [
+      {
+        "id": "halle_saeule",
+        "weight": 3,
+        "rating": "neutral"
+      },
+      {
+        "id": "halle_echo",
+        "weight": 3,
+        "rating": "neutral"
+      },
+      {
+        "id": "halle_fliese",
+        "weight": 2,
+        "rating": "hostile"
+      }
+    ]
+  },
+  {
+    "id": "vorrat",
+    "name": "Die Vorratskammer",
+    "floor": {
+      "h": 0.09,
+      "s": 0.16
+    },
+    "torch": "#ff9a3c",
+    "layout": "vorrat",
+    "rating": "mixed",
+    "eventChance": 0.5,
+    "max": 2,
+    "deadEnd": "prefer",
+    "near": [
+      "kueche"
+    ],
+    "events": [
+      {
+        "id": "vorrat_kaese",
+        "weight": 2,
+        "once": true,
+        "rating": "neutral"
+      },
+      {
+        "id": "vorrat_ratte",
+        "weight": 4,
+        "rating": "hostile"
+      },
+      {
+        "id": "vorrat_brot",
+        "weight": 3,
+        "rating": "hostile"
+      }
+    ]
+  },
+  {
+    "id": "kueche",
+    "name": "Die Küche",
+    "floor": {
+      "h": 0.06,
+      "s": 0.22
+    },
+    "torch": "#ffa040",
+    "layout": "vorrat",
+    "rating": "mixed",
+    "eventChance": 0.5,
+    "max": 1,
+    "near": [
+      "speisesaal"
+    ],
+    "events": [
+      {
+        "id": "kueche_ruhe",
+        "weight": 7,
+        "rating": "neutral"
+      },
+      {
+        "id": "kueche_kampf",
+        "weight": 3,
+        "rating": "hostile"
+      }
+    ]
+  },
+  {
+    "id": "speisesaal",
+    "name": "Der Speisesaal",
+    "floor": {
+      "h": 0.07,
+      "s": 0.18
+    },
+    "torch": "#ff9a3c",
+    "layout": "wache",
+    "rating": "mixed",
+    "eventChance": 0.5,
+    "max": 1,
+    "deadEnd": "never",
+    "events": [
+      {
+        "id": "speisesaal_ruhe",
+        "weight": 7,
+        "rating": "neutral"
+      },
+      {
+        "id": "speisesaal_kampf",
+        "weight": 3,
+        "rating": "hostile"
+      }
+    ]
+  },
+  {
+    "id": "brunnen",
+    "name": "Der Brunnenraum",
+    "floor": {
+      "h": 0.52,
+      "s": 0.1
+    },
+    "torch": "#9fd0ff",
+    "layout": "start",
+    "rating": "mixed",
+    "eventChance": 0.5,
+    "max": 1,
+    "events": [
+      {
+        "id": "brunnen_ruhe",
+        "weight": 7,
+        "rating": "neutral"
+      },
+      {
+        "id": "brunnen_kampf",
+        "weight": 3,
+        "rating": "hostile"
+      }
+    ]
+  },
+  {
+    "id": "schrein",
+    "name": "Der Schrein",
+    "floor": {
+      "h": 0.75,
+      "s": 0.08
+    },
+    "torch": "#c9a0ff",
+    "layout": "pillars",
+    "rating": "mixed",
+    "eventChance": 0.5,
+    "max": 1,
+    "events": [
+      {
+        "id": "schrein_ruhe",
+        "weight": 7,
+        "rating": "neutral"
+      },
+      {
+        "id": "schrein_kampf",
+        "weight": 3,
+        "rating": "hostile"
+      }
+    ]
+  },
+  {
+    "id": "kerker",
+    "name": "Der Kerker",
+    "floor": {
+      "h": 0.02,
+      "s": 0.1
+    },
+    "torch": "#ff8a50",
+    "layout": "vorrat",
+    "rating": "hostile",
+    "eventChance": 0.7,
+    "max": 2,
+    "deadEnd": "prefer",
+    "near": [
+      "folter"
+    ],
+    "events": [
+      {
+        "id": "kerker_kampf",
+        "weight": 2
+      },
+      {
+        "id": "kerker_falle",
+        "weight": 1
+      }
+    ]
+  },
+  {
+    "id": "bibliothek",
+    "name": "Die Bibliothek",
+    "floor": {
+      "h": 0.1,
+      "s": 0.2
+    },
+    "torch": "#ffd080",
+    "layout": "halle",
+    "rating": "mixed",
+    "eventChance": 0.5,
+    "max": 1,
+    "deadEnd": "prefer",
+    "events": [
+      {
+        "id": "bibliothek_ruhe",
+        "weight": 7,
+        "rating": "neutral"
+      },
+      {
+        "id": "bibliothek_kampf",
+        "weight": 3,
+        "rating": "hostile"
+      }
+    ]
+  },
+  {
+    "id": "schmiede",
+    "name": "Die Schmiede",
+    "floor": {
+      "h": 0.03,
+      "s": 0.3
+    },
+    "torch": "#ff6a30",
+    "layout": "wache",
+    "rating": "mixed",
+    "eventChance": 0.5,
+    "max": 1,
+    "near": [
+      "wache"
+    ],
+    "events": [
+      {
+        "id": "schmiede_ruhe",
+        "weight": 7,
+        "rating": "neutral"
+      },
+      {
+        "id": "schmiede_kampf",
+        "weight": 3,
+        "rating": "hostile"
+      }
+    ]
+  },
+  {
+    "id": "folter",
+    "name": "Die Folterkammer",
+    "floor": {
+      "h": 0.0,
+      "s": 0.25
+    },
+    "torch": "#ff5040",
+    "layout": "gruft",
+    "rating": "hostile",
+    "eventChance": 0.7,
+    "nextToStart": "never",
+    "near": [
+      "kerker",
+      "gefangenenlager"
+    ],
+    "events": [
+      {
+        "id": "folter_kampf",
+        "weight": 2
+      },
+      {
+        "id": "folter_falle",
+        "weight": 1
+      }
+    ]
+  },
+  {
+    "id": "goblinlager",
+    "name": "Das Goblin-Lager",
+    "floor": {
+      "h": 0.22,
+      "s": 0.2
+    },
+    "torch": "#c8ff60",
+    "layout": "vorrat",
+    "rating": "hostile",
+    "eventChance": 0.7,
+    "max": 3,
+    "events": [
+      {
+        "id": "goblinlager_kampf",
+        "weight": 2
+      },
+      {
+        "id": "goblinlager_falle",
+        "weight": 1
+      }
+    ]
+  },
+  {
+    "id": "vorratshoehle",
+    "name": "Die Vorratshöhle",
+    "floor": {
+      "h": 0.12,
+      "s": 0.18
+    },
+    "torch": "#ffb060",
+    "layout": "vorrat",
+    "rating": "mixed",
+    "eventChance": 0.5,
+    "deadEnd": "prefer",
+    "near": [
+      "goblinlager"
+    ],
+    "events": [
+      {
+        "id": "vorratshoehle_ruhe",
+        "weight": 7,
+        "rating": "neutral"
+      },
+      {
+        "id": "vorratshoehle_kampf",
+        "weight": 3,
+        "rating": "hostile"
+      }
+    ]
+  },
+  {
+    "id": "pilzzucht",
+    "name": "Die Pilzzucht",
+    "floor": {
+      "h": 0.8,
+      "s": 0.15
+    },
+    "torch": "#d080ff",
+    "layout": "gruft",
+    "rating": "mixed",
+    "eventChance": 0.5,
+    "max": 2,
+    "deadEnd": "prefer",
+    "near": [
+      "vorratshoehle"
+    ],
+    "events": [
+      {
+        "id": "pilzzucht_ruhe",
+        "weight": 7,
+        "rating": "neutral"
+      },
+      {
+        "id": "pilzzucht_kampf",
+        "weight": 3,
+        "rating": "hostile"
+      }
+    ]
+  },
+  {
+    "id": "orklager",
+    "name": "Das Ork-Lager",
+    "floor": {
+      "h": 0.04,
+      "s": 0.28
+    },
+    "torch": "#ff7030",
+    "layout": "wache",
+    "rating": "hostile",
+    "eventChance": 0.7,
+    "max": 3,
+    "events": [
+      {
+        "id": "orklager_kampf",
+        "weight": 2
+      },
+      {
+        "id": "orklager_falle",
+        "weight": 1
+      }
+    ]
+  },
+  {
+    "id": "gefangenenlager",
+    "name": "Das Gefangenen-Lager",
+    "floor": {
+      "h": 0.05,
+      "s": 0.14
+    },
+    "torch": "#ff9050",
+    "layout": "vorrat",
+    "rating": "hostile",
+    "eventChance": 0.7,
+    "deadEnd": "prefer",
+    "near": [
+      "folter"
+    ],
+    "events": [
+      {
+        "id": "gefangenenlager_kampf",
+        "weight": 2
+      },
+      {
+        "id": "gefangenenlager_falle",
+        "weight": 1
+      }
+    ]
+  },
+  {
+    "id": "friedhof",
+    "name": "Der Friedhof",
+    "floor": {
+      "h": 0.3,
+      "s": 0.1
+    },
+    "torch": "#a0e0b0",
+    "layout": "gruft",
+    "rating": "mixed",
+    "eventChance": 0.5,
+    "deadEnd": "prefer",
+    "events": [
+      {
+        "id": "friedhof_ruhe",
+        "weight": 7,
+        "rating": "neutral"
+      },
+      {
+        "id": "friedhof_kampf",
+        "weight": 3,
+        "rating": "hostile"
+      }
+    ]
+  },
+  {
+    "id": "wolfshoehle",
+    "name": "Die Wolfs-Höhle",
+    "floor": {
+      "h": 0.09,
+      "s": 0.12
+    },
+    "torch": "#ffb070",
+    "layout": "vorrat",
+    "rating": "hostile",
+    "eventChance": 0.7,
+    "max": 2,
+    "deadEnd": "prefer",
+    "events": [
+      {
+        "id": "wolfshoehle_kampf",
+        "weight": 2
+      },
+      {
+        "id": "wolfshoehle_falle",
+        "weight": 1
+      }
     ]
   }
 ]

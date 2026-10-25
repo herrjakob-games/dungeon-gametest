@@ -36,7 +36,7 @@ export function updateStats() {
   const p = state.player;
   if (!p) return;
   ui.hero.textContent = p.name + " · Stufe " + p.level;
-  ui.depth.textContent = state.depth;
+  ui.depth.textContent = state.depth + (state.theme ? " · " + state.theme.name : "");
   ui.hp.textContent = p.hp + " / " + p.maxHp;
   ui.hp.classList.toggle("low", p.hp <= 4);
   ui.xp.textContent = p.xp + " / " + xpForLevel(p.level);
@@ -126,7 +126,7 @@ export function drawMinimap() {
     if (seen && (k === dungeon.exit || k === dungeon.start)) {
       mctx.fillStyle = k === current ? css("--bg") : (k === dungeon.exit ? css("--exit") : css("--fg"));
       mctx.font = "700 " + Math.round(size * 0.55) + "px " + css("--body");
-      mctx.fillText(k === dungeon.exit ? "A" : "S", cx, cz + 1);
+      mctx.fillText(k === dungeon.start ? "S" : (dungeon.boss && !(state.roomState[k] || {}).bossDefeated ? "B" : "A"), cx, cz + 1);
     }
   });
 }

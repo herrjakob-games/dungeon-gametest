@@ -964,5 +964,1199 @@
         "text": "Die Bank sieht dir traurig nach."
       }
     ]
+  },
+  {
+    "id": "kueche_kampf",
+    "type": "combat",
+    "title": "Küche: Begegnung",
+    "text": "[Platzhalter] Hier lauert ein Gegner: Riesenratte. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Kämpfen",
+        "effects": [
+          {
+            "combat": "rat"
+          },
+          {
+            "loot": "tier1"
+          },
+          {
+            "gainXp": 3
+          }
+        ]
+      },
+      {
+        "label": "Vorbeischleichen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du kommst unbemerkt vorbei.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Entdeckt!",
+          "effects": [
+            {
+              "combat": "rat"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "kueche_ruhe",
+    "type": "choice",
+    "title": "Küche: Ruhiger Moment",
+    "text": "[Platzhalter] Ein ruhiger Moment. Irgendwo liegt bestimmt etwas Brauchbares. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Umsehen",
+        "check": {
+          "category": "wahrnehmung",
+          "dc": 8
+        },
+        "success": {
+          "text": "Du findest etwas.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 1
+            }
+          ]
+        },
+        "failure": {
+          "text": "Nichts als Staub."
+        }
+      },
+      {
+        "label": "Weitergehen"
+      }
+    ]
+  },
+  {
+    "id": "speisesaal_kampf",
+    "type": "combat",
+    "title": "Speisesaal: Begegnung",
+    "text": "[Platzhalter] Hier lauert ein Gegner: Skelett. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Kämpfen",
+        "effects": [
+          {
+            "combat": "skeleton"
+          },
+          {
+            "loot": "tier1"
+          },
+          {
+            "gainXp": 3
+          }
+        ]
+      },
+      {
+        "label": "Vorbeischleichen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du kommst unbemerkt vorbei.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Entdeckt!",
+          "effects": [
+            {
+              "combat": "skeleton"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "speisesaal_ruhe",
+    "type": "choice",
+    "title": "Speisesaal: Ruhiger Moment",
+    "text": "[Platzhalter] Ein ruhiger Moment. Irgendwo liegt bestimmt etwas Brauchbares. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Umsehen",
+        "check": {
+          "category": "wahrnehmung",
+          "dc": 8
+        },
+        "success": {
+          "text": "Du findest etwas.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 1
+            }
+          ]
+        },
+        "failure": {
+          "text": "Nichts als Staub."
+        }
+      },
+      {
+        "label": "Weitergehen"
+      }
+    ]
+  },
+  {
+    "id": "brunnen_kampf",
+    "type": "combat",
+    "title": "Brunnenraum: Begegnung",
+    "text": "[Platzhalter] Hier lauert ein Gegner: Riesenratte. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Kämpfen",
+        "effects": [
+          {
+            "combat": "rat"
+          },
+          {
+            "loot": "tier1"
+          },
+          {
+            "gainXp": 3
+          }
+        ]
+      },
+      {
+        "label": "Vorbeischleichen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du kommst unbemerkt vorbei.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Entdeckt!",
+          "effects": [
+            {
+              "combat": "rat"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "brunnen_ruhe",
+    "type": "choice",
+    "title": "Brunnenraum: Ruhiger Moment",
+    "text": "[Platzhalter] Ein ruhiger Moment. Irgendwo liegt bestimmt etwas Brauchbares. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Umsehen",
+        "check": {
+          "category": "wahrnehmung",
+          "dc": 8
+        },
+        "success": {
+          "text": "Du findest etwas.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 1
+            }
+          ]
+        },
+        "failure": {
+          "text": "Nichts als Staub."
+        }
+      },
+      {
+        "label": "Weitergehen"
+      }
+    ]
+  },
+  {
+    "id": "schrein_kampf",
+    "type": "combat",
+    "title": "Schrein: Begegnung",
+    "text": "[Platzhalter] Hier lauert ein Gegner: Geist. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Kämpfen",
+        "effects": [
+          {
+            "combat": "geist"
+          },
+          {
+            "loot": "tier1"
+          },
+          {
+            "gainXp": 3
+          }
+        ]
+      },
+      {
+        "label": "Vorbeischleichen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du kommst unbemerkt vorbei.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Entdeckt!",
+          "effects": [
+            {
+              "combat": "geist"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "schrein_ruhe",
+    "type": "choice",
+    "title": "Schrein: Ruhiger Moment",
+    "text": "[Platzhalter] Ein ruhiger Moment. Irgendwo liegt bestimmt etwas Brauchbares. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Umsehen",
+        "check": {
+          "category": "wahrnehmung",
+          "dc": 8
+        },
+        "success": {
+          "text": "Du findest etwas.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 1
+            }
+          ]
+        },
+        "failure": {
+          "text": "Nichts als Staub."
+        }
+      },
+      {
+        "label": "Weitergehen"
+      }
+    ]
+  },
+  {
+    "id": "kerker_kampf",
+    "type": "combat",
+    "title": "Kerker: Begegnung",
+    "text": "[Platzhalter] Hier lauert ein Gegner: Geist. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Kämpfen",
+        "effects": [
+          {
+            "combat": "geist"
+          },
+          {
+            "loot": "tier1"
+          },
+          {
+            "gainXp": 3
+          }
+        ]
+      },
+      {
+        "label": "Vorbeischleichen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du kommst unbemerkt vorbei.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Entdeckt!",
+          "effects": [
+            {
+              "combat": "geist"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "kerker_falle",
+    "type": "trap",
+    "title": "Kerker: Falle",
+    "text": "[Platzhalter] Ein verdächtiges Klicken unter deinem Fuß. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Zur Seite springen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Knapp daneben.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Autsch.",
+          "effects": [
+            {
+              "damage": "W6"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "bibliothek_kampf",
+    "type": "combat",
+    "title": "Bibliothek: Begegnung",
+    "text": "[Platzhalter] Hier lauert ein Gegner: Dunkelzwerg. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Kämpfen",
+        "effects": [
+          {
+            "combat": "dunkelzwerg"
+          },
+          {
+            "loot": "tier1"
+          },
+          {
+            "gainXp": 3
+          }
+        ]
+      },
+      {
+        "label": "Vorbeischleichen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du kommst unbemerkt vorbei.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Entdeckt!",
+          "effects": [
+            {
+              "combat": "dunkelzwerg"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "bibliothek_ruhe",
+    "type": "choice",
+    "title": "Bibliothek: Ruhiger Moment",
+    "text": "[Platzhalter] Ein ruhiger Moment. Irgendwo liegt bestimmt etwas Brauchbares. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Umsehen",
+        "check": {
+          "category": "wahrnehmung",
+          "dc": 8
+        },
+        "success": {
+          "text": "Du findest etwas.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 1
+            }
+          ]
+        },
+        "failure": {
+          "text": "Nichts als Staub."
+        }
+      },
+      {
+        "label": "Weitergehen"
+      }
+    ]
+  },
+  {
+    "id": "schmiede_kampf",
+    "type": "combat",
+    "title": "Schmiede: Begegnung",
+    "text": "[Platzhalter] Hier lauert ein Gegner: Steingolem. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Kämpfen",
+        "effects": [
+          {
+            "combat": "steingolem"
+          },
+          {
+            "loot": "tier1"
+          },
+          {
+            "gainXp": 3
+          }
+        ]
+      },
+      {
+        "label": "Vorbeischleichen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du kommst unbemerkt vorbei.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Entdeckt!",
+          "effects": [
+            {
+              "combat": "steingolem"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "schmiede_ruhe",
+    "type": "choice",
+    "title": "Schmiede: Ruhiger Moment",
+    "text": "[Platzhalter] Ein ruhiger Moment. Irgendwo liegt bestimmt etwas Brauchbares. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Umsehen",
+        "check": {
+          "category": "wahrnehmung",
+          "dc": 8
+        },
+        "success": {
+          "text": "Du findest etwas.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 1
+            }
+          ]
+        },
+        "failure": {
+          "text": "Nichts als Staub."
+        }
+      },
+      {
+        "label": "Weitergehen"
+      }
+    ]
+  },
+  {
+    "id": "folter_kampf",
+    "type": "combat",
+    "title": "Folterkammer: Begegnung",
+    "text": "[Platzhalter] Hier lauert ein Gegner: Goblin-Schamane. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Kämpfen",
+        "effects": [
+          {
+            "combat": "goblin_schamane"
+          },
+          {
+            "loot": "tier1"
+          },
+          {
+            "gainXp": 3
+          }
+        ]
+      },
+      {
+        "label": "Vorbeischleichen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du kommst unbemerkt vorbei.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Entdeckt!",
+          "effects": [
+            {
+              "combat": "goblin_schamane"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "folter_falle",
+    "type": "trap",
+    "title": "Folterkammer: Falle",
+    "text": "[Platzhalter] Ein verdächtiges Klicken unter deinem Fuß. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Zur Seite springen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Knapp daneben.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Autsch.",
+          "effects": [
+            {
+              "damage": "W6"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "goblinlager_kampf",
+    "type": "combat",
+    "title": "Goblin-Lager: Begegnung",
+    "text": "[Platzhalter] Hier lauert ein Gegner: Goblin-Wache. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Kämpfen",
+        "effects": [
+          {
+            "combat": "goblin"
+          },
+          {
+            "loot": "tier1"
+          },
+          {
+            "gainXp": 3
+          }
+        ]
+      },
+      {
+        "label": "Vorbeischleichen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du kommst unbemerkt vorbei.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Entdeckt!",
+          "effects": [
+            {
+              "combat": "goblin"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "goblinlager_falle",
+    "type": "trap",
+    "title": "Goblin-Lager: Falle",
+    "text": "[Platzhalter] Ein verdächtiges Klicken unter deinem Fuß. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Zur Seite springen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Knapp daneben.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Autsch.",
+          "effects": [
+            {
+              "damage": "W6"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "vorratshoehle_kampf",
+    "type": "combat",
+    "title": "Vorratshöhle: Begegnung",
+    "text": "[Platzhalter] Hier lauert ein Gegner: Spinne. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Kämpfen",
+        "effects": [
+          {
+            "combat": "spinne"
+          },
+          {
+            "loot": "tier1"
+          },
+          {
+            "gainXp": 3
+          }
+        ]
+      },
+      {
+        "label": "Vorbeischleichen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du kommst unbemerkt vorbei.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Entdeckt!",
+          "effects": [
+            {
+              "combat": "spinne"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "vorratshoehle_ruhe",
+    "type": "choice",
+    "title": "Vorratshöhle: Ruhiger Moment",
+    "text": "[Platzhalter] Ein ruhiger Moment. Irgendwo liegt bestimmt etwas Brauchbares. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Umsehen",
+        "check": {
+          "category": "wahrnehmung",
+          "dc": 8
+        },
+        "success": {
+          "text": "Du findest etwas.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 1
+            }
+          ]
+        },
+        "failure": {
+          "text": "Nichts als Staub."
+        }
+      },
+      {
+        "label": "Weitergehen"
+      }
+    ]
+  },
+  {
+    "id": "pilzzucht_kampf",
+    "type": "combat",
+    "title": "Pilzzucht: Begegnung",
+    "text": "[Platzhalter] Hier lauert ein Gegner: Spinne. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Kämpfen",
+        "effects": [
+          {
+            "combat": "spinne"
+          },
+          {
+            "loot": "tier1"
+          },
+          {
+            "gainXp": 3
+          }
+        ]
+      },
+      {
+        "label": "Vorbeischleichen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du kommst unbemerkt vorbei.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Entdeckt!",
+          "effects": [
+            {
+              "combat": "spinne"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "pilzzucht_ruhe",
+    "type": "choice",
+    "title": "Pilzzucht: Ruhiger Moment",
+    "text": "[Platzhalter] Ein ruhiger Moment. Irgendwo liegt bestimmt etwas Brauchbares. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Umsehen",
+        "check": {
+          "category": "wahrnehmung",
+          "dc": 8
+        },
+        "success": {
+          "text": "Du findest etwas.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 1
+            }
+          ]
+        },
+        "failure": {
+          "text": "Nichts als Staub."
+        }
+      },
+      {
+        "label": "Weitergehen"
+      }
+    ]
+  },
+  {
+    "id": "orklager_kampf",
+    "type": "combat",
+    "title": "Ork-Lager: Begegnung",
+    "text": "[Platzhalter] Hier lauert ein Gegner: Ork. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Kämpfen",
+        "effects": [
+          {
+            "combat": "ork"
+          },
+          {
+            "loot": "tier1"
+          },
+          {
+            "gainXp": 3
+          }
+        ]
+      },
+      {
+        "label": "Vorbeischleichen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du kommst unbemerkt vorbei.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Entdeckt!",
+          "effects": [
+            {
+              "combat": "ork"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "orklager_falle",
+    "type": "trap",
+    "title": "Ork-Lager: Falle",
+    "text": "[Platzhalter] Ein verdächtiges Klicken unter deinem Fuß. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Zur Seite springen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Knapp daneben.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Autsch.",
+          "effects": [
+            {
+              "damage": "W6"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "gefangenenlager_kampf",
+    "type": "combat",
+    "title": "Gefangenen-Lager: Begegnung",
+    "text": "[Platzhalter] Hier lauert ein Gegner: Ork. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Kämpfen",
+        "effects": [
+          {
+            "combat": "ork"
+          },
+          {
+            "loot": "tier1"
+          },
+          {
+            "gainXp": 3
+          }
+        ]
+      },
+      {
+        "label": "Vorbeischleichen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du kommst unbemerkt vorbei.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Entdeckt!",
+          "effects": [
+            {
+              "combat": "ork"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "gefangenenlager_falle",
+    "type": "trap",
+    "title": "Gefangenen-Lager: Falle",
+    "text": "[Platzhalter] Ein verdächtiges Klicken unter deinem Fuß. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Zur Seite springen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Knapp daneben.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Autsch.",
+          "effects": [
+            {
+              "damage": "W6"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "friedhof_kampf",
+    "type": "combat",
+    "title": "Friedhof: Begegnung",
+    "text": "[Platzhalter] Hier lauert ein Gegner: Skelett. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Kämpfen",
+        "effects": [
+          {
+            "combat": "skeleton"
+          },
+          {
+            "loot": "tier1"
+          },
+          {
+            "gainXp": 3
+          }
+        ]
+      },
+      {
+        "label": "Vorbeischleichen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du kommst unbemerkt vorbei.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Entdeckt!",
+          "effects": [
+            {
+              "combat": "skeleton"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "friedhof_ruhe",
+    "type": "choice",
+    "title": "Friedhof: Ruhiger Moment",
+    "text": "[Platzhalter] Ein ruhiger Moment. Irgendwo liegt bestimmt etwas Brauchbares. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Umsehen",
+        "check": {
+          "category": "wahrnehmung",
+          "dc": 8
+        },
+        "success": {
+          "text": "Du findest etwas.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 1
+            }
+          ]
+        },
+        "failure": {
+          "text": "Nichts als Staub."
+        }
+      },
+      {
+        "label": "Weitergehen"
+      }
+    ]
+  },
+  {
+    "id": "wolfshoehle_kampf",
+    "type": "combat",
+    "title": "Wolfs-Höhle: Begegnung",
+    "text": "[Platzhalter] Hier lauert ein Gegner: Wolf. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Kämpfen",
+        "effects": [
+          {
+            "combat": "wolf"
+          },
+          {
+            "loot": "tier1"
+          },
+          {
+            "gainXp": 3
+          }
+        ]
+      },
+      {
+        "label": "Vorbeischleichen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du kommst unbemerkt vorbei.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Entdeckt!",
+          "effects": [
+            {
+              "combat": "wolf"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "wolfshoehle_falle",
+    "type": "trap",
+    "title": "Wolfs-Höhle: Falle",
+    "text": "[Platzhalter] Ein verdächtiges Klicken unter deinem Fuß. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Zur Seite springen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Knapp daneben.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Autsch.",
+          "effects": [
+            {
+              "damage": "W6"
+            }
+          ]
+        }
+      }
+    ]
   }
 ]

@@ -14,7 +14,7 @@ import { renderInventory } from "./inventory.js";
 import { runCombat } from "./combatUI.js";
 import { rollHtml, maybeRescue, signShort } from "./checkUI.js";
 
-let hooks = { onDeath: () => {}, onRetreat: () => {} };
+let hooks = { onDeath: () => {}, onRetreat: () => {}, onBossDefeated: () => {}, onRested: () => {} };
 export function initEvents(h) { hooks = h; }
 
 function lineHtml(l) {
@@ -29,10 +29,14 @@ function lineHtml(l) {
   return "";
 }
 
+// Proben-Zuschlag des Themas: In den Daten stehen 8, 12 oder 16, dazu kommt +0 bis +4
+const dcBonus = () => state.theme.dcBonus;
+const dcText = (dc) => "SG " + (dc + dcBonus()) + (dcBonus() ? " (" + dc + " +" + dcBonus() + " " + state.theme.name + ")" : "");
+
 const optionLabel = (o) => {
   if (!o.check) return o.label;
   const attr = CATEGORIES[o.check.category];
-  return o.label + " (" + CATEGORY_NAMES[o.check.category] + ", " + ATTR_NAMES[attr] + " " + signShort(state.player.attrs[attr]) + ", SG " + o.check.dc + ")";
+  return o.label + " (" + CATEGORY_NAMES[o.check.category] + ", " + ATTR_NAMES[attr] + " " + signShort(state.player.attrs[attr]) + ", " + dcText(o.check.dc) + ")";
 };
 
 // Türen des aktuellen Raums, wie eventLogic sie braucht
@@ -41,7 +45,7 @@ function roomCtx() {
   if (!rs.locked) rs.locked = new Set();
   return { doors: state.dungeon.rooms[state.current].doors, locked: rs.locked, back: state.backDoor };
 }
-const effectCtx = () => ({ player: state.player, run: state.run, items: DATA.items, room: roomCtx() });
+const effectCtx = () => ({ player: state.player, run: state.run, items: DATA.items, stage: state.theme.stage, room: roomCtx() });
 
 // Beim ersten Betreten: gegen die Event-Chance des Raumtyps würfeln. Ergebnis: true, wenn ein Event startet.
 export function startRoomEvent() {
@@ -66,8 +70,9 @@ export function runEvent(id, onOutcome) {
 
 function choose(ev, option, onOutcome) {
   if (!option.check) { resolve(ev, option, null, onOutcome); return; }
-  const r = doCheck(state.player, option.check, Math.random);
-  maybeRescue(ev.title, r, null, () => resolve(ev, r.ok ? option.success : option.failure, rollHtml(r), onOutcome));
+  const r = doCheck(state.player, { category: option.check.category, dc: option.check.dc + dcBonus() }, Math.random);
+  const against = dcText(option.check.dc);
+  maybeRescue(ev.title, r, against, () => resolve(ev, r.ok ? option.success : option.failure, rollHtml(r, against), onOutcome));
 }
 
 function resolve(ev, outcome, roll, onOutcome) {
@@ -103,7 +108,7 @@ function fight(ev, outcome, combat, onOutcome) {
   runCombat(combat.monster, {
     onWin: (lines, roll) => {
       const res = applyEffects(combat.rest, effectCtx(), Math.random);
-      show(ev, { text: "Der Kampf ist vorbei.", next: outcome.next }, res, roll, onOutcome, lines);
+      show(ev, { text: outcome.winText || "Der Kampf ist vorbei.", next: outcome.next }, res, roll, onOutcome, lines);
     },
     onFlee: () => {
       state.eventActive = false;
@@ -160,6 +165,40 @@ function die(cause) {
   state.eventActive = false;
   closeDialog();
   hooks.onDeath(cause);
+}
+
+// Bossraum: Betreten startet den Kampf. Flucht ist erlaubt, beim nächsten Betreten wartet der Boss wieder.
+// Sieg: Beute tier2 und 10 Erfahrung, danach erscheint der Torbogen zum Abstieg.
+export const BOSS_REWARD = [{ loot: "tier2" }, { gainXp: 10 }];
+
+export function startBoss() {
+  const rs = state.roomState[state.current];
+  if (rs.bossDefeated || state.eventActive) return;
+  const boss = DATA.monsters[state.dungeon.boss];
+  const ev = { title: boss.name };
+  state.eventActive = true;
+  showDialog(boss.name, boss.intro, [{
+    label: "Kämpfen",
+    pick: () => fight(ev, { winText: boss.name + " ist besiegt. In der Mitte des Raums öffnet sich der Torbogen zum Abstieg." },
+      { monster: boss.id, rest: BOSS_REWARD }, () => { rs.bossDefeated = true; hooks.onBossDefeated(); })
+  }], { modal: true });
+}
+
+// Rastplatz: Das Lagerfeuer heilt einmal auf volle Lebenspunkte
+export function restEvent() {
+  const rs = state.roomState[state.current];
+  const p = state.player;
+  if (rs.rested) {
+    showDialog("Das Lagerfeuer", "Nur noch kalte Asche. Irgendwer hat sogar die Marshmallows mitgenommen.", [{ label: "Weiter", pick: closeDialog }]);
+    return;
+  }
+  const n = p.maxHp - p.hp;
+  rs.rested = true;
+  p.hp = p.maxHp;
+  updateStats();
+  hooks.onRested();
+  showDialog("Das Lagerfeuer", "Du wärmst dir die Füße, isst etwas Brot und schläfst eine Runde. Niemand stört dich. Unheimlich.",
+    [{ label: "Weiter", pick: closeDialog }], { fx: [n ? '<span class="good">+' + n + " LP</span> · Lebenspunkte voll" : "Lebenspunkte waren schon voll"] });
 }
 
 // Die Truhe im Raum: ein Event aus den Daten. Sie gilt als geöffnet, sobald sie Beute gegeben hat.

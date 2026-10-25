@@ -5,17 +5,15 @@ import { weaponOf, armorBonusOf } from "./character.js";
 
 export const BASE_ARMOR = 10;   // Rüstung der Spielfigur ohne Rüstungsteil
 export const DEFEND_BONUS = 2;  // Verteidigen: Rüstung +2 bis zur nächsten Runde
-export const FLEE_DC = 12;      // Fliehen: Probe Flucht gegen SG 12
-export const DEPTH_CAP = 5;     // Gegner wachsen höchstens 5 Ebenen lang
+export const FLEE_DC = 12;      // Fliehen: Probe Flucht gegen SG 12, plus Zuschlag des Themas
 
-// Gegner wachsen mit der Tiefe: ab Ebene 2 je Ebene +2 Lebenspunkte und +1 Angriff
-export function scaleMonster(def, depth) {
-  const n = Math.min(DEPTH_CAP, Math.max(0, depth - 1));
-  return { id: def.id, name: def.name, hp: def.hp + 2 * n, maxHp: def.hp + 2 * n, armor: def.armor, attack: def.attack + n, damage: def.damage, deathText: def.deathText };
+// Gegner wachsen mit der Tiefe: hpBonus aus world.monsterHpBonus (+1 LP pro Ebene innerhalb des Themas)
+export function scaleMonster(def, hpBonus = 0) {
+  return { id: def.id, name: def.name, hp: def.hp + hpBonus, maxHp: def.hp + hpBonus, armor: def.armor, attack: def.attack, damage: def.damage, deathText: def.deathText, boss: !!def.boss };
 }
 
-export function startCombat(def, depth) {
-  return { monster: scaleMonster(def, depth), defending: false, shield: 0, round: 1 };
+export function startCombat(def, hpBonus = 0) {
+  return { monster: scaleMonster(def, hpBonus), defending: false, shield: 0, round: 1 };
 }
 
 // Aktuelle Rüstung der Spielfigur im Kampf
@@ -35,7 +33,7 @@ export function hitMonster(player, items, c, rand) {
   return n;
 }
 
-export const fleeRoll = (player, rand) => doCheck(player, { category: "flucht", dc: FLEE_DC }, rand);
+export const fleeRoll = (player, rand, dcBonus = 0) => doCheck(player, { category: "flucht", dc: FLEE_DC + dcBonus }, rand);
 
 export function defend(c) { c.defending = true; }
 

@@ -7,6 +7,7 @@ import { mat, box, stone, WOOD } from "./materials.js";
 import { TYPES } from "./roomTypes.js";
 import { scene } from "./scene.js";
 import { state } from "./state.js";
+import { buildFigure } from "./figures.js";
 const THREE = window.THREE;
 
 let roomGroup = null;
@@ -40,7 +41,7 @@ export function buildRoom(id) {
   buildWalls(room);
   DIRKEYS.forEach(d => { if (room.doors & DIR[d].bit) makeDoor(d); });
   [[tw(1), true], [tw(9), true], [tw(1), false], [tw(9), false]].forEach(([p, north]) => makeTorch(p, north, type.torch));
-  furnish(room.type, id);
+  furnish(type.layout, id);
   scatterRubble();
   refreshLocks();
 }
@@ -168,8 +169,23 @@ const CORNERS = [[1, 1], [9, 1], [1, 9], [9, 9]];
 const QUADS = [[2, 2], [8, 2], [2, 8], [8, 8]];
 const FOUR_PILLARS = [[3, 3], [7, 3], [3, 7], [7, 7]];
 
+// t: Einrichtung ("layout") des Raumtyps aus data/room-types.json
 function furnish(t, id) {
-  if (t === "start") {
+  if (t === "pillars") {
+    FOUR_PILLARS.forEach(p => pillar(...p));
+  } else if (t === "boss") {
+    CORNERS.forEach(p => pillar(...p));
+    if (state.roomState[id].bossDefeated) makeExit(); else makeBossMark();
+  } else if (t === "rast") {
+    makeCampfire(pickOne(QUADS), id);
+    barrelCluster(pickOne(CORNERS));
+  } else if (t === "haendler") {
+    const q = pickOne(QUADS);
+    makeMerchant(q);
+    const sx = q[0] < MID ? 1 : -1;
+    crate(q[0] + sx, q[1]); crate(q[0] - sx, q[1]);
+    barrelCluster(pickOne(CORNERS.filter(c => Math.abs(c[0] - q[0]) > 2 || Math.abs(c[1] - q[1]) > 2)));
+  } else if (t === "start") {
     FOUR_PILLARS.forEach(p => pillar(...p));
     barrelCluster(pickOne(CORNERS));
   } else if (t === "halle") {
@@ -333,6 +349,74 @@ function makeChest(pos, id) {
   state.lidPivot = lidPivot;
   add(chest);
   state.interactables.push(chest);
+}
+
+// Bossraum: dunkler, glühender Block in der Mitte, solange der Boss nicht besiegt ist (Platzhalter)
+function makeBossMark() {
+  block(MID, MID);
+  const g = new THREE.Group();
+  const glow = mat(0x5a1a14, { emissive: 0xff3a20, emissiveIntensity: 0.25 });
+  g.add(box(1.1, 0.2, 1.1, mat(0x2a2422), 0, 0.1, 0));
+  const body = new THREE.Mesh(new THREE.ConeGeometry(0.55, 2.2, 5), glow);
+  body.position.y = 1.2; body.castShadow = true;
+  g.add(body);
+  const light = new THREE.PointLight(0xff4a2a, 1.2, 6, 2);
+  light.position.set(0, 1.6, 0.6);
+  g.add(light);
+  g.position.set(tw(MID), 0, tw(MID));
+  g.userData = { kind: "boss", tile: [MID, MID], hoverMats: [glow], baseGlow: glow };
+  add(g);
+  state.interactables.push(g);
+}
+
+// Rastplatz: Lagerfeuer, einmal benutzbar
+function makeCampfire(pos, id) {
+  if (!free(pos[0], pos[1])) return;
+  block(pos[0], pos[1]);
+  const g = new THREE.Group();
+  const logMat = mat(0x5e3d22, { emissive: 0xe9a640, emissiveIntensity: 0 });
+  [0, 1, 2].forEach(i => {
+    const log = box(0.8, 0.14, 0.14, logMat, 0, 0.08, 0);
+    log.rotation.y = i * Math.PI / 3;
+    g.add(log);
+  });
+  const lit = !state.roomState[id].rested;
+  const flame = new THREE.Mesh(new THREE.OctahedronGeometry(0.22), new THREE.MeshBasicMaterial({ color: 0xffa040 }));
+  flame.position.y = 0.4;
+  flame.visible = lit;
+  g.add(flame);
+  const light = new THREE.PointLight(0xffa040, lit ? 1.4 : 0, 6, 2);
+  light.position.y = 0.7;
+  g.add(light);
+  g.position.set(tw(pos[0]), 0, tw(pos[1]));
+  g.userData = { kind: "campfire", tile: pos, hoverMats: [logMat], flame, light };
+  add(g);
+  state.interactables.push(g);
+}
+
+// Lagerfeuer nach dem Rasten löschen
+export function douseCampfire() {
+  const fire = state.interactables.find(o => o.userData.kind === "campfire");
+  if (fire) { fire.userData.flame.visible = false; fire.userData.light.intensity = 0; }
+}
+
+// Händler: Figur aus Grundformen, schaut zur Raummitte
+function makeMerchant(pos) {
+  if (!free(pos[0], pos[1])) return;
+  block(pos[0], pos[1]);
+  const g = new THREE.Group();
+  const fig = buildFigure("mensch");
+  const hoverMats = [];
+  fig.traverse(o => { if (o.material && o.material.emissive) { o.material = o.material.clone(); hoverMats.push(o.material); } });
+  g.add(fig);
+  const hat = new THREE.Mesh(new THREE.ConeGeometry(0.28, 0.45, 8), mat(0x6a3a8a));
+  hat.position.y = 1.25; hat.castShadow = true;
+  g.add(hat);
+  g.position.set(tw(pos[0]), 0, tw(pos[1]));
+  g.rotation.y = Math.atan2(tw(MID) - tw(pos[0]), tw(MID) - tw(pos[1]));
+  g.userData = { kind: "merchant", tile: pos, hoverMats };
+  add(g);
+  state.interactables.push(g);
 }
 
 // Der Abstieg: Torbogen in der Raummitte
