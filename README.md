@@ -7,15 +7,16 @@ Events in jedem Raum, gelöst über ein Textfenster mit vereinfachten Pen-&-Pape
 
 ## Stand
 
-Meilensteine 1 bis 3 sind fertig: Räume mit 15×15 Kacheln, Klick-Bewegung mit Wegfindung, Türen und
-Raumwechsel, Dungeon-Generator mit Seed (12 bis 20 Räume), Minimap mit Schnellreise, Truhe und Abstieg
-als Test-Events. Alle Regeln stehen im [Game Design Document](docs/GDD.md).
+Meilensteine 1 bis 4 sind fertig: Räume mit 15×15 Kacheln, Klick-Bewegung mit Wegfindung, Türen und
+Raumwechsel, Dungeon-Generator mit Seed (12 bis 20 Räume), Minimap mit Schnellreise und ein Event-System:
+Raumtypen, Events und Monster liegen als JSON in `data/`, Proben werden im Textfenster gewürfelt.
+Alle Regeln stehen im [Game Design Document](docs/GDD.md).
 
 ## Lokal starten
 
 ```bash
 npm start   # startet einen kleinen Webserver
-npm test    # prüft den Dungeon-Generator mit 3.000 Seeds
+npm test    # prüft Dungeon-Generator, Event-Regeln und die Daten in data/
 ```
 
 Danach http://localhost:8000 im Browser öffnen.

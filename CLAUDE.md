@@ -12,14 +12,15 @@ und trifft die Designentscheidungen.
 - Hat Christian in einer Sitzung etwas entschieden, trage es in `docs/GDD.md` ein (passender
   Abschnitt und Liste „Getroffene Entscheidungen“) und weise ihn darauf hin, dass er die
   Änderung auch in sein GDD in Claude Docs übernehmen sollte.
-- Inhalte gehören in Daten, nicht in Code: Raumtypen, Events, Monster und Gegenstände liegen ab
-  Meilenstein 4 als JSON in `data/`. Neue Effekt-Typen oder Bedingungen werden zuerst im GDD
+- Inhalte gehören in Daten, nicht in Code: Raumtypen, Events und Monster liegen als JSON in `data/`,
+  Gegenstände folgen mit Meilenstein 5. `npm test` prüft alle Daten gegen das Regelwerk. Neue Effekt-Typen oder Bedingungen werden zuerst im GDD
   festgelegt, dann programmiert, dann in Events genutzt.
 
 ## Meilensteine
 
-1–3 sind erledigt (Raum, Türen und Raumwechsel, Dungeon-Generator mit Seed, Minimap, Schnellreise).
-Nächster Schritt ist Meilenstein 4: Event-System aus JSON mit Textfenster und Proben.
+1–4 sind erledigt (Raum, Türen und Raumwechsel, Dungeon-Generator mit Seed, Minimap, Schnellreise,
+Event-System aus JSON mit Textfenster und Proben). Nächster Schritt ist Meilenstein 5: Kampf, Lebenspunkte,
+Inventar, Tod und Sieg. Dabei ersetzt der echte Kampf den Ersatz-Kampf, und Beute wird zu Gegenständen.
 Die Liste aller Meilensteine steht im GDD.
 
 ## Technik
@@ -40,13 +41,18 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/pathfinding.js` | A*-Wegfindung, rein logisch |
 | `src/rng.js` | Seed-basierte Zufallszahlen und Würfel |
 | `src/state.js` | gemeinsamer Spielzustand |
-| `src/roomTypes.js` | Raumtypen (Name, Farben); wird in Meilenstein 4 durch `data/` ergänzt |
+| `data/room-types.json` | Raumtypen: Name, Farben, Event-Chance, Event-Tabelle |
+| `data/events.json` | alle Events (auch die Truhe) |
+| `data/monsters.json` | Monster mit Lebenspunkten, Rüstung, Angriff, Schaden |
+| `src/data.js` | lädt `data/*.json` und prüft die Daten |
+| `src/eventLogic.js` | Event-Regeln: Auswahl, Proben, Effekte, Bedingungen, Datenprüfung; rein logisch |
+| `src/roomTypes.js` | Raumtypen-Tabelle, befüllt aus `data/room-types.json` |
 | `src/roomBuilder.js` | baut einen Raum als 3D-Szene inklusive Einrichtung |
 | `src/player.js` | Zwergenkrieger (Platzhalter aus Grundformen) |
 | `src/movement.js` | Laufbewegung entlang des Weges |
-| `src/events.js` | Test-Events Truhe und Abstieg (wird in Meilenstein 4 ersetzt) |
-| `src/dialog.js` | Textfenster mit Optionen und Würfelergebnis |
-| `src/hud.js` | Infotafel und Minimap |
+| `src/events.js` | Event-Ablauf im Textfenster, Truhe, Abstieg, verschlossene Türen |
+| `src/dialog.js` | Textfenster mit Optionen, Würfelergebnis und Effektzeilen |
+| `src/hud.js` | Infotafel (Werte des Zwergs) und Minimap |
 | `src/main.js` | Ablauf, Raumwechsel, Schnellreise, Eingabe, Spielschleife |
 
 ## Feste Regeln im Code

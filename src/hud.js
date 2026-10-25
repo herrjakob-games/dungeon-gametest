@@ -2,6 +2,7 @@
 import { DIR, DIRKEYS, key } from "./config.js";
 import { TYPES } from "./roomTypes.js";
 import { state } from "./state.js";
+import { ATTRS, ATTR_NAMES } from "./eventLogic.js";
 
 export const ui = {
   room: document.getElementById("roomName"),
@@ -10,6 +11,9 @@ export const ui = {
   steps: document.getElementById("steps"),
   visited: document.getElementById("visited"),
   gold: document.getElementById("gold"),
+  hp: document.getElementById("hp"),
+  xp: document.getElementById("xp"),
+  attrs: document.getElementById("attrs"),
   seedInput: document.getElementById("seedInput"),
   reveal: document.getElementById("reveal")
 };
@@ -22,13 +26,23 @@ let layout = null; // Lage der Räume auf der Minimap, für Klicks
 export function setSteps(n) { ui.steps.textContent = n ? n + " Kacheln" : "–"; }
 export function setHover(text) { ui.hover.textContent = text || "–"; }
 export function updatePos() { ui.pos.textContent = "Kachel " + (state.pTile[0] + 1) + " / " + (state.pTile[1] + 1); }
-export function updateGold() { ui.gold.textContent = state.gold; }
+const signed = (n) => (n < 0 ? "−" + Math.abs(n) : "+" + n);
+
+// Werte des Zwergs: Lebenspunkte, Erfahrung, Gold, Attribute
+export function updateStats() {
+  const p = state.player;
+  ui.hp.textContent = p.hp + " / " + p.maxHp;
+  ui.hp.classList.toggle("low", p.hp <= 4);
+  ui.xp.textContent = p.xp;
+  ui.gold.textContent = p.gold;
+  ui.attrs.textContent = ATTRS.map(a => ATTR_NAMES[a] + " " + signed(p.attrs[a])).join(" · ");
+}
 
 export function updateHud() {
   ui.room.textContent = TYPES[state.dungeon.rooms[state.current].type].name;
   ui.visited.textContent = state.visited.size + " / " + state.dungeon.count;
   updatePos();
-  updateGold();
+  updateStats();
   drawMinimap();
 }
 
