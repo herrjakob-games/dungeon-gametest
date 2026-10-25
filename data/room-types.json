@@ -22,6 +22,10 @@
       {
         "id": "start_dehnen",
         "weight": 2
+      },
+      {
+        "id": "start_gaestebuch",
+        "weight": 3
       }
     ]
   },
@@ -48,6 +52,10 @@
       {
         "id": "exit_bank",
         "weight": 2
+      },
+      {
+        "id": "exit_gelaender",
+        "weight": 3
       }
     ]
   },
@@ -145,6 +153,10 @@
         "weight": 6,
         "once": true,
         "condition": "flag:grabkerze"
+      },
+      {
+        "id": "wache_wuerfel",
+        "weight": 3
       }
     ]
   },
@@ -174,6 +186,10 @@
         "weight": 3,
         "once": true,
         "condition": "notFlag:grabkerze"
+      },
+      {
+        "id": "gruft_ruecken",
+        "weight": 3
       }
     ]
   },
@@ -195,16 +211,25 @@
       {
         "id": "halle_saeule",
         "weight": 3,
+        "hostile": false,
         "rating": "neutral"
       },
       {
         "id": "halle_echo",
         "weight": 3,
+        "hostile": false,
         "rating": "neutral"
       },
       {
         "id": "halle_fliese",
         "weight": 2,
+        "hostile": true,
+        "rating": "hostile"
+      },
+      {
+        "id": "halle_fledermaeuse",
+        "weight": 2,
+        "hostile": true,
         "rating": "hostile"
       }
     ]
@@ -229,18 +254,27 @@
       {
         "id": "vorrat_kaese",
         "weight": 2,
+        "hostile": false,
         "once": true,
         "rating": "neutral"
       },
       {
         "id": "vorrat_ratte",
         "weight": 4,
+        "hostile": true,
         "rating": "hostile"
       },
       {
         "id": "vorrat_brot",
         "weight": 3,
+        "hostile": true,
         "rating": "hostile"
+      },
+      {
+        "id": "vorrat_weinfass",
+        "weight": 3,
+        "hostile": false,
+        "rating": "neutral"
       }
     ]
   },
@@ -254,20 +288,40 @@
     "torch": "#ffa040",
     "layout": "vorrat",
     "rating": "mixed",
-    "eventChance": 0.5,
+    "eventChance": 0.4,
     "max": 1,
     "near": [
       "speisesaal"
     ],
     "events": [
       {
-        "id": "kueche_ruhe",
-        "weight": 7,
+        "id": "kueche_eintopf",
+        "weight": 3,
+        "hostile": false,
         "rating": "neutral"
       },
       {
-        "id": "kueche_kampf",
+        "id": "kueche_messerblock",
         "weight": 3,
+        "hostile": false,
+        "rating": "neutral"
+      },
+      {
+        "id": "kueche_kochbuch",
+        "weight": 3,
+        "hostile": false,
+        "rating": "neutral"
+      },
+      {
+        "id": "kueche_fettbrand",
+        "weight": 3,
+        "hostile": true,
+        "rating": "hostile"
+      },
+      {
+        "id": "kueche_chef",
+        "weight": 3,
+        "hostile": true,
         "rating": "hostile"
       }
     ]
@@ -282,18 +336,44 @@
     "torch": "#ff9a3c",
     "layout": "wache",
     "rating": "mixed",
-    "eventChance": 0.5,
+    "eventChance": 0.4,
     "max": 1,
     "deadEnd": "never",
     "events": [
       {
-        "id": "speisesaal_ruhe",
-        "weight": 7,
+        "id": "speisesaal_platzkarte",
+        "weight": 3,
+        "hostile": false,
         "rating": "neutral"
       },
       {
-        "id": "speisesaal_kampf",
+        "id": "speisesaal_gastgeber",
         "weight": 3,
+        "hostile": false,
+        "rating": "neutral"
+      },
+      {
+        "id": "speisesaal_tischtuch",
+        "weight": 3,
+        "hostile": false,
+        "rating": "neutral"
+      },
+      {
+        "id": "speisesaal_buffet",
+        "weight": 3,
+        "hostile": false,
+        "rating": "neutral"
+      },
+      {
+        "id": "speisesaal_kronleuchter",
+        "weight": 3,
+        "hostile": true,
+        "rating": "hostile"
+      },
+      {
+        "id": "speisesaal_gaeste",
+        "weight": 3,
+        "hostile": true,
         "rating": "hostile"
       }
     ]
@@ -308,17 +388,37 @@
     "torch": "#9fd0ff",
     "layout": "start",
     "rating": "mixed",
-    "eventChance": 0.5,
+    "eventChance": 0.4,
     "max": 1,
     "events": [
       {
-        "id": "brunnen_ruhe",
-        "weight": 7,
+        "id": "brunnen_muenzen",
+        "weight": 3,
+        "hostile": false,
         "rating": "neutral"
       },
       {
-        "id": "brunnen_kampf",
+        "id": "brunnen_eimer",
         "weight": 3,
+        "hostile": false,
+        "rating": "neutral"
+      },
+      {
+        "id": "brunnen_kroete",
+        "weight": 3,
+        "hostile": false,
+        "rating": "neutral"
+      },
+      {
+        "id": "brunnen_echo",
+        "weight": 3,
+        "hostile": false,
+        "rating": "neutral"
+      },
+      {
+        "id": "brunnen_rand",
+        "weight": 3,
+        "hostile": true,
         "rating": "hostile"
       }
     ]

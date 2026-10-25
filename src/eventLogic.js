@@ -209,6 +209,8 @@ export function validateData(data) {
       if (!(e.weight > 0)) err(w, "Gewicht von " + e.id + " muss größer als 0 sein");
       checkCond(w, e.condition);
       if (rt.rating === "mixed" && !["hostile", "neutral"].includes(e.rating)) err(w, e.id + " braucht die Markierung hostile oder neutral");
+      if (e.hostile !== undefined && typeof e.hostile !== "boolean") err(w, e.id + ": hostile muss true oder false sein");
+      if (typeof e.hostile === "boolean" && e.rating && (e.rating === "hostile") !== e.hostile) err(w, e.id + ": hostile und rating widersprechen sich");
     }
     if (rt.rating === "mixed" && !["hostile", "neutral"].every(r => rt.events.some(e => e.rating === r))) {
       err(w, "gemischter Raumtyp braucht feindliche und harmlose Events");

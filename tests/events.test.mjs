@@ -36,7 +36,7 @@ test("Jeder Raumtyp kommt im Generator vor und hat Events (auÃŸer Boss, Rast, HÃ
   assert.deepEqual([...used].sort(), Object.keys(DATA.roomTypes).sort());
   for (const rt of Object.values(DATA.roomTypes)) {
     if (["boss", "rast", "haendler"].includes(rt.id)) assert.equal(rt.eventChance, 0);
-    else assert.ok(rt.events.length >= 2 && rt.events.length <= 3, rt.id + ": " + rt.events.length + " Events");
+    else assert.ok(rt.events.length >= 2, rt.id + ": nur " + rt.events.length + " Events");
   }
 });
 
