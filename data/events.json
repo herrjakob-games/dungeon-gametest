@@ -964,5 +964,2294 @@
         "text": "Die Bank sieht dir traurig nach."
       }
     ]
+  },
+  {
+    "id": "schrein_kampf",
+    "type": "combat",
+    "title": "Schrein: Begegnung",
+    "text": "[Platzhalter] Hier lauert ein Gegner: Geist. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Kämpfen",
+        "effects": [
+          {
+            "combat": "geist"
+          },
+          {
+            "loot": "tier1"
+          },
+          {
+            "gainXp": 3
+          }
+        ]
+      },
+      {
+        "label": "Vorbeischleichen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du kommst unbemerkt vorbei.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Entdeckt!",
+          "effects": [
+            {
+              "combat": "geist"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "schrein_ruhe",
+    "type": "choice",
+    "title": "Schrein: Ruhiger Moment",
+    "text": "[Platzhalter] Ein ruhiger Moment. Irgendwo liegt bestimmt etwas Brauchbares. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Umsehen",
+        "check": {
+          "category": "wahrnehmung",
+          "dc": 8
+        },
+        "success": {
+          "text": "Du findest etwas.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 1
+            }
+          ]
+        },
+        "failure": {
+          "text": "Nichts als Staub."
+        }
+      },
+      {
+        "label": "Weitergehen"
+      }
+    ]
+  },
+  {
+    "id": "kerker_kampf",
+    "type": "combat",
+    "title": "Kerker: Begegnung",
+    "text": "[Platzhalter] Hier lauert ein Gegner: Geist. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Kämpfen",
+        "effects": [
+          {
+            "combat": "geist"
+          },
+          {
+            "loot": "tier1"
+          },
+          {
+            "gainXp": 3
+          }
+        ]
+      },
+      {
+        "label": "Vorbeischleichen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du kommst unbemerkt vorbei.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Entdeckt!",
+          "effects": [
+            {
+              "combat": "geist"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "kerker_falle",
+    "type": "trap",
+    "title": "Kerker: Falle",
+    "text": "[Platzhalter] Ein verdächtiges Klicken unter deinem Fuß. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Zur Seite springen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Knapp daneben.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Autsch.",
+          "effects": [
+            {
+              "damage": "W6"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "bibliothek_kampf",
+    "type": "combat",
+    "title": "Bibliothek: Begegnung",
+    "text": "[Platzhalter] Hier lauert ein Gegner: Dunkelzwerg. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Kämpfen",
+        "effects": [
+          {
+            "combat": "dunkelzwerg"
+          },
+          {
+            "loot": "tier1"
+          },
+          {
+            "gainXp": 3
+          }
+        ]
+      },
+      {
+        "label": "Vorbeischleichen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du kommst unbemerkt vorbei.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Entdeckt!",
+          "effects": [
+            {
+              "combat": "dunkelzwerg"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "bibliothek_ruhe",
+    "type": "choice",
+    "title": "Bibliothek: Ruhiger Moment",
+    "text": "[Platzhalter] Ein ruhiger Moment. Irgendwo liegt bestimmt etwas Brauchbares. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Umsehen",
+        "check": {
+          "category": "wahrnehmung",
+          "dc": 8
+        },
+        "success": {
+          "text": "Du findest etwas.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 1
+            }
+          ]
+        },
+        "failure": {
+          "text": "Nichts als Staub."
+        }
+      },
+      {
+        "label": "Weitergehen"
+      }
+    ]
+  },
+  {
+    "id": "schmiede_kampf",
+    "type": "combat",
+    "title": "Schmiede: Begegnung",
+    "text": "[Platzhalter] Hier lauert ein Gegner: Steingolem. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Kämpfen",
+        "effects": [
+          {
+            "combat": "steingolem"
+          },
+          {
+            "loot": "tier1"
+          },
+          {
+            "gainXp": 3
+          }
+        ]
+      },
+      {
+        "label": "Vorbeischleichen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du kommst unbemerkt vorbei.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Entdeckt!",
+          "effects": [
+            {
+              "combat": "steingolem"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "schmiede_ruhe",
+    "type": "choice",
+    "title": "Schmiede: Ruhiger Moment",
+    "text": "[Platzhalter] Ein ruhiger Moment. Irgendwo liegt bestimmt etwas Brauchbares. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Umsehen",
+        "check": {
+          "category": "wahrnehmung",
+          "dc": 8
+        },
+        "success": {
+          "text": "Du findest etwas.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 1
+            }
+          ]
+        },
+        "failure": {
+          "text": "Nichts als Staub."
+        }
+      },
+      {
+        "label": "Weitergehen"
+      }
+    ]
+  },
+  {
+    "id": "folter_kampf",
+    "type": "combat",
+    "title": "Folterkammer: Begegnung",
+    "text": "[Platzhalter] Hier lauert ein Gegner: Goblin-Schamane. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Kämpfen",
+        "effects": [
+          {
+            "combat": "goblin_schamane"
+          },
+          {
+            "loot": "tier1"
+          },
+          {
+            "gainXp": 3
+          }
+        ]
+      },
+      {
+        "label": "Vorbeischleichen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du kommst unbemerkt vorbei.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Entdeckt!",
+          "effects": [
+            {
+              "combat": "goblin_schamane"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "folter_falle",
+    "type": "trap",
+    "title": "Folterkammer: Falle",
+    "text": "[Platzhalter] Ein verdächtiges Klicken unter deinem Fuß. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Zur Seite springen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Knapp daneben.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Autsch.",
+          "effects": [
+            {
+              "damage": "W6"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "goblinlager_kampf",
+    "type": "combat",
+    "title": "Goblin-Lager: Begegnung",
+    "text": "[Platzhalter] Hier lauert ein Gegner: Goblin-Wache. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Kämpfen",
+        "effects": [
+          {
+            "combat": "goblin"
+          },
+          {
+            "loot": "tier1"
+          },
+          {
+            "gainXp": 3
+          }
+        ]
+      },
+      {
+        "label": "Vorbeischleichen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du kommst unbemerkt vorbei.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Entdeckt!",
+          "effects": [
+            {
+              "combat": "goblin"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "goblinlager_falle",
+    "type": "trap",
+    "title": "Goblin-Lager: Falle",
+    "text": "[Platzhalter] Ein verdächtiges Klicken unter deinem Fuß. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Zur Seite springen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Knapp daneben.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Autsch.",
+          "effects": [
+            {
+              "damage": "W6"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "vorratshoehle_kampf",
+    "type": "combat",
+    "title": "Vorratshöhle: Begegnung",
+    "text": "[Platzhalter] Hier lauert ein Gegner: Spinne. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Kämpfen",
+        "effects": [
+          {
+            "combat": "spinne"
+          },
+          {
+            "loot": "tier1"
+          },
+          {
+            "gainXp": 3
+          }
+        ]
+      },
+      {
+        "label": "Vorbeischleichen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du kommst unbemerkt vorbei.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Entdeckt!",
+          "effects": [
+            {
+              "combat": "spinne"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "vorratshoehle_ruhe",
+    "type": "choice",
+    "title": "Vorratshöhle: Ruhiger Moment",
+    "text": "[Platzhalter] Ein ruhiger Moment. Irgendwo liegt bestimmt etwas Brauchbares. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Umsehen",
+        "check": {
+          "category": "wahrnehmung",
+          "dc": 8
+        },
+        "success": {
+          "text": "Du findest etwas.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 1
+            }
+          ]
+        },
+        "failure": {
+          "text": "Nichts als Staub."
+        }
+      },
+      {
+        "label": "Weitergehen"
+      }
+    ]
+  },
+  {
+    "id": "pilzzucht_kampf",
+    "type": "combat",
+    "title": "Pilzzucht: Begegnung",
+    "text": "[Platzhalter] Hier lauert ein Gegner: Spinne. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Kämpfen",
+        "effects": [
+          {
+            "combat": "spinne"
+          },
+          {
+            "loot": "tier1"
+          },
+          {
+            "gainXp": 3
+          }
+        ]
+      },
+      {
+        "label": "Vorbeischleichen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du kommst unbemerkt vorbei.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Entdeckt!",
+          "effects": [
+            {
+              "combat": "spinne"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "pilzzucht_ruhe",
+    "type": "choice",
+    "title": "Pilzzucht: Ruhiger Moment",
+    "text": "[Platzhalter] Ein ruhiger Moment. Irgendwo liegt bestimmt etwas Brauchbares. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Umsehen",
+        "check": {
+          "category": "wahrnehmung",
+          "dc": 8
+        },
+        "success": {
+          "text": "Du findest etwas.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 1
+            }
+          ]
+        },
+        "failure": {
+          "text": "Nichts als Staub."
+        }
+      },
+      {
+        "label": "Weitergehen"
+      }
+    ]
+  },
+  {
+    "id": "orklager_kampf",
+    "type": "combat",
+    "title": "Ork-Lager: Begegnung",
+    "text": "[Platzhalter] Hier lauert ein Gegner: Ork. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Kämpfen",
+        "effects": [
+          {
+            "combat": "ork"
+          },
+          {
+            "loot": "tier1"
+          },
+          {
+            "gainXp": 3
+          }
+        ]
+      },
+      {
+        "label": "Vorbeischleichen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du kommst unbemerkt vorbei.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Entdeckt!",
+          "effects": [
+            {
+              "combat": "ork"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "orklager_falle",
+    "type": "trap",
+    "title": "Ork-Lager: Falle",
+    "text": "[Platzhalter] Ein verdächtiges Klicken unter deinem Fuß. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Zur Seite springen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Knapp daneben.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Autsch.",
+          "effects": [
+            {
+              "damage": "W6"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "gefangenenlager_kampf",
+    "type": "combat",
+    "title": "Gefangenen-Lager: Begegnung",
+    "text": "[Platzhalter] Hier lauert ein Gegner: Ork. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Kämpfen",
+        "effects": [
+          {
+            "combat": "ork"
+          },
+          {
+            "loot": "tier1"
+          },
+          {
+            "gainXp": 3
+          }
+        ]
+      },
+      {
+        "label": "Vorbeischleichen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du kommst unbemerkt vorbei.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Entdeckt!",
+          "effects": [
+            {
+              "combat": "ork"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "gefangenenlager_falle",
+    "type": "trap",
+    "title": "Gefangenen-Lager: Falle",
+    "text": "[Platzhalter] Ein verdächtiges Klicken unter deinem Fuß. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Zur Seite springen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Knapp daneben.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Autsch.",
+          "effects": [
+            {
+              "damage": "W6"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "friedhof_kampf",
+    "type": "combat",
+    "title": "Friedhof: Begegnung",
+    "text": "[Platzhalter] Hier lauert ein Gegner: Skelett. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Kämpfen",
+        "effects": [
+          {
+            "combat": "skeleton"
+          },
+          {
+            "loot": "tier1"
+          },
+          {
+            "gainXp": 3
+          }
+        ]
+      },
+      {
+        "label": "Vorbeischleichen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du kommst unbemerkt vorbei.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Entdeckt!",
+          "effects": [
+            {
+              "combat": "skeleton"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "friedhof_ruhe",
+    "type": "choice",
+    "title": "Friedhof: Ruhiger Moment",
+    "text": "[Platzhalter] Ein ruhiger Moment. Irgendwo liegt bestimmt etwas Brauchbares. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Umsehen",
+        "check": {
+          "category": "wahrnehmung",
+          "dc": 8
+        },
+        "success": {
+          "text": "Du findest etwas.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 1
+            }
+          ]
+        },
+        "failure": {
+          "text": "Nichts als Staub."
+        }
+      },
+      {
+        "label": "Weitergehen"
+      }
+    ]
+  },
+  {
+    "id": "wolfshoehle_kampf",
+    "type": "combat",
+    "title": "Wolfs-Höhle: Begegnung",
+    "text": "[Platzhalter] Hier lauert ein Gegner: Wolf. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Kämpfen",
+        "effects": [
+          {
+            "combat": "wolf"
+          },
+          {
+            "loot": "tier1"
+          },
+          {
+            "gainXp": 3
+          }
+        ]
+      },
+      {
+        "label": "Vorbeischleichen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du kommst unbemerkt vorbei.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Entdeckt!",
+          "effects": [
+            {
+              "combat": "wolf"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "wolfshoehle_falle",
+    "type": "trap",
+    "title": "Wolfs-Höhle: Falle",
+    "text": "[Platzhalter] Ein verdächtiges Klicken unter deinem Fuß. Das Content-Projekt schreibt dieses Event neu.",
+    "options": [
+      {
+        "label": "Zur Seite springen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Knapp daneben.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Autsch.",
+          "effects": [
+            {
+              "damage": "W6"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "kueche_eintopf",
+    "type": "choice",
+    "title": "Der ewige Eintopf",
+    "text": "Über einem Feuer, das niemand mehr schürt, blubbert ein Kessel. Der Eintopf riecht nach Linsen und bereuten Entscheidungen. Daneben liegt ein Holzlöffel, frisch abgeleckt.",
+    "options": [
+      {
+        "label": "Probieren",
+        "check": {
+          "category": "widerstand",
+          "dc": 12
+        },
+        "success": {
+          "text": "Schmeckt nach Großmutter, falls deine Großmutter eine Höhle war. Du fühlst dich erstaunlich gestärkt.",
+          "effects": [
+            {
+              "heal": "W6"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Die Linsen waren keine Linsen. Dein Magen reicht eine formelle Beschwerde ein.",
+          "effects": [
+            {
+              "damage": "W4"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Umrühren und hineinsehen",
+        "check": {
+          "category": "wahrnehmung",
+          "dc": 12
+        },
+        "success": {
+          "text": "Zwischen den Bohnen treibt etwas Glänzendes. Du fischst es heraus, bevor der Eintopf es sich anders überlegt.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Du siehst nur Eintopf. Ein Spritzer trifft dich am Kinn.",
+          "effects": [
+            {
+              "damage": 1
+            }
+          ]
+        }
+      },
+      {
+        "label": "Weitergehen",
+        "text": "Manche Gerichte sollte man ihrer Ewigkeit überlassen.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "kueche_messerblock",
+    "type": "treasure",
+    "title": "Ein Messer zu viel",
+    "text": "Im Messerblock stecken sieben Küchenmesser und ein verzierter Griff, der nicht dazupasst. Der Block ist verklemmt.",
+    "options": [
+      {
+        "label": "Vorsichtig herausziehen",
+        "check": {
+          "category": "fingerfertigkeit",
+          "dc": 12
+        },
+        "success": {
+          "text": "Der Griff gleitet heraus, und alle Finger bleiben dran. Das ist hier unten keine Selbstverständlichkeit.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Der Block gibt nach, die anderen sieben Messer auch. Eines davon findet dich.",
+          "effects": [
+            {
+              "damage": "W4"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Den Block zerschlagen",
+        "check": {
+          "category": "kraftakt",
+          "dc": 12
+        },
+        "success": {
+          "text": "Holz splittert, Messer klirren, der verzierte Griff landet vor deinen Füßen.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Der Block ist aus Eiche und hat Zeit. Deine Hand ist aus Fleisch und hat Schmerzen.",
+          "effects": [
+            {
+              "damage": 2
+            }
+          ]
+        }
+      },
+      {
+        "label": "Liegen lassen",
+        "text": "Wer in fremden Küchen Messer klaut, hat bald selbst eins im Rücken. Sagt man so.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "kueche_kochbuch",
+    "type": "choice",
+    "title": "Das Kochbuch",
+    "text": "Auf dem Tisch liegt ein fettiges Kochbuch, aufgeschlagen bei „Ratte, dreierlei“. Die Randnotizen werden zum Ende hin immer panischer.",
+    "options": [
+      {
+        "label": "Gründlich studieren",
+        "check": {
+          "category": "wissen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du lernst ein Rezept, das selbst Dungeon-Reste genießbar macht. Irgendwo hier unten wird das nützlich sein.",
+          "effects": [
+            {
+              "setFlag": "rezept_gelesen"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Du blätterst zu hastig um. Ein Papierschnitt, tief und persönlich.",
+          "effects": [
+            {
+              "damage": 1
+            }
+          ]
+        }
+      },
+      {
+        "label": "Zuklappen",
+        "text": "Manches Wissen macht nicht satt, sondern nur nachdenklich.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "kueche_fettbrand",
+    "type": "trap",
+    "title": "Fettbrand",
+    "text": "Dein Ellbogen streift eine Pfanne, die seit Jahrhunderten auf dem Herd steht. Das Fett darin hat lange auf diesen Moment gewartet. Stichflamme.",
+    "options": [
+      {
+        "label": "Zur Seite hechten",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du rollst ab, die Flamme leckt ins Leere. Elegant war es nicht, aber vollständig.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Die Flamme erwischt deine Augenbrauen. Sie wachsen nach, dein Stolz vielleicht nicht.",
+          "effects": [
+            {
+              "damage": "W4"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Den Eisendeckel draufknallen",
+        "check": {
+          "category": "kraftakt",
+          "dc": 12
+        },
+        "success": {
+          "text": "Klonk. Das Feuer erstickt, und du fühlst dich wie ein echter Koch.",
+          "effects": [
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Der Deckel ist schwerer als gedacht und landet auf deinem Fuß. Das Feuer brennt weiter, jetzt mit Publikum.",
+          "effects": [
+            {
+              "damage": "W4"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "kueche_chef",
+    "type": "combat",
+    "title": "Der Küchenchef",
+    "text": "Am Herd steht eine Ratte mit Kochmütze und Fleischerbeil. Sie mustert dich wie eine Zutat. Offenbar fehlt noch etwas für das Tagesgericht.",
+    "options": [
+      {
+        "label": "Angreifen",
+        "text": "Der Chef legt die Mütze ab. Jetzt ist es persönlich.",
+        "effects": [
+          {
+            "combat": "kuechenratte"
+          },
+          {
+            "gainXp": 4
+          },
+          {
+            "loot": "tier1"
+          }
+        ]
+      },
+      {
+        "label": "Das Essen loben",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Der Chef errötet unterm Fell und reicht dir einen Teller. Es ist erstaunlich gut, du fragst besser nicht.",
+          "effects": [
+            {
+              "heal": "W4"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Du sagst „deftig“. In Rattenküchen ist das eine Kriegserklärung.",
+          "effects": [
+            {
+              "combat": "kuechenratte"
+            },
+            {
+              "gainXp": 4
+            }
+          ]
+        }
+      },
+      {
+        "label": "Langsam zurückweichen",
+        "text": "Du überlässt dem Chef seine Küche. Er sieht dir nach, das Beil fest im Griff.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "speisesaal_platzkarte",
+    "type": "choice",
+    "title": "Platzkarte",
+    "text": "Die lange Tafel ist für dreizehn Gäste gedeckt, alles unter fingerdickem Staub. Nur ein Platz ist sauber. Auf der Karte daneben steht dein Name.",
+    "options": [
+      {
+        "label": "Die Karte genauer ansehen",
+        "check": {
+          "category": "wahrnehmung",
+          "dc": 12
+        },
+        "success": {
+          "text": "Auf der Rückseite steht: „Für den Nächsten, der es so weit schafft.“ Darunter klebt ein kleiner Beutel.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Du beugst dich zu weit über den Tisch. Der Stuhl kippt, der Staub nicht.",
+          "effects": [
+            {
+              "damage": 1
+            }
+          ]
+        }
+      },
+      {
+        "label": "Hinsetzen und warten",
+        "text": "Niemand kommt. Nach einer Weile stehst du auf, seltsam ausgeruht.",
+        "effects": [
+          {
+            "heal": 2
+          }
+        ]
+      },
+      {
+        "label": "Weitergehen",
+        "text": "Wer weiß, was hier serviert wird. Du willst es nicht herausfinden.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "speisesaal_gastgeber",
+    "type": "npc",
+    "title": "Der Gastgeber",
+    "text": "Am Kopfende der Tafel sitzt ein Skelett, den Becher erhoben. Es wartet sichtlich seit Jahrhunderten auf einen Trinkspruch. Bisher hat sich niemand getraut.",
+    "options": [
+      {
+        "label": "Einen Trinkspruch halten",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Das Skelett nickt gerührt, dabei fällt ihm der Unterkiefer ab. Zum Dank schiebt es dir etwas über den Tisch.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Dein Witz über Knochen kommt nicht gut an. Der Becher trifft dich an der Stirn.",
+          "effects": [
+            {
+              "damage": 2
+            }
+          ]
+        }
+      },
+      {
+        "label": "Auf Zwergenart anstoßen",
+        "condition": "volk:zwerg",
+        "text": "Du rammst deinen Becher so fest gegen seinen, dass beide zerspringen. Das Skelett hält es für den Höhepunkt seines Todes.",
+        "effects": [
+          {
+            "loot": "tier1"
+          },
+          {
+            "gainXp": 3
+          }
+        ]
+      },
+      {
+        "label": "Seinen Becher austrinken",
+        "check": {
+          "category": "widerstand",
+          "dc": 16
+        },
+        "success": {
+          "text": "Was auch immer darin war, es ist gereift. Du fühlst dich unverwüstlich.",
+          "effects": [
+            {
+              "heal": "W6"
+            },
+            {
+              "gainXp": 4
+            }
+          ]
+        },
+        "failure": {
+          "text": "Es ist zu lange gereift. Das Skelett klopft dir mitfühlend auf den Rücken.",
+          "effects": [
+            {
+              "damage": "W6"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Wortlos gehen",
+        "text": "Das Skelett senkt den Becher. Weitere hundert Jahre also.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "speisesaal_tischtuch",
+    "type": "choice",
+    "title": "Der Tischtuch-Trick",
+    "text": "Ein Tisch, vollständig gedeckt mit Porzellan, Kristall und Kerzenleuchtern. Das Tischtuch hängt bis zum Boden. Du weißt genau, was du jetzt tun willst.",
+    "options": [
+      {
+        "label": "Das Tischtuch wegreißen",
+        "check": {
+          "category": "fingerfertigkeit",
+          "dc": 12
+        },
+        "success": {
+          "text": "Das Tuch fliegt, alles bleibt stehen. Aus dem Saum fällt etwas Klimperndes.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Das Tuch fliegt, alles andere auch. Ein Kerzenleuchter findet deinen Kopf.",
+          "effects": [
+            {
+              "damage": "W4"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Vernünftig sein",
+        "text": "Du lässt alles, wie es ist. Es fühlt sich falsch an.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "speisesaal_buffet",
+    "type": "choice",
+    "title": "Das Buffet",
+    "text": "Auf einer Anrichte stehen Platten mit Resten unbestimmten Alters. Ein Schild lädt zum Zugreifen ein, ein Datum steht nicht dabei.",
+    "options": [
+      {
+        "label": "Beherzt zugreifen",
+        "check": {
+          "category": "widerstand",
+          "dc": 12
+        },
+        "success": {
+          "text": "Dein Magen verhandelt, gewinnt und meldet Sättigung.",
+          "effects": [
+            {
+              "heal": "W6"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Die Pastete war älter als du. Sie gewinnt.",
+          "effects": [
+            {
+              "damage": "W4"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Vorher schnuppern",
+        "check": {
+          "category": "wahrnehmung",
+          "dc": 8
+        },
+        "success": {
+          "text": "Du findest die eine Platte, die noch geht. Kleine Portion, kein Risiko.",
+          "effects": [
+            {
+              "heal": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Du schnupperst zu tief. Dir wird schwindelig.",
+          "effects": [
+            {
+              "damage": 1
+            }
+          ]
+        }
+      },
+      {
+        "label": "Nach dem Küchenrezept zubereiten",
+        "condition": "flag:rezept_gelesen",
+        "text": "Mit dem Rezept aus der Küche wird aus den Resten ein anständiges Mahl. Es schmeckt fast nach Zuhause.",
+        "effects": [
+          {
+            "heal": "W6+2"
+          },
+          {
+            "gainXp": 2
+          }
+        ]
+      },
+      {
+        "label": "Weitergehen",
+        "text": "Du hast schon schlechter gegessen. Aber nicht freiwillig.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "speisesaal_kronleuchter",
+    "type": "trap",
+    "title": "Der Kronleuchter",
+    "text": "Über der Tafel hängt ein eiserner Kronleuchter, groß wie ein Ochsenkarren. Er hängt an einem einzigen Seil. Das Seil knarzt, als du eintrittst.",
+    "options": [
+      {
+        "label": "Drunter durchrennen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Hinter dir kracht es. Du drehst dich nicht um, das wäre eitel.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Der Kronleuchter kracht dir hinterher und erwischt deine Fersen.",
+          "effects": [
+            {
+              "damage": "W4"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Das Seil packen",
+        "check": {
+          "category": "kraftakt",
+          "dc": 16
+        },
+        "success": {
+          "text": "Du hältst den Koloss, bis er sanft auf dem Tisch landet. Zwischen den Kerzenhaltern klemmt etwas Wertvolles.",
+          "effects": [
+            {
+              "loot": "tier2"
+            },
+            {
+              "gainXp": 4
+            }
+          ]
+        },
+        "failure": {
+          "text": "Das Seil gewinnt das Tauziehen. Du fliegst ein Stück mit.",
+          "effects": [
+            {
+              "damage": "W6"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "speisesaal_gaeste",
+    "type": "combat",
+    "title": "Ungebetene Gäste",
+    "text": "Auf der Tafel feiern Ratten ein Festmahl. Als du hereinkommst, verstummt das Schmatzen. Offenbar bist du der Hauptgang.",
+    "options": [
+      {
+        "label": "Kämpfen",
+        "text": "Die Ratten springen vom Tisch. Die größte trägt noch ihre Serviette.",
+        "effects": [
+          {
+            "combat": "rat"
+          },
+          {
+            "gainXp": 3
+          },
+          {
+            "loot": "tier1"
+          }
+        ]
+      },
+      {
+        "label": "Den Brotkorb in die Ecke werfen",
+        "check": {
+          "category": "fingerfertigkeit",
+          "dc": 12
+        },
+        "success": {
+          "text": "Die Ratten stürzen dem Brot hinterher. Du hast Zeit, die Tafel zu plündern.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Du triffst die Ratte statt der Ecke. Sie nimmt das persönlich.",
+          "effects": [
+            {
+              "combat": "rat"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "brunnen_muenzen",
+    "type": "treasure",
+    "title": "Münzen fischen",
+    "text": "Am Grund des Brunnens glitzern Münzen, die Wünsche anderer Leute. Die meisten dieser Leute sind vermutlich nicht mehr hier. Das Wasser ist eiskalt.",
+    "options": [
+      {
+        "label": "Mit dem Arm hineingreifen",
+        "check": {
+          "category": "widerstand",
+          "dc": 12
+        },
+        "success": {
+          "text": "Dein Arm wird taub, deine Taschen werden schwer. Ein guter Tausch.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Die Kälte beißt sich bis in die Schulter. Die Münzen bleiben, wo sie sind.",
+          "effects": [
+            {
+              "damage": 2
+            }
+          ]
+        }
+      },
+      {
+        "label": "Mit einem Stock angeln",
+        "check": {
+          "category": "fingerfertigkeit",
+          "dc": 12
+        },
+        "success": {
+          "text": "Münze für Münze wandert auf den Rand. Es ist meditativ und lohnend.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Der Stock bricht, und du verlierst das Gleichgewicht. Der Brunnenrand fängt dich auf, mit dem Gesicht.",
+          "effects": [
+            {
+              "damage": 2
+            }
+          ]
+        }
+      },
+      {
+        "label": "Selbst etwas wünschen",
+        "text": "Du flüsterst einen Wunsch in die Tiefe. Danach fühlst du dich etwas besser, sicher nur Zufall.",
+        "effects": [
+          {
+            "heal": 2
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "brunnen_eimer",
+    "type": "choice",
+    "title": "Der Eimer",
+    "text": "An einer rostigen Kurbel hängt eine Kette, die in die Tiefe führt. Unten zieht etwas Schweres daran. Die Kurbel quietscht schon beim Hinsehen.",
+    "options": [
+      {
+        "label": "Hochkurbeln",
+        "check": {
+          "category": "kraftakt",
+          "dc": 12
+        },
+        "success": {
+          "text": "Der Eimer kommt hoch, darin eine verschlossene Kiste. Sie ist noch trocken, also war sie nicht lange unten.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Auf halber Höhe rutscht dir die Kurbel weg. Sie dreht sich zurück und trifft dich am Kinn.",
+          "effects": [
+            {
+              "damage": "W4"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Die Kette untersuchen",
+        "check": {
+          "category": "wahrnehmung",
+          "dc": 12
+        },
+        "success": {
+          "text": "Eine Stelle der Kette ist frisch geölt. Daneben klemmt ein Beutel, den jemand hier versteckt hat.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Du findest Rost, sehr viel Rost. Ein Splitter davon steckt jetzt unter deinem Fingernagel.",
+          "effects": [
+            {
+              "damage": 1
+            }
+          ]
+        }
+      },
+      {
+        "label": "Lieber nicht",
+        "text": "Was so schwer ist und so tief hängt, will vielleicht nicht gefunden werden.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "brunnen_kroete",
+    "type": "npc",
+    "title": "Die Kröte",
+    "text": "Auf dem Brunnenrand sitzt eine fette Kröte mit Krone. Sie räuspert sich und behauptet, ein verfluchter Prinz zu sein. Ein Kuss würde alles lösen, sagt sie.",
+    "options": [
+      {
+        "label": "Den Fluch untersuchen",
+        "check": {
+          "category": "wissen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Kein Fluch, nur eine Kröte mit Geltungsdrang. Beschämt überlässt sie dir ihre Krone.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Die Kröte spuckt dir ins Auge. Das war offenbar der ganze Fluch.",
+          "effects": [
+            {
+              "damage": 1
+            }
+          ]
+        }
+      },
+      {
+        "label": "Einen Handschlag anbieten",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Ihr einigt euch auf einen Handschlag statt eines Kusses. Zum Dank verrät sie dir ein Versteck im Mauerwerk.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Sie besteht auf dem Kuss. Du gehst, und sie beschimpft dich auf Krötisch.",
+          "effects": []
+        }
+      },
+      {
+        "label": "Küssen",
+        "check": {
+          "category": "widerstand",
+          "dc": 8
+        },
+        "success": {
+          "text": "Nichts passiert, außer dass du jetzt weißt, wie Kröte schmeckt. Das zählt als Erfahrung.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Kröten sind leicht giftig. Das stand in keiner Ballade.",
+          "effects": [
+            {
+              "damage": "W4"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Auf Krötisch antworten",
+        "condition": "volk:elf",
+        "text": "Die Kröte erstarrt und gesteht flüsternd alles. Sie war nie Prinz, nur Buchhalter, und die Krone ist geliehen.",
+        "effects": [
+          {
+            "loot": "tier1"
+          },
+          {
+            "gainXp": 3
+          }
+        ]
+      },
+      {
+        "label": "Weitergehen",
+        "text": "Du hast heute schon genug Fehler gemacht.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "brunnen_echo",
+    "type": "choice",
+    "title": "Das Echo",
+    "text": "Du rufst ein vorsichtiges „Hallo?“ in den Brunnen. Das Echo antwortet: „Wer stört, der hört, und wer hört, beschwört.“ Offenbar spricht es nur in Reimen.",
+    "options": [
+      {
+        "label": "In Reimen antworten",
+        "check": {
+          "category": "wissen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Dein Reim holpert, aber das Echo ist beeindruckt. Es spült ein paar Münzen hoch, die es nicht mehr braucht.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Du reimst „Brunnen“ auf „Brunnen“. Das Echo spritzt dich beleidigt nass.",
+          "effects": [
+            {
+              "damage": 1
+            }
+          ]
+        }
+      },
+      {
+        "label": "Nach dem Weg fragen",
+        "check": {
+          "category": "diplomatie",
+          "dc": 8
+        },
+        "success": {
+          "text": "„Geh tiefer, sei schlau, und trau keiner Sau.“ Brauchbarer als die meisten Karten.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Das Echo wiederholt nur noch dein „Hä?“. Ihr kommt nicht weiter.",
+          "effects": []
+        }
+      },
+      {
+        "label": "Weitergehen",
+        "text": "Du hast keine Zeit für Lyrik.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "brunnen_rand",
+    "type": "trap",
+    "title": "Rutschiger Rand",
+    "text": "Der Boden um den Brunnen ist mit Moos bedeckt und glitschig wie frische Seife. Gerade als du das bemerkst, rutscht dein Fuß weg.",
+    "options": [
+      {
+        "label": "Mit den Armen rudern",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du findest Halt, bevor es peinlich wird. Niemand hat es gesehen, das ist das Wichtigste.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Du landest halb im Brunnen und ganz unwürdig. Das Wasser ist kalt, der Rand ist hart.",
+          "effects": [
+            {
+              "damage": "W4"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Am Brunnenrand festkrallen",
+        "check": {
+          "category": "kraftakt",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du ziehst dich am Rand hoch. Dabei entdeckst du eine lockere Fuge mit etwas darin.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Der Stein ist so glitschig wie der Boden. Physik eins, du null.",
+          "effects": [
+            {
+              "damage": "W4"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "vorrat_weinfass",
+    "type": "choice",
+    "title": "Das Weinfass",
+    "text": "In der Ecke steht ein Fass mit der Aufschrift „Gute Jahrgänge“. Jemand hat „Gute“ durchgestrichen. Der Zapfhahn tropft verlockend.",
+    "options": [
+      {
+        "label": "Einen Becher zapfen",
+        "check": {
+          "category": "widerstand",
+          "dc": 12
+        },
+        "success": {
+          "text": "Rau, sauer, wärmend. Du fühlst dich mutiger und etwas weniger verbeult.",
+          "effects": [
+            {
+              "heal": "W4"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Das Durchstreichen war ehrlich gemeint. Dein Kopf dreht sich, der Raum dreht mit.",
+          "effects": [
+            {
+              "damage": 2
+            }
+          ]
+        }
+      },
+      {
+        "label": "Am Fass horchen",
+        "check": {
+          "category": "wahrnehmung",
+          "dc": 12
+        },
+        "success": {
+          "text": "Es gluckert nicht, es klimpert. Im Fass ist kein Wein, sondern ein Versteck.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Es gluckert. Mehr erfährst du nicht, außer dass dein Ohr jetzt klebt.",
+          "effects": []
+        }
+      },
+      {
+        "label": "Weitergehen",
+        "text": "Du bist im Dienst. Irgendwie.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "halle_fledermaeuse",
+    "type": "trap",
+    "title": "Fledermäuse",
+    "text": "Zwischen den Säulen hängen hunderte Fledermäuse und schlafen. Dein Stiefel findet den einzigen lauten Kiesel im ganzen Raum.",
+    "options": [
+      {
+        "label": "Ducken und durchrennen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Ein schwarzer Schwarm rauscht über dich hinweg. Du kommst mit zerzausten Haaren davon.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Hundert kleine Flügel, hundert kleine Zähne. Nicht alle davon verfehlen dich.",
+          "effects": [
+            {
+              "damage": "W4"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Stocksteif stehen bleiben",
+        "check": {
+          "category": "wissen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Wer sich nicht rührt, ist für Fledermäuse nur eine Säule mehr. Der Schwarm zieht vorbei, bis auf einen kleinen Gruß auf deiner Schulter.",
+          "effects": [
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Du stehst still wie eine Säule. Leider wie eine Säule mit Hals.",
+          "effects": [
+            {
+              "damage": "W4"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "gruft_ruecken",
+    "type": "combat",
+    "title": "Skelett mit Rücken",
+    "text": "Aus einem Sarg stemmt sich ein Skelett hoch, eine Hand im Kreuz. Es stöhnt, knackt und hebt dann trotzdem das Schwert. Pflicht ist Pflicht.",
+    "options": [
+      {
+        "label": "Angreifen",
+        "text": "Das Skelett seufzt und nimmt Haltung an, so gut es eben geht.",
+        "effects": [
+          {
+            "combat": "skeleton"
+          },
+          {
+            "gainXp": 4
+          },
+          {
+            "loot": "tier1"
+          }
+        ]
+      },
+      {
+        "label": "Den Rücken einrenken",
+        "check": {
+          "category": "wissen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Ein Knacken, ein erleichterter Seufzer. Das Skelett legt sich dankbar zurück und überlässt dir seine Grabbeigabe.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Du erwischst den falschen Wirbel. Jetzt hat es Rücken und schlechte Laune.",
+          "effects": [
+            {
+              "combat": "skeleton"
+            },
+            {
+              "gainXp": 4
+            }
+          ]
+        }
+      },
+      {
+        "label": "Auf Feierabend plädieren",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du erinnerst es daran, dass auch Untote Ruhezeiten haben. Es legt sich hin und schnarcht sofort.",
+          "effects": [
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Es kennt seine Rechte nicht und will sie auch nicht kennenlernen.",
+          "effects": [
+            {
+              "combat": "skeleton"
+            },
+            {
+              "gainXp": 4
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "wache_wuerfel",
+    "type": "combat",
+    "title": "Würfelspiel",
+    "text": "Zwei Skelette hocken über einem Würfelbecher. Laut Strichliste spielen sie seit 214 Jahren, Stand unentschieden. Eines deutet auf den freien Hocker.",
+    "options": [
+      {
+        "label": "Mitspielen und schummeln",
+        "check": {
+          "category": "fingerfertigkeit",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du gewinnst mit einer Sechs, die eben noch eine Zwei war. Die Skelette zahlen murrend und spielen weiter.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Ein Skelett zählt die Augen nach. Es hat Zeit, es hat sonst nichts.",
+          "effects": [
+            {
+              "combat": "skeleton"
+            },
+            {
+              "gainXp": 4
+            }
+          ]
+        }
+      },
+      {
+        "label": "Den Streit schlichten",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du erklärst das Spiel für beendet und beide zu Siegern. Vor Erleichterung überlassen sie dir den Einsatz.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Beide fühlen sich betrogen. Endlich sind sie sich einig, und zwar über dich.",
+          "effects": [
+            {
+              "combat": "skeleton"
+            },
+            {
+              "gainXp": 4
+            }
+          ]
+        }
+      },
+      {
+        "label": "Den Tisch umwerfen",
+        "text": "Würfel, Becher und zwei Jahrhunderte Strichliste fliegen. Das größere Skelett steht auf, das andere sammelt die Würfel ein.",
+        "effects": [
+          {
+            "combat": "skeleton"
+          },
+          {
+            "gainXp": 4
+          },
+          {
+            "loot": "tier1"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "start_gaestebuch",
+    "type": "choice",
+    "title": "Das Gästebuch",
+    "text": "Auf einem Pult liegt ein dickes Gästebuch. Die Einträge sind zahlreich, die Rückmeldungen auffällig selten. Der letzte lautet: „Bin gleich zurück.“",
+    "options": [
+      {
+        "label": "Die Einträge lesen",
+        "check": {
+          "category": "wahrnehmung",
+          "dc": 8
+        },
+        "success": {
+          "text": "Zwischen den Zeilen stecken Warnungen, Ratschläge und ein Rezept für Pilzsuppe. Du nimmst dir die Warnungen zu Herzen.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Die Handschriften sind unleserlich, vermutlich vor Aufregung. Du lernst nur Demut.",
+          "effects": []
+        }
+      },
+      {
+        "label": "Dich eintragen",
+        "text": "Du schreibst deinen Namen in schwungvollen Buchstaben. Für den Fall der Fälle.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "exit_gelaender",
+    "type": "npc",
+    "title": "Das Geländer",
+    "text": "Die Treppe nach unten hat ein Geländer, und das Geländer hat Meinungen. „Schon wieder einer“, murrt es. „Und keiner sagt danke.“",
+    "options": [
+      {
+        "label": "Danke sagen",
+        "check": {
+          "category": "diplomatie",
+          "dc": 8
+        },
+        "success": {
+          "text": "Das Geländer ist gerührt und hält dich auf dem ganzen Weg nach unten. Du fühlst dich eigenartig wertgeschätzt.",
+          "effects": [
+            {
+              "heal": 2
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Es hört Ironie, wo keine war. Ab jetzt schweigt es demonstrativ.",
+          "effects": []
+        }
+      },
+      {
+        "label": "Ohne Festhalten hinunterhüpfen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 8
+        },
+        "success": {
+          "text": "Du nimmst die Stufen, als hättest du nie etwas anderes getan. Das Geländer ist beleidigt, aber beeindruckt.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Stufe sieben ist niedriger als die anderen. Das Geländer lacht, aber leise.",
+          "effects": []
+        }
+      },
+      {
+        "label": "Einfach weitergehen",
+        "text": "Ein Geländer, das redet, ist nicht dein Problem. Noch nicht.",
+        "effects": []
+      }
+    ]
   }
 ]

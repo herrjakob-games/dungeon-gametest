@@ -7,6 +7,7 @@ import {
   startCombat, playerArmor, attackRoll, hitMonster, monsterTurn, defend, useInCombat, fleeRoll, DEFEND_BONUS, FLEE_DC
 } from "./combat.js";
 import { showDialog } from "./dialog.js";
+import { monsterHpBonus } from "./world.js";
 import { updateStats } from "./hud.js";
 import { renderInventory } from "./inventory.js";
 import { rollHtml, maybeRescue, signShort } from "./checkUI.js";
@@ -19,7 +20,7 @@ let h = null; // { onWin(lines), onFlee(), onDeath(monster) }
  */
 export function runCombat(monsterId, handlers) {
   h = handlers;
-  state.combat = startCombat(DATA.monsters[monsterId], state.depth);
+  state.combat = startCombat(DATA.monsters[monsterId], monsterHpBonus(DATA.themes, state.depth));
   menu("Ein Kampf beginnt. Was tust du?", [], null);
 }
 
@@ -43,7 +44,7 @@ function menu(text, lines, roll) {
     { label: "Verteidigen (Rüstung +" + DEFEND_BONUS + ")", pick: guard }
   ];
   if (usableItems().length) opts.push({ label: "Gegenstand nutzen", pick: itemMenu });
-  opts.push({ label: "Fliehen (Flucht, SG " + FLEE_DC + ")", pick: flee });
+  opts.push({ label: "Fliehen (Flucht, SG " + (FLEE_DC + state.theme.dcBonus) + ")", pick: flee });
   showDialog(title(), text, opts, { roll, fx: [status()].concat(lines), modal: true });
 }
 
@@ -88,7 +89,7 @@ function useItem(e) {
 }
 
 function flee() {
-  const r = fleeRoll(state.player, Math.random);
+  const r = fleeRoll(state.player, Math.random, state.theme.dcBonus);
   maybeRescue(title(), r, null, () => {
     const roll = rollHtml(r, null, "Entkommen", "Misslungen");
     if (r.ok) {

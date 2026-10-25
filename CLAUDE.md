@@ -20,7 +20,10 @@ und trifft die Designentscheidungen.
 
 1–5 sind erledigt (Raum, Türen und Raumwechsel, Dungeon-Generator mit Seed, Minimap, Schnellreise,
 Event-System aus JSON mit Proben-Kategorien, Volkswahl, Rundenkampf, Inventar, Stufenaufstieg, Tod mit
-Endbildschirm, endlose Ebenen). Nächster Schritt ist Meilenstein 6: echte Assets, Animationen und Licht.
+Endbildschirm, endlose Ebenen). Dazu kommt „Themen und Ebenen“: Themen je drei Ebenen, 25 Raumtypen mit
+Lage- und Anzahlregeln, Bosse, Rastplatz und Händler. Monster, Bosse, Gegenstände der Stufen 5 und 6 und die
+Events der neuen Raumtypen sind Platzhalter (`"placeholder": true` bzw. Text „[Platzhalter]“), die das
+Content-Projekt ersetzt. Nächster Schritt ist Meilenstein 6: echte Assets, Animationen und Licht.
 Die Liste aller Meilensteine steht im GDD.
 
 ## Technik
@@ -37,15 +40,18 @@ Die Liste aller Meilensteine steht im GDD.
 | Datei | Inhalt |
 | --- | --- |
 | `src/config.js` | Konstanten: Raumgröße 11×11, Türen als Bitmaske, Raster-Helfer |
-| `src/generator.js` | Dungeon-Generator (Random Walk, Raumtypen, Ausgang), rein logisch |
+| `src/generator.js` | Ebenen-Generator (Größe nach Tiefe, Random Walk, Raumtypen nach Thema, Lage- und Anzahlregeln), rein logisch |
+| `src/world.js` | Themen und Ebenen: Thema je Tiefe, Größe, Anteil feindlicher Räume, Boss, Rastplatz, Monster-Wachstum; rein logisch |
+| `src/shop.js` | Händler: Preise, Angebot, Kaufen, Verkaufen; rein logisch |
 | `src/pathfinding.js` | A*-Wegfindung, rein logisch |
 | `src/rng.js` | Seed-basierte Zufallszahlen und Würfel |
 | `src/state.js` | gemeinsamer Spielzustand |
-| `data/room-types.json` | Raumtypen: Name, Farben, Event-Chance, Event-Tabelle |
+| `data/themes.json` | Themen: Name, Stufe, Proben-Zuschlag, Raumtypen, Nachbar des Starts, Monster, Boss, Regel-Ausnahmen (`overrides`) |
+| `data/room-types.json` | Raumtypen: Name, Farben, Einrichtung (`layout`), Bewertung, Lage- und Anzahlregeln, Event-Chance, Event-Tabelle |
 | `data/events.json` | alle Events (auch die Truhe) |
-| `data/monsters.json` | Monster mit Lebenspunkten, Rüstung, Angriff, Schaden, Satz zur Todesursache |
+| `data/monsters.json` | Monster und Bosse mit Lebenspunkten, Rüstung, Angriff, Schaden, Satz zur Todesursache |
 | `data/characters.json` | Völker: Attribute, Lebenspunkte, LP je Stufe, Fähigkeit, Startausrüstung, Modell |
-| `data/items.json` | Gegenstände: Waffen, Rüstungen, Verbrauch, Mindestattribut, Beutestufe |
+| `data/items.json` | Gegenstände: Waffen und Rüstungen mit Stufe 1–6, Verbrauch mit Preis und Beutegewicht, Mindestattribut |
 | `data/texts.json` | Sätze zur Todesursache bei Events |
 | `src/data.js` | lädt `data/*.json` und prüft die Daten |
 | `src/eventLogic.js` | Event-Regeln: Proben-Kategorien, Auswahl, Effekte, Beute, Bedingungen, Datenprüfung; rein logisch |
@@ -56,10 +62,11 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/player.js` | Spielfigur, Platzierung; `setFigure(volk)` tauscht das Modell |
 | `src/figures.js` | Platzhalterfiguren der Völker: Zwerg, Elfin, Mensch (Grundformen) |
 | `src/movement.js` | Laufbewegung entlang des Weges |
-| `src/events.js` | Event-Ablauf im Textfenster, Fundstücke, Stufenaufstieg, Tod, Truhe, Abstieg |
+| `src/events.js` | Event-Ablauf im Textfenster, Proben-Zuschlag, Fundstücke, Stufenaufstieg, Tod, Truhe, Boss, Rastplatz, Abstieg |
 | `src/combatUI.js` | Kampf im Textfenster |
 | `src/checkUI.js` | Würfelzeile und Angebot der Volks-Fähigkeit |
 | `src/inventory.js` | Ausrüstungs- und Rucksack-Feld oben rechts |
+| `src/shopUI.js` | Händler im Textfenster |
 | `src/screens.js` | Volkswahl und Endbildschirm |
 | `src/dialog.js` | Textfenster mit Optionen, Würfelergebnis und Effektzeilen |
 | `src/hud.js` | Infotafel (Werte der Figur) und Minimap |

@@ -10,7 +10,8 @@ Events in jedem Raum, gelöst über ein Textfenster mit vereinfachten Pen-&-Pape
 Meilensteine 1 bis 5 sind fertig: Räume mit 11×11 Kacheln, Klick-Bewegung mit Wegfindung, Türen und
 Raumwechsel, Dungeon-Generator mit Seed (12 bis 20 Räume), Minimap mit Schnellreise, ein Event-System
 mit Proben, Volkswahl (Zwerg, Elfin, Mensch), Rundenkampf, Inventar, Stufenaufstieg und endlose Ebenen
-bis zum Tod. Alle Inhalte liegen als JSON in `data/`.
+bis zum Tod. Dazu Themen alle drei Ebenen (Keller, Katakomben, Zwergenminen, Goblin-Höhlen, Ork-Lager)
+mit eigenen Raumtypen, Bossen, Rastplatz und Händler. Alle Inhalte liegen als JSON in `data/`.
 Alle Regeln stehen im [Game Design Document](docs/GDD.md).
 
 ## Lokal starten

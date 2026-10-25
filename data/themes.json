@@ -1,0 +1,116 @@
+[
+  {
+    "id": "keller",
+    "name": "Keller",
+    "stage": 1,
+    "dcBonus": 0,
+    "startNeighbor": "wache",
+    "roomTypes": [
+      "vorrat",
+      "kueche",
+      "speisesaal",
+      "wache",
+      "brunnen",
+      "halle",
+      "gruft"
+    ],
+    "monsters": [
+      "rat",
+      "skeleton"
+    ],
+    "boss": "monsterratte"
+  },
+  {
+    "id": "katakomben",
+    "name": "Katakomben",
+    "stage": 2,
+    "dcBonus": 1,
+    "startNeighbor": "kerker",
+    "roomTypes": [
+      "gruft",
+      "schrein",
+      "halle",
+      "kerker"
+    ],
+    "monsters": [
+      "skeleton",
+      "geist",
+      "mimic"
+    ],
+    "boss": "skelettkoenig",
+    "overrides": {
+      "kerker": {
+        "max": null
+      },
+      "gruft": {
+        "nextToStart": null
+      }
+    }
+  },
+  {
+    "id": "zwergenminen",
+    "name": "Zwergenminen",
+    "stage": 3,
+    "dcBonus": 2,
+    "startNeighbor": "wache",
+    "roomTypes": [
+      "halle",
+      "bibliothek",
+      "schrein",
+      "speisesaal",
+      "wache",
+      "schmiede"
+    ],
+    "monsters": [
+      "hoehlenspinne",
+      "steingolem",
+      "eisengolem",
+      "dunkelzwerg"
+    ],
+    "boss": "schmiedemeister"
+  },
+  {
+    "id": "goblinhoehlen",
+    "name": "Goblin-Höhlen",
+    "stage": 4,
+    "dcBonus": 3,
+    "startNeighbor": "goblinlager",
+    "roomTypes": [
+      "kerker",
+      "folter",
+      "goblinlager",
+      "vorratshoehle",
+      "pilzzucht"
+    ],
+    "monsters": [
+      "goblin",
+      "goblin_schamane",
+      "spinne"
+    ],
+    "boss": "hoehlentroll"
+  },
+  {
+    "id": "orklager",
+    "name": "Ork-Lager",
+    "stage": 5,
+    "dcBonus": 4,
+    "startNeighbor": "orklager",
+    "roomTypes": [
+      "orklager",
+      "folter",
+      "gefangenenlager",
+      "friedhof",
+      "wolfshoehle"
+    ],
+    "monsters": [
+      "ork",
+      "wolf"
+    ],
+    "boss": "orkkriegsherr",
+    "endlessBosses": [
+      "riesenspinne",
+      "hoehlentroll",
+      "orkkriegsherr"
+    ]
+  }
+]

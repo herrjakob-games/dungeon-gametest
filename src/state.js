@@ -12,6 +12,7 @@ export const state = {
   backDoor: null,      // Tür, durch die der aktuelle Raum betreten wurde
 
   depth: 1,            // Ebene: jeder Abstieg führt eine Ebene tiefer
+  theme: null,         // Thema der Ebene aus data/themes.json (Keller, Katakomben …)
 
   // Spieler
   pTile: [MID, MID],

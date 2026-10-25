@@ -3,12 +3,14 @@ import { N, MID, DIR, key, inBounds, reduceMotion } from "./config.js";
 import { generate } from "./generator.js";
 import { state, walkable } from "./state.js";
 import { renderer, scene, camera, zoomBy } from "./scene.js";
-import { buildRoom } from "./roomBuilder.js";
+import { buildRoom, douseCampfire } from "./roomBuilder.js";
 import { placePlayer, setFigure } from "./player.js";
 import { hoverMesh, showHoverTile } from "./markers.js";
 import { moveTo, stopMoving, approachTile, updateMovement } from "./movement.js";
 import { closeDialog, isDialogOpen, isDialogModal, showDialog } from "./dialog.js";
-import { initEvents, startRoomEvent, chestEvent, exitEvent, lockedDoorNote } from "./events.js";
+import { initEvents, startRoomEvent, chestEvent, exitEvent, lockedDoorNote, startBoss, restEvent } from "./events.js";
+import { openShop } from "./shopUI.js";
+import { themeFor } from "./world.js";
 import { loadData, DATA } from "./data.js";
 import { newRun } from "./eventLogic.js";
 import { newCharacter } from "./character.js";
@@ -38,7 +40,8 @@ function withFade(fn) {
 
 // Neuer Dungeon auf der aktuellen Ebene. quiet: ohne Begrüßungs-Event (Hintergrund der Volkswahl)
 function startDungeon(dSeed, quiet) {
-  state.dungeon = generate(dSeed);
+  state.dungeon = generate(dSeed, state.depth, { themes: DATA.themes, roomTypes: DATA.roomTypes });
+  state.theme = themeFor(DATA.themes, state.depth);
   state.current = state.dungeon.start;
   state.visited = new Set([state.current]);
   state.roomState = {};
@@ -78,7 +81,10 @@ initEvents({
     showEndScreen({ depth: state.depth, cause, volk: p.name, level: p.level, gold: p.gold, rooms: state.stats.rooms }, chooseCharacter);
   },
   // Flucht: zurück durch die Tür, durch die der Raum betreten wurde
-  onRetreat: () => { if (state.backDoor) changeRoom(state.backDoor, true); }
+  onRetreat: () => { if (state.backDoor) changeRoom(state.backDoor, true); },
+  // Boss besiegt: Raum neu aufbauen, damit der Torbogen erscheint
+  onBossDefeated: () => { buildRoom(state.current); updateHud(); },
+  onRested: () => douseCampfire()
 });
 
 const randomSeed = () => 1 + Math.floor(Math.random() * 999998);
@@ -100,7 +106,7 @@ function changeRoom(d, force) {
     state.visited.add(target);
     buildRoom(target);
     placePlayer(DIR[DIR[d].opp].approach, Math.atan2(DIR[d].dx, DIR[d].dz));
-    if (first) startRoomEvent(); // Events nur beim ersten Betreten
+    enterRoom(first);
   });
 }
 
@@ -115,6 +121,12 @@ function nearestFreeToCenter() {
   return best;
 }
 
+// Nach dem Betreten: Der Boss wartet bei jedem Betreten, bis er besiegt ist; sonst Events nur beim ersten Betreten
+function enterRoom(first) {
+  if (state.dungeon.rooms[state.current].type === "boss") startBoss();
+  else if (first) startRoomEvent();
+}
+
 function travelTo(k) {
   if (state.transitioning || k === state.current || !state.visited.has(k) || isDialogOpen() || isScreenOpen()) return;
   withFade(() => {
@@ -122,6 +134,7 @@ function travelTo(k) {
     state.backDoor = null;
     buildRoom(k);
     placePlayer(nearestFreeToCenter(), 0);
+    enterRoom(false);
   });
 }
 
@@ -182,6 +195,9 @@ const labelFor = (o) => {
     return "Tür nach " + o.userData.name + (locked && locked.has(o.userData.dir) ? " (verschlossen)" : "");
   }
   if (o.userData.kind === "chest") return "Truhe";
+  if (o.userData.kind === "campfire") return "Lagerfeuer";
+  if (o.userData.kind === "merchant") return "Händler";
+  if (o.userData.kind === "boss") return DATA.monsters[state.dungeon.boss].name;
   return "Torbogen";
 };
 
@@ -220,6 +236,12 @@ renderer.domElement.addEventListener("pointerup", (ev) => {
     const [ax, az] = h.obj.userData.approach;
     const d = h.obj.userData.dir;
     moveTo(ax, az, () => changeRoom(d));
+  } else if (kind === "campfire") {
+    approachTile(h.obj.userData.tile, restEvent);
+  } else if (kind === "merchant") {
+    approachTile(h.obj.userData.tile, () => openShop());
+  } else if (kind === "boss") {
+    approachTile(h.obj.userData.tile, startBoss);
   } else if (kind === "chest") {
     approachTile(h.obj.userData.tile, chestEvent);
   } else if (kind === "exit") {

@@ -12,7 +12,7 @@ import { generate } from "../src/generator.js";
 const read = (f) => JSON.parse(readFileSync(new URL("../data/" + f, import.meta.url), "utf8"));
 const DATA = indexData({
   roomTypes: read("room-types.json"), events: read("events.json"), monsters: read("monsters.json"),
-  items: read("items.json"), characters: read("characters.json"), texts: read("texts.json")
+  items: read("items.json"), characters: read("characters.json"), texts: read("texts.json"), themes: read("themes.json")
 });
 const newPlayer = (volk = "zwerg") => newCharacter(DATA.characters[volk]);
 
@@ -29,13 +29,27 @@ test("Daten in data/ sind gültig", () => {
   assert.deepEqual(validateData(DATA), []);
 });
 
-test("Raumtypen passen zum Generator und haben 2 bis 3 Events", () => {
+test("Jeder Raumtyp kommt im Generator vor und hat Events (außer Boss, Rast, Händler)", () => {
   const used = new Set();
-  for (let s = 1; s <= 300; s++) Object.values(generate(s).rooms).forEach(r => used.add(r.type));
+  const world = { themes: DATA.themes, roomTypes: DATA.roomTypes };
+  for (let depth = 1; depth <= 15; depth++) for (let s = 1; s <= 60; s++) Object.values(generate(s, depth, world).rooms).forEach(r => used.add(r.type));
   assert.deepEqual([...used].sort(), Object.keys(DATA.roomTypes).sort());
   for (const rt of Object.values(DATA.roomTypes)) {
-    assert.ok(rt.events.length >= 2 && rt.events.length <= 3, rt.id + ": " + rt.events.length + " Events");
+    if (["boss", "rast", "haendler"].includes(rt.id)) assert.equal(rt.eventChance, 0);
+    else assert.ok(rt.events.length >= 2, rt.id + ": nur " + rt.events.length + " Events");
   }
+});
+
+test("Gemischte Raumtypen: etwa 30 % feindliche Events", () => {
+  const rt = DATA.roomTypes.kueche;
+  let hostile = 0, n = 0;
+  for (let i = 0; i < 4000; i++) {
+    const id = pickEvent(rt, newRun(), Math.random, newPlayer());
+    if (!id) continue;
+    n++;
+    if (rt.events.find(e => e.id === id).rating === "hostile") hostile++;
+  }
+  assert.ok(Math.abs(hostile / n - 0.3) < 0.04, (hostile / n).toFixed(2));
 });
 
 test("Datenprüfung findet Fehler", () => {
@@ -149,18 +163,20 @@ test("Kampf unterbricht die Effekte, der Rest gilt erst nach dem Sieg", () => {
   assert.equal(p.gold, 0);
 });
 
-test("Beute: Gold und Gegenstand der Stufe", () => {
+test("Beute: Gold mal Themenstufe, Gegenstand der Themenstufe (tier2 eine höher)", () => {
   // tier1: Gegenstand nur, wenn der dritte Wurf unter 1/3 liegt
-  let l = rollLoot("tier1", DATA.items, seq(0, 0, 0.1, 0));
+  let l = rollLoot("tier1", DATA.items, seq(0, 0, 0.1, 0), 1);
   assert.equal(l.gold, 2);
-  assert.ok(DATA.items[l.item].loot.tier1);
-  l = rollLoot("tier1", DATA.items, seq(0, 0, 0.5));
+  l = rollLoot("tier1", DATA.items, seq(0, 0, 0.5), 3);
+  assert.equal(l.gold, 6, "2W6 = 2, mal Stufe 3");
   assert.equal(l.item, null);
-  // tier2: immer ein Gegenstand
-  for (let i = 0; i < 200; i++) {
-    const t2 = rollLoot("tier2", DATA.items, Math.random);
-    assert.ok(t2.gold >= 4 && t2.gold <= 24);
-    assert.ok(DATA.items[t2.item].loot.tier2);
+  for (const stage of [1, 2, 3, 4, 5]) for (let i = 0; i < 200; i++) {
+    const t1 = rollLoot("tier1", DATA.items, Math.random, stage);
+    assert.ok(t1.gold >= 2 * stage && t1.gold <= 12 * stage);
+    if (t1.item && DATA.items[t1.item].type !== "consumable") assert.equal(DATA.items[t1.item].stage, stage);
+    const t2 = rollLoot("tier2", DATA.items, Math.random, stage);
+    assert.ok(t2.item, "tier2 gibt immer einen Gegenstand");
+    if (DATA.items[t2.item].type !== "consumable") assert.equal(DATA.items[t2.item].stage, stage + 1);
   }
 });
 
