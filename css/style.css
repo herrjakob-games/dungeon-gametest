@@ -1,0 +1,104 @@
+/* Layout: Vollbild-Spielfeld, Infotafel mit Minimap und Seed oben links, Textfenster unten mittig (wie im GDD) */
+:root {
+  --bg: #15110e;
+  --panel: rgba(30, 24, 20, 0.93);
+  --line: #54443a;
+  --fg: #f0e5d3;
+  --muted: #b8a68f;
+  --accent: #e9a640;
+  --good: #8cc56f;
+  --bad: #e06a4f;
+  --room: #6b5a4c;
+  --exit: #9fd0ff;
+  --display: "Grenze Gotisch", Georgia, serif;
+  --body: "Alegreya Sans", system-ui, sans-serif;
+  color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+[hidden] { display: none !important; }
+body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; overflow: hidden; }
+#stage { position: fixed; inset: 0; }
+#stage canvas { display: block; width: 100%; height: 100%; cursor: pointer; }
+#fade { position: fixed; inset: 0; background: var(--bg); opacity: 0; pointer-events: none; transition: opacity 0.28s ease; }
+
+.hud {
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 0px) + 16px);
+  left: calc(env(safe-area-inset-left, 0px) + 16px);
+  width: min(300px, calc(100% - 32px));
+  max-height: calc(100% - 32px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  overflow-y: auto;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 14px 16px 16px;
+  display: grid;
+  gap: 10px;
+}
+.hud h1 { margin: 0; font-family: var(--display); font-weight: 700; font-size: 30px; line-height: 1; color: var(--accent); text-wrap: balance; }
+.hud .sub { margin: 0; color: var(--muted); font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; }
+.hud p { margin: 0; color: var(--muted); line-height: 1.45; }
+.stats { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin: 0; font-variant-numeric: tabular-nums; }
+.stats dt { color: var(--muted); }
+.stats dd { margin: 0; text-align: right; }
+.hud hr { border: 0; border-top: 1px solid var(--line); margin: 0; width: 100%; }
+.map { display: grid; gap: 6px; }
+.label { color: var(--muted); font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; }
+#minimap { display: block; width: 100%; height: auto; max-width: 100%; }
+.check { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 14px; cursor: pointer; }
+.check input { accent-color: var(--accent); }
+
+.seed { display: grid; grid-template-columns: 1fr auto auto; gap: 6px; align-items: center; }
+.seed label { grid-column: 1 / -1; }
+.seed input {
+  min-width: 0;
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 6px 8px;
+}
+.seed input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+button {
+  font: inherit;
+  font-weight: 500;
+  color: var(--fg);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+button:hover { border-color: var(--accent); color: var(--accent); }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.dialog {
+  position: absolute;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
+  transform: translateX(-50%);
+  width: min(560px, calc(100% - 32px));
+  background: var(--panel);
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  padding: 16px 18px 18px;
+  display: grid;
+  gap: 10px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+.dialog h2 { margin: 0; font-family: var(--display); font-weight: 500; font-size: 26px; color: var(--accent); }
+.dialog p { margin: 0; line-height: 1.5; max-width: 62ch; }
+.roll { font-variant-numeric: tabular-nums; color: var(--muted); }
+.roll strong.ok { color: var(--good); }
+.roll strong.fail { color: var(--bad); }
+.opts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.opts button { padding: 8px 14px; }
+.opts button .key { color: var(--muted); margin-right: 6px; font-variant-numeric: tabular-nums; }
+
+@media (max-width: 520px) {
+  .hud p.help { display: none; }
+}

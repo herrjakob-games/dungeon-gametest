@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dungeon Gametest</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@500;700&family=Alegreya+Sans:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="stage"></div>
+  <div id="fade"></div>
+
+  <aside class="hud" aria-label="Spielinfo">
+    <div>
+      <p class="sub">Meilenstein 3 · Prototyp</p>
+      <h1 id="roomName">Die Vorkammer</h1>
+    </div>
+    <p class="help">Klicke auf eine Kachel, um zu laufen, und auf Türen, Truhen oder den Torbogen. Klicke auf besuchte Räume in der Karte, um dorthin zu reisen. Finde den Abstieg. Mausrad zoomt.</p>
+    <hr>
+    <div class="map">
+      <span class="label">Karte</span>
+      <canvas id="minimap" width="268" height="220" aria-label="Minimap des Dungeons"></canvas>
+      <label class="check" for="reveal"><input type="checkbox" id="reveal"> Ganze Karte zeigen (Test)</label>
+    </div>
+    <hr>
+    <dl class="stats">
+      <dt>Position</dt><dd id="pos">–</dd>
+      <dt>Maus über</dt><dd id="hover">–</dd>
+      <dt>Weg</dt><dd id="steps">–</dd>
+      <dt>Räume besucht</dt><dd id="visited">1 / 1</dd>
+      <dt>Gold</dt><dd id="gold">0</dd>
+    </dl>
+    <hr>
+    <form class="seed" id="seedForm">
+      <label class="label" for="seedInput">Seed</label>
+      <input id="seedInput" inputmode="numeric" autocomplete="off" aria-describedby="seedHelp">
+      <button type="submit">Laden</button>
+      <button type="button" id="newSeed">Neu</button>
+    </form>
+    <p id="seedHelp" style="font-size: 13px;">Gleicher Seed ergibt den gleichen Dungeon.</p>
+  </aside>
+
+  <section class="dialog" id="dialog" hidden aria-live="polite">
+    <h2 id="dlgTitle"></h2>
+    <p id="dlgText"></p>
+    <p class="roll" id="dlgRoll" hidden></p>
+    <div class="opts" id="dlgOpts"></div>
+  </section>
+
+  <!-- Three.js als globale Variable THREE, danach das Spiel als ES-Modul -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
