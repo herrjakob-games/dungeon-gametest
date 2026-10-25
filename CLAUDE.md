@@ -48,7 +48,8 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/eventLogic.js` | Event-Regeln: Auswahl, Proben, Effekte, Bedingungen, Datenprüfung; rein logisch |
 | `src/roomTypes.js` | Raumtypen-Tabelle, befüllt aus `data/room-types.json` |
 | `src/roomBuilder.js` | baut einen Raum als 3D-Szene inklusive Einrichtung |
-| `src/player.js` | Zwergenkrieger (Platzhalter aus Grundformen) |
+| `src/player.js` | Spielfigur, Platzierung; `setFigure(volk)` tauscht das Modell |
+| `src/figures.js` | Platzhalterfiguren der Völker: Zwerg, Elfin, Mensch (Grundformen) |
 | `src/movement.js` | Laufbewegung entlang des Weges |
 | `src/events.js` | Event-Ablauf im Textfenster, Truhe, Abstieg, verschlossene Türen |
 | `src/dialog.js` | Textfenster mit Optionen, Würfelergebnis und Effektzeilen |
