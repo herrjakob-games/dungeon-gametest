@@ -225,7 +225,7 @@ Der Dungeon führt durch Themen, die alle drei Ebenen wechseln. Das Thema bestim
 | Wolfs-Höhle | feindlich | bevorzugt in Sackgassen | höchstens 2 |
 
 - **Lesart der Lage:** „nur“, „nie“ und „direkt neben dem Start“ sind feste Regeln. „Bevorzugt“ und „neben X“ gelten, wenn der Grundriss es zulässt und der andere Raumtyp auf der Ebene vorkommt.
-- **Feindlich:** Events mit Kämpfen und Fallen. **Neutral:** Rätsel, Gespräche, Fundstücke oder gar kein Event, nur Start, Abstieg, Rastplatz und Händler sind verlässlich sicher. **Gemischt:** Wenn ein Event auslöst, ist es in etwa 30 % der Fälle ein Gegner oder eine Falle, sonst harmlos. Dafür trägt jedes Event in der Tabelle eines gemischten Raumtyps die Markierung feindlich oder neutral. Für den Anteil feindlicher Räume zählen gemischte Räume nicht als feindlich.
+- **Feindlich:** Events mit Kämpfen und Fallen. **Neutral:** Rätsel, Gespräche, Fundstücke oder gar kein Event, nur Start, Abstieg, Rastplatz und Händler sind verlässlich sicher. **Gemischt:** Wenn ein Event auslöst, ist es in etwa 30 % der Fälle ein Gegner oder eine Falle, sonst harmlos. Dafür trägt jedes Event in der Tabelle eines gemischten Raumtyps die Markierung feindlich oder neutral, und zwar doppelt: `"hostile": true` oder `false` (Feld des Content-Projekts) und `"rating": "hostile"` oder `"neutral"` (wertet der Code aus). Beide müssen übereinstimmen, `npm test` prüft das. Für den Anteil feindlicher Räume zählen gemischte Räume nicht als feindlich.
 - **Anteil feindlicher Räume:** steigt gleichmäßig von 40 % auf Ebene 1 auf 70 % ab Ebene 13 (+2,5 Prozentpunkte je Ebene).
 - **Sackgassen:** Sackgassen, die keine Schatzkammer werden, bekommen einen anderen Raumtyp des Themas.
 - **Ausnahmen in den Katakomben:** Dort darf die Gruft neben dem Start stehen, und der Kerker hat keine Höchstzahl. Sonst gäbe es für Räume neben dem Start manchmal keinen erlaubten Raumtyp. Solche Ausnahmen stehen als `overrides` beim Thema in `data/themes.json`.
@@ -356,3 +356,4 @@ Sieben Schritte, jeder endet mit etwas Spielbarem, das Christian im Browser test
 - [x] Proben-Zuschlag des Themas gilt auch für die Flucht
 - [x] Händler: 4 Ausrüstungsteile der Themenstufe plus alle Verbrauchsgegenstände in beliebiger Menge; Verbrauchsgegenstände in jeder Beutestufe
 - [x] Katakomben: Gruft darf neben den Start, Kerker ohne Höchstzahl
+- [x] Markierung in gemischten Tabellen bleibt doppelt: `hostile` und `rating`, beide müssen übereinstimmen
