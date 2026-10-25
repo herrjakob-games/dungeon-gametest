@@ -38,7 +38,7 @@ Grundregel: Inhalte stehen in den JSON-Dateien, nicht im Code. Neue Räume und E
 
 Der Dungeon ist ein Gitter aus Raumplätzen, jeder Raum ein Gitter aus Kacheln. Ein Raum hat einen Typ und null bis vier Türen.
 
-- **Raumgröße:** 15×15 Kacheln für alle Räume. Türen sitzen mittig auf der jeweiligen Seite, also auf der achten Kachel.
+- **Raumgröße:** 11×11 Kacheln für alle Räume. Türen sitzen mittig auf der jeweiligen Seite, also auf der sechsten Kachel.
 - **Türen als Bitmaske:** Norden = 1, Osten = 2, Süden = 4, Westen = 8. Ein Raum mit Türen nach Norden und Osten hat den Wert 3. Daraus ergeben sich 16 Raumformen. Werte 1, 2, 4 und 8 sind Sackgassen.
 - **Dungeongröße:** 12 bis 20 Räume auf einem Gitter von 8×8 Plätzen.
 - **Generierung:** Ein Random Walk startet im Startraum und legt Räume an, bis die Zielanzahl erreicht ist. Jede Verbindung setzt die Tür in beiden Räumen.
@@ -154,7 +154,7 @@ Sieben Schritte, jeder endet mit etwas Spielbarem, das Christian im Browser test
 
 - [x] Zwei Modi bestätigen: freie Erkundung in Echtzeit, Rundenmodus nur während Events
 - [x] Regelvorschlag annehmen: drei Attribute, W20, Schwierigkeiten 8/12/16
-- [x] Raumgröße und Dungeongröße festlegen: 15×15 Kacheln, 12 bis 20 Räume
+- [x] Raumgröße und Dungeongröße festlegen: 11×11 Kacheln (vorher 15×15), 12 bis 20 Räume
 - [x] Setting und Ton: klassische Fantasy, humorvoll
 - [x] Ziel eines Durchlaufs: Ausgang (Bossgegner oder Artefakt sind mögliche Events)
 - [x] Tod: Neustart mit neuem Dungeon (Permadeath)

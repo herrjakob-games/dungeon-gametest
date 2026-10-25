@@ -36,7 +36,7 @@ Die Liste aller Meilensteine steht im GDD.
 
 | Datei | Inhalt |
 | --- | --- |
-| `src/config.js` | Konstanten: Raumgröße 15×15, Türen als Bitmaske, Raster-Helfer |
+| `src/config.js` | Konstanten: Raumgröße 11×11, Türen als Bitmaske, Raster-Helfer |
 | `src/generator.js` | Dungeon-Generator (Random Walk, Raumtypen, Ausgang), rein logisch |
 | `src/pathfinding.js` | A*-Wegfindung, rein logisch |
 | `src/rng.js` | Seed-basierte Zufallszahlen und Würfel |
@@ -57,7 +57,7 @@ Die Liste aller Meilensteine steht im GDD.
 
 ## Feste Regeln im Code
 
-- Die Einrichtung eines Raums lässt das Kreuz aus Reihe und Spalte 6 bis 8 frei, damit alle
+- Die Einrichtung eines Raums lässt das Kreuz aus Reihe und Spalte 4 bis 6 (gezählt ab 0) frei, damit alle
   Türen immer erreichbar sind. Neue Möbel nur außerhalb dieses Kreuzes platzieren.
 - Alles, was reproduzierbar sein muss (Dungeon, Einrichtung), läuft über Seeds aus `rng.js`.
   `Math.random()` nur für Würfelwürfe im Spiel.

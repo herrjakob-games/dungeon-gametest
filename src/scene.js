@@ -21,7 +21,7 @@ function resize() {
   const w = stage.clientWidth, h = stage.clientHeight;
   renderer.setSize(w, h, false);
   const aspect = w / h;
-  const half = Math.max(8.6, 12.2 / aspect); // ganzer 15×15-Raum passt ins Bild
+  const half = Math.max(6.4, 9 / aspect); // ganzer 11×11-Raum passt ins Bild
   camera.left = -half * aspect; camera.right = half * aspect;
   camera.top = half; camera.bottom = -half;
   camera.updateProjectionMatrix();
@@ -35,7 +35,7 @@ const sun = new THREE.DirectionalLight(0xffe0bc, 0.55);
 sun.position.set(8, 16, 5);
 sun.castShadow = true;
 sun.shadow.mapSize.set(2048, 2048);
-Object.assign(sun.shadow.camera, { left: -12, right: 12, top: 12, bottom: -12, near: 1, far: 50 });
+Object.assign(sun.shadow.camera, { left: -9, right: 9, top: 9, bottom: -9, near: 1, far: 50 });
 scene.add(sun);
 
 export function zoomBy(deltaY) {
