@@ -40,9 +40,9 @@ Der Dungeon ist ein Gitter aus Raumplätzen, jeder Raum ein Gitter aus Kacheln. 
 
 - **Raumgröße:** 11×11 Kacheln für alle Räume. Türen sitzen mittig auf der jeweiligen Seite, also auf der sechsten Kachel.
 - **Türen als Bitmaske:** Norden = 1, Osten = 2, Süden = 4, Westen = 8. Ein Raum mit Türen nach Norden und Osten hat den Wert 3. Daraus ergeben sich 16 Raumformen. Werte 1, 2, 4 und 8 sind Sackgassen.
-- **Dungeongröße:** 12 bis 20 Räume auf einem Gitter von 8×8 Plätzen.
+- **Dungeongröße:** wächst mit der Tiefe (siehe Raumtypen und Ebenen), auf einem Gitter von 8×8 Plätzen.
 - **Generierung:** Ein Random Walk startet im Startraum und legt Räume an, bis die Zielanzahl erreicht ist. Jede Verbindung setzt die Tür in beiden Räumen.
-- **Raumtypen verteilen:** Startraum fest. Der Ausgang liegt im Raum mit dem größten Abstand zum Start. Schatzkammern bevorzugt in Sackgassen. Alle übrigen Räume per gewichtetem Zufall.
+- **Raumtypen verteilen:** Startraum fest. Der Ausgang liegt im Raum mit dem größten Abstand zum Start. Alle weiteren Regeln für die Verteilung stehen im Abschnitt Raumtypen und Ebenen.
 - **Seed:** Jeder Dungeon entsteht aus einer Startzahl. Gleicher Seed ergibt gleichen Dungeon, das macht Fehler nachstellbar.
 
 ## Bewegung und Erkundung
@@ -95,9 +95,9 @@ Der Spieler wählt vor dem ersten Dungeon ein Volk. Das Volk legt Attribute, Leb
 - **Fliehen:** Probe Flucht gegen SG 12. Erfolg: Rückzug durch die Tür, durch die der Raum betreten wurde (im Startraum endet nur der Kampf). Das Event ist dann vorbei, ohne Beute und ohne Folge-Event. Fehlschlag: Der Gegner handelt normal.
 - **Fähigkeit im Kampf:** gilt für das tatsächlich gewürfelte Attribut. Die Elfin kann also einen verfehlten Angriff mit leichter Waffe retten, der Zwerg einen mit schwerer Waffe.
 - **Kampf in Events:** Der Effekt `combat` startet einen Rundenkampf. Die Effekte danach (etwa Beute) gelten erst nach einem Sieg.
-- **Gegner:** Lebenspunkte, Rüstungswert, Angriffsbonus, Schaden (z. B. W6) und ein witziger Satz für den Endbildschirm. Ab Ebene 2 bekommen Gegner je Ebene +2 Lebenspunkte und +1 Angriff, höchstens 5 Ebenen lang (also höchstens +10 und +5).
+- **Gegner:** Lebenspunkte, Rüstungswert, Angriffsbonus, Schaden (z. B. W6) und ein witziger Satz für den Endbildschirm. Wie Gegner mit der Tiefe stärker werden, steht im Abschnitt Raumtypen und Ebenen.
 - **Fortschritt:** Erfahrung aus Events. Stufe 2 bei 10, Stufe 3 bei 25, Stufe 4 bei 45, Stufe 5 bei 70 Erfahrung, danach alle 30 Erfahrung eine weitere Stufe. Beim Stufenaufstieg wählt der Spieler ein Attribut für +1, ohne Obergrenze. Dazu kommen maximale Lebenspunkte je nach Volk (Zwerg +5, Elf und Mensch +4), die ihn auch um denselben Wert heilen.
-- **Beute:** Beutestufe `tier1` = 2W6 Gold und mit 1/3 Chance ein einfacher Gegenstand. `tier2` = 4W6 Gold und immer ein besserer Gegenstand. Welche Gegenstände in welcher Stufe vorkommen, steht in `data/items.json`. Gold zählt als Punktestand.
+- **Beute:** Beutestufe `tier1` = 2W6 Gold und mit 1/3 Chance ein einfacher Gegenstand. `tier2` = 4W6 Gold und immer ein besserer Gegenstand. Welche Gegenstände in welcher Stufe vorkommen, steht in `data/items.json`. Die Stufen verschieben sich mit dem Thema (siehe Raumtypen und Ebenen). Gold ist Zahlungsmittel beim Händler.
 - **Abstieg:** Jeder Ausgang führt eine Ebene tiefer, endlos. Lebenspunkte, Gold, Erfahrung und Ausrüstung bleiben. Die Fähigkeit ist im neuen Dungeon wieder bereit.
 - **Inventar:** Je ein Platz für die angelegte Waffe und Rüstung, dazu sechs Rucksackplätze. Ist der Rucksack voll, fragt das Spiel, was liegen bleibt. Außerhalb von Events lassen sich Gegenstände anlegen, ablegen, benutzen (Heiltrank) und wegwerfen. Während Events und Kämpfen geht das nur über „Gegenstand nutzen“.
 
@@ -178,6 +178,55 @@ Jeder Raumtyp hat eine Event-Chance und eine gewichtete Event-Tabelle. Jedes Eve
 - **Monster:** Name, Lebenspunkte, Rüstung, Angriffsbonus, Schaden (z. B. W6).
 - **Regel:** Neue Effekt-Typen oder Bedingungen werden zuerst im Game Design festgelegt, dann programmiert, dann in Events genutzt.
 
+## Raumtypen und Ebenen
+
+Der Dungeon führt durch Themen, die alle drei Ebenen wechseln. Das Thema bestimmt Raumtypen, Farben, Einrichtung und Monster, die Tiefe bestimmt Größe, Schwierigkeit und Beute.
+
+### Themen
+
+| Ebenen | Thema | Typische Raumtypen | Monster (Beispiele) |
+| --- | --- | --- | --- |
+| 1–3 | Keller | Vorratskammer, Küche, Speisesaal, Wachstube, Brunnenraum, Säulenhalle, Gruft | Ratten, Skelette |
+| 4–6 | Katakomben | Gruft, Schrein, Säulenhalle, Kerker | Skelette, Geister, Mimik |
+| 7–9 | Zwergenminen | Säulenhalle, Bibliothek, Schrein, Speisesaal, Wachstube, Schmiede | Höhlenspinnen, Steingolems, Eisengolems, Dunkelzwerge |
+| 10–12 | Goblin-Höhlen | Kerker, Folterkammer, Goblin-Lager, Vorratshöhle, Pilzzucht | Goblins, Goblin-Schamanen, Spinnen |
+| 13–15 | Ork-Lager | Ork-Lager, Folterkammer, Gefangenen-Lager, Friedhof, Wolfs-Höhle | Orks, Wölfe, Ork-Kriegsherr |
+
+- **Ab Ebene 16:** Weitere Themen sind geplant. Bis dahin bleibt das Ork-Lager endlos.
+
+### Raumtypen
+
+| Raumtyp | Bewertung | Regel |
+| --- | --- | --- |
+| Vorkammer (Start) | neutral | fest, Begrüßungs-Event, in jedem Thema |
+| Abstieg | neutral | Raum mit dem größten Abstand zum Start |
+| Bossraum | feindlich | auf Ebene 6, 12, 18 … statt des Abstiegs; der Abstieg öffnet sich erst nach dem Sieg über den Boss |
+| Schatzkammer | feindlich | nur in Sackgassen, höchstens eine pro Ebene, in jedem Thema |
+| Rastplatz | neutral | genau einer auf jeder zweiten Ebene (2, 4, 6 …), heilt einmal auf volle Lebenspunkte, in jedem Thema |
+| Händler | neutral | höchstens einer pro Ebene, kaufen und verkaufen mit Gold, in jedem Thema |
+| Wachstube | feindlich | liegt immer direkt neben dem Start |
+| Gruft | feindlich | nie direkt neben dem Start |
+| Folterkammer, Kerker, Goblin-Lager, Ork-Lager, Gefangenen-Lager, Wolfs-Höhle | feindlich | |
+| Vorratskammer, Küche, Speisesaal, Brunnenraum, Säulenhalle, Schrein, Bibliothek, Schmiede, Vorratshöhle, Pilzzucht, Friedhof | neutral | |
+
+- **Feindlich:** Events mit Kämpfen und Fallen. **Neutral:** Rätsel, Gespräche, Fundstücke oder gar kein Event.
+- **Anteil feindlicher Räume:** steigt von etwa 40 % auf Ebene 1 auf 70 % ab Ebene 13.
+- **Sackgassen:** Sackgassen, die keine Schatzkammer werden, bekommen einen anderen Raumtyp des Themas.
+
+### Ebenen
+
+- **Größe:** Ebene 1 hat 8 bis 12 Räume, jede weitere Ebene 2 mehr. Ab Ebene 9 bleibt es bei 24 bis 28 Räumen.
+- **Proben:** Pro Thema +1 auf jede Schwierigkeit: Keller ±0, Katakomben +1, Zwergenminen +2, Goblin-Höhlen +3, Ork-Lager +4. In den Event-Daten bleiben die Werte 8, 12 und 16, der Zuschlag kommt automatisch dazu und wird im Textfenster angezeigt.
+- **Monster:** Jedes Thema hat eigene Monster. Innerhalb eines Themas bekommen Gegner +1 Lebenspunkt pro Ebene (erste Ebene des Themas +0, zweite +1, dritte +2), im endlosen Ork-Lager wächst das weiter. Das ersetzt das bisherige Wachstum von +2 Lebenspunkten und +1 Angriff je Ebene.
+- **Beute:** Die Beutestufen verschieben sich mit dem Thema. `tier1` ergibt Beute der Stufe des Themas (Keller 1 bis Ork-Lager 5), `tier2` eine Stufe höher. Dafür braucht `data/items.json` Gegenstände bis Stufe 6.
+- **Ergebnis:** Der Endbildschirm zeigt die erreichte Ebene als Ergebnis.
+
+### Noch offen
+
+- [ ] Händler: Sortiment, Preise und wie oft er vorkommt. Vorschlag: 4 zufällige Gegenstände der aktuellen Beutestufe plus Heiltränke, Verkauf zum halben Preis.
+- [ ] Wachstube neben dem Start: Die Wachstube gibt es nur im Keller und in den Zwergenminen. Vorschlag: In den anderen Themen übernimmt ein entsprechender Raum diese Rolle (Katakomben: Kerker, Goblin-Höhlen: Goblin-Lager, Ork-Lager: Ork-Lager).
+- [ ] Bosse: welche Bosse es gibt und wie stark sie sind.
+
 ## Grafik und Animation
 
 Die Grafik besteht aus einem modularen Low-Poly-Baukasten auf dem Kachelraster, die Animationen stecken in den Modelldateien.
@@ -237,3 +286,12 @@ Sieben Schritte, jeder endet mit etwas Spielbarem, das Christian im Browser test
 - [x] Gegner wachsen ab Ebene 2 um +2 LP und +1 Angriff je Ebene, höchstens 5 Ebenen
 - [x] Inventar: Waffe und Rüstung angelegt extra, sechs Rucksackplätze
 - [x] Gegenstandsliste, Startausrüstung je Volk, Beute als Gold plus Gegenstand (Ersatz-Kampf und Nur-Gold-Beute aus Meilenstein 4 sind damit abgelöst)
+- [x] Themen alle drei Ebenen: Keller, Katakomben, Zwergenminen, Goblin-Höhlen, Ork-Lager; danach weitere Themen geplant, bis dahin Ork-Lager endlos
+- [x] 19 Raumtypen mit Bewertung feindlich oder neutral; Anteil feindlicher Räume steigt mit der Tiefe
+- [x] Schatzkammer nur in Sackgassen und höchstens eine pro Ebene; Wachstube neben, Gruft nie neben dem Start
+- [x] Rastplatz auf jeder zweiten Ebene, Händler höchstens einer pro Ebene
+- [x] Ebenengröße 8–12 Räume, +2 je Ebene, höchstens 24–28
+- [x] Proben +1 pro Thema, Monster je Thema plus +1 LP pro Ebene innerhalb des Themas
+- [x] Bossraum alle sechs Ebenen statt des Abstiegs
+- [x] Beutestufen verschieben sich mit dem Thema
+- [x] Ergebnis ist die erreichte Ebene, Gold ist Zahlungsmittel
