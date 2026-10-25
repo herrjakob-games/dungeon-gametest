@@ -3,9 +3,7 @@
 
 export const ATTRS = ["kraft", "geschick", "verstand"];
 export const ATTR_NAMES = { kraft: "Kraft", geschick: "Geschick", verstand: "Verstand" };
-export const ATTR_MAX = 3;
 export const PACK_SIZE = 6;        // Rucksackplätze; angelegte Waffe und Rüstung zählen extra
-export const LEVEL_HP = 3;         // Stufenaufstieg: +3 maximale Lebenspunkte (heilt auch um 3)
 
 // Erfahrung für Stufe 2 bis 5, danach alle 30 Erfahrung eine weitere Stufe
 const THRESHOLDS = [10, 25, 45, 70];
@@ -31,6 +29,7 @@ export function newCharacter(def) {
     name: def.name,
     hp: def.hp,
     maxHp: def.hp,
+    levelHp: def.levelHp,
     xp: 0,
     level: 1,
     gold: 0,
@@ -92,16 +91,14 @@ export function unequip(player, slot) {
   return true;
 }
 
-// Stufenaufstieg: +1 auf das gewählte Attribut (höchstens +3) und +3 Lebenspunkte
+// Stufenaufstieg: +1 auf das gewählte Attribut (ohne Obergrenze) und Lebenspunkte je nach Volk.
+// Die neuen Lebenspunkte erhöhen das Maximum und heilen um denselben Wert.
 export function levelUp(player, attr) {
   player.level += 1;
-  player.maxHp += LEVEL_HP;
-  player.hp = Math.min(player.maxHp, player.hp + LEVEL_HP);
-  if (attr && player.attrs[attr] < ATTR_MAX) player.attrs[attr] += 1;
+  player.maxHp += player.levelHp;
+  player.hp = Math.min(player.maxHp, player.hp + player.levelHp);
+  player.attrs[attr] += 1;
 }
-
-// Attribute, die beim Aufstieg noch steigen können
-export const raisableAttrs = (player) => ATTRS.filter(a => player.attrs[a] < ATTR_MAX);
 
 // Steht noch ein Stufenaufstieg aus?
 export const pendingLevelUps = (player) => levelForXp(player.xp) - player.level;

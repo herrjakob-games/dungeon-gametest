@@ -60,23 +60,23 @@ Das Spiel kennt zwei Modi: freie Erkundung in Echtzeit und rundenbasierte Events
 
 Drei Attribute, ein W20 und feste Schwierigkeiten. Das Regelwerk ist so beschlossen.
 
-| Attribut | Kategorien | Wertebereich |
+| Attribut | Kategorien | Startwerte |
 | --- | --- | --- |
 | Kraft | Nahkampf; Kraftakt (Türen und Schlösser aufbrechen, schwere Dinge bewegen); Widerstand (Gift, Krankheit) | −1 bis +3 |
 | Geschick | Ausweichen (Fallen, Steinschlag); Fingerfertigkeit (Schlösser, Fallen entschärfen); Flucht | −1 bis +3 |
 | Verstand | Diplomatie (Gespräche, Überzeugen, Handeln); Wahrnehmung; Wissen (Rätsel, Runen, Magie) | −1 bis +3 |
 
-Jede Probe gehört zu genau einer dieser Kategorien und damit zu einem Attribut.
+Jede Probe gehört zu genau einer dieser Kategorien und damit zu einem Attribut. Die Startwerte der Völker liegen zwischen −1 und +3. Durch Stufenaufstiege können Attribute ohne Obergrenze weiter steigen, damit es auch Gegenstände mit höheren Anforderungen geben kann.
 
 ### Völker
 
 Der Spieler wählt vor dem ersten Dungeon ein Volk. Das Volk legt Attribute, Lebenspunkte und Fähigkeit fest. Es gibt bewusst keine Klassen: Ob ein Charakter eine Waffe, Rüstung oder einen Zauber nutzen kann, hängt allein von seinen Attributen ab (zum Beispiel schwere Rüstung erst ab Kraft +3).
 
-| Volk | Kraft | Geschick | Verstand | Lebenspunkte | Fähigkeit |
-| --- | --- | --- | --- | --- | --- |
-| Zwerg | +2 | +1 | −1 | 14 | Kraftprotz |
-| Elf | −1 | +2 | +1 | 10 | Scharfe Sinne |
-| Mensch | 0 | 0 | +2 | 12 | Wacher Geist |
+| Volk | Kraft | Geschick | Verstand | Lebenspunkte | LP je Stufe | Fähigkeit |
+| --- | --- | --- | --- | --- | --- | --- |
+| Zwerg | +2 | +1 | −1 | 14 | +5 | Kraftprotz |
+| Elf | −1 | +2 | +1 | 10 | +4 | Scharfe Sinne |
+| Mensch | 0 | 0 | +2 | 12 | +4 | Wacher Geist |
 
 - **Fähigkeiten:** Jedes Volk darf einmal pro Dungeon eine misslungene Probe seines Hauptattributs als bestanden werten, ohne neu zu würfeln. Das gilt für alle Kategorien dieses Attributs, also auch im Kampf (Nahkampf, Flucht). Kraftprotz (Zwerg) gilt für Kraft, Scharfe Sinne (Elf) für Geschick, Wacher Geist (Mensch) für Verstand.
 - **Auswahl:** Nach einer misslungenen passenden Probe bietet das Textfenster an, die Fähigkeit einzusetzen. Der Spieler entscheidet.
@@ -96,7 +96,7 @@ Der Spieler wählt vor dem ersten Dungeon ein Volk. Das Volk legt Attribute, Leb
 - **Fähigkeit im Kampf:** gilt für das tatsächlich gewürfelte Attribut. Die Elfin kann also einen verfehlten Angriff mit leichter Waffe retten, der Zwerg einen mit schwerer Waffe.
 - **Kampf in Events:** Der Effekt `combat` startet einen Rundenkampf. Die Effekte danach (etwa Beute) gelten erst nach einem Sieg.
 - **Gegner:** Lebenspunkte, Rüstungswert, Angriffsbonus, Schaden (z. B. W6) und ein witziger Satz für den Endbildschirm. Ab Ebene 2 bekommen Gegner je Ebene +2 Lebenspunkte und +1 Angriff, höchstens 5 Ebenen lang (also höchstens +10 und +5).
-- **Fortschritt:** Erfahrung aus Events. Stufe 2 bei 10, Stufe 3 bei 25, Stufe 4 bei 45, Stufe 5 bei 70 Erfahrung, danach alle 30 Erfahrung eine weitere Stufe. Beim Stufenaufstieg wählt der Spieler ein Attribut für +1 (höchstens +3) und bekommt +3 maximale Lebenspunkte, die ihn auch um 3 heilen. Sind alle Attribute auf +3, gibt es nur die Lebenspunkte.
+- **Fortschritt:** Erfahrung aus Events. Stufe 2 bei 10, Stufe 3 bei 25, Stufe 4 bei 45, Stufe 5 bei 70 Erfahrung, danach alle 30 Erfahrung eine weitere Stufe. Beim Stufenaufstieg wählt der Spieler ein Attribut für +1, ohne Obergrenze. Dazu kommen maximale Lebenspunkte je nach Volk (Zwerg +5, Elf und Mensch +4), die ihn auch um denselben Wert heilen.
 - **Beute:** Beutestufe `tier1` = 2W6 Gold und mit 1/3 Chance ein einfacher Gegenstand. `tier2` = 4W6 Gold und immer ein besserer Gegenstand. Welche Gegenstände in welcher Stufe vorkommen, steht in `data/items.json`. Gold zählt als Punktestand.
 - **Abstieg:** Jeder Ausgang führt eine Ebene tiefer, endlos. Lebenspunkte, Gold, Erfahrung und Ausrüstung bleiben. Die Fähigkeit ist im neuen Dungeon wieder bereit.
 - **Inventar:** Je ein Platz für die angelegte Waffe und Rüstung, dazu sechs Rucksackplätze. Ist der Rucksack voll, fragt das Spiel, was liegen bleibt. Außerhalb von Events lassen sich Gegenstände anlegen, ablegen, benutzen (Heiltrank) und wegwerfen. Während Events und Kämpfen geht das nur über „Gegenstand nutzen“.
@@ -222,7 +222,7 @@ Sieben Schritte, jeder endet mit etwas Spielbarem, das Christian im Browser test
 - [x] Startraum: Begrüßungs-Event zu Beginn jedes Dungeons
 - [x] once gilt pro Dungeon; Bedingungen flag und notFlag
 - [x] Volkswahl statt Klassen: Zwerg, Elf, Mensch legen Attribute, Lebenspunkte und Fähigkeit fest (ersetzt die festen Startwerte des Zwergenkriegers)
-- [x] Ausrüstung und Zauber über Mindestattribute, Skala bleibt −1 bis +3
+- [x] Ausrüstung und Zauber über Mindestattribute (Startwerte −1 bis +3, nach oben offen, siehe unten)
 - [x] Fähigkeit pro Volk, einmal pro Dungeon: misslungene Probe des Hauptattributs gilt als bestanden (Kraftprotz, Scharfe Sinne, Wacher Geist)
 - [x] Jede Probe hat eine von neun Kategorien unter den drei Attributen
 - [x] Volks-Bedingungen für ganze Events und für einzelne Optionen bei ausgewählten Events
@@ -231,6 +231,8 @@ Sieben Schritte, jeder endet mit etwas Spielbarem, das Christian im Browser test
 - [x] Leichte Waffen treffen mit Geschick statt Kraft
 - [x] Flucht: SG 12, Fehlschlag lässt den Gegner handeln, Erfolg führt durch die Rück-Tür und beendet das Event ohne Beute
 - [x] Erfahrungsschwellen 10 / 25 / 45 / 70, danach alle 30; Spieler wählt das Attribut beim Aufstieg
+- [x] Attribute haben beim Stufenaufstieg keine Obergrenze, damit Gegenstände höhere Anforderungen haben können
+- [x] Lebenspunkte je Stufe nach Volk: Zwerg +5, Elf und Mensch +4 (ersetzt +3 für alle)
 - [x] Endlos tiefer: kein Sieg, Endbildschirm mit Ebene und witziger Todesursache
 - [x] Gegner wachsen ab Ebene 2 um +2 LP und +1 Angriff je Ebene, höchstens 5 Ebenen
 - [x] Inventar: Waffe und Rüstung angelegt extra, sechs Rucksackplätze

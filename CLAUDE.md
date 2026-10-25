@@ -44,7 +44,7 @@ Die Liste aller Meilensteine steht im GDD.
 | `data/room-types.json` | Raumtypen: Name, Farben, Event-Chance, Event-Tabelle |
 | `data/events.json` | alle Events (auch die Truhe) |
 | `data/monsters.json` | Monster mit Lebenspunkten, Rüstung, Angriff, Schaden, Satz zur Todesursache |
-| `data/characters.json` | Völker: Attribute, Lebenspunkte, Fähigkeit, Startausrüstung, Modell |
+| `data/characters.json` | Völker: Attribute, Lebenspunkte, LP je Stufe, Fähigkeit, Startausrüstung, Modell |
 | `data/items.json` | Gegenstände: Waffen, Rüstungen, Verbrauch, Mindestattribut, Beutestufe |
 | `data/texts.json` | Sätze zur Todesursache bei Events |
 | `src/data.js` | lädt `data/*.json` und prüft die Daten |

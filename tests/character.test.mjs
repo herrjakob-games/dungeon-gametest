@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { indexData } from "../src/eventLogic.js";
 import {
-  newCharacter, xpForLevel, levelForXp, pendingLevelUps, levelUp, raisableAttrs,
+  newCharacter, xpForLevel, levelForXp, pendingLevelUps, levelUp,
   addItem, equip, unequip, meetsReq, weaponOf, armorBonusOf, canUseAbility, PACK_SIZE
 } from "../src/character.js";
 import {
@@ -39,17 +39,21 @@ test("Erfahrungsschwellen 10 / 25 / 45 / 70, danach alle 30", () => {
   assert.equal(levelForXp(130), 7);
 });
 
-test("Stufenaufstieg: +1 Attribut bis +3, +3 Lebenspunkte", () => {
-  const p = make("zwerg");
+test("Stufenaufstieg: +1 Attribut ohne Obergrenze, Lebenspunkte je nach Volk", () => {
+  const p = make("zwerg"); // +5 LP je Stufe
   p.xp = 26;
   assert.equal(pendingLevelUps(p), 2);
   p.hp = 10;
   levelUp(p, "kraft");
-  assert.deepEqual([p.level, p.attrs.kraft, p.maxHp, p.hp], [2, 3, 17, 13]);
-  levelUp(p, "kraft"); // schon auf +3: nur Lebenspunkte
-  assert.deepEqual([p.level, p.attrs.kraft, p.maxHp], [3, 3, 20]);
+  assert.deepEqual([p.level, p.attrs.kraft, p.maxHp, p.hp], [2, 3, 19, 15]);
+  levelUp(p, "kraft");
+  assert.deepEqual([p.level, p.attrs.kraft, p.maxHp, p.hp], [3, 4, 24, 20], "Kraft darf über +3 steigen");
   assert.equal(pendingLevelUps(p), 0);
-  assert.deepEqual(raisableAttrs(p), ["geschick", "verstand"]);
+  for (const v of ["elf", "mensch"]) {
+    const q = make(v);
+    levelUp(q, "verstand");
+    assert.equal(q.maxHp, DATA.characters[v].hp + 4, v + ": +4 LP je Stufe");
+  }
 });
 
 test("Inventar: sechs Plätze, Anlegen mit Mindestattribut", () => {
