@@ -239,11 +239,37 @@ Der Dungeon führt durch Themen, die alle drei Ebenen wechseln. Das Thema bestim
 - **Beute:** Die Beutestufen verschieben sich mit dem Thema. `tier1` ergibt Beute der Stufe des Themas (Keller 1 bis Ork-Lager 5), `tier2` eine Stufe höher. Dafür braucht `data/items.json` Gegenstände bis Stufe 6.
 - **Ergebnis:** Der Endbildschirm zeigt die erreichte Ebene als Ergebnis.
 
-### Noch offen
+### Bosse, Gold und Händler
 
-- [ ] Bosse: Vorschlag je Thema: Keller Rattenkönig, Katakomben Knochenfürst, Zwergenminen Dunkelzwerg-Schmiedemeister, Goblin-Höhlen Goblin-König, Ork-Lager Ork-Kriegsherr. Werte und Texte entstehen im Content-Projekt.
-- [ ] Endloses Ork-Lager ab Ebene 16: Vorschlag, dort kommt weiterhin alle drei Ebenen ein Boss.
-- [ ] Preise der Gegenstände für den Händler.
+| Themenwelt | Boss | Ebene |
+| --- | --- | --- |
+| Keller | Monsterratte | 3 |
+| Katakomben | Skelett-König | 6 |
+| Zwergenminen | Dunkelzwerg-Schmiedemeister | 9 |
+| Goblin-Höhlen | Höhlentroll | 12 |
+| Ork-Lager | Ork-Kriegsherr | 15 |
+| Endloses Ork-Lager | zufällig Riesenspinne, Höhlentroll oder Ork-Kriegsherr | 18, 21, 24 … |
+
+Werte und Texte der Bosse entstehen im Content-Projekt.
+
+- **Gold:** Der Goldbetrag der Beute wird mit der Stufe des Themas malgenommen: Keller ×1, Katakomben ×2, Zwergenminen ×3, Goblin-Höhlen ×4, Ork-Lager ×5, auch im endlosen Ork-Lager.
+- **Stufe der Gegenstände:** Jeder Gegenstand hat in `data/items.json` eine Stufe von 1 bis 6. Stufe 1: Knüppel, Dolch, Lederwams. Stufe 2: Kurzschwert, Rapier, Kettenhemd. Stufe 3: Streitaxt, Elfenmantel. Stufe 4: Elfenklinge, Kriegshammer, Plattenpanzer. Stufe 5 und 6 füllt das Content-Projekt.
+- **Ziel der Preise:** Etwa alle ein bis zwei Ebenen ist ein neues Ausrüstungsteil bezahlbar.
+
+| Ausrüstung der Stufe | Kaufpreis | Verkaufspreis |
+| --- | --- | --- |
+| 1 | 20 Gold | 10 Gold |
+| 2 | 40 Gold | 20 Gold |
+| 3 | 70 Gold | 35 Gold |
+| 4 | 110 Gold | 55 Gold |
+| 5 | 160 Gold | 80 Gold |
+| 6 | 220 Gold | 110 Gold |
+
+| Verbrauchsgegenstand | Kaufpreis (in jeder Tiefe gleich) |
+| --- | --- |
+| Heiltrank | 15 Gold |
+| Feuerball-Schriftrolle | 25 Gold |
+| Schild-Schriftrolle | 30 Gold |
 
 ## Grafik und Animation
 
@@ -318,3 +344,6 @@ Sieben Schritte, jeder endet mit etwas Spielbarem, das Christian im Browser test
 - [x] Rastplatz etwa auf halber Strecke zwischen Start und Abstieg
 - [x] Ersatz für die Wachstube neben dem Start: Kerker (Katakomben), Goblin-Lager (Goblin-Höhlen), Ork-Lager (Ork-Lager)
 - [x] Lage- und Anzahlregeln für alle Raumtypen (Tabelle im Abschnitt Raumtypen)
+- [x] Bosse: Monsterratte, Skelett-König, Dunkelzwerg-Schmiedemeister, Höhlentroll, Ork-Kriegsherr; im endlosen Ork-Lager alle drei Ebenen zufällig Riesenspinne, Höhlentroll oder Ork-Kriegsherr
+- [x] Gold der Beute ×Stufe des Themas, Gegenstände mit Stufe 1–6
+- [x] Händlerpreise nach Stufe (20 bis 220 Gold), Verbrauchsgegenstände zum Festpreis
