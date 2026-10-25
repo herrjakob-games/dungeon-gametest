@@ -15,7 +15,7 @@ Ablauf eines Raums:
 5. Folgen werden angewendet: Schaden, Beute, Erfahrung, Türzustand.
 6. Der Spieler wählt eine Tür und betritt den nächsten Raum.
 
-Ziel eines Durchlaufs ist der Ausgang. Bossgegner und Artefakte können als Events vorkommen, sind aber kein Pflichtziel. Stirbt der Spieler, beginnt ein neuer Durchlauf mit neuem Dungeon (Permadeath). Setting ist klassische Fantasy mit humorvollem Ton.
+Jeder Ausgang führt eine Ebene tiefer, ein Durchlauf endet erst mit dem Tod. Ziel ist, so tief wie möglich zu kommen. Bossgegner und Artefakte können als Events vorkommen, sind aber kein Pflichtziel. Stirbt der Spieler, zeigt ein Endbildschirm die erreichte Ebene und einen witzigen Satz zur Todesursache, danach beginnt ein neuer Durchlauf mit Volkswahl und neuem Dungeon (Permadeath). Setting ist klassische Fantasy mit humorvollem Ton.
 
 ## Technische Eckdaten
 
@@ -87,14 +87,46 @@ Der Spieler wählt vor dem ersten Dungeon ein Volk. Das Volk legt Attribute, Leb
 
 - **Probe:** W20 + Attribut gegen Schwierigkeit. Leicht 8, mittel 12, schwer 16. Jede Probe nennt ihre Kategorie. Der Wurf wird im Textfenster angezeigt.
 - **Lebenspunkte:** Startwert je nach Volk, Heilung höchstens bis zum Maximum. Bei 0 Lebenspunkten ist der Durchlauf vorbei, es folgt die Volkswahl und ein neuer Dungeon. Tränke und Rasten heilen.
-- **Ausrüstung:** Waffen, Rüstungen und Zauber können ein Mindestattribut verlangen. Konkrete Werte folgen mit Meilenstein 5.
-- **Kampfrunde:** Der Spieler wählt Angreifen (Kraft gegen Rüstung des Gegners), Verteidigen (Rüstung +2 bis zur nächsten Runde), Gegenstand nutzen oder Fliehen (Geschick-Probe, Rückzug durch die zuletzt genutzte Tür). Danach handelt der Gegner.
-- **Gegner:** Lebenspunkte, Rüstungswert, Angriffsbonus, Schaden (z. B. W6).
-- **Ersatz-Kampf bis Meilenstein 5:** Der Effekt `combat` ist eine einzige Kraft-Probe (W20 + Kraft) gegen die Rüstung des Monsters. Erfolg ist ein Sieg. Fehlschlag kostet den Schaden des Monsters, die übrigen Effekte des Ergebnisses (etwa Beute) entfallen dann.
-- **Fortschritt:** Erfahrung aus Events. Beim Stufenaufstieg +1 auf ein Attribut und +3 Lebenspunkte. Bis Meilenstein 5 wird Erfahrung nur gezählt, die Schwellen für den Aufstieg folgen dort.
-- **Gold:** Bis Meilenstein 5 besteht Beute nur aus Gold. Beutestufe `tier1` = 2W6 Gold, `tier2` = 4W6 Gold.
-- **Abstieg:** Wer den Ausgang nimmt, behält Lebenspunkte, Gold und Erfahrung.
-- **Inventar:** Sechs Plätze.
+- **Ausrüstung:** Waffen, Rüstungen und Zauber-Schriftrollen können ein Mindestattribut verlangen. Wer es nicht erfüllt, kann den Gegenstand tragen, aber nicht anlegen oder benutzen. Die Werte stehen in `data/items.json` (siehe Tabelle unten).
+- **Kampfrunde:** Der Spieler wählt Angreifen, Verteidigen (Rüstung +2 bis zur nächsten Runde), Gegenstand nutzen oder Fliehen. Danach handelt der Gegner.
+- **Angreifen:** W20 + Trefferattribut der Waffe gegen die Rüstung des Gegners (Kategorie Nahkampf). Schwere Waffen treffen mit Kraft, leichte (Dolch, Rapier, Elfenklinge) mit Geschick. Ein Treffer macht den Schaden der Waffe, ohne Waffe 1.
+- **Gegnerzug:** W20 + Angriffsbonus des Gegners gegen die Rüstung der Spielfigur: 10 plus Bonus der angelegten Rüstung, plus 2 beim Verteidigen, plus Schild-Schriftrolle. Ein Treffer macht den Schaden des Gegners.
+- **Gegenstand nutzen:** Heiltrank oder Schriftrolle aus dem Rucksack, kostet die Runde.
+- **Fliehen:** Probe Flucht gegen SG 12. Erfolg: Rückzug durch die Tür, durch die der Raum betreten wurde (im Startraum endet nur der Kampf). Das Event ist dann vorbei, ohne Beute und ohne Folge-Event. Fehlschlag: Der Gegner handelt normal.
+- **Fähigkeit im Kampf:** gilt für das tatsächlich gewürfelte Attribut. Die Elfin kann also einen verfehlten Angriff mit leichter Waffe retten, der Zwerg einen mit schwerer Waffe.
+- **Kampf in Events:** Der Effekt `combat` startet einen Rundenkampf. Die Effekte danach (etwa Beute) gelten erst nach einem Sieg.
+- **Gegner:** Lebenspunkte, Rüstungswert, Angriffsbonus, Schaden (z. B. W6) und ein witziger Satz für den Endbildschirm. Ab Ebene 2 bekommen Gegner je Ebene +2 Lebenspunkte und +1 Angriff, höchstens 5 Ebenen lang (also höchstens +10 und +5).
+- **Fortschritt:** Erfahrung aus Events. Stufe 2 bei 10, Stufe 3 bei 25, Stufe 4 bei 45, Stufe 5 bei 70 Erfahrung, danach alle 30 Erfahrung eine weitere Stufe. Beim Stufenaufstieg wählt der Spieler ein Attribut für +1 (höchstens +3) und bekommt +3 maximale Lebenspunkte, die ihn auch um 3 heilen. Sind alle Attribute auf +3, gibt es nur die Lebenspunkte.
+- **Beute:** Beutestufe `tier1` = 2W6 Gold und mit 1/3 Chance ein einfacher Gegenstand. `tier2` = 4W6 Gold und immer ein besserer Gegenstand. Welche Gegenstände in welcher Stufe vorkommen, steht in `data/items.json`. Gold zählt als Punktestand.
+- **Abstieg:** Jeder Ausgang führt eine Ebene tiefer, endlos. Lebenspunkte, Gold, Erfahrung und Ausrüstung bleiben. Die Fähigkeit ist im neuen Dungeon wieder bereit.
+- **Inventar:** Je ein Platz für die angelegte Waffe und Rüstung, dazu sechs Rucksackplätze. Ist der Rucksack voll, fragt das Spiel, was liegen bleibt. Außerhalb von Events lassen sich Gegenstände anlegen, ablegen, benutzen (Heiltrank) und wegwerfen. Während Events und Kämpfen geht das nur über „Gegenstand nutzen“.
+
+### Völker: Startausrüstung
+
+| Volk | Waffe | Rüstung | Rucksack |
+| --- | --- | --- | --- |
+| Zwerg | Streitaxt | Kettenhemd | Heiltrank |
+| Elf | Rapier | Elfenmantel | Heiltrank |
+| Mensch | Kurzschwert | Lederwams | Feuerball-Schriftrolle, Heiltrank |
+
+### Gegenstände
+
+| Gegenstand | Art | Wert | Trifft mit | Mindestwert |
+| --- | --- | --- | --- | --- |
+| Knüppel | Waffe | Schaden W4 | Kraft | – |
+| Dolch | Waffe | Schaden W4 | Geschick | – |
+| Kurzschwert | Waffe | Schaden W6 | Kraft | Kraft 0 |
+| Rapier | Waffe | Schaden W6 | Geschick | Geschick +1 |
+| Streitaxt | Waffe | Schaden W8 | Kraft | Kraft +2 |
+| Elfenklinge | Waffe | Schaden W8 | Geschick | Geschick +3 |
+| Kriegshammer | Waffe | Schaden W10 | Kraft | Kraft +3 |
+| Lederwams | Rüstung | +1 | – | – |
+| Kettenhemd | Rüstung | +2 | – | Kraft +1 |
+| Elfenmantel | Rüstung | +2 | – | Geschick +2 |
+| Plattenpanzer | Rüstung | +3 | – | Kraft +3 |
+| Heiltrank | Verbrauch | heilt 2W4+2, jederzeit außer in Events (im Kampf als „Gegenstand nutzen“) | – | – |
+| Feuerball-Schriftrolle | Verbrauch | 2W6 Schaden, trifft immer, nur im Kampf | – | Verstand +1 |
+| Schild-Schriftrolle | Verbrauch | Rüstung +3 bis Kampfende, nur im Kampf | – | Verstand +2 |
 
 ## Raumtypen und Event-System
 
@@ -135,12 +167,12 @@ Jeder Raumtyp hat eine Event-Chance und eine gewichtete Event-Tabelle. Jedes Eve
 ```
 
 - **Ablauf:** Beim ersten Betreten eines Raums würfelt das Spiel gegen die Event-Chance und wählt dann gewichtet ein Event, dessen Bedingung erfüllt ist. Der Startraum hat die Chance 100 %: Jeder Dungeon beginnt mit einem kurzen, harmlosen Begrüßungs-Event.
-- **Dateien:** `data/room-types.json`, `data/events.json`, `data/monsters.json`, `data/characters.json`. Ein Event hat zusätzlich einen `title` für das Textfenster. Ein Ergebnis kann mit `next` ein Folge-Event starten, so laufen Proben Runde für Runde.
+- **Dateien:** `data/room-types.json`, `data/events.json`, `data/monsters.json`, `data/characters.json`, `data/items.json`, `data/texts.json` (Sätze zur Todesursache bei Events). Ein Event hat zusätzlich einen `title` für das Textfenster. Ein Ergebnis kann mit `next` ein Folge-Event starten, so laufen Proben Runde für Runde.
 - **Proben in Events:** Jede Probe nennt ihre Kategorie, zum Beispiel `{ "category": "kraftakt", "dc": 12 }`. Das Attribut ergibt sich aus der Kategorie.
 - **Event-Typen:** combat, choice, trap, treasure, npc. Bossgegner und Artefakte laufen als normale Events über die Tabellen.
 - **Effekte:** damage, heal, loot, combat, gainXp, lockDoor, unlockDoor, setFlag. Mengen als Zahl oder Würfel, etwa `"W4"` oder `"2W6"`.
 - **once:** Das Event kommt höchstens einmal pro Dungeon vor.
-- **Bedingungen:** `flag:name` (Flag ist gesetzt), `notFlag:name` (Flag fehlt) und `volk:zwerg`, `volk:elf`, `volk:mensch`. Flags gelten pro Dungeon. `hasItem:name` kommt mit dem Inventar in Meilenstein 5.
+- **Bedingungen:** `flag:name` (Flag ist gesetzt), `notFlag:name` (Flag fehlt) und `volk:zwerg`, `volk:elf`, `volk:mensch`. Flags gelten pro Dungeon. `hasItem:id` ist erfüllt, wenn der Gegenstand angelegt ist oder im Rucksack liegt.
 - **Volks-Bedingungen:** Ein ganzes Event kann an ein Volk gebunden sein, dann erscheint es nur für dieses Volk. Bei ausgewählten Events kann auch eine einzelne Option an ein Volk gebunden sein, andere Völker sehen sie nicht.
 - **Türen:** `lockDoor` und `unlockDoor` nennen eine Richtung (`N`, `E`, `S`, `W`) oder `back`, die Tür, durch die der Spieler kam. Eine verschlossene Tür zeigt ein Schloss und lässt sich nicht benutzen, bis `unlockDoor` sie öffnet. Sind am Ende eines Events alle Türen eines Raums zu, öffnet sich die Rück-Tür von selbst.
 - **Monster:** Name, Lebenspunkte, Rüstung, Angriffsbonus, Schaden (z. B. W6).
@@ -194,3 +226,12 @@ Sieben Schritte, jeder endet mit etwas Spielbarem, das Christian im Browser test
 - [x] Fähigkeit pro Volk, einmal pro Dungeon: misslungene Probe des Hauptattributs gilt als bestanden (Kraftprotz, Scharfe Sinne, Wacher Geist)
 - [x] Jede Probe hat eine von neun Kategorien unter den drei Attributen
 - [x] Volks-Bedingungen für ganze Events und für einzelne Optionen bei ausgewählten Events
+- [x] Gegnerzug: W20 + Angriffsbonus gegen Rüstung der Figur (10 + Rüstungsbonus)
+- [x] Spielerschaden kommt von der Waffe, ohne Waffe 1
+- [x] Leichte Waffen treffen mit Geschick statt Kraft
+- [x] Flucht: SG 12, Fehlschlag lässt den Gegner handeln, Erfolg führt durch die Rück-Tür und beendet das Event ohne Beute
+- [x] Erfahrungsschwellen 10 / 25 / 45 / 70, danach alle 30; Spieler wählt das Attribut beim Aufstieg
+- [x] Endlos tiefer: kein Sieg, Endbildschirm mit Ebene und witziger Todesursache
+- [x] Gegner wachsen ab Ebene 2 um +2 LP und +1 Angriff je Ebene, höchstens 5 Ebenen
+- [x] Inventar: Waffe und Rüstung angelegt extra, sechs Rucksackplätze
+- [x] Gegenstandsliste, Startausrüstung je Volk, Beute als Gold plus Gegenstand (Ersatz-Kampf und Nur-Gold-Beute aus Meilenstein 4 sind damit abgelöst)

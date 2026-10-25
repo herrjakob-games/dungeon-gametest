@@ -12,15 +12,15 @@ und trifft die Designentscheidungen.
 - Hat Christian in einer Sitzung etwas entschieden, trage es in `docs/GDD.md` ein (passender
   Abschnitt und Liste „Getroffene Entscheidungen“) und weise ihn darauf hin, dass er die
   Änderung auch in sein GDD in Claude Docs übernehmen sollte.
-- Inhalte gehören in Daten, nicht in Code: Raumtypen, Events und Monster liegen als JSON in `data/`,
-  Gegenstände folgen mit Meilenstein 5. `npm test` prüft alle Daten gegen das Regelwerk. Neue Effekt-Typen oder Bedingungen werden zuerst im GDD
+- Inhalte gehören in Daten, nicht in Code: Raumtypen, Events, Monster, Völker, Gegenstände und Texte
+  liegen als JSON in `data/`. `npm test` prüft alle Daten gegen das Regelwerk. Neue Effekt-Typen oder Bedingungen werden zuerst im GDD
   festgelegt, dann programmiert, dann in Events genutzt.
 
 ## Meilensteine
 
-1–4 sind erledigt (Raum, Türen und Raumwechsel, Dungeon-Generator mit Seed, Minimap, Schnellreise,
-Event-System aus JSON mit Textfenster und Proben). Nächster Schritt ist Meilenstein 5: Kampf, Lebenspunkte,
-Inventar, Tod und Sieg. Dabei ersetzt der echte Kampf den Ersatz-Kampf, und Beute wird zu Gegenständen.
+1–5 sind erledigt (Raum, Türen und Raumwechsel, Dungeon-Generator mit Seed, Minimap, Schnellreise,
+Event-System aus JSON mit Proben-Kategorien, Volkswahl, Rundenkampf, Inventar, Stufenaufstieg, Tod mit
+Endbildschirm, endlose Ebenen). Nächster Schritt ist Meilenstein 6: echte Assets, Animationen und Licht.
 Die Liste aller Meilensteine steht im GDD.
 
 ## Technik
@@ -43,17 +43,26 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/state.js` | gemeinsamer Spielzustand |
 | `data/room-types.json` | Raumtypen: Name, Farben, Event-Chance, Event-Tabelle |
 | `data/events.json` | alle Events (auch die Truhe) |
-| `data/monsters.json` | Monster mit Lebenspunkten, Rüstung, Angriff, Schaden |
+| `data/monsters.json` | Monster mit Lebenspunkten, Rüstung, Angriff, Schaden, Satz zur Todesursache |
+| `data/characters.json` | Völker: Attribute, Lebenspunkte, Fähigkeit, Startausrüstung, Modell |
+| `data/items.json` | Gegenstände: Waffen, Rüstungen, Verbrauch, Mindestattribut, Beutestufe |
+| `data/texts.json` | Sätze zur Todesursache bei Events |
 | `src/data.js` | lädt `data/*.json` und prüft die Daten |
-| `src/eventLogic.js` | Event-Regeln: Auswahl, Proben, Effekte, Bedingungen, Datenprüfung; rein logisch |
+| `src/eventLogic.js` | Event-Regeln: Proben-Kategorien, Auswahl, Effekte, Beute, Bedingungen, Datenprüfung; rein logisch |
+| `src/character.js` | Figur: Volk, Inventar, Anlegen, Stufenaufstieg, Fähigkeit; rein logisch |
+| `src/combat.js` | Rundenkampf: Angriff, Gegnerzug, Verteidigen, Gegenstände, Flucht, Tiefe; rein logisch |
 | `src/roomTypes.js` | Raumtypen-Tabelle, befüllt aus `data/room-types.json` |
 | `src/roomBuilder.js` | baut einen Raum als 3D-Szene inklusive Einrichtung |
 | `src/player.js` | Spielfigur, Platzierung; `setFigure(volk)` tauscht das Modell |
 | `src/figures.js` | Platzhalterfiguren der Völker: Zwerg, Elfin, Mensch (Grundformen) |
 | `src/movement.js` | Laufbewegung entlang des Weges |
-| `src/events.js` | Event-Ablauf im Textfenster, Truhe, Abstieg, verschlossene Türen |
+| `src/events.js` | Event-Ablauf im Textfenster, Fundstücke, Stufenaufstieg, Tod, Truhe, Abstieg |
+| `src/combatUI.js` | Kampf im Textfenster |
+| `src/checkUI.js` | Würfelzeile und Angebot der Volks-Fähigkeit |
+| `src/inventory.js` | Ausrüstungs- und Rucksack-Feld oben rechts |
+| `src/screens.js` | Volkswahl und Endbildschirm |
 | `src/dialog.js` | Textfenster mit Optionen, Würfelergebnis und Effektzeilen |
-| `src/hud.js` | Infotafel (Werte des Zwergs) und Minimap |
+| `src/hud.js` | Infotafel (Werte der Figur) und Minimap |
 | `src/main.js` | Ablauf, Raumwechsel, Schnellreise, Eingabe, Spielschleife |
 
 ## Feste Regeln im Code

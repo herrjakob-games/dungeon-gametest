@@ -2,26 +2,37 @@
 // Reine Logik ohne Grafik und Textfenster, damit sie in tests/ geprüft werden kann.
 // Zufall kommt immer als Funktion rand() herein: im Spiel Math.random, in Tests fest.
 import { DIR, DIRKEYS } from "./config.js";
+import { ATTRS, hasItem } from "./character.js";
 
-export const ATTRS = ["kraft", "geschick", "verstand"];
-export const ATTR_NAMES = { kraft: "Kraft", geschick: "Geschick", verstand: "Verstand" };
 export const DCS = [8, 12, 16]; // leicht, mittel, schwer
 export const EVENT_TYPES = ["combat", "choice", "trap", "treasure", "npc"];
 export const EFFECTS = ["damage", "heal", "loot", "combat", "gainXp", "lockDoor", "unlockDoor", "setFlag"];
-export const LOOT = { tier1: "2W6", tier2: "4W6" }; // bis Meilenstein 5 nur Gold
 
-// Zwergenkrieger zu Beginn eines Durchlaufs
-export function newPlayer() {
-  return { hp: 12, maxHp: 12, xp: 0, gold: 0, attrs: { kraft: 2, geschick: 1, verstand: -1 } };
-}
+// Neun Proben-Kategorien, je drei pro Attribut
+export const CATEGORIES = {
+  nahkampf: "kraft", kraftakt: "kraft", widerstand: "kraft",
+  ausweichen: "geschick", fingerfertigkeit: "geschick", flucht: "geschick",
+  diplomatie: "verstand", wahrnehmung: "verstand", wissen: "verstand"
+};
+export const CATEGORY_NAMES = {
+  nahkampf: "Nahkampf", kraftakt: "Kraftakt", widerstand: "Widerstand",
+  ausweichen: "Ausweichen", fingerfertigkeit: "Fingerfertigkeit", flucht: "Flucht",
+  diplomatie: "Diplomatie", wahrnehmung: "Wahrnehmung", wissen: "Wissen"
+};
+
+// Beute: Gold wie bisher, dazu ein Gegenstand der Stufe (tier1 mit 1/3 Chance, tier2 immer)
+export const LOOT = { tier1: { gold: "2W6", itemChance: 1 / 3 }, tier2: { gold: "4W6", itemChance: 1 } };
 
 // Zustand, der pro Dungeon gilt
 export const newRun = () => ({ flags: new Set(), usedOnce: new Set() });
 
 // Rohdaten (Listen aus data/*.json) in Nachschlage-Tabellen nach id umwandeln
 export function indexData(raw) {
-  const byId = (list) => Object.fromEntries(list.map(o => [o.id, o]));
-  return { roomTypes: byId(raw.roomTypes), events: byId(raw.events), monsters: byId(raw.monsters) };
+  const byId = (list) => Object.fromEntries((list || []).map(o => [o.id, o]));
+  return {
+    roomTypes: byId(raw.roomTypes), events: byId(raw.events), monsters: byId(raw.monsters),
+    items: byId(raw.items), characters: byId(raw.characters), texts: raw.texts || {}
+  };
 }
 
 // ---------- Würfel ----------
@@ -38,34 +49,56 @@ export function rollDice(spec, rand) {
   return Math.max(0, sum);
 }
 
-// Probe: W20 + Attribut gegen Schwierigkeit
+// Probe: W20 + Attribut gegen Schwierigkeit. Das Attribut ergibt sich aus der Kategorie,
+// außer es ist ausdrücklich angegeben (Angriff mit leichter Waffe trifft mit Geschick).
 export function doCheck(player, check, rand) {
   const d = 1 + Math.floor(rand() * 20);
-  const bonus = player.attrs[check.attr];
+  const attr = check.attr || CATEGORIES[check.category];
+  const bonus = player.attrs[attr];
   const total = d + bonus;
-  return { d, bonus, total, dc: check.dc, attr: check.attr, ok: total >= check.dc };
+  return { d, bonus, total, dc: check.dc, attr, category: check.category, ok: total >= check.dc };
 }
 
 // ---------- Bedingungen ----------
-const CONDITION = /^(flag|notFlag):([\w-]+)$/;
+const CONDITION = /^(flag|notFlag|volk|hasItem):([\w-]+)$/;
 
-export function checkCondition(cond, run) {
+export function checkCondition(cond, run, player) {
   if (!cond) return true;
   const m = CONDITION.exec(cond);
   if (!m) return false;
-  return m[1] === "flag" ? run.flags.has(m[2]) : !run.flags.has(m[2]);
+  if (m[1] === "flag") return run.flags.has(m[2]);
+  if (m[1] === "notFlag") return !run.flags.has(m[2]);
+  if (m[1] === "volk") return !!player && player.volk === m[2];
+  return !!player && hasItem(player, m[2]);
 }
 
 // ---------- Event-Auswahl ----------
 // Würfelt gegen die Event-Chance und wählt dann gewichtet aus den erlaubten Events. Ergebnis: id oder null.
-export function pickEvent(roomType, run, rand) {
+export function pickEvent(roomType, run, rand, player) {
   if (!(rand() < roomType.eventChance)) return null;
-  const allowed = roomType.events.filter(e => !(e.once && run.usedOnce.has(e.id)) && checkCondition(e.condition, run));
+  const allowed = roomType.events.filter(e => !(e.once && run.usedOnce.has(e.id)) && checkCondition(e.condition, run, player));
   const total = allowed.reduce((s, e) => s + e.weight, 0);
   if (!total) return null;
   let r = rand() * total;
   for (const e of allowed) { if ((r -= e.weight) < 0) return e.id; }
   return allowed[allowed.length - 1].id;
+}
+
+// Optionen eines Events, die die Figur sehen darf (Volks-Bedingungen einzelner Optionen)
+export const visibleOptions = (ev, run, player) => ev.options.filter(o => checkCondition(o.condition, run, player));
+
+// ---------- Beute ----------
+export function rollLoot(tier, items, rand) {
+  const t = LOOT[tier];
+  const gold = rollDice(t.gold, rand);
+  let item = null;
+  if (rand() < t.itemChance) {
+    const pool = Object.values(items).filter(i => i.loot && i.loot[tier]);
+    let r = rand() * pool.reduce((s, i) => s + i.loot[tier], 0);
+    for (const i of pool) { if ((r -= i.loot[tier]) < 0) { item = i.id; break; } }
+    if (!item && pool.length) item = pool[pool.length - 1].id;
+  }
+  return { gold, item };
 }
 
 // Erlaubte Richtungen für Türeffekte: N, E, S, W oder "back" (die Tür, durch die man kam)
@@ -74,15 +107,18 @@ export const resolveDoor = (dir, back) => (dir === "back" ? back : dir);
 // ---------- Effekte ----------
 /**
  * Wendet Effekte der Reihe nach an und liefert lesbare Zeilen für das Textfenster.
- * ctx: { player, run, monsters, room: { doors (Bitmaske), locked (Set), back } }
- * Ergebnis: { lines: [{ type, ... }], died }
- * Nach einem verlorenen Kampf oder bei 0 LP entfallen die restlichen Effekte.
+ * ctx: { player, run, items, room: { doors (Bitmaske), locked (Set), back } }
+ * Ergebnis: { lines, died, items, combat }
+ *  - items: gefundene Gegenstände; der Ablauf legt sie in den Rucksack (oder fragt, was liegen bleibt)
+ *  - combat: { monster, rest } bei einem Kampf; die Effekte danach (rest) gelten erst nach einem Sieg
+ * Bei 0 LP entfallen die restlichen Effekte.
  */
 export function applyEffects(effects, ctx, rand) {
   const { player, run, room } = ctx;
-  const lines = [];
-  for (const fx of effects || []) {
-    const [type, value] = Object.entries(fx)[0];
+  const list = effects || [];
+  const lines = [], found = [];
+  for (let i = 0; i < list.length; i++) {
+    const [type, value] = Object.entries(list[i])[0];
     if (type === "damage") {
       const n = Math.min(player.hp, rollDice(value, rand));
       player.hp -= n;
@@ -92,20 +128,12 @@ export function applyEffects(effects, ctx, rand) {
       player.hp += n;
       lines.push({ type, amount: n });
     } else if (type === "loot") {
-      const n = rollDice(LOOT[value], rand);
-      player.gold += n;
-      lines.push({ type, amount: n });
+      const l = rollLoot(value, ctx.items, rand);
+      player.gold += l.gold;
+      lines.push({ type, amount: l.gold });
+      if (l.item) found.push(l.item);
     } else if (type === "combat") {
-      // Ersatz-Kampf bis Meilenstein 5: eine Kraft-Probe gegen die Rüstung des Monsters
-      const m = ctx.monsters[value];
-      const roll = doCheck(player, { attr: "kraft", dc: m.armor }, rand);
-      const line = { type, monster: m.name, roll, amount: 0 };
-      if (!roll.ok) {
-        line.amount = Math.min(player.hp, rollDice(m.damage, rand));
-        player.hp -= line.amount;
-      }
-      lines.push(line);
-      if (!roll.ok) break;
+      return { lines, died: false, items: found, combat: { monster: value, rest: list.slice(i + 1) } };
     } else if (type === "gainXp") {
       player.xp += value;
       lines.push({ type, amount: value });
@@ -119,7 +147,7 @@ export function applyEffects(effects, ctx, rand) {
     }
     if (player.hp <= 0) break;
   }
-  return { lines, died: player.hp <= 0 };
+  return { lines, died: player.hp <= 0, items: found, combat: null };
 }
 
 // Sicherung gegen Einsperren: Sind am Ende eines Events alle Türen zu, öffnet sich die Rück-Tür.
@@ -137,6 +165,17 @@ export function releaseIfTrapped(room) {
 export function validateData(data) {
   const errors = [];
   const err = (where, msg) => errors.push(where + ": " + msg);
+  const checkCond = (w, cond) => {
+    if (cond === undefined) return;
+    const m = CONDITION.exec(cond);
+    if (!m) err(w, "unbekannte Bedingung " + cond);
+    else if (m[1] === "volk" && !data.characters[m[2]]) err(w, "unbekanntes Volk " + m[2]);
+    else if (m[1] === "hasItem" && !data.items[m[2]]) err(w, "unbekannter Gegenstand " + m[2]);
+  };
+  const checkReq = (w, req) => Object.entries(req || {}).forEach(([a, v]) => {
+    if (!ATTRS.includes(a)) err(w, "unbekanntes Attribut " + a);
+    if (!(Number.isInteger(v) && v >= -1 && v <= 3)) err(w, "Mindestwert muss zwischen −1 und +3 liegen");
+  });
 
   for (const rt of Object.values(data.roomTypes)) {
     const w = "Raumtyp " + rt.id;
@@ -146,7 +185,7 @@ export function validateData(data) {
     for (const e of rt.events) {
       if (!data.events[e.id]) err(w, "unbekanntes Event " + e.id);
       if (!(e.weight > 0)) err(w, "Gewicht von " + e.id + " muss größer als 0 sein");
-      if (e.condition !== undefined && !CONDITION.test(e.condition)) err(w, "unbekannte Bedingung " + e.condition);
+      checkCond(w, e.condition);
     }
   }
 
@@ -155,6 +194,45 @@ export function validateData(data) {
     if (!m.name) err(w, "Name fehlt");
     ["hp", "armor", "attack"].forEach(k => { if (typeof m[k] !== "number") err(w, k + " fehlt"); });
     if (!isDice(m.damage)) err(w, "Schaden ist kein Würfel");
+    if (!m.deathText) err(w, "deathText fehlt");
+  }
+
+  for (const it of Object.values(data.items)) {
+    const w = "Gegenstand " + it.id;
+    if (!it.name) err(w, "Name fehlt");
+    checkReq(w, it.req);
+    if (it.type === "weapon") {
+      if (!isDice(it.damage)) err(w, "Schaden ist kein Würfel");
+      if (!["kraft", "geschick"].includes(it.hit)) err(w, "hit muss kraft oder geschick sein");
+    } else if (it.type === "armor") {
+      if (!(Number.isInteger(it.armor) && it.armor > 0)) err(w, "armor braucht eine positive Zahl");
+    } else if (it.type === "consumable") {
+      const u = Object.entries(it.use || {});
+      if (u.length !== 1 || !["heal", "damage", "shield"].includes(u[0][0])) err(w, "use braucht genau heal, damage oder shield");
+      else if (!isDice(u[0][1])) err(w, "use braucht Zahl oder Würfel");
+      if (u.length && u[0][0] !== "heal" && !it.combatOnly) err(w, "damage und shield gehen nur im Kampf (combatOnly)");
+    } else err(w, "unbekannter Typ " + it.type);
+    Object.keys(it.loot || {}).forEach(t => { if (!LOOT[t]) err(w, "unbekannte Beutestufe " + t); });
+  }
+  for (const t of Object.keys(LOOT)) {
+    if (!Object.values(data.items).some(i => i.loot && i.loot[t])) err("Beute " + t, "kein Gegenstand in dieser Stufe");
+  }
+
+  for (const c of Object.values(data.characters)) {
+    const w = "Volk " + c.id;
+    if (!c.name) err(w, "Name fehlt");
+    ATTRS.forEach(a => { if (!(Number.isInteger(c.attrs && c.attrs[a]) && c.attrs[a] >= -1 && c.attrs[a] <= 3)) err(w, "Attribut " + a + " fehlt oder liegt außerhalb −1 bis +3"); });
+    if (!(c.hp > 0)) err(w, "Lebenspunkte fehlen");
+    if (!c.ability || !ATTRS.includes(c.ability.attr) || !c.ability.name) err(w, "Fähigkeit unvollständig");
+    const s = c.start || {};
+    [["weapon", "weapon"], ["armor", "armor"]].forEach(([slot, type]) => {
+      if (!s[slot]) return;
+      const it = data.items[s[slot]];
+      if (!it || it.type !== type) err(w, "Start-" + slot + " " + s[slot] + " passt nicht");
+      else if (!Object.entries(it.req || {}).every(([a, v]) => c.attrs[a] >= v)) err(w, "erfüllt das Mindestattribut von " + it.id + " nicht");
+    });
+    if (!Array.isArray(s.pack) || s.pack.length > 6) err(w, "Start-Rucksack fehlt oder hat mehr als 6 Plätze");
+    else s.pack.forEach(id => { if (!data.items[id]) err(w, "unbekannter Gegenstand " + id); });
   }
 
   const checkOutcome = (w, o) => {
@@ -181,11 +259,14 @@ export function validateData(data) {
     if (!ev.text) err(w, "Text fehlt");
     if (!Array.isArray(ev.options) || !ev.options.length) { err(w, "keine Optionen"); continue; }
     if (ev.options.length > 9) err(w, "mehr als 9 Optionen");
+    if (!ev.options.some(o => !o.condition)) err(w, "braucht mindestens eine Option ohne Bedingung");
     ev.options.forEach((o, i) => {
       const wo = w + ", Option " + (i + 1);
       if (!o.label) err(wo, "Beschriftung fehlt");
+      checkCond(wo, o.condition);
       if (o.check) {
-        if (!ATTRS.includes(o.check.attr)) err(wo, "unbekanntes Attribut " + o.check.attr);
+        if (!CATEGORIES[o.check.category]) err(wo, "unbekannte Kategorie " + o.check.category);
+        if (o.check.attr !== undefined) err(wo, "Proben nennen die Kategorie, nicht das Attribut");
         if (!DCS.includes(o.check.dc)) err(wo, "Schwierigkeit muss 8, 12 oder 16 sein");
         checkOutcome(wo + " (Erfolg)", o.success);
         checkOutcome(wo + " (Fehlschlag)", o.failure);

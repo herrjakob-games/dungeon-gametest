@@ -1,0 +1,18 @@
+[
+  { "id": "knueppel", "name": "Knüppel", "type": "weapon", "damage": "W4", "hit": "kraft", "text": "Ein Stock mit Ambitionen.", "loot": { "tier1": 2 } },
+  { "id": "dolch", "name": "Dolch", "type": "weapon", "damage": "W4", "hit": "geschick", "text": "Klein, spitz, unterschätzt. Wie ein Gnom mit schlechter Laune.", "loot": { "tier1": 2 } },
+  { "id": "kurzschwert", "name": "Kurzschwert", "type": "weapon", "damage": "W6", "hit": "kraft", "req": { "kraft": 0 }, "text": "Kurz, aber ehrlich gemeint.", "loot": { "tier1": 2 } },
+  { "id": "rapier", "name": "Rapier", "type": "weapon", "damage": "W6", "hit": "geschick", "req": { "geschick": 1 }, "text": "Für Leute, die beim Fechten »En garde« sagen.", "loot": { "tier2": 2 } },
+  { "id": "streitaxt", "name": "Streitaxt", "type": "weapon", "damage": "W8", "hit": "kraft", "req": { "kraft": 2 }, "text": "Löst Probleme. Und Türen. Und Tische.", "loot": { "tier2": 2 } },
+  { "id": "elfenklinge", "name": "Elfenklinge", "type": "weapon", "damage": "W8", "hit": "geschick", "req": { "geschick": 3 }, "text": "Leuchtet leicht, wenn Orks in der Nähe sind. Oder wenn sie Hunger hat.", "loot": { "tier2": 1 } },
+  { "id": "kriegshammer", "name": "Kriegshammer", "type": "weapon", "damage": "W10", "hit": "kraft", "req": { "kraft": 3 }, "text": "Nicht für Nägel geeignet. Für alles andere schon.", "loot": { "tier2": 1 } },
+
+  { "id": "lederwams", "name": "Lederwams", "type": "armor", "armor": 1, "text": "Riecht nach Abenteuer. Und nach Kuh.", "loot": { "tier1": 2 } },
+  { "id": "kettenhemd", "name": "Kettenhemd", "type": "armor", "armor": 2, "req": { "kraft": 1 }, "text": "Klirrt bei jedem Schritt. Heimlichkeit ist überbewertet.", "loot": { "tier2": 2 } },
+  { "id": "elfenmantel", "name": "Elfenmantel", "type": "armor", "armor": 2, "req": { "geschick": 2 }, "text": "Leicht wie ein Gedanke, zäh wie eine elfische Diskussion.", "loot": { "tier2": 2 } },
+  { "id": "plattenpanzer", "name": "Plattenpanzer", "type": "armor", "armor": 3, "req": { "kraft": 3 }, "text": "Eine tragbare Burg. Treppen sind ab jetzt Feinde.", "loot": { "tier2": 1 } },
+
+  { "id": "heiltrank", "name": "Heiltrank", "type": "consumable", "use": { "heal": "2W4+2" }, "text": "Schmeckt nach Erdbeere und Reue.", "loot": { "tier1": 4, "tier2": 5 } },
+  { "id": "feuerball", "name": "Feuerball-Schriftrolle", "type": "consumable", "use": { "damage": "2W6" }, "combatOnly": true, "req": { "verstand": 1 }, "text": "Nicht in geschlossenen Räumen benutzen. Also eigentlich nirgends hier.", "loot": { "tier2": 2 } },
+  { "id": "schildrolle", "name": "Schild-Schriftrolle", "type": "consumable", "use": { "shield": 3 }, "combatOnly": true, "req": { "verstand": 2 }, "text": "Erzeugt eine schimmernde Wand. Die Wand ist schüchtern und verschwindet nach dem Kampf.", "loot": { "tier2": 2 } }
+]

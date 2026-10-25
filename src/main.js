@@ -4,13 +4,16 @@ import { generate } from "./generator.js";
 import { state, walkable } from "./state.js";
 import { renderer, scene, camera, zoomBy } from "./scene.js";
 import { buildRoom } from "./roomBuilder.js";
-import { placePlayer } from "./player.js";
+import { placePlayer, setFigure } from "./player.js";
 import { hoverMesh, showHoverTile } from "./markers.js";
 import { moveTo, stopMoving, approachTile, updateMovement } from "./movement.js";
 import { closeDialog, isDialogOpen, isDialogModal, showDialog } from "./dialog.js";
 import { initEvents, startRoomEvent, chestEvent, exitEvent, lockedDoorNote } from "./events.js";
-import { loadData } from "./data.js";
-import { newPlayer, newRun } from "./eventLogic.js";
+import { loadData, DATA } from "./data.js";
+import { newRun } from "./eventLogic.js";
+import { newCharacter } from "./character.js";
+import { renderInventory } from "./inventory.js";
+import { showCharacterSelect, showEndScreen, isScreenOpen } from "./screens.js";
 import { TYPES } from "./roomTypes.js";
 import { ui, minimap, updateHud, drawMinimap, mapRoomAt, setHover } from "./hud.js";
 const THREE = window.THREE;
@@ -33,7 +36,8 @@ function withFade(fn) {
   }, wait);
 }
 
-function startDungeon(dSeed) {
+// Neuer Dungeon auf der aktuellen Ebene. quiet: ohne Begrüßungs-Event (Hintergrund der Volkswahl)
+function startDungeon(dSeed, quiet) {
   state.dungeon = generate(dSeed);
   state.current = state.dungeon.start;
   state.visited = new Set([state.current]);
@@ -41,29 +45,56 @@ function startDungeon(dSeed) {
   state.run = newRun();
   state.backDoor = null;
   state.eventActive = false;
+  state.combat = null;
+  if (state.player) state.player.abilityUsed = false; // Fähigkeit gilt einmal pro Dungeon
   buildRoom(state.current);
   placePlayer([MID, MID], 0);
   ui.seedInput.value = dSeed;
-  startRoomEvent(); // Begrüßungs-Event im Startraum
+  if (!quiet) { state.stats.rooms += 1; startRoomEvent(); } // Begrüßungs-Event im Startraum
 }
 
-// Tod: neuer Zwerg, neuer Dungeon (Permadeath)
+// Neuer Durchlauf: Volk wählen, dann Ebene 1
+function chooseCharacter() {
+  showCharacterSelect((def) => {
+    state.player = newCharacter(def);
+    state.depth = 1;
+    state.stats = { rooms: 0 };
+    setFigure(def.model);
+    renderInventory();
+    withFade(() => startDungeon(randomSeed()));
+  });
+}
+
+// Abstieg: eine Ebene tiefer, Werte und Ausrüstung bleiben
+function descend() {
+  state.depth += 1;
+  withFade(() => startDungeon(randomSeed()));
+}
+
 initEvents({
-  onDeath: () => withFade(() => { state.player = newPlayer(); startDungeon(randomSeed()); })
+  // Tod: Endbildschirm mit Ebene und Todesursache, danach Volkswahl (Permadeath)
+  onDeath: (cause) => {
+    const p = state.player;
+    showEndScreen({ depth: state.depth, cause, volk: p.name, level: p.level, gold: p.gold, rooms: state.stats.rooms }, chooseCharacter);
+  },
+  // Flucht: zurück durch die Tür, durch die der Raum betreten wurde
+  onRetreat: () => { if (state.backDoor) changeRoom(state.backDoor, true); }
 });
 
 const randomSeed = () => 1 + Math.floor(Math.random() * 999998);
 
-// Durch eine Tür in den Nachbarraum; Ankunft an der gegenüberliegenden Tür
-function changeRoom(d) {
+// Durch eine Tür in den Nachbarraum; Ankunft an der gegenüberliegenden Tür.
+// force: auch durch eine verschlossene Tür (Flucht aus dem Kampf)
+function changeRoom(d, force) {
   if (state.transitioning) return;
   const r = state.dungeon.rooms[state.current];
   const target = key(r.x + DIR[d].dx, r.z + DIR[d].dz);
   if (!state.dungeon.rooms[target]) return;
   const locked = state.roomState[state.current].locked;
-  if (locked && locked.has(d)) { lockedDoorNote(d); return; }
+  if (!force && locked && locked.has(d)) { lockedDoorNote(d); return; }
   withFade(() => {
     const first = !state.visited.has(target);
+    if (first) state.stats.rooms += 1;
     state.current = target;
     state.backDoor = DIR[d].opp;
     state.visited.add(target);
@@ -85,7 +116,7 @@ function nearestFreeToCenter() {
 }
 
 function travelTo(k) {
-  if (state.transitioning || k === state.current || !state.visited.has(k) || isDialogOpen()) return;
+  if (state.transitioning || k === state.current || !state.visited.has(k) || isDialogOpen() || isScreenOpen()) return;
   withFade(() => {
     state.current = k;
     state.backDoor = null;
@@ -192,7 +223,7 @@ renderer.domElement.addEventListener("pointerup", (ev) => {
   } else if (kind === "chest") {
     approachTile(h.obj.userData.tile, chestEvent);
   } else if (kind === "exit") {
-    approachTile(h.obj.userData.tile, () => exitEvent(() => withFade(() => startDungeon(randomSeed()))));
+    approachTile(h.obj.userData.tile, () => exitEvent(descend));
   } else if (h.tile && walkable(h.tile[0], h.tile[1])) {
     moveTo(h.tile[0], h.tile[1]);
   }
@@ -209,8 +240,12 @@ try {
   showDialog("Daten fehlen", "Die Spieldaten aus dem Ordner data/ konnten nicht geladen werden. Läuft das Spiel über einen Server (npm start)?", [], { modal: true });
   throw e;
 }
-startDungeon(randomSeed());
+// Im Hintergrund steht schon ein Dungeon, davor die Volkswahl
+state.player = newCharacter(Object.values(DATA.characters)[0]);
+startDungeon(randomSeed(), true);
 updateHud();
+renderInventory();
+chooseCharacter();
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawMinimap);
 
 // ---------- Spielschleife ----------

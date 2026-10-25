@@ -1,25 +1,21 @@
-// Event-Ablauf im Textfenster: Events aus data/events.json anzeigen, Proben würfeln, Effekte anwenden.
-// Die Regeln selbst stehen in eventLogic.js, hier geht es nur um Anzeige und Ablauf.
+// Event-Ablauf im Textfenster: Events aus data/events.json anzeigen, Proben würfeln, Effekte anwenden,
+// Kämpfe starten, Fundstücke einpacken, Stufenaufstiege anbieten.
+// Die Regeln selbst stehen in eventLogic.js, character.js und combat.js.
 import { DIR } from "./config.js";
 import { state } from "./state.js";
 import { DATA } from "./data.js";
 import { TYPES } from "./roomTypes.js";
-import { ATTR_NAMES, pickEvent, doCheck, applyEffects, releaseIfTrapped } from "./eventLogic.js";
+import { CATEGORY_NAMES, CATEGORIES, pickEvent, doCheck, applyEffects, releaseIfTrapped, visibleOptions } from "./eventLogic.js";
+import { ATTR_NAMES, addItem, levelUp, raisableAttrs, pendingLevelUps, LEVEL_HP } from "./character.js";
 import { showDialog, closeDialog } from "./dialog.js";
 import { refreshLocks } from "./roomBuilder.js";
 import { updateStats } from "./hud.js";
+import { renderInventory } from "./inventory.js";
+import { runCombat } from "./combatUI.js";
+import { rollHtml, maybeRescue, signShort } from "./checkUI.js";
 
-let onDeath = () => {};
-export function initEvents(hooks) { onDeath = hooks.onDeath; }
-
-const sign = (n) => (n < 0 ? "− " + Math.abs(n) : "+ " + n);
-const signShort = (n) => (n < 0 ? "−" + Math.abs(n) : "+" + n);
-
-// Würfelzeile, z. B. "Geschick-Probe · W20: 9 + 1 = 10 gegen SG 12 · Erfolg"
-function rollHtml(r, against, okText, failText) {
-  return ATTR_NAMES[r.attr] + "-Probe · W20: " + r.d + " " + sign(r.bonus) + " = " + r.total + " gegen " + against +
-    ' · <strong class="' + (r.ok ? "ok" : "fail") + '">' + (r.ok ? okText : failText) + "</strong>";
-}
+let hooks = { onDeath: () => {}, onRetreat: () => {} };
+export function initEvents(h) { hooks = h; }
 
 function lineHtml(l) {
   switch (l.type) {
@@ -27,18 +23,17 @@ function lineHtml(l) {
     case "heal": return l.amount ? '<span class="good">+' + l.amount + " LP</span>" : "Lebenspunkte sind schon voll";
     case "loot": return '<span class="gold">+' + l.amount + " Gold</span>";
     case "gainXp": return "+" + l.amount + " Erfahrung";
-    case "combat": return "Kampf gegen " + l.monster + ": " +
-      rollHtml(l.roll, "Rüstung " + l.roll.dc, "Sieg", "Niederlage") +
-      (l.amount ? ' · <span class="bad">−' + l.amount + " LP</span>" : "");
     case "lockDoor": return "Die Tür nach " + DIR[l.dir].name + " ist verschlossen.";
     case "unlockDoor": return "Die Tür nach " + DIR[l.dir].name + " ist wieder offen.";
   }
   return "";
 }
 
-const optionLabel = (o) => o.check
-  ? o.label + " (" + ATTR_NAMES[o.check.attr] + " " + signShort(state.player.attrs[o.check.attr]) + ", SG " + o.check.dc + ")"
-  : o.label;
+const optionLabel = (o) => {
+  if (!o.check) return o.label;
+  const attr = CATEGORIES[o.check.category];
+  return o.label + " (" + CATEGORY_NAMES[o.check.category] + ", " + ATTR_NAMES[attr] + " " + signShort(state.player.attrs[attr]) + ", SG " + o.check.dc + ")";
+};
 
 // Türen des aktuellen Raums, wie eventLogic sie braucht
 function roomCtx() {
@@ -46,11 +41,12 @@ function roomCtx() {
   if (!rs.locked) rs.locked = new Set();
   return { doors: state.dungeon.rooms[state.current].doors, locked: rs.locked, back: state.backDoor };
 }
+const effectCtx = () => ({ player: state.player, run: state.run, items: DATA.items, room: roomCtx() });
 
 // Beim ersten Betreten: gegen die Event-Chance des Raumtyps würfeln. Ergebnis: true, wenn ein Event startet.
 export function startRoomEvent() {
   const type = TYPES[state.dungeon.rooms[state.current].type];
-  const id = pickEvent(type, state.run, Math.random);
+  const id = pickEvent(type, state.run, Math.random, state.player);
   if (!id) return false;
   state.run.usedOnce.add(id);
   runEvent(id);
@@ -64,42 +60,113 @@ export function startRoomEvent() {
 export function runEvent(id, onOutcome) {
   const ev = DATA.events[id];
   state.eventActive = true;
-  showDialog(ev.title, ev.text, ev.options.map(o => ({ label: optionLabel(o), pick: () => choose(ev, o, onOutcome) })), { modal: true });
+  const opts = visibleOptions(ev, state.run, state.player);
+  showDialog(ev.title, ev.text, opts.map(o => ({ label: optionLabel(o), pick: () => choose(ev, o, onOutcome) })), { modal: true });
 }
 
 function choose(ev, option, onOutcome) {
-  let outcome = option, roll = null;
-  if (option.check) {
-    const r = doCheck(state.player, option.check, Math.random);
-    roll = rollHtml(r, "SG " + r.dc, "Erfolg", "Misslungen");
-    outcome = r.ok ? option.success : option.failure;
-  }
-  const res = applyEffects(outcome.effects, { player: state.player, run: state.run, monsters: DATA.monsters, room: roomCtx() }, Math.random);
+  if (!option.check) { resolve(ev, option, null, onOutcome); return; }
+  const r = doCheck(state.player, option.check, Math.random);
+  maybeRescue(ev.title, r, null, () => resolve(ev, r.ok ? option.success : option.failure, rollHtml(r), onOutcome));
+}
+
+function resolve(ev, outcome, roll, onOutcome) {
+  const res = applyEffects(outcome.effects, effectCtx(), Math.random);
+  show(ev, outcome, res, roll, onOutcome, []);
+}
+
+// Ergebnis anzeigen und dann weiter: Kampf, Fundstücke, Folge-Event oder Ende
+function show(ev, outcome, res, roll, onOutcome, before) {
   refreshLocks();
   updateStats();
   if (onOutcome) onOutcome(outcome, res);
-  const fx = res.lines.map(lineHtml).filter(Boolean);
+  const fx = before.concat(res.lines.map(lineHtml).filter(Boolean), res.items.map(id => "Gefunden: " + DATA.items[id].name));
 
   if (res.died) {
-    fx.push("Deine Lebenspunkte sind auf 0. Ein neuer Zwerg beginnt einen neuen Dungeon.");
-    showDialog("Das war's", outcome.text, [{ label: "Neuer Durchlauf", pick: () => { finish(true); onDeath(); } }], { roll, fx, modal: true });
+    showDialog(ev.title, outcome.text, [{ label: "Weiter", pick: () => die(eventCause(ev)) }], { roll, fx, modal: true });
     return;
   }
-  const next = outcome.next ? () => runEvent(outcome.next, onOutcome) : () => finish();
-  if (!outcome.text && !fx.length && !roll) { next(); return; }
-  showDialog(ev.title, outcome.text, [{ label: "Weiter", pick: next }], { roll, fx, modal: true });
+  const next = () => {
+    if (res.combat) { fight(ev, outcome, res.combat, onOutcome); return; }
+    pickUp(res.items.slice(), () => (outcome.next ? runEvent(outcome.next, onOutcome) : finish()));
+  };
+  if (res.combat) {
+    showDialog(ev.title, outcome.text, [{ label: "Kämpfen", pick: next }], { roll, fx, modal: true });
+  } else if (!outcome.text && !fx.length && !roll) {
+    next();
+  } else {
+    showDialog(ev.title, outcome.text, [{ label: "Weiter", pick: next }], { roll, fx, modal: true });
+  }
 }
 
-function finish(died) {
+function fight(ev, outcome, combat, onOutcome) {
+  runCombat(combat.monster, {
+    onWin: (lines, roll) => {
+      const res = applyEffects(combat.rest, effectCtx(), Math.random);
+      show(ev, { text: "Der Kampf ist vorbei.", next: outcome.next }, res, roll, onOutcome, lines);
+    },
+    onFlee: () => {
+      state.eventActive = false;
+      closeDialog();
+      hooks.onRetreat();
+    },
+    onDeath: (monster) => die(monster.deathText)
+  });
+}
+
+// Fundstücke in den Rucksack. Ist er voll, entscheidet der Spieler, was liegen bleibt.
+function pickUp(list, done) {
+  if (!list.length) { done(); return; }
+  const id = list.shift();
+  const p = state.player;
+  if (addItem(p, id)) { renderInventory(); pickUp(list, done); return; }
+  const item = DATA.items[id];
+  const opts = p.pack.map((old, i) => ({
+    label: DATA.items[old].name + " liegen lassen",
+    pick: () => { p.pack[i] = id; renderInventory(); pickUp(list, done); }
+  }));
+  opts.push({ label: item.name + " liegen lassen", pick: () => pickUp(list, done) });
+  showDialog("Rucksack voll", "Für " + item.name + " ist kein Platz mehr. Was bleibt hier liegen?", opts, { modal: true });
+}
+
+function finish() {
   state.eventActive = false;
   closeDialog();
-  if (died) return;
   const opened = releaseIfTrapped(roomCtx());
-  if (opened) {
-    refreshLocks();
-    showDialog("Glück gehabt", "Die Tür nach " + DIR[opened].name + " knarrt von selbst wieder auf. Eingesperrt wird hier niemand.",
-      [{ label: "Weiter", pick: closeDialog }]);
-  }
+  if (opened) refreshLocks();
+  levelUps(() => {
+    if (opened) {
+      showDialog("Glück gehabt", "Die Tür nach " + DIR[opened].name + " knarrt von selbst wieder auf. Eingesperrt wird hier niemand.",
+        [{ label: "Weiter", pick: closeDialog }]);
+    }
+  });
+}
+
+// Stufenaufstieg: für jede erreichte Stufe ein Attribut wählen (+1, höchstens +3) und +3 Lebenspunkte
+function levelUps(done) {
+  const p = state.player;
+  if (pendingLevelUps(p) <= 0) { done(); return; }
+  const next = p.level + 1;
+  const choices = raisableAttrs(p);
+  const apply = (attr) => { levelUp(p, attr); updateStats(); closeDialog(); levelUps(done); };
+  const opts = choices.length
+    ? choices.map(a => ({ label: ATTR_NAMES[a] + " " + signShort(p.attrs[a]) + " → " + signShort(p.attrs[a] + 1), pick: () => apply(a) }))
+    : [{ label: "Weiter", pick: () => apply(null) }];
+  const text = choices.length
+    ? "Du erreichst Stufe " + next + ". Du bekommst +" + LEVEL_HP + " Lebenspunkte. Welches Attribut steigt um 1?"
+    : "Du erreichst Stufe " + next + ". Alle Attribute sind schon auf +3, dafür gibt es +" + LEVEL_HP + " Lebenspunkte.";
+  showDialog("Stufenaufstieg!", text, opts, { modal: true });
+}
+
+function eventCause(ev) {
+  const list = DATA.texts.deathByEvent || ["»{title}« war dein Ende."];
+  return list[Math.floor(Math.random() * list.length)].replace("{title}", ev.title);
+}
+
+function die(cause) {
+  state.eventActive = false;
+  closeDialog();
+  hooks.onDeath(cause);
 }
 
 // Die Truhe im Raum: ein Event aus den Daten. Sie gilt als geöffnet, sobald sie Beute gegeben hat.
@@ -114,7 +181,7 @@ export function chestEvent() {
 // Der Torbogen im Ausgangsraum (feste Interaktion, kein Event aus der Tabelle)
 export function exitEvent(onDescend) {
   showDialog("Der Abstieg", "Ein Torbogen voll kaltem, blauem Schimmer. Dahinter führen Stufen nach unten. Von dort riecht es nach Bratkartoffeln.", [
-    { label: "Hinabsteigen (neuer Dungeon)", pick: onDescend },
+    { label: "Hinabsteigen (Ebene " + (state.depth + 1) + ")", pick: onDescend },
     { label: "Noch nicht", pick: closeDialog }
   ]);
 }
