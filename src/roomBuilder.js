@@ -32,6 +32,7 @@ export function buildRoom(id) {
   state.lidPivot = null;
   state.openLid = false;
   state.hovered = null;
+  state.doorLocks = {};
   if (!state.roomState[id]) state.roomState[id] = {};
   setRoomSeed(room.seed);
 
@@ -41,6 +42,18 @@ export function buildRoom(id) {
   [[tw(3), true], [tw(11), true], [tw(3), false], [tw(11), false]].forEach(([p, north]) => makeTorch(p, north, type.torch));
   furnish(room.type, id);
   scatterRubble();
+  refreshLocks();
+}
+
+// Schloss und Riegel an verschlossenen Türen zeigen (Zustand aus state.roomState[...].locked)
+export function refreshLocks() {
+  const locked = (state.roomState[state.current] || {}).locked;
+  Object.entries(state.doorLocks).forEach(([d, g]) => {
+    const on = !!(locked && locked.has(d));
+    g.visible = on;
+    g.userData.glow.color.setHex(on ? 0xd04a32 : 0xe9a640);
+    g.userData.glow.emissive.setHex(on ? 0xd04a32 : 0xe9a640);
+  });
 }
 
 // ---------- Boden und Wände ----------
@@ -97,6 +110,7 @@ function makeDoor(d) {
     g.add(box(0.18, 0.7, 0.6, frame, 0.41, 0.35, 0));
   }
   g.add(box(0.7, 0.05, 0.55, glowMat, 0, 0.03, 0));
+  g.add(makeLock(d, tall, glowMat));
   if (d === "N") g.position.set(0, 0, -E);
   if (d === "S") g.position.set(0, 0, E);
   if (d === "W") { g.position.set(-E, 0, 0); g.rotation.y = Math.PI / 2; }
@@ -104,6 +118,25 @@ function makeDoor(d) {
   g.userData = { kind: "door", dir: d, name: info.name, approach: info.approach, hoverMats, baseGlow: glowMat };
   add(g);
   state.interactables.push(g);
+}
+
+// Riegel mit Vorhängeschloss auf der Raumseite der Tür, zunächst unsichtbar
+function makeLock(d, tall, glow) {
+  const lock = new THREE.Group();
+  const metal = mat(0xc9c2b4, { metalness: 0.5, roughness: 0.45 });
+  const y = tall ? 1.2 : 0.55;
+  lock.add(box(0.95, 0.18, 0.14, mat(0x5a3820), 0, y, 0));
+  lock.add(box(0.4, 0.34, 0.14, metal, 0, y - 0.22, 0.08));
+  const shackle = new THREE.Mesh(new THREE.TorusGeometry(0.13, 0.04, 6, 10, Math.PI), metal);
+  shackle.position.set(0, y - 0.06, 0.08);
+  lock.add(shackle);
+  // Bei Nord- und Westtür zeigt die lokale z-Achse in den Raum, bei Süd und Ost nach außen
+  lock.position.z = d === "N" || d === "W" ? 0.05 : -0.32;
+  if (d === "S" || d === "E") lock.rotation.y = Math.PI;
+  lock.visible = false;
+  lock.userData.glow = glow;
+  state.doorLocks[d] = lock;
+  return lock;
 }
 
 function makeTorch(p, alongNorth, color) {

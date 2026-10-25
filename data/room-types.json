@@ -1,0 +1,86 @@
+[
+  {
+    "id": "start",
+    "name": "Die Vorkammer",
+    "floor": { "h": 0.07, "s": 0.12 },
+    "torch": "#ff9a3c",
+    "eventChance": 1,
+    "events": [
+      { "id": "start_schild", "weight": 3 },
+      { "id": "start_zettel", "weight": 3 },
+      { "id": "start_dehnen", "weight": 2 }
+    ]
+  },
+  {
+    "id": "halle",
+    "name": "Die Säulenhalle",
+    "floor": { "h": 0.08, "s": 0.06 },
+    "torch": "#ff9a3c",
+    "eventChance": 0.4,
+    "events": [
+      { "id": "halle_saeule", "weight": 3 },
+      { "id": "halle_echo", "weight": 3 },
+      { "id": "halle_fliese", "weight": 2 }
+    ]
+  },
+  {
+    "id": "gruft",
+    "name": "Die Gruft",
+    "floor": { "h": 0.32, "s": 0.06 },
+    "torch": "#7fdc9a",
+    "eventChance": 0.7,
+    "events": [
+      { "id": "gruft_sarkophag", "weight": 5 },
+      { "id": "gruft_stimme", "weight": 3 },
+      { "id": "gruft_kerze", "weight": 3, "once": true, "condition": "notFlag:grabkerze" }
+    ]
+  },
+  {
+    "id": "wache",
+    "name": "Die Wachstube",
+    "floor": { "h": 0.05, "s": 0.20 },
+    "torch": "#ffb060",
+    "eventChance": 0.7,
+    "events": [
+      { "id": "wache_goblin", "weight": 4 },
+      { "id": "wache_karten", "weight": 3 },
+      { "id": "wache_kerze", "weight": 6, "once": true, "condition": "flag:grabkerze" }
+    ]
+  },
+  {
+    "id": "vorrat",
+    "name": "Die Vorratskammer",
+    "floor": { "h": 0.09, "s": 0.16 },
+    "torch": "#ff9a3c",
+    "eventChance": 0.5,
+    "events": [
+      { "id": "vorrat_kaese", "weight": 2, "once": true },
+      { "id": "vorrat_ratte", "weight": 4 },
+      { "id": "vorrat_brot", "weight": 3 }
+    ]
+  },
+  {
+    "id": "schatz",
+    "name": "Die Schatzkammer",
+    "floor": { "h": 0.11, "s": 0.26 },
+    "torch": "#ffc85a",
+    "eventChance": 0.8,
+    "events": [
+      { "id": "schatz_mimik", "weight": 3 },
+      { "id": "schatz_tuer", "weight": 3, "once": true },
+      { "id": "schatz_steuer", "weight": 2, "once": true }
+    ]
+  },
+  {
+    "id": "exit",
+    "name": "Der Abstieg",
+    "floor": { "h": 0.58, "s": 0.08 },
+    "torch": "#9fd0ff",
+    "eventChance": 0.5,
+    "events": [
+      { "id": "exit_tuersteher", "weight": 3 },
+      { "id": "exit_souvenir", "weight": 3 },
+      { "id": "exit_bank", "weight": 2 }
+    ]
+  }
+]

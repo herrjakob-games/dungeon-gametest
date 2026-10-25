@@ -1,0 +1,368 @@
+[
+  {
+    "id": "chest",
+    "type": "treasure",
+    "title": "Die Truhe",
+    "text": "Eine Truhe mit auffällig vielen Kratzspuren am Schloss. Offenbar haben es schon andere versucht.",
+    "options": [
+      {
+        "label": "Schloss knacken",
+        "check": { "attr": "geschick", "dc": 12 },
+        "success": { "text": "Klick. Darin liegen ein paar Goldmünzen und eine einzelne Socke. Nur eine.", "effects": [{ "loot": "tier1" }] },
+        "failure": { "text": "Der Dietrich verbiegt sich. Die Truhe wirkt jetzt irgendwie selbstzufrieden. (Du kannst es nochmal versuchen.)" }
+      },
+      { "label": "Liegen lassen" }
+    ]
+  },
+  {
+    "id": "chest_empty",
+    "type": "treasure",
+    "title": "Die Truhe",
+    "text": "Leer. Bis auf einen Zettel: »Hier war schon jemand. Gezeichnet: jemand.«",
+    "options": [{ "label": "Weiter" }]
+  },
+
+  {
+    "id": "start_schild",
+    "type": "choice",
+    "title": "Ein Begrüßungsschild",
+    "text": "An der Wand hängt ein Holzschild: »Wilkommen im Dunjon. Bitte keine Drachen füttern.« Darunter hat jemand »Zu spät« gekritzelt.",
+    "options": [
+      {
+        "label": "Die Rechtschreibung korrigieren",
+        "check": { "attr": "verstand", "dc": 8 },
+        "success": { "text": "Du korrigierst zwei Fehler und fühlst dich sehr gebildet.", "effects": [{ "gainXp": 2 }] },
+        "failure": { "text": "Du machst es schlimmer. Jetzt steht da »Wilkomen im Dunjohn«. Das Schild wirkt gekränkt." }
+      },
+      { "label": "Weitergehen", "text": "Drachen füttern stand ohnehin nicht auf deiner Liste." }
+    ]
+  },
+  {
+    "id": "start_zettel",
+    "type": "choice",
+    "title": "Ein Zettel",
+    "text": "Ein Vorgänger hat einen Zettel hinterlassen: »Tipp 1: Nicht sterben. Tipp 2: siehe Rückseite.« Die Rückseite ist abgerissen.",
+    "options": [
+      {
+        "label": "Nach der Rückseite suchen",
+        "check": { "attr": "geschick", "dc": 8 },
+        "success": { "text": "Unter einem Stein liegt sie: »Tipp 2: Truhen beißen manchmal.« Daneben ein paar vergessene Münzen.", "effects": [{ "loot": "tier1" }] },
+        "failure": { "text": "Du findest nur Staub und eine tote Spinne. Die Spinne hatte auch keinen Tipp." }
+      },
+      { "label": "Tipp 1 beherzigen und losgehen", "text": "Ein solider Plan.", "effects": [{ "gainXp": 1 }] }
+    ]
+  },
+  {
+    "id": "start_dehnen",
+    "type": "choice",
+    "title": "Aufwärmen",
+    "text": "Bevor es losgeht: Ein paar Dehnübungen? Dein Knie knackt schon beim Gedanken daran.",
+    "options": [
+      {
+        "label": "Gründlich dehnen",
+        "check": { "attr": "geschick", "dc": 8 },
+        "success": { "text": "Geschmeidig wie ein Zwerg nur sein kann. Also mäßig.", "effects": [{ "gainXp": 1 }] },
+        "failure": { "text": "Irgendwas im Rücken macht »Plopp«. Das war bestimmt nicht wichtig.", "effects": [{ "damage": 1 }] }
+      },
+      { "label": "Zwerge dehnen sich nicht", "text": "Richtig so. Der Bart ist geschmeidig genug." }
+    ]
+  },
+
+  {
+    "id": "halle_saeule",
+    "type": "npc",
+    "title": "Die wackelnde Säule",
+    "text": "Ein Mann in Rüstung stemmt sich gegen eine wackelnde Säule. »Halt mal ganz kurz. Wirklich nur ganz kurz.«",
+    "options": [
+      {
+        "label": "Die Säule halten",
+        "check": { "attr": "kraft", "dc": 12 },
+        "success": { "text": "Er kommt nach zehn Minuten mit einem Butterbrot zurück und bedankt sich mit ein paar Münzen.", "effects": [{ "loot": "tier1" }, { "gainXp": 3 }] },
+        "failure": { "text": "Die Säule gewinnt. Ein Stück Decke landet auf deinem Helm.", "effects": [{ "damage": "W4" }] }
+      },
+      { "label": "»Nein danke.«", "text": "Er seufzt. Die Säule auch." }
+    ]
+  },
+  {
+    "id": "halle_echo",
+    "type": "choice",
+    "title": "Das freche Echo",
+    "text": "Du räusperst dich. Das Echo antwortet: »Selber räuspern!«",
+    "options": [
+      {
+        "label": "Das Echo überlisten",
+        "check": { "attr": "verstand", "dc": 12 },
+        "success": { "text": "Du rufst »Das Echo ist doof!«. Es muss es wiederholen und schweigt danach beleidigt.", "effects": [{ "gainXp": 4 }] },
+        "failure": { "text": "Das Echo gewinnt die Diskussion. Es hat einfach immer das letzte Wort.", "effects": [{ "damage": 1 }] }
+      },
+      { "label": "Ignorieren", "text": "»Ignorieren!«, ruft das Echo. Du ignorierst auch das." }
+    ]
+  },
+  {
+    "id": "halle_fliese",
+    "type": "trap",
+    "title": "Die verdächtige Fliese",
+    "text": "Eine Bodenfliese trägt ein kleines Schild: »Bitte nicht drauftreten.«",
+    "options": [
+      {
+        "label": "Vorsichtig drumherum",
+        "check": { "attr": "geschick", "dc": 8 },
+        "success": { "text": "Du schleichst vorbei. Die Fliese wirkt enttäuscht.", "effects": [{ "gainXp": 2 }] },
+        "failure": { "text": "Du trittst natürlich drauf. Aus der Wand fliegt ein Kissen. Dann ein Stein.", "effects": [{ "damage": "W4" }] }
+      },
+      { "label": "Draufspringen, aus Prinzip", "text": "Aus der Wand fliegt ein Stein. Prinzipien sind teuer.", "effects": [{ "damage": 2 }] }
+    ]
+  },
+
+  {
+    "id": "gruft_sarkophag",
+    "type": "choice",
+    "title": "Der Sarkophag",
+    "text": "Ein steinerner Sarkophag. Der Deckel ist einen Spalt verschoben. Von innen klopft es. Höflich.",
+    "options": [
+      {
+        "label": "Deckel aufstemmen",
+        "check": { "attr": "kraft", "dc": 12 },
+        "success": { "text": "Darin liegt ein Häufchen Münzen und ein Zettel: »Bitte nicht stören.« Zu spät.", "effects": [{ "loot": "tier1" }, { "gainXp": 3 }] },
+        "failure": { "text": "Der Deckel rutscht ab. Knochen regen sich, ein Skelett setzt sich auf und wirkt verärgert.", "effects": [{ "combat": "skeleton" }, { "gainXp": 3 }] }
+      },
+      { "label": "Zurückklopfen", "text": "Es klopft zweimal zurück. Ihr habt jetzt eine Art Beziehung." },
+      { "label": "Weitergehen" }
+    ]
+  },
+  {
+    "id": "gruft_stimme",
+    "type": "npc",
+    "title": "Die flüsternde Stimme",
+    "text": "Aus der Wand flüstert es: »Psst ... willst du ein Geheimnis hören?«",
+    "options": [
+      {
+        "label": "Zuhören",
+        "check": { "attr": "verstand", "dc": 12 },
+        "success": { "text": "Das Geheimnis ist ein Rezept für Pilzsuppe. Erstaunlich gut. Du fühlst dich gestärkt.", "effects": [{ "heal": 3 }, { "gainXp": 2 }] },
+        "failure": { "text": "Die Stimme erzählt eine halbe Stunde lang von ihrer Schwiegermutter. Du hast Kopfschmerzen.", "effects": [{ "damage": 1 }] }
+      },
+      { "label": "»Nein.«", "text": "Die Stimme schmollt hörbar." }
+    ]
+  },
+  {
+    "id": "gruft_kerze",
+    "type": "choice",
+    "title": "Die Grabkerze",
+    "text": "Auf einem Grab brennt eine dicke Kerze. Sie riecht nach Lavendel und schlechtem Gewissen.",
+    "options": [
+      { "label": "Kerze mitnehmen", "text": "Du steckst sie ein. Irgendwo seufzt ein Geist.", "effects": [{ "setFlag": "grabkerze" }] },
+      {
+        "label": "Ein Gebet sprechen",
+        "check": { "attr": "verstand", "dc": 8 },
+        "success": { "text": "Du kennst kein Gebet und summst einfach. Es scheint zu reichen.", "effects": [{ "gainXp": 2 }] },
+        "failure": { "text": "Du verwechselst das Gebet mit einem Trinklied. Aus dem Dunkel fliegt ein Knochen nach dir.", "effects": [{ "damage": 1 }] }
+      }
+    ]
+  },
+
+  {
+    "id": "wache_goblin",
+    "type": "combat",
+    "title": "Die schlafende Wache",
+    "text": "Eine Goblin-Wache schnarcht auf einem Hocker. Auf ihrem Bauch liegt ein Pausenbrot.",
+    "options": [
+      {
+        "label": "Vorbeischleichen",
+        "check": { "attr": "geschick", "dc": 12 },
+        "success": { "text": "Du schleichst vorbei und klaust nebenbei das Pausenbrot. Leberwurst.", "effects": [{ "heal": 2 }, { "gainXp": 3 }] },
+        "failure": { "text": "Du trittst auf eine Quietscheente. Wer legt die hierhin?! Die Wache springt auf.", "effects": [{ "combat": "goblin" }, { "gainXp": 3 }] }
+      },
+      { "label": "Angreifen", "text": "Du weckst sie mit einem Schlachtruf. Fair ist fair.", "effects": [{ "combat": "goblin" }, { "gainXp": 3 }] }
+    ]
+  },
+  {
+    "id": "wache_karten",
+    "type": "npc",
+    "title": "Die Kartenrunde",
+    "text": "Zwei Wachen spielen Karten. »Spielst du mit? Einsatz ist egal, wir haben eh kein Geld.«",
+    "options": [
+      {
+        "label": "Mitspielen",
+        "check": { "attr": "verstand", "dc": 12 },
+        "success": { "text": "Du gewinnst. Sie hatten doch Geld.", "effects": [{ "loot": "tier1" }, { "gainXp": 2 }] },
+        "failure": { "text": "Du verlierst. Die Regeln ändern sich jede Runde, und zwar immer gegen dich." }
+      },
+      { "label": "Höflich ablehnen", "text": "»Spielverderber«, murmeln beide. Dann spielen sie weiter." }
+    ]
+  },
+  {
+    "id": "wache_kerze",
+    "type": "npc",
+    "title": "Der Lavendel-Verdacht",
+    "text": "Eine Goblin-Wache schnuppert. »Riecht das hier nach Lavendel? Hast du etwa Omas Grabkerze geklaut?«",
+    "options": [
+      { "label": "Die Kerze zurückgeben", "text": "Die Wache nickt gerührt. »Oma wird sich freuen.« Oma ist tot. Trotzdem schön.", "effects": [{ "gainXp": 5 }] },
+      {
+        "label": "Abstreiten",
+        "check": { "attr": "verstand", "dc": 16 },
+        "success": { "text": "»Lavendel? Das ist mein Parfüm.« Sie glaubt dir. Erstaunlich.", "effects": [{ "gainXp": 3 }] },
+        "failure": { "text": "Die Kerze fällt dir aus der Tasche. Brennend. Die Wache greift an.", "effects": [{ "combat": "goblin" }, { "gainXp": 2 }] }
+      }
+    ]
+  },
+
+  {
+    "id": "vorrat_kaese",
+    "type": "npc",
+    "title": "Der sprechende Käse",
+    "text": "Ein Käserad spricht dich an: »Ich bin ein seltener Höhlenkäse. Iss mich nicht. Oder doch. Ich bin hin- und hergerissen.«",
+    "options": [
+      { "label": "Ein Stück probieren", "text": "Würzig. Der Käse sagt »Au«, aber auch »Danke«.", "effects": [{ "heal": 3 }] },
+      {
+        "label": "Ein Gespräch führen",
+        "check": { "attr": "verstand", "dc": 8 },
+        "success": { "text": "Er verrät dir, wo die Wachen ihr Gold verstecken. In ihm. Gegen Gold hat er nichts.", "effects": [{ "loot": "tier1" }, { "gainXp": 2 }] },
+        "failure": { "text": "Ihr redet aneinander vorbei. Er redet über Reifung, du über Äxte." }
+      }
+    ]
+  },
+  {
+    "id": "vorrat_ratte",
+    "type": "combat",
+    "title": "Die Ratte im Mehlsack",
+    "text": "Ein Mehlsack bewegt sich. Heraus schaut eine Ratte. Eine sehr große Ratte. Sie trägt das Mehl wie Puder.",
+    "options": [
+      { "label": "Kämpfen", "text": "Die Ratte zieht eine Augenbraue hoch. Sie hat Augenbrauen.", "effects": [{ "combat": "rat" }, { "gainXp": 2 }] },
+      {
+        "label": "Mit Käse ablenken",
+        "check": { "attr": "geschick", "dc": 8 },
+        "success": { "text": "Du wirfst einen Brocken in die Ecke. Die Ratte ist weg, der Weg ist frei.", "effects": [{ "gainXp": 2 }] },
+        "failure": { "text": "Du triffst die Ratte am Kopf. Sie nimmt das persönlich.", "effects": [{ "combat": "rat" }, { "gainXp": 2 }] }
+      }
+    ]
+  },
+  {
+    "id": "vorrat_brot",
+    "type": "trap",
+    "title": "Das warme Brot",
+    "text": "Auf einem Regal liegt ein Brot. Es ist warm. Hier unten backt niemand.",
+    "options": [
+      {
+        "label": "Erst daran riechen",
+        "check": { "attr": "verstand", "dc": 12 },
+        "success": { "text": "Es riecht nach Brot. Es ist Brot. Wunder gibt es.", "effects": [{ "heal": 4 }] },
+        "failure": { "text": "Es riecht nach Brot. Es ist ein Mimik-Brötchen. Es beißt zurück.", "effects": [{ "damage": "W4" }] }
+      },
+      { "label": "Liegen lassen", "text": "Sicher ist sicher. Das Brot wirkt erleichtert." }
+    ]
+  },
+
+  {
+    "id": "schatz_mimik",
+    "type": "combat",
+    "title": "Die lächelnde Truhe",
+    "text": "Mitten im Raum steht eine Truhe. Sie hat Zähne. Und sie lächelt.",
+    "options": [
+      { "label": "Angreifen", "text": "Du hebst die Axt. Die Truhe hört auf zu lächeln.", "effects": [{ "combat": "mimic" }, { "loot": "tier2" }, { "gainXp": 5 }] },
+      {
+        "label": "Zurücklächeln",
+        "check": { "attr": "verstand", "dc": 12 },
+        "success": { "text": "Die Truhe wird rot und klappt verlegen auf.", "effects": [{ "loot": "tier2" }, { "gainXp": 3 }] },
+        "failure": { "text": "Dein Lächeln ist schief. Die Truhe beißt.", "effects": [{ "damage": "W6" }] }
+      },
+      { "label": "Langsam rückwärts gehen", "text": "Die Truhe winkt dir mit dem Deckel nach." }
+    ]
+  },
+  {
+    "id": "schatz_tuer",
+    "type": "trap",
+    "title": "Die zufallende Tür",
+    "text": "Kaum bist du drin, hörst du hinter dir ein Knarren. Dann ein sehr endgültiges Klacken.",
+    "options": [
+      { "label": "Umdrehen", "text": "Die Tür ist zu. Sehr zu.", "effects": [{ "lockDoor": "back" }], "next": "schatz_raetsel" }
+    ]
+  },
+  {
+    "id": "schatz_raetsel",
+    "type": "trap",
+    "title": "Das Rätselschloss",
+    "text": "Am Schloss sind drei Drehräder: Krone, Krone und ein leeres Feld. Darüber steht: »Was kommt nach Krone, Krone?«",
+    "options": [
+      {
+        "label": "Das Rätsel lösen",
+        "check": { "attr": "verstand", "dc": 12 },
+        "success": { "text": "Krone! Natürlich. Die Tür springt auf, und daneben öffnet sich ein Geheimfach.", "effects": [{ "unlockDoor": "back" }, { "loot": "tier1" }, { "gainXp": 4 }] },
+        "failure": { "text": "Falsch. Ein Pfeil zischt knapp an dir vorbei. Knapp ist relativ.", "effects": [{ "damage": "W4" }], "next": "schatz_raetsel" }
+      },
+      {
+        "label": "Die Tür eintreten",
+        "check": { "attr": "kraft", "dc": 16 },
+        "success": { "text": "Die Tür fliegt auf. Das Rätsel gilt als gelöst, findest du.", "effects": [{ "unlockDoor": "back" }, { "gainXp": 3 }] },
+        "failure": { "text": "Die Tür gewinnt. Dein Fuß protestiert.", "effects": [{ "damage": 2 }], "next": "schatz_raetsel" }
+      }
+    ]
+  },
+  {
+    "id": "schatz_steuer",
+    "type": "npc",
+    "title": "Die Steuerprüfung",
+    "text": "Auf einem Goldhaufen sitzt ein Kobold mit Brille. »Steuerprüfung. Haben Sie eine Quittung für diesen Schatz?«",
+    "options": [
+      {
+        "label": "Eine Quittung fälschen",
+        "check": { "attr": "geschick", "dc": 12 },
+        "success": { "text": "Die Unterschrift ist ein Kunstwerk. Er stempelt ab und gibt dir den Schatz.", "effects": [{ "loot": "tier2" }, { "gainXp": 3 }] },
+        "failure": { "text": "Du hast »Quitung« geschrieben. Die Strafe: ein Tritt gegen das Schienbein.", "effects": [{ "damage": 2 }] }
+      },
+      {
+        "label": "Mit Paragrafen argumentieren",
+        "check": { "attr": "verstand", "dc": 16 },
+        "success": { "text": "Nach drei Formularen gibt er auf und flieht. Der Schatz bleibt hier.", "effects": [{ "loot": "tier2" }, { "gainXp": 5 }] },
+        "failure": { "text": "Er füllt ein Formular über dich aus. Das tut irgendwie weh.", "effects": [{ "damage": 1 }] }
+      },
+      { "label": "Gehen", "text": "Er stempelt »Abgelehnt« auf deinen Rücken." }
+    ]
+  },
+
+  {
+    "id": "exit_tuersteher",
+    "type": "npc",
+    "title": "Der Türsteher",
+    "text": "Ein Skelett mit Sonnenbrille steht vor dem Torbogen. »Du kommst hier nicht rein. Nur mit Schuhen.«",
+    "options": [
+      {
+        "label": "»Ich trage Stiefel.«",
+        "check": { "attr": "verstand", "dc": 8 },
+        "success": { "text": "Es mustert deine Stiefel. »Ok. Viel Spaß unten.«", "effects": [{ "gainXp": 3 }] },
+        "failure": { "text": "»Das sind keine Schuhe, das sind Erinnerungen an Schuhe.« Es schubst dich.", "effects": [{ "damage": 2 }] }
+      },
+      {
+        "label": "Einfach vorbeigehen",
+        "check": { "attr": "kraft", "dc": 12 },
+        "success": { "text": "Du schiebst es freundlich zur Seite. Es fällt auseinander und flucht.", "effects": [{ "gainXp": 3 }] },
+        "failure": { "text": "Es baut sich auf. Also, es setzt sich zusammen. Dann greift es an.", "effects": [{ "combat": "skeleton" }, { "gainXp": 3 }] }
+      }
+    ]
+  },
+  {
+    "id": "exit_souvenir",
+    "type": "npc",
+    "title": "Der Andenkenstand",
+    "text": "Vor dem Abstieg hat ein Goblin einen Stand aufgebaut: Postkarten, Tassen und Schilde mit »Ich war im Dungeon«.",
+    "options": [
+      {
+        "label": "Feilschen",
+        "check": { "attr": "verstand", "dc": 12 },
+        "success": { "text": "Er schenkt dir aus Mitleid eine Tasse. Darin liegen Münzen.", "effects": [{ "loot": "tier1" }, { "gainXp": 2 }] },
+        "failure": { "text": "Du kaufst versehentlich fünf Postkarten. Sie zeigen alle diesen Raum. Bezahlt hast du mit einem Lächeln." }
+      },
+      { "label": "Weitergehen", "text": "»Komm wieder!«, ruft er. »Das tun alle!«" }
+    ]
+  },
+  {
+    "id": "exit_bank",
+    "type": "choice",
+    "title": "Die Bank",
+    "text": "Neben dem Torbogen steht eine Bank. Eine echte, bequeme Bank. Mit Kissen.",
+    "options": [
+      { "label": "Rasten", "text": "Du döst kurz. Im Traum erscheint dir ein Dungeon. Wie originell.", "effects": [{ "heal": 4 }] },
+      { "label": "Keine Zeit", "text": "Die Bank sieht dir traurig nach." }
+    ]
+  }
+]

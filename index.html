@@ -15,10 +15,10 @@
 
   <aside class="hud" aria-label="Spielinfo">
     <div>
-      <p class="sub">Meilenstein 3 · Prototyp</p>
+      <p class="sub">Meilenstein 4 · Prototyp</p>
       <h1 id="roomName">Die Vorkammer</h1>
     </div>
-    <p class="help">Klicke auf eine Kachel, um zu laufen, und auf Türen, Truhen oder den Torbogen. Klicke auf besuchte Räume in der Karte, um dorthin zu reisen. Finde den Abstieg. Mausrad zoomt.</p>
+    <p class="help">Klicke auf eine Kachel, um zu laufen, und auf Türen, Truhen oder den Torbogen. Klicke auf besuchte Räume in der Karte, um dorthin zu reisen. In manchen Räumen wartet ein Ereignis. Finde den Abstieg. Mausrad zoomt.</p>
     <hr>
     <div class="map">
       <span class="label">Karte</span>
@@ -27,11 +27,17 @@
     </div>
     <hr>
     <dl class="stats">
+      <dt>Lebenspunkte</dt><dd id="hp">12 / 12</dd>
+      <dt>Erfahrung</dt><dd id="xp">0</dd>
+      <dt>Gold</dt><dd id="gold">0</dd>
+    </dl>
+    <p class="attrs" id="attrs"></p>
+    <hr>
+    <dl class="stats">
       <dt>Position</dt><dd id="pos">–</dd>
       <dt>Maus über</dt><dd id="hover">–</dd>
       <dt>Weg</dt><dd id="steps">–</dd>
       <dt>Räume besucht</dt><dd id="visited">1 / 1</dd>
-      <dt>Gold</dt><dd id="gold">0</dd>
     </dl>
     <hr>
     <form class="seed" id="seedForm">
@@ -47,6 +53,7 @@
     <h2 id="dlgTitle"></h2>
     <p id="dlgText"></p>
     <p class="roll" id="dlgRoll" hidden></p>
+    <ul class="fx" id="dlgFx" hidden></ul>
     <div class="opts" id="dlgOpts"></div>
   </section>
 

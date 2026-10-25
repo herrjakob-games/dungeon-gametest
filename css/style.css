@@ -95,6 +95,11 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .roll { font-variant-numeric: tabular-nums; color: var(--muted); }
 .roll strong.ok { color: var(--good); }
 .roll strong.fail { color: var(--bad); }
+.fx { margin: 0; padding: 0; list-style: none; display: grid; gap: 2px; font-variant-numeric: tabular-nums; }
+.fx .bad, .stats dd.low { color: var(--bad); }
+.fx .good { color: var(--good); }
+.fx .gold { color: var(--accent); }
+.hud p.attrs { font-size: 14px; color: var(--fg); }
 .opts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
 .opts button { padding: 8px 14px; }
 .opts button .key { color: var(--muted); margin-right: 6px; font-variant-numeric: tabular-nums; }

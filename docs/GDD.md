@@ -67,10 +67,14 @@ Drei Attribute, ein W20 und feste Schwierigkeiten. Das Regelwerk ist so beschlos
 | Verstand | Magie, Rätsel, Wahrnehmung, Gespräche | −1 bis +3 |
 
 - **Probe:** W20 + Attribut gegen Schwierigkeit. Leicht 8, mittel 12, schwer 16. Der Wurf wird im Textfenster angezeigt.
-- **Lebenspunkte:** Start mit 12. Tränke und Rasten heilen.
+- **Startwerte des Zwergenkriegers:** Kraft +2, Geschick +1, Verstand −1.
+- **Lebenspunkte:** Start mit 12, Heilung höchstens bis zum Maximum. Bei 0 Lebenspunkten ist der Durchlauf vorbei, es folgt ein neuer Dungeon mit frischem Zwerg. Tränke und Rasten heilen.
 - **Kampfrunde:** Der Spieler wählt Angreifen (Kraft gegen Rüstung des Gegners), Verteidigen (Rüstung +2 bis zur nächsten Runde), Gegenstand nutzen oder Fliehen (Geschick-Probe, Rückzug durch die zuletzt genutzte Tür). Danach handelt der Gegner.
 - **Gegner:** Lebenspunkte, Rüstungswert, Angriffsbonus, Schaden (z. B. W6).
-- **Fortschritt:** Erfahrung aus Events. Beim Stufenaufstieg +1 auf ein Attribut und +3 Lebenspunkte.
+- **Ersatz-Kampf bis Meilenstein 5:** Der Effekt `combat` ist eine einzige Kraft-Probe (W20 + Kraft) gegen die Rüstung des Monsters. Erfolg ist ein Sieg. Fehlschlag kostet den Schaden des Monsters, die übrigen Effekte des Ergebnisses (etwa Beute) entfallen dann.
+- **Fortschritt:** Erfahrung aus Events. Beim Stufenaufstieg +1 auf ein Attribut und +3 Lebenspunkte. Bis Meilenstein 5 wird Erfahrung nur gezählt, die Schwellen für den Aufstieg folgen dort.
+- **Gold:** Bis Meilenstein 5 besteht Beute nur aus Gold. Beutestufe `tier1` = 2W6 Gold, `tier2` = 4W6 Gold.
+- **Abstieg:** Wer den Ausgang nimmt, behält Lebenspunkte, Gold und Erfahrung.
 - **Inventar:** Sechs Plätze.
 
 ## Raumtypen und Event-System
@@ -111,8 +115,14 @@ Jeder Raumtyp hat eine Event-Chance und eine gewichtete Event-Tabelle. Jedes Eve
 }
 ```
 
+- **Ablauf:** Beim ersten Betreten eines Raums würfelt das Spiel gegen die Event-Chance und wählt dann gewichtet ein Event, dessen Bedingung erfüllt ist. Der Startraum hat die Chance 100 %: Jeder Dungeon beginnt mit einem kurzen, harmlosen Begrüßungs-Event.
+- **Dateien:** `data/room-types.json`, `data/events.json`, `data/monsters.json`. Ein Event hat zusätzlich einen `title` für das Textfenster. Ein Ergebnis kann mit `next` ein Folge-Event starten, so laufen Proben Runde für Runde.
 - **Event-Typen:** combat, choice, trap, treasure, npc. Bossgegner und Artefakte laufen als normale Events über die Tabellen.
-- **Effekte:** damage, heal, loot, combat, gainXp, lockDoor, unlockDoor, setFlag.
+- **Effekte:** damage, heal, loot, combat, gainXp, lockDoor, unlockDoor, setFlag. Mengen als Zahl oder Würfel, etwa `"W4"` oder `"2W6"`.
+- **once:** Das Event kommt höchstens einmal pro Dungeon vor.
+- **Bedingungen:** `flag:name` (Flag ist gesetzt) und `notFlag:name` (Flag fehlt). Flags gelten pro Dungeon. `hasItem:name` kommt mit dem Inventar in Meilenstein 5.
+- **Türen:** `lockDoor` und `unlockDoor` nennen eine Richtung (`N`, `E`, `S`, `W`) oder `back`, die Tür, durch die der Spieler kam. Eine verschlossene Tür zeigt ein Schloss und lässt sich nicht benutzen, bis `unlockDoor` sie öffnet. Sind am Ende eines Events alle Türen eines Raums zu, öffnet sich die Rück-Tür von selbst.
+- **Monster:** Name, Lebenspunkte, Rüstung, Angriffsbonus, Schaden (z. B. W6).
 - **Regel:** Neue Effekt-Typen oder Bedingungen werden zuerst im Game Design festgelegt, dann programmiert, dann in Events genutzt.
 
 ## Grafik und Animation
@@ -150,3 +160,11 @@ Sieben Schritte, jeder endet mit etwas Spielbarem, das Christian im Browser test
 - [x] Tod: Neustart mit neuem Dungeon (Permadeath)
 - [x] Verhalten beim erneuten Betreten eines Raums: Durchlaufen ohne neues Event
 - [x] Nur Desktop
+- [x] Startwerte des Zwergenkriegers: Kraft +2, Geschick +1, Verstand −1
+- [x] Lebenspunkte gelten ab Meilenstein 4, bei 0 neuer Dungeon
+- [x] Beute bis Meilenstein 5 nur Gold: tier1 = 2W6, tier2 = 4W6
+- [x] Ersatz-Kampf bis Meilenstein 5: eine Kraft-Probe gegen die Rüstung des Monsters
+- [x] Erfahrung wird gezählt, Stufenaufstieg ab Meilenstein 5
+- [x] lockDoor/unlockDoor mit Richtung oder „back“, Rück-Tür öffnet sich, wenn sonst alles zu ist
+- [x] Startraum: Begrüßungs-Event zu Beginn jedes Dungeons
+- [x] once gilt pro Dungeon; Bedingungen flag und notFlag

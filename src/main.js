@@ -7,8 +7,10 @@ import { buildRoom } from "./roomBuilder.js";
 import { placePlayer } from "./player.js";
 import { hoverMesh, showHoverTile } from "./markers.js";
 import { moveTo, stopMoving, approachTile, updateMovement } from "./movement.js";
-import { closeDialog, isDialogOpen } from "./dialog.js";
-import { chestEvent, exitEvent } from "./events.js";
+import { closeDialog, isDialogOpen, isDialogModal, showDialog } from "./dialog.js";
+import { initEvents, startRoomEvent, chestEvent, exitEvent, lockedDoorNote } from "./events.js";
+import { loadData } from "./data.js";
+import { newPlayer, newRun } from "./eventLogic.js";
 import { TYPES } from "./roomTypes.js";
 import { ui, minimap, updateHud, drawMinimap, mapRoomAt, setHover } from "./hud.js";
 const THREE = window.THREE;
@@ -36,10 +38,19 @@ function startDungeon(dSeed) {
   state.current = state.dungeon.start;
   state.visited = new Set([state.current]);
   state.roomState = {};
+  state.run = newRun();
+  state.backDoor = null;
+  state.eventActive = false;
   buildRoom(state.current);
   placePlayer([MID, MID], 0);
   ui.seedInput.value = dSeed;
+  startRoomEvent(); // Begrüßungs-Event im Startraum
 }
+
+// Tod: neuer Zwerg, neuer Dungeon (Permadeath)
+initEvents({
+  onDeath: () => withFade(() => { state.player = newPlayer(); startDungeon(randomSeed()); })
+});
 
 const randomSeed = () => 1 + Math.floor(Math.random() * 999998);
 
@@ -49,11 +60,16 @@ function changeRoom(d) {
   const r = state.dungeon.rooms[state.current];
   const target = key(r.x + DIR[d].dx, r.z + DIR[d].dz);
   if (!state.dungeon.rooms[target]) return;
+  const locked = state.roomState[state.current].locked;
+  if (locked && locked.has(d)) { lockedDoorNote(d); return; }
   withFade(() => {
+    const first = !state.visited.has(target);
     state.current = target;
+    state.backDoor = DIR[d].opp;
     state.visited.add(target);
     buildRoom(target);
     placePlayer(DIR[DIR[d].opp].approach, Math.atan2(DIR[d].dx, DIR[d].dz));
+    if (first) startRoomEvent(); // Events nur beim ersten Betreten
   });
 }
 
@@ -72,6 +88,7 @@ function travelTo(k) {
   if (state.transitioning || k === state.current || !state.visited.has(k) || isDialogOpen()) return;
   withFade(() => {
     state.current = k;
+    state.backDoor = null;
     buildRoom(k);
     placePlayer(nearestFreeToCenter(), 0);
   });
@@ -129,7 +146,10 @@ function setHoverObj(o) {
 }
 
 const labelFor = (o) => {
-  if (o.userData.kind === "door") return "Tür nach " + o.userData.name;
+  if (o.userData.kind === "door") {
+    const locked = state.roomState[state.current].locked;
+    return "Tür nach " + o.userData.name + (locked && locked.has(o.userData.dir) ? " (verschlossen)" : "");
+  }
   if (o.userData.kind === "chest") return "Truhe";
   return "Torbogen";
 };
@@ -160,6 +180,7 @@ renderer.domElement.addEventListener("pointerup", (ev) => {
   if (state.transitioning) return;
   if (!downAt || Math.hypot(ev.clientX - downAt[0], ev.clientY - downAt[1]) > 6) return;
   downAt = null;
+  if (isDialogModal()) return; // laufendes Event: erst eine Option wählen
   if (isDialogOpen()) closeDialog();
   const h = pick(ev);
   if (!h) return;
@@ -180,6 +201,14 @@ renderer.domElement.addEventListener("pointerup", (ev) => {
 renderer.domElement.addEventListener("wheel", (ev) => { ev.preventDefault(); zoomBy(ev.deltaY); }, { passive: false });
 
 // ---------- Start ----------
+// Spieldaten aus data/ laden, dann den ersten Dungeon bauen
+try {
+  await loadData();
+} catch (e) {
+  console.error(e);
+  showDialog("Daten fehlen", "Die Spieldaten aus dem Ordner data/ konnten nicht geladen werden. Läuft das Spiel über einen Server (npm start)?", [], { modal: true });
+  throw e;
+}
 startDungeon(randomSeed());
 updateHud();
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawMinimap);
