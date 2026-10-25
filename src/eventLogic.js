@@ -174,7 +174,7 @@ export function validateData(data) {
   };
   const checkReq = (w, req) => Object.entries(req || {}).forEach(([a, v]) => {
     if (!ATTRS.includes(a)) err(w, "unbekanntes Attribut " + a);
-    if (!(Number.isInteger(v) && v >= -1 && v <= 3)) err(w, "Mindestwert muss zwischen −1 und +3 liegen");
+    if (!(Number.isInteger(v) && v >= -1)) err(w, "Mindestwert muss eine ganze Zahl ab −1 sein");
   });
 
   for (const rt of Object.values(data.roomTypes)) {
@@ -223,6 +223,7 @@ export function validateData(data) {
     if (!c.name) err(w, "Name fehlt");
     ATTRS.forEach(a => { if (!(Number.isInteger(c.attrs && c.attrs[a]) && c.attrs[a] >= -1 && c.attrs[a] <= 3)) err(w, "Attribut " + a + " fehlt oder liegt außerhalb −1 bis +3"); });
     if (!(c.hp > 0)) err(w, "Lebenspunkte fehlen");
+    if (!(Number.isInteger(c.levelHp) && c.levelHp > 0)) err(w, "levelHp (Lebenspunkte je Stufe) fehlt");
     if (!c.ability || !ATTRS.includes(c.ability.attr) || !c.ability.name) err(w, "Fähigkeit unvollständig");
     const s = c.start || {};
     [["weapon", "weapon"], ["armor", "armor"]].forEach(([slot, type]) => {

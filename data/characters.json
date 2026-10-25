@@ -5,6 +5,7 @@
     "text": "Stämmig, bärtig und überzeugt, dass sich jedes Problem mit einer Axt lösen lässt. Meistens stimmt das sogar.",
     "attrs": { "kraft": 2, "geschick": 1, "verstand": -1 },
     "hp": 14,
+    "levelHp": 5,
     "ability": { "id": "kraftprotz", "name": "Kraftprotz", "attr": "kraft", "text": "Einmal pro Dungeon gilt eine misslungene Kraft-Probe als bestanden." },
     "start": { "weapon": "streitaxt", "armor": "kettenhemd", "pack": ["heiltrank"] },
     "model": "zwerg"
@@ -15,6 +16,7 @@
     "text": "Flink, scharfäugig und seit dreihundert Jahren leicht genervt von allen, die langsamer denken. Also allen.",
     "attrs": { "kraft": -1, "geschick": 2, "verstand": 1 },
     "hp": 10,
+    "levelHp": 4,
     "ability": { "id": "scharfe_sinne", "name": "Scharfe Sinne", "attr": "geschick", "text": "Einmal pro Dungeon gilt eine misslungene Geschick-Probe als bestanden." },
     "start": { "weapon": "rapier", "armor": "elfenmantel", "pack": ["heiltrank"] },
     "model": "elf"
@@ -25,6 +27,7 @@
     "text": "Nicht besonders stark, nicht besonders flink, aber hat ein Buch gelesen. Zwei sogar, wenn man das Kochbuch mitzählt.",
     "attrs": { "kraft": 0, "geschick": 0, "verstand": 2 },
     "hp": 12,
+    "levelHp": 4,
     "ability": { "id": "wacher_geist", "name": "Wacher Geist", "attr": "verstand", "text": "Einmal pro Dungeon gilt eine misslungene Verstand-Probe als bestanden." },
     "start": { "weapon": "kurzschwert", "armor": "lederwams", "pack": ["feuerball", "heiltrank"] },
     "model": "mensch"
