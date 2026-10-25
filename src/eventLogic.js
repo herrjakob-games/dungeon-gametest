@@ -222,6 +222,10 @@ export function validateData(data) {
     if (!Number.isInteger(th.dcBonus)) err(w, "dcBonus fehlt");
     [th.startNeighbor].concat(th.roomTypes || []).forEach(t => { if (!data.roomTypes[t]) err(w, "unbekannter Raumtyp " + t); });
     [th.boss].concat(th.endlessBosses || []).concat(th.monsters || []).forEach(m => { if (!data.monsters[m]) err(w, "unbekanntes Monster " + m); });
+    Object.entries(th.overrides || {}).forEach(([t, o]) => {
+      if (!(th.roomTypes || []).includes(t)) err(w, "Ausnahme für " + t + ", das nicht zum Thema gehört");
+      Object.keys(o).forEach(k => { if (!["max", "deadEnd", "nextToStart", "near", "crossroads"].includes(k)) err(w, "unbekannte Regel " + k + " bei " + t); });
+    });
   }
 
   for (const m of Object.values(data.monsters)) {

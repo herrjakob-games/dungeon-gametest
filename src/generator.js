@@ -60,6 +60,8 @@ export function generate(dSeed, depth, world) {
   const theme = themeFor(world.themes, depth);
   const boss = isBossLevel(depth) ? bossFor(world.themes, depth, R) : null;
   const types = world.roomTypes;
+  // Regeln eines Raumtyps, mit den Ausnahmen des Themas (overrides; null hebt eine Regel auf)
+  const rule = (t) => Object.assign({}, types[t], (theme.overrides || {})[t]);
   const counts = {};
   const set = (k, t) => { rooms[k].type = t; counts[t] = (counts[t] || 0) + 1; };
   const isDead = (k) => doorCount(rooms[k].doors) === 1;
@@ -92,15 +94,15 @@ export function generate(dSeed, depth, world) {
 
   // Feste Regeln (nur, nie, Höchstzahl) und Vorlieben (bevorzugt, neben X) für die übrigen Räume
   const hardOk = (k, t) => {
-    const def = types[t];
+    const def = rule(t);
     if (def.deadEnd === "only" && !isDead(k)) return false;
     if (def.deadEnd === "never" && isDead(k)) return false;
     if (def.nextToStart === "never" && nextToStart.has(k)) return false;
     return true;
   };
-  const allowed = (k, t) => hardOk(k, t) && !(types[t].max && (counts[t] || 0) >= types[t].max);
+  const allowed = (k, t) => hardOk(k, t) && !(rule(t).max && (counts[t] || 0) >= rule(t).max);
   const score = (k, t) => {
-    const def = types[t];
+    const def = rule(t);
     let s = 1;
     if (def.deadEnd === "prefer" && isDead(k)) s += 4;
     if (def.crossroads === "prefer" && doorCount(rooms[k].doors) >= 3) s += 4;
@@ -129,7 +131,7 @@ export function generate(dSeed, depth, world) {
     if (cands.length) t = weighted(k, cands);
     else {
       // Alle erlaubten Raumtypen sind voll: den am wenigsten überzähligen nehmen
-      const fill = (x) => ((counts[x] || 0) + 1) / (types[x].max || Infinity);
+      const fill = (x) => ((counts[x] || 0) + 1) / (rule(x).max || Infinity);
       t = theme.roomTypes.filter(x => hardOk(k, x)).sort((x, y) => fill(x) - fill(y))[0];
     }
     set(k, t);

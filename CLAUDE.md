@@ -46,7 +46,7 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/pathfinding.js` | A*-Wegfindung, rein logisch |
 | `src/rng.js` | Seed-basierte Zufallszahlen und Würfel |
 | `src/state.js` | gemeinsamer Spielzustand |
-| `data/themes.json` | Themen: Name, Stufe, Proben-Zuschlag, Raumtypen, Nachbar des Starts, Monster, Boss |
+| `data/themes.json` | Themen: Name, Stufe, Proben-Zuschlag, Raumtypen, Nachbar des Starts, Monster, Boss, Regel-Ausnahmen (`overrides`) |
 | `data/room-types.json` | Raumtypen: Name, Farben, Einrichtung (`layout`), Bewertung, Lage- und Anzahlregeln, Event-Chance, Event-Tabelle |
 | `data/events.json` | alle Events (auch die Truhe) |
 | `data/monsters.json` | Monster und Bosse mit Lebenspunkten, Rüstung, Angriff, Schaden, Satz zur Todesursache |

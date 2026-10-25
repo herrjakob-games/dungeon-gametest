@@ -205,14 +205,14 @@ Der Dungeon führt durch Themen, die alle drei Ebenen wechseln. Das Thema bestim
 | Rastplatz | neutral | etwa auf halber Strecke zwischen Start und Abstieg, in jedem Thema | 1 auf jeder zweiten Ebene |
 | Händler | neutral | beliebig, in jedem Thema | genau 1 |
 | Wachstube | feindlich | immer direkt neben dem Start (Keller, Zwergenminen) | – |
-| Gruft | feindlich | nie direkt neben dem Start | – |
+| Gruft | feindlich | nie direkt neben dem Start (außer in den Katakomben) | – |
 | Küche | gemischt | neben einem Speisesaal | höchstens 1 |
 | Speisesaal | gemischt | nie in Sackgassen | höchstens 1 |
 | Vorratskammer | gemischt | bevorzugt in Sackgassen, neben einer Küche | höchstens 2 |
 | Brunnenraum | gemischt | – | höchstens 1 |
 | Säulenhalle | gemischt | nie in Sackgassen, bevorzugt an Kreuzungen (3–4 Türen) | höchstens 3 |
 | Schrein | gemischt | – | höchstens 1 |
-| Kerker | feindlich | bevorzugt in Sackgassen, neben einer Folterkammer; in den Katakomben direkt neben dem Start | höchstens 2 |
+| Kerker | feindlich | bevorzugt in Sackgassen, neben einer Folterkammer; in den Katakomben direkt neben dem Start | höchstens 2 (in den Katakomben ohne Grenze) |
 | Bibliothek | gemischt | bevorzugt in Sackgassen | höchstens 1 |
 | Schmiede | gemischt | neben einer Wachstube | höchstens 1 |
 | Folterkammer | feindlich | nie neben dem Start, neben einem Kerker oder Gefangenen-Lager | – |
@@ -228,6 +228,7 @@ Der Dungeon führt durch Themen, die alle drei Ebenen wechseln. Das Thema bestim
 - **Feindlich:** Events mit Kämpfen und Fallen. **Neutral:** Rätsel, Gespräche, Fundstücke oder gar kein Event, nur Start, Abstieg, Rastplatz und Händler sind verlässlich sicher. **Gemischt:** Wenn ein Event auslöst, ist es in etwa 30 % der Fälle ein Gegner oder eine Falle, sonst harmlos. Dafür trägt jedes Event in der Tabelle eines gemischten Raumtyps die Markierung feindlich oder neutral. Für den Anteil feindlicher Räume zählen gemischte Räume nicht als feindlich.
 - **Anteil feindlicher Räume:** steigt gleichmäßig von 40 % auf Ebene 1 auf 70 % ab Ebene 13 (+2,5 Prozentpunkte je Ebene).
 - **Sackgassen:** Sackgassen, die keine Schatzkammer werden, bekommen einen anderen Raumtyp des Themas.
+- **Ausnahmen in den Katakomben:** Dort darf die Gruft neben dem Start stehen, und der Kerker hat keine Höchstzahl. Sonst gäbe es für Räume neben dem Start manchmal keinen erlaubten Raumtyp. Solche Ausnahmen stehen als `overrides` beim Thema in `data/themes.json`.
 - **Händler:** bietet 4 zufällige Ausrüstungsteile der Stufe des Themas an (ohne Doppelte; gibt es weniger, dann alle), dazu immer Heiltrank, Feuerball- und Schild-Schriftrolle in beliebiger Menge. Gekaufte Ausrüstung verschwindet aus dem Angebot. Verkaufen bringt den halben Preis, angelegte Ausrüstung muss vorher abgelegt werden. Das Angebot hängt am Seed des Raums.
 - **Rastplatz:** auf jeder geraden Ebene (2, 4, 6 …). Ein Lagerfeuer im Raum heilt einmal auf volle Lebenspunkte, danach ist es aus.
 - **Bossraum:** Betreten startet den Bosskampf, auch bei jedem weiteren Betreten, bis der Boss besiegt ist. Flucht ist erlaubt, der Boss wartet dann mit vollen Lebenspunkten. Sieg: Beute `tier2` und 10 Erfahrung, danach erscheint in der Raummitte der Torbogen zum Abstieg.
@@ -354,3 +355,4 @@ Sieben Schritte, jeder endet mit etwas Spielbarem, das Christian im Browser test
 - [x] Bosskampf: Flucht erlaubt, Boss wartet bei jedem Betreten; Sieg bringt tier2-Beute und 10 Erfahrung, dann erscheint der Abstieg
 - [x] Proben-Zuschlag des Themas gilt auch für die Flucht
 - [x] Händler: 4 Ausrüstungsteile der Themenstufe plus alle Verbrauchsgegenstände in beliebiger Menge; Verbrauchsgegenstände in jeder Beutestufe
+- [x] Katakomben: Gruft darf neben den Start, Kerker ohne Höchstzahl

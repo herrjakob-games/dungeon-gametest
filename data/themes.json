@@ -37,7 +37,15 @@
       "geist",
       "mimic"
     ],
-    "boss": "skelettkoenig"
+    "boss": "skelettkoenig",
+    "overrides": {
+      "kerker": {
+        "max": null
+      },
+      "gruft": {
+        "nextToStart": null
+      }
+    }
   },
   {
     "id": "zwergenminen",

@@ -20,6 +20,8 @@ function* levels() {
 }
 const neighborsOf = (d, r) => DIRKEYS.filter(dk => r.doors & DIR[dk].bit).map(dk => d.rooms[key(r.x + DIR[dk].dx, r.z + DIR[dk].dz)]);
 const count = (d, t) => Object.values(d.rooms).filter(r => r.type === t).length;
+// Regeln eines Raumtyps mit den Ausnahmen des Themas
+const ruleOf = (theme, t) => Object.assign({}, roomTypes[t], (theme.overrides || {})[t]);
 
 test("Ebenengröße: 8–12 Räume, +2 je Ebene, ab Ebene 9 24–28", () => {
   for (const [s, depth, d] of levels()) {
@@ -78,7 +80,7 @@ test("Raumtypen passen zum Thema, feste Lageregeln werden eingehalten", () => {
       assert.ok(startNeighbors.some(n => n.type === theme.startNeighbor), `Seed ${s}/${depth}: kein ${theme.startNeighbor} neben dem Start`);
     }
     for (const r of Object.values(d.rooms)) {
-      const def = roomTypes[r.type];
+      const def = ruleOf(theme, r.type);
       assert.ok(SPECIAL.includes(r.type) || theme.roomTypes.includes(r.type), `Seed ${s}/${depth}: ${r.type} gehört nicht zu ${theme.id}`);
       if (def.deadEnd === "never") assert.notEqual(doorCount(r.doors), 1, `Seed ${s}/${depth}: ${r.type} in Sackgasse`);
       if (def.nextToStart === "never") assert.ok(!startNeighbors.includes(r), `Seed ${s}/${depth}: ${r.type} neben dem Start`);
@@ -86,14 +88,28 @@ test("Raumtypen passen zum Thema, feste Lageregeln werden eingehalten", () => {
   }
 });
 
-test("Höchstzahlen pro Ebene werden eingehalten (Ausnahme: Katakomben neben dem Start)", () => {
+test("Höchstzahlen pro Ebene werden eingehalten", () => {
   for (const [s, depth, d] of levels()) {
-    for (const t of Object.values(roomTypes)) {
-      if (!t.max || count(d, t.id) <= t.max) continue;
-      // In den Katakomben sind neben dem Start nur Kerker, Schrein und Säulenhalle erlaubt, alle gedeckelt.
-      // Hat der Start dort viele Nachbarn, muss ein Raumtyp überzählig werden.
-      assert.equal(d.theme, "katakomben", `Seed ${s}/${depth}: ${t.id} ${count(d, t.id)}× statt höchstens ${t.max}`);
+    const theme = themeFor(themes, depth);
+    for (const t of Object.keys(roomTypes)) {
+      const max = ruleOf(theme, t).max;
+      if (max) assert.ok(count(d, t) <= max, `Seed ${s}/${depth}: ${t} ${count(d, t)}× statt höchstens ${max}`);
     }
+  }
+});
+
+test("Katakomben: Kerker ohne Höchstzahl, Gruft darf neben den Start", () => {
+  let gruftNextToStart = false, manyKerker = false;
+  for (let s = 1; s <= SEEDS; s++) for (const depth of [4, 5, 6]) {
+    const d = generate(s, depth, WORLD);
+    if (neighborsOf(d, d.rooms[d.start]).some(n => n.type === "gruft")) gruftNextToStart = true;
+    if (count(d, "kerker") > 2) manyKerker = true;
+  }
+  assert.ok(gruftNextToStart && manyKerker);
+  // Im Keller gilt weiter: Gruft nie neben dem Start
+  for (let s = 1; s <= SEEDS; s++) {
+    const d = generate(s, 2, WORLD);
+    assert.ok(!neighborsOf(d, d.rooms[d.start]).some(n => n.type === "gruft"));
   }
 });
 
