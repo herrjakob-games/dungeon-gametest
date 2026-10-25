@@ -1,5 +1,5 @@
 // Baut den aktuellen Raum als 3D-Szene: Boden, Wände, Türen, Fackeln, Einrichtung.
-// Regel für die Einrichtung: Das Kreuz aus Reihe und Spalte 6 bis 8 bleibt immer frei,
+// Regel für die Einrichtung: Das Kreuz aus Reihe und Spalte 4 bis 6 bleibt immer frei,
 // damit alle Türen miteinander verbunden sind.
 import { N, MID, E, DIR, DIRKEYS, key, inBounds, tw } from "./config.js";
 import { setRoomSeed, rnd, pickOne, shuffled } from "./rng.js";
@@ -39,7 +39,7 @@ export function buildRoom(id) {
   buildFloor(type);
   buildWalls(room);
   DIRKEYS.forEach(d => { if (room.doors & DIR[d].bit) makeDoor(d); });
-  [[tw(3), true], [tw(11), true], [tw(3), false], [tw(11), false]].forEach(([p, north]) => makeTorch(p, north, type.torch));
+  [[tw(1), true], [tw(9), true], [tw(1), false], [tw(9), false]].forEach(([p, north]) => makeTorch(p, north, type.torch));
   furnish(room.type, id);
   scatterRubble();
   refreshLocks();
@@ -155,7 +155,7 @@ function makeTorch(p, alongNorth, color) {
 }
 
 function scatterRubble() {
-  for (let k = 0; k < 14; k++) {
+  for (let k = 0; k < 9; k++) {
     const r = new THREE.Mesh(new THREE.DodecahedronGeometry(0.06 + rnd() * 0.08), stone());
     r.position.set(tw(Math.floor(rnd() * N)) + (rnd() - 0.5) * 0.7, 0.04, tw(Math.floor(rnd() * N)) + (rnd() - 0.5) * 0.7);
     r.castShadow = true;
@@ -164,9 +164,9 @@ function scatterRubble() {
 }
 
 // ---------- Einrichtung je Raumtyp ----------
-const CORNERS = [[1, 1], [13, 1], [1, 13], [13, 13]];
-const QUADS = [[3, 3], [11, 3], [3, 11], [11, 11]];
-const FOUR_PILLARS = [[4, 4], [10, 4], [4, 10], [10, 10]];
+const CORNERS = [[1, 1], [9, 1], [1, 9], [9, 9]];
+const QUADS = [[2, 2], [8, 2], [2, 8], [8, 8]];
+const FOUR_PILLARS = [[3, 3], [7, 3], [3, 7], [7, 7]];
 
 function furnish(t, id) {
   if (t === "start") {
@@ -174,16 +174,16 @@ function furnish(t, id) {
     barrelCluster(pickOne(CORNERS));
   } else if (t === "halle") {
     const pts = rnd() < 0.5
-      ? [[2, 3], [5, 3], [9, 3], [12, 3], [2, 11], [5, 11], [9, 11], [12, 11]]
-      : [[3, 2], [3, 5], [3, 9], [3, 12], [11, 2], [11, 5], [11, 9], [11, 12]];
+      ? [[1, 2], [3, 2], [7, 2], [9, 2], [1, 8], [3, 8], [7, 8], [9, 8]]
+      : [[2, 1], [2, 3], [2, 7], [2, 9], [8, 1], [8, 3], [8, 7], [8, 9]];
     pts.forEach(p => pillar(...p));
     if (rnd() < 0.5) barrelCluster(pickOne(CORNERS));
   } else if (t === "gruft") {
-    [[4, 3], [10, 3], [4, 10], [10, 10]].forEach(p => sarcophagus(...p));
-    shuffled([[2, 2], [12, 2], [2, 12], [12, 12]]).slice(0, 2).forEach(p => pillar(...p));
+    [[3, 2], [7, 2], [3, 7], [7, 7]].forEach(p => sarcophagus(...p));
+    shuffled(CORNERS).slice(0, 2).forEach(p => pillar(...p));
   } else if (t === "wache") {
     const order = shuffled([0, 1, 2, 3]);
-    const q = [[2, 3], [10, 3], [2, 11], [10, 11]][order[0]];
+    const q = [[1, 2], [7, 2], [1, 8], [7, 8]][order[0]];
     table([[q[0], q[1]], [q[0] + 1, q[1]], [q[0] + 2, q[1]]]);
     [[q[0], q[1] - 1], [q[0] + 2, q[1] - 1], [q[0] + 1, q[1] + 1]].forEach(p => stool(...p));
     barrelCluster(CORNERS[order[1]]);
@@ -298,7 +298,7 @@ function weaponRack() {
     g.add(box(0.04, 1.3, 0.04, mat(0x7a4a26), x, 1.1, 0.06));
     g.add(box(0.12, 0.22, 0.03, mat(0x9aa1a8, { metalness: 0.5, roughness: 0.5 }), x, 1.75, 0.06));
   });
-  g.position.set(tw(5), 0, -E + 0.3);
+  g.position.set(tw(3), 0, -E + 0.3);
   add(g);
 }
 

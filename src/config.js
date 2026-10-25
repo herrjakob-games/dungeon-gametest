@@ -1,7 +1,7 @@
 // Grundkonstanten und Raster-Helfer. Werte stammen aus docs/GDD.md.
 
-export const N = 15;      // Raumgröße 15×15 Kacheln
-export const MID = 7;     // Mittelkachel: hier sitzen die Türen
+export const N = 11;      // Raumgröße 11×11 Kacheln
+export const MID = 5;     // Mittelkachel: hier sitzen die Türen
 export const GRID = 8;    // Dungeon-Gitter 8×8 Raumplätze
 export const E = MID + 0.75; // Wandmitte außerhalb des Kachelrasters (Weltkoordinate)
 
