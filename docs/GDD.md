@@ -206,26 +206,26 @@ Der Dungeon führt durch Themen, die alle drei Ebenen wechseln. Das Thema bestim
 | Händler | neutral | beliebig, in jedem Thema | genau 1 |
 | Wachstube | feindlich | immer direkt neben dem Start (Keller, Zwergenminen) | – |
 | Gruft | feindlich | nie direkt neben dem Start | – |
-| Küche | neutral | neben einem Speisesaal | höchstens 1 |
-| Speisesaal | neutral | nie in Sackgassen | höchstens 1 |
-| Vorratskammer | neutral | bevorzugt in Sackgassen, neben einer Küche | höchstens 2 |
-| Brunnenraum | neutral | – | höchstens 1 |
-| Säulenhalle | neutral | nie in Sackgassen, bevorzugt an Kreuzungen (3–4 Türen) | höchstens 3 |
-| Schrein | neutral | – | höchstens 1 |
+| Küche | gemischt | neben einem Speisesaal | höchstens 1 |
+| Speisesaal | gemischt | nie in Sackgassen | höchstens 1 |
+| Vorratskammer | gemischt | bevorzugt in Sackgassen, neben einer Küche | höchstens 2 |
+| Brunnenraum | gemischt | – | höchstens 1 |
+| Säulenhalle | gemischt | nie in Sackgassen, bevorzugt an Kreuzungen (3–4 Türen) | höchstens 3 |
+| Schrein | gemischt | – | höchstens 1 |
 | Kerker | feindlich | bevorzugt in Sackgassen, neben einer Folterkammer; in den Katakomben direkt neben dem Start | höchstens 2 |
-| Bibliothek | neutral | bevorzugt in Sackgassen | höchstens 1 |
-| Schmiede | neutral | neben einer Wachstube | höchstens 1 |
+| Bibliothek | gemischt | bevorzugt in Sackgassen | höchstens 1 |
+| Schmiede | gemischt | neben einer Wachstube | höchstens 1 |
 | Folterkammer | feindlich | nie neben dem Start, neben einem Kerker oder Gefangenen-Lager | – |
 | Goblin-Lager | feindlich | in den Goblin-Höhlen direkt neben dem Start | höchstens 3 |
-| Vorratshöhle | neutral | bevorzugt in Sackgassen, neben einem Goblin-Lager | – |
-| Pilzzucht | neutral | bevorzugt in Sackgassen, neben einer Vorratshöhle | höchstens 2 |
+| Vorratshöhle | gemischt | bevorzugt in Sackgassen, neben einem Goblin-Lager | – |
+| Pilzzucht | gemischt | bevorzugt in Sackgassen, neben einer Vorratshöhle | höchstens 2 |
 | Ork-Lager | feindlich | im Ork-Lager direkt neben dem Start | höchstens 3 |
 | Gefangenen-Lager | feindlich | bevorzugt in Sackgassen, neben einer Folterkammer | – |
-| Friedhof | neutral | bevorzugt in Sackgassen | – |
+| Friedhof | gemischt | bevorzugt in Sackgassen | – |
 | Wolfs-Höhle | feindlich | bevorzugt in Sackgassen | höchstens 2 |
 
 - **Lesart der Lage:** „nur“, „nie“ und „direkt neben dem Start“ sind feste Regeln. „Bevorzugt“ und „neben X“ gelten, wenn der Grundriss es zulässt und der andere Raumtyp auf der Ebene vorkommt.
-- **Feindlich:** Events mit Kämpfen und Fallen. **Neutral:** Rätsel, Gespräche, Fundstücke oder gar kein Event.
+- **Feindlich:** Events mit Kämpfen und Fallen. **Neutral:** Rätsel, Gespräche, Fundstücke oder gar kein Event, nur Start, Abstieg, Rastplatz und Händler sind verlässlich sicher. **Gemischt:** Wenn ein Event auslöst, ist es in etwa 30 % der Fälle ein Gegner oder eine Falle, sonst harmlos. Dafür trägt jedes Event in der Tabelle eines gemischten Raumtyps die Markierung feindlich oder neutral. Für den Anteil feindlicher Räume zählen gemischte Räume nicht als feindlich.
 - **Anteil feindlicher Räume:** steigt von etwa 40 % auf Ebene 1 auf 70 % ab Ebene 13.
 - **Sackgassen:** Sackgassen, die keine Schatzkammer werden, bekommen einen anderen Raumtyp des Themas.
 - **Händler:** bietet 4 zufällige Gegenstände der aktuellen Beutestufe und Heiltränke an. Verkaufen bringt den halben Preis.
@@ -347,3 +347,4 @@ Sieben Schritte, jeder endet mit etwas Spielbarem, das Christian im Browser test
 - [x] Bosse: Monsterratte, Skelett-König, Dunkelzwerg-Schmiedemeister, Höhlentroll, Ork-Kriegsherr; im endlosen Ork-Lager alle drei Ebenen zufällig Riesenspinne, Höhlentroll oder Ork-Kriegsherr
 - [x] Gold der Beute ×Stufe des Themas, Gegenstände mit Stufe 1–6
 - [x] Händlerpreise nach Stufe (20 bis 220 Gold), Verbrauchsgegenstände zum Festpreis
+- [x] Dritte Bewertung „gemischt“ für elf bisher neutrale Raumtypen: 30 % feindliche Events, sonst harmlos; neutral bleiben nur Start, Abstieg, Rastplatz und Händler
