@@ -106,8 +106,8 @@ test("Bedingungen", () => {
   const zwerg = newPlayer("zwerg"), elf = newPlayer("elf");
   assert.equal(checkCondition("volk:zwerg", run, zwerg), true);
   assert.equal(checkCondition("volk:zwerg", run, elf), false);
-  assert.equal(checkCondition("hasItem:streitaxt", run, zwerg), true);
-  assert.equal(checkCondition("hasItem:streitaxt", run, elf), false);
+  assert.equal(checkCondition("hasItem:langschwert", run, zwerg), true);
+  assert.equal(checkCondition("hasItem:langschwert", run, elf), false);
   assert.equal(checkCondition("hasItem:heiltrank", run, elf), true);
 });
 

@@ -57,7 +57,7 @@ function buildDwarf() {
   return g;
 }
 
-// Elfin: schlank und groß, grüne Kleidung mit Kapuzenumhang, helles langes Haar, spitze Ohren, Bogen und Köcher
+// Elf: schlank und groß, grüne Kleidung mit Kapuzenumhang, helles langes Haar, spitze Ohren, Bogen und Köcher
 function buildElf() {
   const g = new THREE.Group();
   const part = partMaker(g);

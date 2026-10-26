@@ -25,8 +25,10 @@ test("Völker laut GDD", () => {
   assert.deepEqual([z.attrs, z.maxHp, z.ability.attr], [{ kraft: 2, geschick: 1, verstand: -1 }, 14, "kraft"]);
   assert.deepEqual([e.attrs, e.maxHp, e.ability.attr], [{ kraft: -1, geschick: 2, verstand: 1 }, 10, "geschick"]);
   assert.deepEqual([m.attrs, m.maxHp, m.ability.attr], [{ kraft: 0, geschick: 0, verstand: 2 }, 12, "verstand"]);
-  assert.deepEqual([z.weapon, z.armor, z.pack], ["streitaxt", "kettenhemd", ["heiltrank"]]);
-  assert.deepEqual([m.weapon, m.armor, m.pack], ["kurzschwert", "lederwams", ["feuerball", "heiltrank"]]);
+  assert.deepEqual([z.weapon, z.armor, z.pack], ["langschwert", "lederwams", ["heiltrank"]]);
+  assert.deepEqual([e.weapon, e.armor, e.pack], ["dolch", "tunika", ["heiltrank"]]);
+  assert.deepEqual([m.weapon, m.armor, m.pack], ["knueppel", "stoffweste", ["feuerpfeil", "schildrolle", "heiltrank"]]);
+  assert.equal(DATA.characters.elf.name, "Elf");
 });
 
 test("Erfahrungsschwellen 10 / 25 / 45 / 70, danach alle 30", () => {
@@ -39,7 +41,7 @@ test("Erfahrungsschwellen 10 / 25 / 45 / 70, danach alle 30", () => {
   assert.equal(levelForXp(130), 7);
 });
 
-test("Stufenaufstieg: +1 Attribut ohne Obergrenze, Lebenspunkte je nach Volk", () => {
+test("Stufenaufstieg: +1 Attribut, Lebenspunkte je nach Volk", () => {
   const p = make("zwerg"); // +5 LP je Stufe
   p.xp = 26;
   assert.equal(pendingLevelUps(p), 2);
@@ -63,11 +65,11 @@ test("Inventar: sechs Plätze, Anlegen mit Mindestattribut", () => {
   assert.equal(addItem(e, "dolch"), false, "Rucksack voll");
   e.pack[5] = "streitaxt";
   assert.match(equip(e, DATA.items, 5), /Kraft \+2/);
-  assert.equal(e.weapon, "rapier");
-  e.pack[5] = "dolch";
-  assert.equal(equip(e, DATA.items, 5), null);
   assert.equal(e.weapon, "dolch");
-  assert.equal(e.pack[5], "rapier", "alte Waffe wandert in den Rucksack");
+  e.pack[5] = "rapier";
+  assert.equal(equip(e, DATA.items, 5), null);
+  assert.equal(e.weapon, "rapier");
+  assert.equal(e.pack[5], "dolch", "alte Waffe wandert in den Rucksack");
   assert.equal(equip(e, DATA.items, 0), "Das kann man nicht anlegen.");
   assert.equal(unequip(e, "armor"), false, "kein Platz zum Ablegen");
   assert.equal(meetsReq(make("mensch"), DATA.items.schildrolle), true);

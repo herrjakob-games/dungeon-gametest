@@ -61,7 +61,7 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/roomTypes.js` | Raumtypen-Tabelle, befüllt aus `data/room-types.json` |
 | `src/roomBuilder.js` | baut einen Raum als 3D-Szene inklusive Einrichtung |
 | `src/player.js` | Spielfigur, Platzierung; `setFigure(volk)` tauscht das Modell |
-| `src/figures.js` | Platzhalterfiguren der Völker: Zwerg, Elfin, Mensch (Grundformen) |
+| `src/figures.js` | Platzhalterfiguren der Völker: Zwerg, Elf, Mensch (Grundformen) |
 | `src/movement.js` | Laufbewegung entlang des Weges |
 | `src/events.js` | Event-Ablauf im Textfenster, Proben-Zuschlag, Fundstücke, Stufenaufstieg, Tod, Truhe, Boss, Rastplatz, Abstieg |
 | `src/combatUI.js` | Kampf im Textfenster |

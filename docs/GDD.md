@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.0 · Oct 26, 2026 · @Christian
+Version 2.1 · Oct 26, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.1 | 26.10.2026 | Neue Startausrüstung: Zwerg Langschwert und Lederwams, Elf Dolch und Stofftunika, Mensch Knüppel, Stoffweste, Feuerpfeil- und Schild-Schriftrolle; alle mit Kleinem Heiltrank |
 | 2.0 | 26.10.2026 | Attribut-Skala −1 bis +10 statt +3; Proben-Zuschlag pro Thema verdoppelt (+0 bis +8); Monster-Richtwerte angepasst; Verstand als drittes Trefferattribut für magische Waffen; neuer Nutzen-Effekt `freeze`; Einzelpreise pro Gegenstand (Feld `preis`); neue Gegenstandsliste mit 25 Gegenständen; neue Startausrüstung |
 | 1.2 | 26.10.2026 | Gegenstände haben einen Rang statt einer Stufe (Feld `rang`); Verbrauchsgegenstände bekommen Ränge (Heiltrank 1, Feuerball-Schriftrolle 2, Schild-Schriftrolle 3); Händler führt sie im Angebot der Beutestufe |
 | 1.1 | 26.10.2026 | Volks-Anforderung für Gegenstände (`req.volk`); einheitlich „Elf“ statt „Elfin“ |
@@ -118,9 +119,9 @@ Der Spieler wählt vor dem ersten Dungeon ein Volk. Das Volk legt Attribute, Leb
 
 | Volk | Waffe | Rüstung | Rucksack |
 | --- | --- | --- | --- |
-| Zwerg | Streitaxt | Lederwams | Kleiner Heiltrank |
-| Elf | Rapier | Lederwams | Kleiner Heiltrank |
-| Mensch | Eismesser | Stofftunika | Feuerpfeil-Schriftrolle, Kleiner Heiltrank |
+| Zwerg | Langschwert | Lederwams | Kleiner Heiltrank |
+| Elf | Dolch | Stofftunika | Kleiner Heiltrank |
+| Mensch | Knüppel | Stoffweste | Feuerpfeil-Schriftrolle, Schild-Schriftrolle, Kleiner Heiltrank |
 
 Jedes Volk erfüllt die Mindestwerte seiner Startausrüstung mit den Startattributen.
 
@@ -384,3 +385,4 @@ Sieben Schritte, jeder endet mit etwas Spielbarem, das Christian im Browser test
 - [x] Neuer Nutzen-Effekt `freeze`: Gegner setzt die angegebene Zahl an Runden aus, nur im Kampf
 - [x] Einzelpreise pro Gegenstand (Feld `preis`), Verkauf zum halben Preis abgerundet; Rang-Preistabelle nur noch Richtwert
 - [x] Neue Gegenstandsliste mit 25 Gegenständen; Startausrüstung: Zwerg Streitaxt und Lederwams, Elf Rapier und Lederwams, Mensch Eismesser, Stofftunika und Feuerpfeil-Schriftrolle, alle mit Kleinem Heiltrank
+- [x] GDD 2.1: Startausrüstung Zwerg Langschwert, Lederwams, Kleiner Heiltrank · Elf Dolch, Stofftunika, Kleiner Heiltrank · Mensch Knüppel, Stoffweste, Feuerpfeil-Schriftrolle, Schild-Schriftrolle, Kleiner Heiltrank (ersetzt die Startausrüstung aus 2.0)
