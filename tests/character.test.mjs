@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { indexData } from "../src/eventLogic.js";
 import {
-  newCharacter, xpForLevel, levelForXp, pendingLevelUps, levelUp,
+  newCharacter, xpForLevel, levelForXp, pendingLevelUps, levelUp, raisableAttrs, reqText, ATTR_MAX,
   addItem, equip, unequip, meetsReq, weaponOf, armorBonusOf, canUseAbility, PACK_SIZE
 } from "../src/character.js";
 import {
@@ -71,7 +71,30 @@ test("Inventar: sechs Plätze, Anlegen mit Mindestattribut", () => {
   assert.equal(equip(e, DATA.items, 0), "Das kann man nicht anlegen.");
   assert.equal(unequip(e, "armor"), false, "kein Platz zum Ablegen");
   assert.equal(meetsReq(make("mensch"), DATA.items.schildrolle), true);
-  assert.equal(meetsReq(make("zwerg"), DATA.items.feuerball), false);
+  assert.equal(meetsReq(make("zwerg"), DATA.items.feuerballrolle), false);
+});
+
+test("Volks-Anforderung: req.volk zusätzlich zum Mindestattribut", () => {
+  const z = make("zwerg"), e = make("elf");
+  z.attrs.geschick = 10; e.attrs.geschick = 5;
+  assert.equal(meetsReq(z, DATA.items.elfenklinge), false, "Zwerg darf die Elfenklinge nicht nutzen");
+  assert.equal(meetsReq(e, DATA.items.elfenklinge), true);
+  e.attrs.geschick = 4;
+  assert.equal(meetsReq(e, DATA.items.elfenklinge), false, "Mindestwert gilt trotzdem");
+  assert.equal(reqText(DATA.items.elfenklinge), "Geschick +5, Volk Elf");
+});
+
+test("Attribute steigen beim Aufstieg höchstens bis +10", () => {
+  const z = make("zwerg");
+  assert.equal(ATTR_MAX, 10);
+  z.attrs.kraft = 10;
+  levelUp(z, "kraft");
+  assert.equal(z.attrs.kraft, 10);
+  assert.deepEqual(raisableAttrs(z), ["geschick", "verstand"]);
+  z.attrs = { kraft: 10, geschick: 10, verstand: 10 };
+  const hp = z.maxHp;
+  levelUp(z, null);
+  assert.deepEqual([raisableAttrs(z), z.maxHp], [[], hp + z.levelHp], "alle auf +10: nur Lebenspunkte");
 });
 
 test("Fähigkeit nur für das Hauptattribut und einmal", () => {
@@ -89,7 +112,8 @@ test("Gegner wachsen nur bei den Lebenspunkten", () => {
 });
 
 test("Kampfrunde: Angriff, Schaden, Gegnerzug, Verteidigen", () => {
-  const z = make("zwerg"); // Streitaxt W8 (Kraft), Kettenhemd +2
+  const z = make("zwerg");
+  z.weapon = "streitaxt"; z.armor = "lederwams"; // W8 (Kraft), Rüstung +2
   const c = startCombat(DATA.monsters.skeleton, 0); // Rüstung 11, Angriff +1, W6
   assert.equal(playerArmor(z, DATA.items, c), 12);
   const r = attackRoll(z, DATA.items, c, () => face(9, 20));
@@ -111,12 +135,15 @@ test("Leichte Waffen treffen mit Geschick", () => {
   e.weapon = null;
   assert.equal(weaponOf(e, DATA.items).damage, 1, "ohne Waffe 1 Schaden");
   assert.equal(attackRoll(e, DATA.items, c, () => face(5, 20)).attr, "kraft");
+  const m = make("mensch");
+  m.weapon = "eismesser";
+  assert.equal(attackRoll(m, DATA.items, c, () => face(5, 20)).attr, "verstand", "magische Waffen treffen mit Verstand");
 });
 
 test("Gegenstände im Kampf und Flucht", () => {
   const m = make("mensch");
   const c = startCombat(DATA.monsters.mimic, 0);
-  assert.equal(useInCombat(m, DATA.items.feuerball, c, () => 0.999).amount, 10);
+  assert.equal(useInCombat(m, DATA.items.feuerballrolle, c, () => 0.999).amount, 10);
   assert.equal(c.monster.hp, 0);
   const c2 = startCombat(DATA.monsters.mimic, 0);
   useInCombat(m, DATA.items.schildrolle, c2, Math.random);
@@ -124,25 +151,39 @@ test("Gegenstände im Kampf und Flucht", () => {
   m.hp = 5;
   useInCombat(m, DATA.items.heiltrank, c2, () => 0.999);
   assert.equal(m.hp, 12, "2W4+2 = 10, gedeckelt auf das Maximum");
+  // Eis-Schriftrolle: Gegner setzt 2 Runden aus, ein neuer freeze setzt die Runden neu
+  const c3 = startCombat(DATA.monsters.mimic, 0);
+  m.hp = m.maxHp;
+  assert.deepEqual(useInCombat(m, DATA.items.eisrolle, c3, Math.random), { type: "freeze", amount: 2 });
+  assert.equal(monsterTurn(m, DATA.items, c3, () => 0.999).frozen, true);
+  useInCombat(m, DATA.items.eisrolle, c3, Math.random);
+  assert.equal(c3.frozen, 2, "neu gesetzt, nicht verlängert");
+  monsterTurn(m, DATA.items, c3, () => 0.999); monsterTurn(m, DATA.items, c3, () => 0.999);
+  assert.equal(m.hp, m.maxHp, "eingefroren: kein Schaden");
+  const t = monsterTurn(m, DATA.items, c3, seq(face(20, 20), 0));
+  assert.deepEqual([t.frozen, t.hit], [undefined, true], "danach greift der Gegner wieder an");
   const f = fleeRoll(m, () => face(12, 20));
   assert.deepEqual([f.category, f.attr, f.dc, f.ok], ["flucht", "geschick", 12, true]);
   const f2 = fleeRoll(m, () => face(12, 20), 2); // Zwergenminen: SG 12 + 2
   assert.deepEqual([f2.dc, f2.ok], [14, false]);
 });
 
-test("Händler: Preise nach Stufe, Verkauf zum halben Preis, Angebot der Themenstufe", async () => {
+test("Händler: Preis aus dem Feld preis, Verkauf zur Hälfte abgerundet, Angebot vom Rang der Themenstufe", async () => {
   const { buyPrice, sellPrice, merchantStock, buy, sell } = await import("../src/shop.js");
-  assert.deepEqual([1, 2, 3, 4, 5, 6].map(st => buyPrice({ type: "weapon", stage: st })), [20, 40, 70, 110, 160, 220]);
+  for (const it of Object.values(DATA.items)) {
+    assert.equal(buyPrice(it), it.preis);
+    assert.equal(sellPrice(it), Math.floor(it.preis / 2));
+  }
   assert.equal(buyPrice(DATA.items.heiltrank), 15);
-  assert.equal(buyPrice(DATA.items.schildrolle), 30);
-  assert.equal(sellPrice(DATA.items.streitaxt), 35);
   assert.equal(sellPrice(DATA.items.heiltrank), 7);
+  assert.equal(sellPrice(DATA.items.stoffweste), 2, "5 Gold: Hälfte abgerundet");
+  assert.equal(sellPrice(DATA.items.streitaxt), 35);
   for (const stage of [1, 2, 3, 4, 5]) {
     const s = merchantStock(DATA.items, stage, 1234);
     assert.ok(s.gear.length > 0 && s.gear.length <= 4);
     assert.equal(new Set(s.gear).size, s.gear.length, "keine Doppelten");
-    s.gear.forEach(id => assert.equal(DATA.items[id].stage, stage));
-    assert.deepEqual(s.consumables.sort(), ["feuerball", "heiltrank", "schildrolle"]);
+    s.gear.forEach(id => assert.equal(DATA.items[id].rang, stage));
+    assert.deepEqual(s.consumables.sort(), ["eisrolle", "feuerballrolle", "feuerpfeil", "heiltrank", "heiltrankgross", "schildrolle"]);
   }
   assert.deepEqual(merchantStock(DATA.items, 3, 99), merchantStock(DATA.items, 3, 99), "gleicher Seed, gleiches Angebot");
   const p = make("zwerg");

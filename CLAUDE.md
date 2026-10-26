@@ -51,7 +51,8 @@ Die Liste aller Meilensteine steht im GDD.
 | `data/events.json` | alle Events (auch die Truhe) |
 | `data/monsters.json` | Monster und Bosse mit Lebenspunkten, Rüstung, Angriff, Schaden, Satz zur Todesursache |
 | `data/characters.json` | Völker: Attribute, Lebenspunkte, LP je Stufe, Fähigkeit, Startausrüstung, Modell |
-| `data/items.json` | Gegenstände: Waffen und Rüstungen mit Stufe 1–6, Verbrauch mit Preis und Beutegewicht, Mindestattribut |
+| `data/items.json` | Gegenstände mit Rang 1–6, Preis (`preis`), Schaden/Rüstung/Nutzen, Mindestattribut und Volk (`req`); erzeugt aus `data/gegenstaende.csv` |
+| `data/gegenstaende.csv` | Gegenstandsliste als Tabelle (Quelle für `items.json`) |
 | `data/texts.json` | Sätze zur Todesursache bei Events |
 | `src/data.js` | lädt `data/*.json` und prüft die Daten |
 | `src/eventLogic.js` | Event-Regeln: Proben-Kategorien, Auswahl, Effekte, Beute, Bedingungen, Datenprüfung; rein logisch |

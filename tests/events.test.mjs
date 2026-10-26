@@ -170,13 +170,15 @@ test("Beute: Gold mal Themenstufe, Gegenstand der Themenstufe (tier2 eine höher
   l = rollLoot("tier1", DATA.items, seq(0, 0, 0.5), 3);
   assert.equal(l.gold, 6, "2W6 = 2, mal Stufe 3");
   assert.equal(l.item, null);
-  for (const stage of [1, 2, 3, 4, 5]) for (let i = 0; i < 200; i++) {
+  // Gegenstände vom Rang der Themenstufe (tier2 einen Rang höher), Verbrauchsgegenstände eingeschlossen.
+  // Rang 6 ist noch leer (Content-Projekt), daher hier nur bis Themenstufe 4.
+  for (const stage of [1, 2, 3, 4]) for (let i = 0; i < 200; i++) {
     const t1 = rollLoot("tier1", DATA.items, Math.random, stage);
     assert.ok(t1.gold >= 2 * stage && t1.gold <= 12 * stage);
-    if (t1.item && DATA.items[t1.item].type !== "consumable") assert.equal(DATA.items[t1.item].stage, stage);
+    if (t1.item) assert.equal(DATA.items[t1.item].rang, stage);
     const t2 = rollLoot("tier2", DATA.items, Math.random, stage);
     assert.ok(t2.item, "tier2 gibt immer einen Gegenstand");
-    if (DATA.items[t2.item].type !== "consumable") assert.equal(DATA.items[t2.item].stage, stage + 1);
+    assert.equal(DATA.items[t2.item].rang, stage + 1);
   }
 });
 
@@ -211,7 +213,7 @@ test("Effekte gold, item und loseGold", () => {
   assert.equal(p.gold, 24);
   assert.equal(res.items.length, 1);
   const it = DATA.items[res.items[0]];
-  assert.ok(it.type === "consumable" || it.stage === 2);
+  assert.equal(it.rang, 2);
   // loseGold: fester Betrag, nie unter 0
   applyEffects([{ loseGold: 2 }], c, Math.random);
   assert.equal(p.gold, 22);

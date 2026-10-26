@@ -24,7 +24,7 @@
     "id": "katakomben",
     "name": "Katakomben",
     "stage": 2,
-    "dcBonus": 1,
+    "dcBonus": 2,
     "startNeighbor": "kerker",
     "roomTypes": [
       "gruft",
@@ -51,7 +51,7 @@
     "id": "zwergenminen",
     "name": "Zwergenminen",
     "stage": 3,
-    "dcBonus": 2,
+    "dcBonus": 4,
     "startNeighbor": "wache",
     "roomTypes": [
       "halle",
@@ -73,7 +73,7 @@
     "id": "goblinhoehlen",
     "name": "Goblin-Höhlen",
     "stage": 4,
-    "dcBonus": 3,
+    "dcBonus": 6,
     "startNeighbor": "goblinlager",
     "roomTypes": [
       "kerker",
@@ -93,7 +93,7 @@
     "id": "orklager",
     "name": "Ork-Lager",
     "stage": 5,
-    "dcBonus": 4,
+    "dcBonus": 8,
     "startNeighbor": "orklager",
     "roomTypes": [
       "orklager",

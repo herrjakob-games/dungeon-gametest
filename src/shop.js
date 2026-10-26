@@ -1,21 +1,19 @@
 // Händler (docs/GDD.md, Abschnitt Bosse, Gold und Händler). Reine Logik, testbar.
 import { mulberry32 } from "./rng.js";
 
-// Kaufpreis von Ausrüstung nach Stufe 1 bis 6; Verkauf bringt den halben Preis
-export const STAGE_PRICES = [20, 40, 70, 110, 160, 220];
 export const OFFER_SIZE = 4;
 
-// Kaufpreis: Ausrüstung nach Stufe, Verbrauchsgegenstände zum festen Preis aus data/items.json
-export const buyPrice = (item) => (item.type === "consumable" ? item.price : STAGE_PRICES[item.stage - 1]);
-export const sellPrice = (item) => Math.floor(buyPrice(item) / 2);
+// Kaufpreis steht bei jedem Gegenstand im Feld "preis"; Verkauf bringt die Hälfte, abgerundet
+export const buyPrice = (item) => item.preis;
+export const sellPrice = (item) => Math.floor(item.preis / 2);
 
 /**
- * Angebot des Händlers: 4 zufällige Ausrüstungsteile der Stufe des Themas (ohne Doppelte; gibt es weniger,
+ * Angebot des Händlers: 4 zufällige Ausrüstungsteile vom Rang der Stufe des Themas (ohne Doppelte; gibt es weniger,
  * alle) und alle Verbrauchsgegenstände in beliebiger Menge. Gleicher Raum-Seed ergibt das gleiche Angebot.
  */
 export function merchantStock(items, stage, seed) {
   const R = mulberry32(seed);
-  const pool = Object.values(items).filter(i => i.type !== "consumable" && i.stage === stage).map(i => i.id);
+  const pool = Object.values(items).filter(i => i.type !== "consumable" && i.rang === stage).map(i => i.id);
   const gear = [];
   while (pool.length && gear.length < OFFER_SIZE) gear.push(pool.splice(Math.floor(R() * pool.length), 1)[0]);
   const consumables = Object.values(items).filter(i => i.type === "consumable").map(i => i.id);

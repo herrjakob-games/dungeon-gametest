@@ -6,7 +6,7 @@ import { state } from "./state.js";
 import { DATA } from "./data.js";
 import { TYPES } from "./roomTypes.js";
 import { CATEGORY_NAMES, CATEGORIES, pickEvent, doCheck, applyEffects, releaseIfTrapped, visibleOptions } from "./eventLogic.js";
-import { ATTRS, ATTR_NAMES, addItem, levelUp, pendingLevelUps } from "./character.js";
+import { ATTR_NAMES, addItem, levelUp, raisableAttrs, pendingLevelUps } from "./character.js";
 import { showDialog, closeDialog } from "./dialog.js";
 import { refreshLocks } from "./roomBuilder.js";
 import { updateStats } from "./hud.js";
@@ -153,8 +153,14 @@ function levelUps(done) {
   const p = state.player;
   if (pendingLevelUps(p) <= 0) { done(); return; }
   const apply = (attr) => { levelUp(p, attr); updateStats(); renderInventory(); closeDialog(); levelUps(done); };
-  const opts = ATTRS.map(a => ({ label: ATTR_NAMES[a] + " " + signShort(p.attrs[a]) + " → " + signShort(p.attrs[a] + 1), pick: () => apply(a) }));
-  showDialog("Stufenaufstieg!", "Du erreichst Stufe " + (p.level + 1) + ". Du bekommst +" + p.levelHp + " Lebenspunkte. Welches Attribut steigt um 1?", opts, { modal: true });
+  // Attribute steigen höchstens bis +10; sind alle dort, gibt es nur die Lebenspunkte
+  const choices = raisableAttrs(p);
+  const opts = choices.length
+    ? choices.map(a => ({ label: ATTR_NAMES[a] + " " + signShort(p.attrs[a]) + " → " + signShort(p.attrs[a] + 1), pick: () => apply(a) }))
+    : [{ label: "Weiter", pick: () => apply(null) }];
+  const text = "Du erreichst Stufe " + (p.level + 1) + ". Du bekommst +" + p.levelHp + " Lebenspunkte. " +
+    (choices.length ? "Welches Attribut steigt um 1?" : "Alle Attribute sind schon auf +10.");
+  showDialog("Stufenaufstieg!", text, opts, { modal: true });
 }
 
 function eventCause(ev) {

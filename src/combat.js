@@ -13,7 +13,7 @@ export function scaleMonster(def, hpBonus = 0) {
 }
 
 export function startCombat(def, hpBonus = 0) {
-  return { monster: scaleMonster(def, hpBonus), defending: false, shield: 0, round: 1 };
+  return { monster: scaleMonster(def, hpBonus), defending: false, shield: 0, frozen: 0, round: 1 };
 }
 
 // Aktuelle Rüstung der Spielfigur im Kampf
@@ -53,12 +53,23 @@ export function useInCombat(player, item, c, rand) {
     c.monster.hp -= n;
     return { type, amount: n };
   }
+  if (type === "freeze") {
+    c.frozen = value; // Gegner setzt so viele Runden aus; ein neuer freeze setzt die Runden neu
+    return { type, amount: value };
+  }
   c.shield += value; // shield: Rüstung bis Kampfende
   return { type, amount: value };
 }
 
 // Zug des Gegners: W20 + Angriffsbonus gegen die Rüstung der Spielfigur
 export function monsterTurn(player, items, c, rand) {
+  if (c.frozen > 0) {
+    // Eingefroren: Der Gegner greift diese Runde nicht an
+    c.frozen -= 1;
+    c.defending = false;
+    c.round += 1;
+    return { frozen: true, left: c.frozen, hit: false, dmg: 0 };
+  }
   const d = 1 + Math.floor(rand() * 20);
   const total = d + c.monster.attack;
   const dc = playerArmor(player, items, c);
