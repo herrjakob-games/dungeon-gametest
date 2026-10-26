@@ -198,3 +198,24 @@ test("Sicherung gegen Einsperren öffnet die Rück-Tür", () => {
   const deadEnd = { doors: 8, locked: new Set(["W"]), back: null };
   assert.equal(releaseIfTrapped(deadEnd), "W");
 });
+
+test("Effekte gold, item und loseGold", () => {
+  const p = newPlayer();
+  const c = Object.assign(ctx(p), { stage: 2 });
+  // gold: nur Gold, mal Stufe des Themas
+  let res = applyEffects([{ gold: "2W6" }], c, () => 0.999);
+  assert.equal(p.gold, 24);
+  assert.deepEqual(res.items, []);
+  // item: sicher ein Gegenstand, kein Gold
+  res = applyEffects([{ item: "tier1" }], c, () => 0);
+  assert.equal(p.gold, 24);
+  assert.equal(res.items.length, 1);
+  const it = DATA.items[res.items[0]];
+  assert.ok(it.type === "consumable" || it.stage === 2);
+  // loseGold: fester Betrag, nie unter 0
+  applyEffects([{ loseGold: 2 }], c, Math.random);
+  assert.equal(p.gold, 22);
+  p.gold = 1;
+  res = applyEffects([{ loseGold: 2 }], c, Math.random);
+  assert.deepEqual([p.gold, res.lines[0].amount], [0, 1]);
+});

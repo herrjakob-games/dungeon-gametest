@@ -6,7 +6,7 @@ import { ATTRS, hasItem } from "./character.js";
 
 export const DCS = [8, 12, 16]; // leicht, mittel, schwer
 export const EVENT_TYPES = ["combat", "choice", "trap", "treasure", "npc"];
-export const EFFECTS = ["damage", "heal", "loot", "combat", "gainXp", "lockDoor", "unlockDoor", "setFlag"];
+export const EFFECTS = ["damage", "heal", "loot", "gold", "item", "loseGold", "combat", "gainXp", "lockDoor", "unlockDoor", "setFlag"];
 
 // Neun Proben-Kategorien, je drei pro Attribut
 export const CATEGORIES = {
@@ -108,14 +108,16 @@ export const lootPool = (items, stage) => Object.values(items)
 export function rollLoot(tier, items, rand, stage = 1) {
   const t = LOOT[tier];
   const gold = rollDice(t.gold, rand) * stage;
-  let item = null;
-  if (rand() < t.itemChance) {
-    const pool = lootPool(items, Math.min(MAX_ITEM_STAGE, stage + t.step));
-    let r = rand() * pool.reduce((s, i) => s + i.weight, 0);
-    for (const i of pool) { if ((r -= i.weight) < 0) { item = i.id; break; } }
-    if (!item && pool.length) item = pool[pool.length - 1].id;
-  }
+  const item = rand() < t.itemChance ? rollItem(tier, items, rand, stage) : null;
   return { gold, item };
+}
+
+// Ein Gegenstand der Beutestufe: tier1 = Stufe des Themas, tier2 = eine höher
+export function rollItem(tier, items, rand, stage = 1) {
+  const pool = lootPool(items, Math.min(MAX_ITEM_STAGE, stage + LOOT[tier].step));
+  let r = rand() * pool.reduce((s, i) => s + i.weight, 0);
+  for (const i of pool) { if ((r -= i.weight) < 0) return i.id; }
+  return pool.length ? pool[pool.length - 1].id : null;
 }
 
 // Erlaubte Richtungen für Türeffekte: N, E, S, W oder "back" (die Tür, durch die man kam)
@@ -149,6 +151,20 @@ export function applyEffects(effects, ctx, rand) {
       player.gold += l.gold;
       lines.push({ type, amount: l.gold });
       if (l.item) found.push(l.item);
+    } else if (type === "gold") {
+      // Nur Gold, mal Stufe des Themas wie bei der Beute
+      const n = rollDice(value, rand) * (ctx.stage || 1);
+      player.gold += n;
+      lines.push({ type: "loot", amount: n });
+    } else if (type === "item") {
+      // Sicher ein Gegenstand, ohne Gold
+      const id = rollItem(value, ctx.items, rand, ctx.stage || 1);
+      if (id) found.push(id);
+    } else if (type === "loseGold") {
+      // Fester Betrag, Gold fällt nie unter 0
+      const n = Math.min(player.gold, value);
+      player.gold -= n;
+      lines.push({ type, amount: n });
     } else if (type === "combat") {
       return { lines, died: false, items: found, combat: { monster: value, rest: list.slice(i + 1) } };
     } else if (type === "gainXp") {
@@ -290,7 +306,9 @@ export function validateData(data) {
       const [type, v] = entries[0];
       if (!EFFECTS.includes(type)) err(w, "unbekannter Effekt " + type);
       else if ((type === "damage" || type === "heal") && !isDice(v)) err(w, type + " braucht Zahl oder Würfel");
-      else if (type === "loot" && !LOOT[v]) err(w, "unbekannte Beutestufe " + v);
+      else if ((type === "loot" || type === "item") && !LOOT[v]) err(w, "unbekannte Beutestufe " + v);
+      else if (type === "gold" && !isDice(v)) err(w, "gold braucht Zahl oder Würfel");
+      else if (type === "loseGold" && !(Number.isInteger(v) && v > 0)) err(w, "loseGold braucht eine positive Zahl");
       else if (type === "combat" && !data.monsters[v]) err(w, "unbekanntes Monster " + v);
       else if (type === "gainXp" && !(Number.isInteger(v) && v > 0)) err(w, "gainXp braucht eine positive Zahl");
       else if ((type === "lockDoor" || type === "unlockDoor") && !(v === "back" || DIRKEYS.includes(v))) err(w, type + " braucht N, E, S, W oder back");

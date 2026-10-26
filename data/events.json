@@ -60,7 +60,7 @@
           ]
         },
         "failure": {
-          "text": "Du machst es schlimmer. Jetzt steht da »Wilkomen im Dunjohn«. Das Schild wirkt gekränkt."
+          "text": "Du machst es schlimmer. Jetzt steht da »Vilkomen im Dunjohn«. Das Schild wirkt gekränkt."
         }
       },
       {
@@ -73,10 +73,10 @@
     "id": "start_zettel",
     "type": "choice",
     "title": "Ein Zettel",
-    "text": "Ein Vorgänger hat einen Zettel hinterlassen: »Tipp 1: Nicht sterben. Tipp 2: siehe Rückseite.« Die Rückseite ist abgerissen.",
+    "text": "Ein Vorgänger hat einen Zettel hinterlassen: »Tipp 1: Nicht sterben. Tipp 2: Truhen …« Die untere Hälfte ist abgerissen.",
     "options": [
       {
-        "label": "Nach der Rückseite suchen",
+        "label": "Nach dem Rest des Zettels suchen",
         "check": {
           "category": "wahrnehmung",
           "dc": 8
@@ -85,7 +85,7 @@
           "text": "Unter einem Stein liegt sie: »Tipp 2: Truhen beißen manchmal.« Daneben ein paar vergessene Münzen.",
           "effects": [
             {
-              "loot": "tier1"
+              "gold": "1W6"
             }
           ]
         },
@@ -117,7 +117,7 @@
           "dc": 8
         },
         "success": {
-          "text": "Geschmeidig wie ein Zwerg nur sein kann. Also mäßig.",
+          "text": "Geschmeidig wie man nur sein kann. Solltest du öfter machen.",
           "effects": [
             {
               "gainXp": 1
@@ -135,7 +135,13 @@
       },
       {
         "label": "Zwerge dehnen sich nicht",
+        "condition": "volk:zwerg",
         "text": "Richtig so. Der Bart ist geschmeidig genug."
+      },
+      {
+        "label": "Ignorieren",
+        "text": "Richtig so. Du fühlst dich geschmeidig genug.",
+        "effects": []
       }
     ]
   },
@@ -235,7 +241,7 @@
           "dc": 8
         },
         "success": {
-          "text": "Du schleichst vorbei. Die Fliese wirkt enttäuscht.",
+          "text": "Du schleichst vorbei. Die Fliese wirkt erleichtert.",
           "effects": [
             {
               "gainXp": 2
@@ -243,7 +249,7 @@
           ]
         },
         "failure": {
-          "text": "Du trittst natürlich drauf. Aus der Wand fliegt ein Kissen. Dann ein Stein.",
+          "text": "Du trittst aus Versehen drauf. Die Fliese schreit laut »Aua!« und ein Stein löst sich von der Decke und fällt dir auf den Kopf.",
           "effects": [
             {
               "damage": "W4"
@@ -253,7 +259,7 @@
       },
       {
         "label": "Draufspringen, aus Prinzip",
-        "text": "Aus der Wand fliegt ein Stein. Prinzipien sind teuer.",
+        "text": "Die Fliese schreit laut »Aua!« und ein Stein löst sich von der Decke und fällt dir auf den Kopf.",
         "effects": [
           {
             "damage": 2
@@ -462,7 +468,7 @@
           "text": "Du gewinnst. Sie hatten doch Geld.",
           "effects": [
             {
-              "loot": "tier1"
+              "gold": "2W6"
             },
             {
               "gainXp": 2
@@ -479,7 +485,7 @@
         "text": "»Paragraf 7, Absatz 3: Wer zuletzt Karten gemischt hat, verliert.« Die Wachen sind beeindruckt und zahlen freiwillig.",
         "effects": [
           {
-            "loot": "tier1"
+            "gold": "2W6"
           },
           {
             "gainXp": 2
@@ -488,7 +494,12 @@
       },
       {
         "label": "Höflich ablehnen",
-        "text": "»Spielverderber«, murmeln beide. Dann spielen sie weiter."
+        "text": "»Spielverderber«, murmeln beide. Das tut weh.",
+        "effects": [
+          {
+            "damage": 1
+          }
+        ]
       }
     ]
   },
@@ -557,10 +568,10 @@
           "dc": 8
         },
         "success": {
-          "text": "Er verrät dir, wo die Wachen ihr Gold verstecken. In ihm. Gegen Gold hat er nichts.",
+          "text": "Er verrät dir, wo die Wachen ihr Gold verstecken.",
           "effects": [
             {
-              "loot": "tier1"
+              "gold": "2W6"
             },
             {
               "gainXp": 2
@@ -581,7 +592,7 @@
     "options": [
       {
         "label": "Kämpfen",
-        "text": "Die Ratte zieht eine Augenbraue hoch. Sie hat Augenbrauen.",
+        "text": "Die Ratte zieht eine Augenbraue hoch. Warum hat sie Augenbrauen?",
         "effects": [
           {
             "combat": "rat"
@@ -632,7 +643,7 @@
           "dc": 12
         },
         "success": {
-          "text": "Es riecht nach Brot. Es ist Brot. Wunder gibt es.",
+          "text": "Es riecht nach Brot. Es ist Brot. Und lecker auch noch.",
           "effects": [
             {
               "heal": 4
@@ -858,16 +869,16 @@
     "id": "exit_tuersteher",
     "type": "npc",
     "title": "Der Türsteher",
-    "text": "Ein Skelett mit Sonnenbrille steht vor dem Torbogen. »Du kommst hier nicht rein. Nur mit Schuhen.«",
+    "text": "Ein Skelett mit Sonnenbrille steht vor dem Torbogen. »Du kommst hier nicht rein. Nicht in dem Outfit.«",
     "options": [
       {
-        "label": "»Ich trage Stiefel.«",
+        "label": "»Ich kenne den Boss.«",
         "check": {
           "category": "diplomatie",
           "dc": 8
         },
         "success": {
-          "text": "Es mustert deine Stiefel. »Ok. Viel Spaß unten.«",
+          "text": "Es mustert dich. »Ok. Viel Spaß unten.«",
           "effects": [
             {
               "gainXp": 3
@@ -875,10 +886,16 @@
           ]
         },
         "failure": {
-          "text": "»Das sind keine Schuhe, das sind Erinnerungen an Schuhe.« Es schubst dich.",
+          "text": "»Du glaubst nicht, wie oft ich das höre.« Es schubst dich.",
           "effects": [
             {
-              "damage": 2
+              "combat": "skeleton"
+            },
+            {
+              "gainXp": 4
+            },
+            {
+              "loot": "tier1"
             }
           ]
         }
@@ -890,7 +907,7 @@
           "dc": 12
         },
         "success": {
-          "text": "Du schiebst es freundlich zur Seite. Es fällt auseinander und flucht.",
+          "text": "Du schiebst es freundlich zur Seite. Dabei fällt es auseinander und flucht: »Nicht schon wieder.«",
           "effects": [
             {
               "gainXp": 3
@@ -898,7 +915,7 @@
           ]
         },
         "failure": {
-          "text": "Es baut sich auf. Also, es setzt sich zusammen. Dann greift es an.",
+          "text": "»So leicht kommst du nicht vorbei.«",
           "effects": [
             {
               "combat": "skeleton"
@@ -935,7 +952,12 @@
           ]
         },
         "failure": {
-          "text": "Du kaufst versehentlich fünf Postkarten. Sie zeigen alle diesen Raum. Bezahlt hast du mit einem Lächeln."
+          "text": "Du kaufst versehentlich fünf Postkarten. Sie zeigen alle diesen Raum. Bezahlt hast du mehr, als du wolltest.",
+          "effects": [
+            {
+              "loseGold": 2
+            }
+          ]
         }
       },
       {
@@ -961,7 +983,12 @@
       },
       {
         "label": "Keine Zeit",
-        "text": "Die Bank sieht dir traurig nach."
+        "text": "Die Bank stellt dir ein Bein.",
+        "effects": [
+          {
+            "damage": "W4"
+          }
+        ]
       }
     ]
   },
@@ -1932,7 +1959,7 @@
           "dc": 12
         },
         "success": {
-          "text": "Schmeckt nach Großmutter, falls deine Großmutter eine Höhle war. Du fühlst dich erstaunlich gestärkt.",
+          "text": "Schmeckt nach Großmutter mit Kreuzkümmel. Du fühlst dich erstaunlich gestärkt.",
           "effects": [
             {
               "heal": "W6"
@@ -1969,7 +1996,7 @@
           ]
         },
         "failure": {
-          "text": "Du siehst nur Eintopf. Ein Spritzer trifft dich am Kinn.",
+          "text": "Du siehst nur Eintopf. Ein heißer Spritzer trifft dich am Kinn.",
           "effects": [
             {
               "damage": 1
@@ -2000,7 +2027,7 @@
           "text": "Der Griff gleitet heraus, und alle Finger bleiben dran. Das ist hier unten keine Selbstverständlichkeit.",
           "effects": [
             {
-              "loot": "tier1"
+              "item": "tier1"
             },
             {
               "gainXp": 3
@@ -2008,7 +2035,7 @@
           ]
         },
         "failure": {
-          "text": "Der Block gibt nach, die anderen sieben Messer auch. Eines davon findet dich.",
+          "text": "Der Block gibt nach, die anderen sieben Messer auch. Eines davon landet in deinem Oberschenkel.",
           "effects": [
             {
               "damage": "W4"
@@ -2026,7 +2053,7 @@
           "text": "Holz splittert, Messer klirren, der verzierte Griff landet vor deinen Füßen.",
           "effects": [
             {
-              "loot": "tier1"
+              "item": "tier1"
             },
             {
               "gainXp": 2
@@ -2092,7 +2119,7 @@
     "id": "kueche_fettbrand",
     "type": "trap",
     "title": "Fettbrand",
-    "text": "Dein Ellbogen streift eine Pfanne, die seit Jahrhunderten auf dem Herd steht. Das Fett darin hat lange auf diesen Moment gewartet. Stichflamme.",
+    "text": "Dein Ellbogen streift eine Pfanne, die seit Jahrhunderten neben dem Herd steht. Das Fett darin hat lange auf diesen Moment gewartet. Stichflamme.",
     "options": [
       {
         "label": "Zur Seite hechten",
@@ -2101,7 +2128,7 @@
           "dc": 12
         },
         "success": {
-          "text": "Du rollst ab, die Flamme leckt ins Leere. Elegant war es nicht, aber vollständig.",
+          "text": "Du rollst ab, die Flamme feuert ins Leere. Elegant war es nicht, aber gerettet ist gerettet.",
           "effects": [
             {
               "gainXp": 2
@@ -2109,7 +2136,7 @@
           ]
         },
         "failure": {
-          "text": "Die Flamme erwischt deine Augenbrauen. Sie wachsen nach, dein Stolz vielleicht nicht.",
+          "text": "Die Flamme erwischt deine Augenbrauen. Sie wachsen irgendwann nach, dein Stolz vielleicht nicht.",
           "effects": [
             {
               "damage": "W4"
@@ -2118,7 +2145,7 @@
         }
       },
       {
-        "label": "Den Eisendeckel draufknallen",
+        "label": "Den schweren Eisendeckel draufknallen",
         "check": {
           "category": "kraftakt",
           "dc": 12
@@ -2132,7 +2159,7 @@
           ]
         },
         "failure": {
-          "text": "Der Deckel ist schwerer als gedacht und landet auf deinem Fuß. Das Feuer brennt weiter, jetzt mit Publikum.",
+          "text": "Der Deckel ist schwerer als gedacht und landet auf deinem Fuß. Das Feuer brennt weiter, dein großer Zeh auch.",
           "effects": [
             {
               "damage": "W4"
@@ -2215,7 +2242,7 @@
           "text": "Auf der Rückseite steht: „Für den Nächsten, der es so weit schafft.“ Darunter klebt ein kleiner Beutel.",
           "effects": [
             {
-              "loot": "tier1"
+              "gold": "2W6"
             },
             {
               "gainXp": 3
@@ -2223,7 +2250,7 @@
           ]
         },
         "failure": {
-          "text": "Du beugst dich zu weit über den Tisch. Der Stuhl kippt, der Staub nicht.",
+          "text": "Du beugst dich zu weit über den Tisch und verbrennst dich an einer Kerze.",
           "effects": [
             {
               "damage": 1
@@ -2359,7 +2386,7 @@
       },
       {
         "label": "Vernünftig sein",
-        "text": "Du lässt alles, wie es ist. Es fühlt sich falsch an.",
+        "text": "Du lässt alles, wie es ist. Es fühlt sich falsch und langweilig an.",
         "effects": []
       }
     ]
@@ -2561,7 +2588,7 @@
           "dc": 12
         },
         "success": {
-          "text": "Dein Arm wird taub, deine Taschen werden schwer. Ein guter Tausch.",
+          "text": "Dein Arm wird taub, aber deine Taschen werden schwer. Ein guter Tausch.",
           "effects": [
             {
               "loot": "tier1"
@@ -2572,7 +2599,7 @@
           ]
         },
         "failure": {
-          "text": "Die Kälte beißt sich bis in die Schulter. Die Münzen bleiben, wo sie sind.",
+          "text": "Etwas beißt dir in die Hand. Die Münzen bleiben, wo sie sind.",
           "effects": [
             {
               "damage": 2
@@ -2598,7 +2625,7 @@
           ]
         },
         "failure": {
-          "text": "Der Stock bricht, und du verlierst das Gleichgewicht. Der Brunnenrand fängt dich auf, mit dem Gesicht.",
+          "text": "Der Stock bricht, und du verlierst das Gleichgewicht. Der Brunnenrand fängt dich auf. Leider weiß dein Gesicht das nicht zu schätzen. Du bekommst eine Beule.",
           "effects": [
             {
               "damage": 2
@@ -2792,7 +2819,7 @@
           "dc": 12
         },
         "success": {
-          "text": "Dein Reim holpert, aber das Echo ist beeindruckt. Es spült ein paar Münzen hoch, die es nicht mehr braucht.",
+          "text": "Dein Reim holpert, aber das Echo ist beeindruckt. Es fliegen ein paar Münzen aus dem Brunnen.",
           "effects": [
             {
               "loot": "tier1"
@@ -2844,13 +2871,13 @@
     "text": "Der Boden um den Brunnen ist mit Moos bedeckt und glitschig wie frische Seife. Gerade als du das bemerkst, rutscht dein Fuß weg.",
     "options": [
       {
-        "label": "Mit den Armen rudern",
+        "label": "Wild mit den Armen in der Luft rudern",
         "check": {
           "category": "ausweichen",
           "dc": 12
         },
         "success": {
-          "text": "Du findest Halt, bevor es peinlich wird. Niemand hat es gesehen, das ist das Wichtigste.",
+          "text": "Du findest Halt. Niemand hat es gesehen, wie peinlich das ausgesehen hat. Das ist das Wichtigste.",
           "effects": [
             {
               "gainXp": 2
@@ -2858,7 +2885,7 @@
           ]
         },
         "failure": {
-          "text": "Du landest halb im Brunnen und ganz unwürdig. Das Wasser ist kalt, der Rand ist hart.",
+          "text": "Du landest halb im Brunnen. Das Wasser ist kalt, der Rand ist hart.",
           "effects": [
             {
               "damage": "W4"
@@ -2907,7 +2934,7 @@
           "dc": 12
         },
         "success": {
-          "text": "Rau, sauer, wärmend. Du fühlst dich mutiger und etwas weniger verbeult.",
+          "text": "Rau, sauer, wärmend. Du fühlst dich mutiger und besser.",
           "effects": [
             {
               "heal": "W4"
@@ -2959,7 +2986,7 @@
     "id": "halle_fledermaeuse",
     "type": "trap",
     "title": "Fledermäuse",
-    "text": "Zwischen den Säulen hängen hunderte Fledermäuse und schlafen. Dein Stiefel findet den einzigen lauten Kiesel im ganzen Raum.",
+    "text": "Zwischen den Säulen hängen hunderte Fledermäuse und schlafen. Dein Stiefel findet die einzige quietschende Bodenplatte im ganzen Raum.",
     "options": [
       {
         "label": "Ducken und durchrennen",
@@ -2999,7 +3026,7 @@
           ]
         },
         "failure": {
-          "text": "Du stehst still wie eine Säule. Leider wie eine Säule mit Hals.",
+          "text": "Du stehst still wie eine Säule. Leider wie eine Säule mit zerkratztem Gesicht und blutigem Hals.",
           "effects": [
             {
               "damage": "W4"
@@ -3013,7 +3040,7 @@
     "id": "gruft_ruecken",
     "type": "combat",
     "title": "Skelett mit Rücken",
-    "text": "Aus einem Sarg stemmt sich ein Skelett hoch, eine Hand im Kreuz. Es stöhnt, knackt und hebt dann trotzdem das Schwert. Pflicht ist Pflicht.",
+    "text": "Aus einem Sarg stemmt sich ein Skelett hoch, eine Hand an der Wirbelsäule. Es stöhnt, knackt und hebt dann trotzdem das Schwert. Pflicht ist Pflicht.",
     "options": [
       {
         "label": "Angreifen",
@@ -3060,7 +3087,7 @@
         }
       },
       {
-        "label": "Auf Feierabend plädieren",
+        "label": "An Ruhepause erinnern",
         "check": {
           "category": "diplomatie",
           "dc": 12
@@ -3111,7 +3138,7 @@
           ]
         },
         "failure": {
-          "text": "Ein Skelett zählt die Augen nach. Es hat Zeit, es hat sonst nichts.",
+          "text": "Ein Skelett erwischt dich und greift an.",
           "effects": [
             {
               "combat": "skeleton"
@@ -3140,7 +3167,7 @@
           ]
         },
         "failure": {
-          "text": "Beide fühlen sich betrogen. Endlich sind sie sich einig, und zwar über dich.",
+          "text": "Beide halten nichts von deinem Geschwafel. Endlich sind sie sich einig, und zwar über dich.",
           "effects": [
             {
               "combat": "skeleton"
@@ -3184,6 +3211,9 @@
           "text": "Zwischen den Zeilen stecken Warnungen, Ratschläge und ein Rezept für Pilzsuppe. Du nimmst dir die Warnungen zu Herzen.",
           "effects": [
             {
+              "setFlag": "rezept_gelesen"
+            },
+            {
               "gainXp": 2
             }
           ]
@@ -3216,9 +3246,6 @@
           "text": "Das Geländer ist gerührt und hält dich auf dem ganzen Weg nach unten. Du fühlst dich eigenartig wertgeschätzt.",
           "effects": [
             {
-              "heal": 2
-            },
-            {
               "gainXp": 2
             }
           ]
@@ -3244,12 +3271,16 @@
         },
         "failure": {
           "text": "Stufe sieben ist niedriger als die anderen. Das Geländer lacht, aber leise.",
-          "effects": []
+          "effects": [
+            {
+              "damage": "W4"
+            }
+          ]
         }
       },
       {
         "label": "Einfach weitergehen",
-        "text": "Ein Geländer, das redet, ist nicht dein Problem. Noch nicht.",
+        "text": "Ein Geländer, das redet, ist nicht dein Problem. Hoffentlich.",
         "effects": []
       }
     ]
