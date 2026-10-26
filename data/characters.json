@@ -16,7 +16,7 @@
     "text": "Flink, scharfäugig und seit dreihundert Jahren leicht genervt von allen, die langsamer denken. Also allen.",
     "attrs": { "kraft": -1, "geschick": 2, "verstand": 1 },
     "hp": 10,
-    "levelHp": 4,
+    "levelHp": 3,
     "ability": { "id": "scharfe_sinne", "name": "Scharfe Sinne", "attr": "geschick", "text": "Einmal pro Dungeon gilt eine misslungene Geschick-Probe als bestanden." },
     "start": { "weapon": "dolch", "armor": "tunika", "pack": ["heiltrank"] },
     "model": "elf"

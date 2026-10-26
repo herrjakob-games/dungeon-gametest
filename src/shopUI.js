@@ -33,7 +33,7 @@ function buyMenu(msg) {
     const item = DATA.items[e.id];
     return { label: item.name + " · " + buyPrice(item) + " Gold", pick: () => {
       const err = buy(state.player, item, PACK_SIZE);
-      if (!err && e.gearIndex !== undefined) s.gear.splice(e.gearIndex, 1); // Ausrüstung gibt es nur einmal
+      if (!err && e.gearIndex !== undefined) s.gear.splice(e.gearIndex, 1); // Angebot gibt es nur einmal
       renderInventory();
       updateStats();
       buyMenu(err || item.name + " gekauft.");
@@ -41,7 +41,7 @@ function buyMenu(msg) {
   });
   opts.push({ label: "Zurück", pick: () => openShop() });
   const fx = [goldLine()].concat(entries.map(e => DATA.items[e.id].name + ": " + itemStats(DATA.items[e.id])));
-  showDialog(TITLE, msg || "Was darf es sein? Ausrüstung gibt es nur einmal, Tränke und Schriftrollen so viele du willst.", opts, { fx });
+  showDialog(TITLE, msg || "Was darf es sein? Jedes Stück aus dem Angebot gibt es nur einmal, Heiltränke so viele du willst.", opts, { fx });
 }
 
 function sellMenu(msg) {

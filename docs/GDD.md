@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.1 · Oct 26, 2026 · @Christian
+Version 2.2 · Oct 26, 2026 · @Christian
 
 ## Versionen
 
@@ -8,8 +8,9 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.2 | 26.10.2026 | Lebenspunkte je Stufe nach Volk (Zwerg +5, Elf +3, Mensch +4); Händler-Angebot genauer (4 Gegenstände je einmal, Heiltränke immer); leerer Rang: es gilt der höchste Rang darunter; Effekte `gold`, `item`, `loseGold`; Abstieg, Rastplatz und Bossraum ergänzt; 26 Gegenstände; veraltete Entscheidungen entfernt |
 | 2.1 | 26.10.2026 | Neue Startausrüstung: Zwerg Langschwert und Lederwams, Elf Dolch und Stofftunika, Mensch Knüppel, Stoffweste, Feuerpfeil- und Schild-Schriftrolle; alle mit Kleinem Heiltrank |
-| 2.0 | 26.10.2026 | Attribut-Skala −1 bis +10 statt +3; Proben-Zuschlag pro Thema verdoppelt (+0 bis +8); Monster-Richtwerte angepasst; Verstand als drittes Trefferattribut für magische Waffen; neuer Nutzen-Effekt `freeze`; Einzelpreise pro Gegenstand (Feld `preis`); neue Gegenstandsliste mit 25 Gegenständen; neue Startausrüstung |
+| 2.0 | 26.10.2026 | Attribut-Skala −1 bis +10 statt +3; Proben-Zuschlag pro Thema verdoppelt (+0 bis +8); Monster-Richtwerte angepasst; Verstand als drittes Trefferattribut für magische Waffen; neuer Nutzen-Effekt `freeze`; Einzelpreise pro Gegenstand (Feld `preis`); neue Gegenstandsliste mit 26 Gegenständen; neue Startausrüstung |
 | 1.2 | 26.10.2026 | Gegenstände haben einen Rang statt einer Stufe (Feld `rang`); Verbrauchsgegenstände bekommen Ränge (Heiltrank 1, Feuerball-Schriftrolle 2, Schild-Schriftrolle 3); Händler führt sie im Angebot der Beutestufe |
 | 1.1 | 26.10.2026 | Volks-Anforderung für Gegenstände (`req.volk`); einheitlich „Elf“ statt „Elfin“ |
 | 1.0 | 25.10.2026 | Stand nach Meilenstein 4 für die Ebenen 1–3: Regelwerk, Völker, Gegenstände, Event-System, Themen, Raumtypen, Bosse, Preise |
@@ -84,15 +85,15 @@ Jede Probe gehört zu genau einer dieser Kategorien und damit zu einem Attribut.
 
 Der Spieler wählt vor dem ersten Dungeon ein Volk. Das Volk legt Attribute, Lebenspunkte und Fähigkeit fest. Es gibt bewusst keine Klassen: Ob ein Charakter eine Waffe, Rüstung oder einen Zauber nutzen kann, hängt von seinen Attributen ab (zum Beispiel Plattenpanzer erst ab Kraft +5). Einzelne Gegenstände können zusätzlich an ein Volk gebunden sein (siehe Ausrüstung).
 
-| Volk | Kraft | Geschick | Verstand | Lebenspunkte | Fähigkeit |
-| --- | --- | --- | --- | --- | --- |
-| Zwerg | +2 | +1 | −1 | 14 | Kraftprotz |
-| Elf | −1 | +2 | +1 | 10 | Scharfe Sinne |
-| Mensch | 0 | 0 | +2 | 12 | Wacher Geist |
+| Volk | Kraft | Geschick | Verstand | Lebenspunkte | LP je Stufe | Fähigkeit |
+| --- | --- | --- | --- | --- | --- | --- |
+| Zwerg | +2 | +1 | −1 | 14 | +5 | Kraftprotz |
+| Elf | −1 | +2 | +1 | 10 | +3 | Scharfe Sinne |
+| Mensch | 0 | 0 | +2 | 12 | +4 | Wacher Geist |
 
 - **Fähigkeiten:** Jedes Volk darf einmal pro Dungeon eine misslungene Probe seines Hauptattributs als bestanden werten, ohne neu zu würfeln. Das gilt für alle Kategorien dieses Attributs, also auch im Kampf (Nahkampf, Flucht). Kraftprotz (Zwerg) gilt für Kraft, Scharfe Sinne (Elf) für Geschick, Wacher Geist (Mensch) für Verstand.
 - **Auswahl:** Nach einer misslungenen passenden Probe bietet das Textfenster an, die Fähigkeit einzusetzen. Der Spieler entscheidet.
-- **Daten:** Völker stehen in `data/characters.json` mit Name, Attributen, Lebenspunkten, Fähigkeit, Startausrüstung und Modell.
+- **Daten:** Völker stehen in `data/characters.json` mit Name, Attributen, Lebenspunkten, Lebenspunkten je Stufe (`levelHp`), Fähigkeit, Startausrüstung und Modell.
 - **Auswahlbildschirm:** Vor dem ersten Dungeon und nach jedem Tod.
 
 ### Proben, Kampf und Fortschritt
@@ -110,8 +111,8 @@ Der Spieler wählt vor dem ersten Dungeon ein Volk. Das Volk legt Attribute, Leb
 - **Fähigkeit im Kampf:** gilt für das tatsächlich gewürfelte Attribut. Der Elf kann also einen verfehlten Angriff mit leichter Waffe retten, der Zwerg einen mit schwerer Waffe, der Mensch einen mit magischer Waffe.
 - **Kampf in Events:** Der Effekt `combat` startet einen Rundenkampf. Die Effekte danach (etwa Beute) gelten erst nach einem Sieg.
 - **Gegner:** Lebenspunkte, Rüstungswert, Angriffsbonus, Schaden (z. B. W6) und ein witziger Satz für den Endbildschirm. Wie Gegner mit der Tiefe stärker werden, steht im Abschnitt Raumtypen und Ebenen.
-- **Fortschritt:** Erfahrung aus Events. Stufe 2 bei 10, Stufe 3 bei 25, Stufe 4 bei 45, Stufe 5 bei 70 Erfahrung, danach alle 30 Erfahrung eine weitere Stufe. Beim Stufenaufstieg wählt der Spieler ein Attribut für +1 (höchstens +10) und bekommt +3 maximale Lebenspunkte, die ihn auch um 3 heilen. Sind alle Attribute auf +10, gibt es nur die Lebenspunkte.
-- **Beute:** Beutestufe `tier1` = 2W6 Gold und mit 1/3 Chance ein einfacher Gegenstand. `tier2` = 4W6 Gold und immer ein besserer Gegenstand. Welchen Rang ein Gegenstand hat, steht in `data/items.json`. Die Beutestufen verschieben sich mit dem Thema (siehe Raumtypen und Ebenen). Gold ist Zahlungsmittel beim Händler.
+- **Fortschritt:** Erfahrung aus Events. Stufe 2 bei 10, Stufe 3 bei 25, Stufe 4 bei 45, Stufe 5 bei 70 Erfahrung, danach alle 30 Erfahrung eine weitere Stufe. Beim Stufenaufstieg wählt der Spieler ein Attribut für +1 (höchstens +10) und bekommt maximale Lebenspunkte je nach Volk (Zwerg +5, Elf +3, Mensch +4), die ihn auch um denselben Wert heilen. Sind alle Attribute auf +10, gibt es nur die Lebenspunkte.
+- **Beute:** Beutestufe `tier1` = 2W6 Gold und mit 1/3 Chance ein einfacher Gegenstand. `tier2` = 4W6 Gold und immer ein besserer Gegenstand. Welchen Rang ein Gegenstand hat, steht in `data/items.json`. Gibt es für einen Rang noch keine Gegenstände, gilt der höchste Rang darunter, der welche hat. Die Beutestufen verschieben sich mit dem Thema (siehe Raumtypen und Ebenen). Gold ist Zahlungsmittel beim Händler.
 - **Abstieg:** Jeder Ausgang führt eine Ebene tiefer, endlos. Lebenspunkte, Gold, Erfahrung und Ausrüstung bleiben. Die Fähigkeit ist im neuen Dungeon wieder bereit.
 - **Inventar:** Je ein Platz für die angelegte Waffe und Rüstung, dazu sechs Rucksackplätze. Ist der Rucksack voll, fragt das Spiel, was liegen bleibt. Außerhalb von Events lassen sich Gegenstände anlegen, ablegen, benutzen (Heiltrank) und wegwerfen. Während Events und Kämpfen geht das nur über „Gegenstand nutzen“.
 
@@ -198,7 +199,8 @@ Jeder Raumtyp hat eine Event-Chance und eine gewichtete Event-Tabelle. Jedes Eve
 - **Dateien:** `data/room-types.json`, `data/events.json`, `data/monsters.json`, `data/characters.json`, `data/items.json`, `data/texts.json` (Sätze zur Todesursache bei Events). Ein Event hat zusätzlich einen `title` für das Textfenster. Ein Ergebnis kann mit `next` ein Folge-Event starten, so laufen Proben Runde für Runde.
 - **Proben in Events:** Jede Probe nennt ihre Kategorie, zum Beispiel `{ "category": "kraftakt", "dc": 12 }`. Das Attribut ergibt sich aus der Kategorie.
 - **Event-Typen:** combat, choice, trap, treasure, npc. Bossgegner und Artefakte laufen als normale Events über die Tabellen.
-- **Effekte:** damage, heal, loot, combat, gainXp, lockDoor, unlockDoor, setFlag. Mengen als Zahl oder Würfel, etwa `"W4"` oder `"2W6"`.
+- **Effekte:** damage, heal, loot, gold, item, loseGold, combat, gainXp, lockDoor, unlockDoor, setFlag. Mengen als Zahl oder Würfel, etwa `"W4"` oder `"2W6"`.
+- **Beute-Effekte:** `loot` gibt Gold und eventuell einen Gegenstand (siehe Beute). `gold` gibt nur Gold, der Würfelwert wird wie bei der Beute mit der Stufe des Themas malgenommen, etwa `{ "gold": "2W6" }`. `item` gibt sicher einen Gegenstand ohne Gold: `tier1` vom Rang der Stufe des Themas, `tier2` einen Rang höher. `loseGold` nimmt einen festen Betrag weg, nicht mit der Themenstufe malgenommen, etwa `{ "loseGold": 2 }`; Gold fällt nie unter 0.
 - **once:** Das Event kommt höchstens einmal pro Dungeon vor.
 - **Bedingungen:** `flag:name` (Flag ist gesetzt), `notFlag:name` (Flag fehlt) und `volk:zwerg`, `volk:elf`, `volk:mensch`. Flags gelten pro Dungeon. `hasItem:id` ist erfüllt, wenn der Gegenstand angelegt ist oder im Rucksack liegt.
 - **Volks-Bedingungen:** Ein ganzes Event kann an ein Volk gebunden sein, dann erscheint es nur für dieses Volk. Bei ausgewählten Events kann auch eine einzelne Option an ein Volk gebunden sein, andere Völker sehen sie nicht.
@@ -253,10 +255,12 @@ Der Dungeon führt durch Themen, die alle drei Ebenen wechseln. Das Thema bestim
 | Wolfs-Höhle | feindlich | bevorzugt in Sackgassen | höchstens 2 |
 
 - **Lesart der Lage:** „nur“, „nie“ und „direkt neben dem Start“ sind feste Regeln. „Bevorzugt“ und „neben X“ gelten, wenn der Grundriss es zulässt und der andere Raumtyp auf der Ebene vorkommt.
-- **Feindlich:** Events mit Kämpfen und Fallen. **Neutral:** Rätsel, Gespräche, Fundstücke oder gar kein Event, nur Start, Abstieg, Rastplatz und Händler sind verlässlich sicher. Gemischt: Wenn ein Event auslöst, ist es in etwa 30 % der Fälle ein Gegner oder eine Falle, sonst harmlos. Dafür trägt jedes Event in der Tabelle eines gemischten Raumtyps die Markierung feindlich oder neutral. Für den Anteil feindlicher Räume zählen gemischte Räume nicht als feindlich.
+- **Feindlich:** Events mit Kämpfen und Fallen. **Neutral:** Rätsel, Gespräche, Fundstücke oder gar kein Event, nur Start, Rastplatz und Händler sind verlässlich sicher. Der Abstieg ist neutral, seine Events dürfen aber kleine Folgen haben (etwas Schaden, Goldverlust) und einen Kampf, etwa mit dem Türsteher. **Gemischt:** Wenn ein Event auslöst, ist es in etwa 30 % der Fälle ein Gegner oder eine Falle, sonst harmlos. Dafür trägt jedes Event in der Tabelle eines gemischten Raumtyps die Markierung feindlich oder neutral, und zwar doppelt: `"hostile": true` oder `false` (Feld des Content-Projekts) und `"rating": "hostile"` oder `"neutral"` (wertet der Code aus). Beide müssen übereinstimmen, `npm test` prüft das. Für den Anteil feindlicher Räume zählen gemischte Räume nicht als feindlich.
 - **Anteil feindlicher Räume:** steigt von etwa 40 % auf Ebene 1 auf 70 % ab Ebene 13.
 - **Sackgassen:** Sackgassen, die keine Schatzkammer werden, bekommen einen anderen Raumtyp des Themas.
-- **Händler:** bietet 4 zufällige Gegenstände vom Rang der aktuellen Beutestufe an (Verbrauchsgegenstände eingeschlossen) und immer Heiltränke. Verkaufen bringt den halben Preis.
+- **Händler:** bietet 4 zufällige Gegenstände vom Rang der aktuellen Beutestufe an (Rang = Stufe des Themas, Verbrauchsgegenstände eingeschlossen), jeden einmal. Dazu immer die Heiltränke (Kleiner und Großer Heiltrank) in beliebiger Menge; sie zählen nicht zu den 4 Gegenständen. Ist der Rang leer, gilt der höchste Rang darunter. Verkaufen bringt den halben Preis.
+- **Rastplatz:** auf jeder geraden Ebene (2, 4, 6 …). Ein Lagerfeuer im Raum heilt einmal auf volle Lebenspunkte, danach ist es aus.
+- **Bossraum:** Betreten startet den Bosskampf, auch bei jedem weiteren Betreten, bis der Boss besiegt ist. Flucht ist erlaubt, der Boss wartet dann mit vollen Lebenspunkten. Sieg: Beute `tier2` und 10 Erfahrung, danach erscheint in der Raummitte der Torbogen zum Abstieg.
 - **Bosse:** passend zum Thema, einer am Ende jeder Themenwelt.
 
 ### Ebenen
@@ -264,7 +268,7 @@ Der Dungeon führt durch Themen, die alle drei Ebenen wechseln. Das Thema bestim
 - **Größe:** Ebene 1 hat 8 bis 12 Räume, jede weitere Ebene 2 mehr. Ab Ebene 9 bleibt es bei 24 bis 28 Räumen.
 - **Proben:** Pro Thema +2 auf jede Schwierigkeit: Keller ±0, Katakomben +2, Zwergenminen +4, Goblin-Höhlen +6, Ork-Lager +8, auch im endlosen Ork-Lager. Der Zuschlag hält mit den Attributen Schritt, die über Stufenaufstiege bis +10 wachsen (Werte im Spiel testen). In den Event-Daten bleiben die Werte 8, 12 und 16, der Zuschlag kommt automatisch dazu und wird im Textfenster angezeigt.
 - **Monster:** Jedes Thema hat eigene Monster. Innerhalb eines Themas bekommen Gegner +1 Lebenspunkt pro Ebene (erste Ebene des Themas +0, zweite +1, dritte +2), im endlosen Ork-Lager wächst das weiter. Das ersetzt das bisherige Wachstum von +2 Lebenspunkten und +1 Angriff je Ebene. Richtwert für neue Monster: pro Thema tiefer etwa +3 Lebenspunkte, +2 Rüstung, +2 Angriff und eine Würfelstufe mehr Schaden, damit sie gegen Attribute bis +10 und Rüstungen bis +10 bestehen (im Spiel testen).
-- **Beute:** Die Beutestufen verschieben sich mit dem Thema. `tier1` ergibt Gegenstände vom Rang der Stufe des Themas (Keller 1 bis Ork-Lager 5), `tier2` einen Rang höher. Dafür braucht `data/items.json` Gegenstände bis Rang 6.
+- **Beute:** Die Beutestufen verschieben sich mit dem Thema. `tier1` ergibt Gegenstände vom Rang der Stufe des Themas (Keller 1 bis Ork-Lager 5), `tier2` einen Rang höher. Dafür braucht `data/items.json` Gegenstände bis Rang 6; solange ein Rang leer ist, gilt der höchste Rang darunter.
 - **Ergebnis:** Der Endbildschirm zeigt die erreichte Ebene als Ergebnis.
 
 ### Bosse, Gold und Händler
@@ -281,7 +285,7 @@ Der Dungeon führt durch Themen, die alle drei Ebenen wechseln. Das Thema bestim
 Werte und Texte der Bosse entstehen im Content-Projekt.
 
 - **Gold:** Der Goldbetrag der Beute wird mit der Stufe des Themas malgenommen: Keller ×1, Katakomben ×2, Zwergenminen ×3, Goblin-Höhlen ×4, Ork-Lager ×5, auch im endlosen Ork-Lager.
-- **Rang der Gegenstände:** Jeder Gegenstand hat in `data/items.json` einen Rang von 1 bis 6 (Feld `rang`), auch Verbrauchsgegenstände. „Rang“ gilt nur für Gegenstände, „Stufe“ meint die Charakterstufe und die Stufe des Themas. Der Rang bestimmt, wo ein Gegenstand als Beute und beim Händler auftaucht. Welcher Gegenstand welchen Rang hat, steht in der Gegenstandstabelle. Rang 6 füllt das Content-Projekt.
+- **Rang der Gegenstände:** Jeder Gegenstand hat in `data/items.json` einen Rang von 1 bis 6 (Feld `rang`), auch Verbrauchsgegenstände. „Rang“ gilt nur für Gegenstände, „Stufe“ meint die Charakterstufe und die Stufe des Themas. Der Rang bestimmt, wo ein Gegenstand als Beute und beim Händler auftaucht. Welcher Gegenstand welchen Rang hat, steht in der Gegenstandstabelle. Rang 6 füllt das Content-Projekt, bis dahin gilt dort Rang 5.
 - **Preis:** Jeder Gegenstand hat in `data/items.json` einen eigenen Kaufpreis (Feld `preis`). Verkaufen bringt die Hälfte, abgerundet. Die Tabelle unten ist nur Richtwert für neue Ausrüstung.
 - **Ziel der Preise:** Etwa alle ein bis zwei Ebenen ist ein neues Ausrüstungsteil bezahlbar.
 
@@ -323,66 +327,53 @@ Sieben Schritte, jeder endet mit etwas Spielbarem, das Christian im Browser test
 
 - [x] Zwei Modi bestätigen: freie Erkundung in Echtzeit, Rundenmodus nur während Events
 - [x] Regelvorschlag annehmen: drei Attribute, W20, Schwierigkeiten 8/12/16
-- [x] Raumgröße und Dungeongröße festlegen: 11×11 Kacheln (vorher 15×15), 12 bis 20 Räume
+- [x] Raumgröße 11×11 Kacheln (vorher 15×15)
 - [x] Setting und Ton: klassische Fantasy, humorvoll
-- [x] Ziel eines Durchlaufs: Ausgang (Bossgegner oder Artefakt sind mögliche Events)
 - [x] Tod: Neustart mit neuem Dungeon (Permadeath)
 - [x] Verhalten beim erneuten Betreten eines Raums: Durchlaufen ohne neues Event
 - [x] Nur Desktop
 - [x] Schnellreise über die Minimap: nur besuchte Räume, sofort mit Abblende, ohne Kosten, Ankunft in der Raummitte, gesperrt während Events
-- [x] Lebenspunkte gelten ab Meilenstein 4, bei 0 neuer Dungeon
-- [x] Beute bis Meilenstein 5 nur Gold: tier1 = 2W6, tier2 = 4W6
-- [x] Ersatz-Kampf bis Meilenstein 5: eine Kraft-Probe gegen die Rüstung des Monsters
-- [x] Erfahrung wird gezählt, Stufenaufstieg ab Meilenstein 5
+- [x] Lebenspunkte gelten, bei 0 neuer Dungeon
 - [x] lockDoor/unlockDoor mit Richtung oder „back“, Rück-Tür öffnet sich, wenn sonst alles zu ist
 - [x] Startraum: Begrüßungs-Event zu Beginn jedes Dungeons
 - [x] once gilt pro Dungeon; Bedingungen flag und notFlag
-- [x] Volkswahl statt Klassen: Zwerg, Elf, Mensch legen Attribute, Lebenspunkte und Fähigkeit fest (ersetzt die festen Startwerte des Zwergenkriegers)
-- [x] Ausrüstung und Zauber über Mindestattribute, Skala bleibt −1 bis +3
+- [x] Volkswahl statt Klassen: Zwerg, Elf, Mensch legen Attribute, Lebenspunkte und Fähigkeit fest
+- [x] Ausrüstung und Zauber über Mindestattribute
 - [x] Fähigkeit pro Volk, einmal pro Dungeon: misslungene Probe des Hauptattributs gilt als bestanden (Kraftprotz, Scharfe Sinne, Wacher Geist)
 - [x] Jede Probe hat eine von neun Kategorien unter den drei Attributen
 - [x] Volks-Bedingungen für ganze Events und für einzelne Optionen bei ausgewählten Events
-
-* [x] Gegnerzug: W20 + Angriffsbonus gegen Rüstung der Figur (10 + Rüstungsbonus)
-* [x] Spielerschaden kommt von der Waffe, ohne Waffe 1
-* [x] Leichte Waffen treffen mit Geschick statt Kraft
-* [x] Flucht: SG 12, Fehlschlag lässt den Gegner handeln, Erfolg führt durch die Rück-Tür und beendet das Event ohne Beute
-* [x] Erfahrungsschwellen 10 / 25 / 45 / 70, danach alle 30; Spieler wählt das Attribut beim Aufstieg
-* [x] Endlos tiefer: kein Sieg, Endbildschirm mit Ebene und witziger Todesursache
-* [x] Gegner wachsen ab Ebene 2 um +2 LP und +1 Angriff je Ebene, höchstens 5 Ebenen
-* [x] Inventar: Waffe und Rüstung angelegt extra, sechs Rucksackplätze
-* [x] Gegenstandsliste, Startausrüstung je Volk, Beute als Gold plus Gegenstand (Ersatz-Kampf und Nur-Gold-Beute aus Meilenstein 4 sind damit abgelöst)
-
+- [x] Gegnerzug: W20 + Angriffsbonus gegen Rüstung der Figur (10 + Rüstungsbonus)
+- [x] Spielerschaden kommt von der Waffe, ohne Waffe 1
+- [x] Leichte Waffen treffen mit Geschick, schwere mit Kraft, magische mit Verstand; Feld `hit` kennt kraft, geschick und verstand
+- [x] Flucht: SG 12, Fehlschlag lässt den Gegner handeln, Erfolg führt durch die Rück-Tür und beendet das Event ohne Beute
+- [x] Erfahrungsschwellen 10 / 25 / 45 / 70, danach alle 30; Spieler wählt das Attribut beim Aufstieg
+- [x] Lebenspunkte je Stufe nach Volk: Zwerg +5, Elf +3, Mensch +4
+- [x] Endlos tiefer: kein Sieg, Endbildschirm mit Ebene und witziger Todesursache
+- [x] Inventar: Waffe und Rüstung angelegt extra, sechs Rucksackplätze
+- [x] Beute als Gold plus Gegenstand
+- [x] Effekte `gold` (nur Gold, mal Themenstufe), `item` (sicher ein Gegenstand, ohne Gold) und `loseGold` (fester Betrag, nie unter 0)
 - [x] Themen alle drei Ebenen: Keller, Katakomben, Zwergenminen, Goblin-Höhlen, Ork-Lager; danach weitere Themen geplant, bis dahin Ork-Lager endlos
-- [x] 19 Raumtypen mit Bewertung feindlich oder neutral; Anteil feindlicher Räume steigt mit der Tiefe
+- [x] Raumtypen mit Bewertung feindlich, neutral oder gemischt; gemischt heißt 30 % feindliche Events, sonst harmlos; Markierung doppelt als `hostile` und `rating`
+- [x] Verlässlich sicher sind nur Start, Rastplatz und Händler; der Abstieg ist neutral, seine Events dürfen kleine Folgen und einen Kampf haben
+- [x] Anteil feindlicher Räume steigt mit der Tiefe
 - [x] Schatzkammer nur in Sackgassen und höchstens eine pro Ebene; Wachstube neben, Gruft nie neben dem Start
-- [x] Rastplatz auf jeder zweiten Ebene, Händler höchstens einer pro Ebene
+- [x] Ersatz für die Wachstube neben dem Start: Kerker (Katakomben), Goblin-Lager (Goblin-Höhlen), Ork-Lager (Ork-Lager)
+- [x] Lage- und Anzahlregeln für alle Raumtypen (Tabelle im Abschnitt Raumtypen)
 - [x] Ebenengröße 8–12 Räume, +2 je Ebene, höchstens 24–28
-- [x] Proben +1 pro Thema, Monster je Thema plus +1 LP pro Ebene innerhalb des Themas
-- [x] Bossraum alle sechs Ebenen statt des Abstiegs
-- [x] Beutestufen verschieben sich mit dem Thema
-- [x] Ergebnis ist die erreichte Ebene, Gold ist Zahlungsmittel
-
-* [x] Bossraum am Ende jeder Themenwelt (Ebene 3, 6, 9, 12, 15) statt alle sechs Ebenen, Boss passend zum Thema
-* [x] Händler auf jeder Ebene genau einmal, Lage beliebig; 4 Gegenstände der Beutestufe plus Heiltränke, Verkauf zum halben Preis
-* [x] Rastplatz etwa auf halber Strecke zwischen Start und Abstieg
-* [x] Ersatz für die Wachstube neben dem Start: Kerker (Katakomben), Goblin-Lager (Goblin-Höhlen), Ork-Lager (Ork-Lager)
-* [x] Lage- und Anzahlregeln für alle Raumtypen (Tabelle im Abschnitt Raumtypen)
-
+- [x] Monster je Thema, dazu +1 LP pro Ebene innerhalb des Themas; Richtwert für neue Monster pro Thema +2 Rüstung und +2 Angriff
+- [x] Bossraum am Ende jeder Themenwelt (Ebene 3, 6, 9, 12, 15) statt des Abstiegs, Boss passend zum Thema
 - [x] Bosse: Monsterratte, Skelett-König, Dunkelzwerg-Schmiedemeister, Höhlentroll, Ork-Kriegsherr; im endlosen Ork-Lager alle drei Ebenen zufällig Riesenspinne, Höhlentroll oder Ork-Kriegsherr
-- [x] Gold der Beute ×Stufe des Themas, Gegenstände mit Stufe 1–6
-- [x] Händlerpreise nach Stufe (20 bis 220 Gold), Verbrauchsgegenstände zum Festpreis
-
-* [x] Dritte Bewertung „gemischt“ für elf bisher neutrale Raumtypen: 30 % feindliche Events, sonst harmlos; neutral bleiben nur Start, Abstieg, Rastplatz und Händler
-
+- [x] Bosskampf: Flucht erlaubt, Boss wartet bei jedem Betreten; Sieg bringt tier2-Beute und 10 Erfahrung, dann erscheint der Abstieg
+- [x] Rastplatz auf geraden Ebenen, etwa auf halber Strecke zwischen Start und Abstieg; Lagerfeuer heilt einmal voll
+- [x] Händler auf jeder Ebene genau einmal, Lage beliebig; 4 zufällige Gegenstände vom Rang der Beutestufe (je einmal) plus Kleiner und Großer Heiltrank in beliebiger Menge; Verkauf zum halben Preis, abgerundet
+- [x] Beutestufen verschieben sich mit dem Thema; Gold der Beute ×Stufe des Themas
+- [x] Ist ein Rang leer, gilt bei Beute und Händler der höchste Rang darunter
+- [x] Ergebnis ist die erreichte Ebene, Gold ist Zahlungsmittel
 - [x] Volks-Anforderung für Gegenstände: `req.volk` (zwerg, elf, mensch) zusätzlich zum Mindestattribut; Grundausrüstung bleibt für alle Völker offen
 - [x] Einheitliche Bezeichnung „Elf“ für das Volk, keine weibliche Form
-- [x] Gegenstände haben einen Rang (Feld `rang`, vorher `stufe`), um sie von Charakterstufe und Stufe des Themas zu unterscheiden
-- [x] Verbrauchsgegenstände bekommen ebenfalls einen Rang: Heiltrank 1, Feuerball-Schriftrolle 2, Schild-Schriftrolle 3; Festpreise bleiben, der Händler führt sie im Angebot der Beutestufe
-
-- [x] GDD 2.0: Attribute von −1 bis +10 (ersetzt −1 bis +3), Stufenaufstieg bis +10, Proben-Zuschlag +2 pro Thema, Monster pro Thema +2 Rüstung und +2 Angriff
-- [x] Magische Waffen treffen mit Verstand; Feld `hit` kennt kraft, geschick und verstand
-- [x] Neuer Nutzen-Effekt `freeze`: Gegner setzt die angegebene Zahl an Runden aus, nur im Kampf
-- [x] Einzelpreise pro Gegenstand (Feld `preis`), Verkauf zum halben Preis abgerundet; Rang-Preistabelle nur noch Richtwert
-- [x] Neue Gegenstandsliste mit 25 Gegenständen; Startausrüstung: Zwerg Streitaxt und Lederwams, Elf Rapier und Lederwams, Mensch Eismesser, Stofftunika und Feuerpfeil-Schriftrolle, alle mit Kleinem Heiltrank
-- [x] GDD 2.1: Startausrüstung Zwerg Langschwert, Lederwams, Kleiner Heiltrank · Elf Dolch, Stofftunika, Kleiner Heiltrank · Mensch Knüppel, Stoffweste, Feuerpfeil-Schriftrolle, Schild-Schriftrolle, Kleiner Heiltrank (ersetzt die Startausrüstung aus 2.0)
+- [x] Gegenstände haben einen Rang von 1 bis 6 (Feld `rang`), auch Verbrauchsgegenstände; „Stufe“ meint Charakterstufe und Stufe des Themas
+- [x] Attribute von −1 bis +10, Stufenaufstieg bis +10, Proben-Zuschlag +2 pro Thema
+- [x] Nutzen-Effekt `freeze`: Gegner setzt die angegebene Zahl an Runden aus, nur im Kampf
+- [x] Einzelpreise pro Gegenstand (Feld `preis`), Verkauf zum halben Preis abgerundet; Rang-Preistabelle nur Richtwert
+- [x] Gegenstandsliste mit 26 Gegenständen (Tabelle im Abschnitt Gegenstände)
+- [x] Startausrüstung: Zwerg Langschwert, Lederwams, Kleiner Heiltrank · Elf Dolch, Stofftunika, Kleiner Heiltrank · Mensch Knüppel, Stoffweste, Feuerpfeil-Schriftrolle, Schild-Schriftrolle, Kleiner Heiltrank

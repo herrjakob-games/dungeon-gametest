@@ -101,8 +101,15 @@ export const visibleOptions = (ev, run, player) => ev.options.filter(o => checkC
 // ---------- Beute ----------
 // Beutepool: alle Gegenstände vom Rang der Beutestufe, Verbrauchsgegenstände eingeschlossen (GDD 2.0)
 export const lootPool = (items, rang) => Object.values(items)
-  .filter(i => i.rang === rang)
+  .filter(i => i.rang === availableRang(items, rang))
   .map(i => ({ id: i.id, weight: 1 }));
+
+// Ist ein Rang noch leer (etwa Rang 6 vor dem Content-Projekt), gilt der höchste Rang darunter, der Gegenstände hat
+export function availableRang(items, rang) {
+  const list = Object.values(items);
+  for (let r = rang; r >= 1; r--) if (list.some(i => i.rang === r)) return r;
+  return rang;
+}
 
 // stage: Stufe des Themas (Keller 1 bis Ork-Lager 5)
 export function rollLoot(tier, items, rand, stage = 1) {

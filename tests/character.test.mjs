@@ -51,10 +51,10 @@ test("Stufenaufstieg: +1 Attribut, Lebenspunkte je nach Volk", () => {
   levelUp(p, "kraft");
   assert.deepEqual([p.level, p.attrs.kraft, p.maxHp, p.hp], [3, 4, 24, 20], "Kraft darf über +3 steigen");
   assert.equal(pendingLevelUps(p), 0);
-  for (const v of ["elf", "mensch"]) {
+  for (const [v, n] of [["elf", 3], ["mensch", 4]]) {
     const q = make(v);
     levelUp(q, "verstand");
-    assert.equal(q.maxHp, DATA.characters[v].hp + 4, v + ": +4 LP je Stufe");
+    assert.equal(q.maxHp, DATA.characters[v].hp + n, v + ": +" + n + " LP je Stufe");
   }
 });
 
@@ -185,8 +185,17 @@ test("Händler: Preis aus dem Feld preis, Verkauf zur Hälfte abgerundet, Angebo
     assert.ok(s.gear.length > 0 && s.gear.length <= 4);
     assert.equal(new Set(s.gear).size, s.gear.length, "keine Doppelten");
     s.gear.forEach(id => assert.equal(DATA.items[id].rang, stage));
-    assert.deepEqual(s.consumables.sort(), ["eisrolle", "feuerballrolle", "feuerpfeil", "heiltrank", "heiltrankgross", "schildrolle"]);
+    assert.ok(!s.gear.includes("heiltrank") && !s.gear.includes("heiltrankgross"), "Heiltränke stehen extra im Angebot");
+    assert.deepEqual(s.consumables.sort(), ["heiltrank", "heiltrankgross"]);
   }
+  // Rang 1 enthält auch Schriftrollen: Sie können unter den 4 zufälligen Gegenständen sein
+  const seen = new Set();
+  for (let seed = 1; seed < 200; seed++) merchantStock(DATA.items, 1, seed).gear.forEach(id => seen.add(DATA.items[id].type));
+  assert.ok(seen.has("consumable") && seen.has("weapon") && seen.has("armor"));
+  // Rang 6 ist noch leer: Der Händler zeigt dann den letzten Rang mit Gegenständen
+  const s6 = merchantStock(DATA.items, 6, 7);
+  assert.ok(s6.gear.length > 0);
+  s6.gear.forEach(id => assert.equal(DATA.items[id].rang, 5));
   assert.deepEqual(merchantStock(DATA.items, 3, 99), merchantStock(DATA.items, 3, 99), "gleicher Seed, gleiches Angebot");
   const p = make("zwerg");
   p.gold = 30;

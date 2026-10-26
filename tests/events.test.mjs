@@ -171,7 +171,6 @@ test("Beute: Gold mal Themenstufe, Gegenstand der Themenstufe (tier2 eine höher
   assert.equal(l.gold, 6, "2W6 = 2, mal Stufe 3");
   assert.equal(l.item, null);
   // Gegenstände vom Rang der Themenstufe (tier2 einen Rang höher), Verbrauchsgegenstände eingeschlossen.
-  // Rang 6 ist noch leer (Content-Projekt), daher hier nur bis Themenstufe 4.
   for (const stage of [1, 2, 3, 4]) for (let i = 0; i < 200; i++) {
     const t1 = rollLoot("tier1", DATA.items, Math.random, stage);
     assert.ok(t1.gold >= 2 * stage && t1.gold <= 12 * stage);
@@ -179,6 +178,11 @@ test("Beute: Gold mal Themenstufe, Gegenstand der Themenstufe (tier2 eine höher
     const t2 = rollLoot("tier2", DATA.items, Math.random, stage);
     assert.ok(t2.item, "tier2 gibt immer einen Gegenstand");
     assert.equal(DATA.items[t2.item].rang, stage + 1);
+  }
+  // Rang 6 ist noch leer (Content-Projekt): Im Ork-Lager (Stufe 5) bringt tier2 dann Gegenstände vom Rang 5
+  for (let i = 0; i < 50; i++) {
+    const t2 = rollLoot("tier2", DATA.items, Math.random, 5);
+    assert.equal(DATA.items[t2.item].rang, 5);
   }
 });
 
