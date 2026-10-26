@@ -170,7 +170,8 @@ Jeder Raumtyp hat eine Event-Chance und eine gewichtete Event-Tabelle. Jedes Eve
 - **Dateien:** `data/room-types.json`, `data/events.json`, `data/monsters.json`, `data/characters.json`, `data/items.json`, `data/texts.json` (Sätze zur Todesursache bei Events). Ein Event hat zusätzlich einen `title` für das Textfenster. Ein Ergebnis kann mit `next` ein Folge-Event starten, so laufen Proben Runde für Runde.
 - **Proben in Events:** Jede Probe nennt ihre Kategorie, zum Beispiel `{ "category": "kraftakt", "dc": 12 }`. Das Attribut ergibt sich aus der Kategorie.
 - **Event-Typen:** combat, choice, trap, treasure, npc. Bossgegner und Artefakte laufen als normale Events über die Tabellen.
-- **Effekte:** damage, heal, loot, combat, gainXp, lockDoor, unlockDoor, setFlag. Mengen als Zahl oder Würfel, etwa `"W4"` oder `"2W6"`.
+- **Effekte:** damage, heal, loot, gold, item, loseGold, combat, gainXp, lockDoor, unlockDoor, setFlag. Mengen als Zahl oder Würfel, etwa `"W4"` oder `"2W6"`.
+- **Beute-Effekte:** `loot` gibt Gold und eventuell einen Gegenstand (siehe Beute). `gold` gibt nur Gold, der Würfelwert wird wie bei der Beute mit der Stufe des Themas malgenommen, etwa `{ "gold": "2W6" }`. `item` gibt sicher einen Gegenstand ohne Gold: `tier1` aus der Stufe des Themas, `tier2` eine Stufe höher. `loseGold` nimmt einen festen Betrag weg, nicht mit der Themenstufe malgenommen, etwa `{ "loseGold": 2 }`; Gold fällt nie unter 0.
 - **once:** Das Event kommt höchstens einmal pro Dungeon vor.
 - **Bedingungen:** `flag:name` (Flag ist gesetzt), `notFlag:name` (Flag fehlt) und `volk:zwerg`, `volk:elf`, `volk:mensch`. Flags gelten pro Dungeon. `hasItem:id` ist erfüllt, wenn der Gegenstand angelegt ist oder im Rucksack liegt.
 - **Volks-Bedingungen:** Ein ganzes Event kann an ein Volk gebunden sein, dann erscheint es nur für dieses Volk. Bei ausgewählten Events kann auch eine einzelne Option an ein Volk gebunden sein, andere Völker sehen sie nicht.
@@ -225,7 +226,7 @@ Der Dungeon führt durch Themen, die alle drei Ebenen wechseln. Das Thema bestim
 | Wolfs-Höhle | feindlich | bevorzugt in Sackgassen | höchstens 2 |
 
 - **Lesart der Lage:** „nur“, „nie“ und „direkt neben dem Start“ sind feste Regeln. „Bevorzugt“ und „neben X“ gelten, wenn der Grundriss es zulässt und der andere Raumtyp auf der Ebene vorkommt.
-- **Feindlich:** Events mit Kämpfen und Fallen. **Neutral:** Rätsel, Gespräche, Fundstücke oder gar kein Event, nur Start, Abstieg, Rastplatz und Händler sind verlässlich sicher. **Gemischt:** Wenn ein Event auslöst, ist es in etwa 30 % der Fälle ein Gegner oder eine Falle, sonst harmlos. Dafür trägt jedes Event in der Tabelle eines gemischten Raumtyps die Markierung feindlich oder neutral. Für den Anteil feindlicher Räume zählen gemischte Räume nicht als feindlich.
+- **Feindlich:** Events mit Kämpfen und Fallen. **Neutral:** Rätsel, Gespräche, Fundstücke oder gar kein Event, nur Start, Rastplatz und Händler sind verlässlich sicher. Der Abstieg ist neutral, seine Events dürfen aber kleine Folgen haben (etwas Schaden, Goldverlust) und einen Kampf, etwa mit dem Türsteher. **Gemischt:** Wenn ein Event auslöst, ist es in etwa 30 % der Fälle ein Gegner oder eine Falle, sonst harmlos. Dafür trägt jedes Event in der Tabelle eines gemischten Raumtyps die Markierung feindlich oder neutral, und zwar doppelt: `"hostile": true` oder `false` (Feld des Content-Projekts) und `"rating": "hostile"` oder `"neutral"` (wertet der Code aus). Beide müssen übereinstimmen, `npm test` prüft das. Für den Anteil feindlicher Räume zählen gemischte Räume nicht als feindlich.
 - **Anteil feindlicher Räume:** steigt gleichmäßig von 40 % auf Ebene 1 auf 70 % ab Ebene 13 (+2,5 Prozentpunkte je Ebene).
 - **Sackgassen:** Sackgassen, die keine Schatzkammer werden, bekommen einen anderen Raumtyp des Themas.
 - **Ausnahmen in den Katakomben:** Dort darf die Gruft neben dem Start stehen, und der Kerker hat keine Höchstzahl. Sonst gäbe es für Räume neben dem Start manchmal keinen erlaubten Raumtyp. Solche Ausnahmen stehen als `overrides` beim Thema in `data/themes.json`.
@@ -356,3 +357,6 @@ Sieben Schritte, jeder endet mit etwas Spielbarem, das Christian im Browser test
 - [x] Proben-Zuschlag des Themas gilt auch für die Flucht
 - [x] Händler: 4 Ausrüstungsteile der Themenstufe plus alle Verbrauchsgegenstände in beliebiger Menge; Verbrauchsgegenstände in jeder Beutestufe
 - [x] Katakomben: Gruft darf neben den Start, Kerker ohne Höchstzahl
+- [x] Markierung in gemischten Tabellen bleibt doppelt: `hostile` und `rating`, beide müssen übereinstimmen
+- [x] Neue Effekte `gold` (nur Gold, mal Themenstufe), `item` (sicher ein Gegenstand, ohne Gold) und `loseGold` (fester Betrag, nie unter 0)
+- [x] Verlässlich sicher sind nur Start, Rastplatz und Händler; der Abstieg darf kleine Folgen und Kämpfe haben

@@ -22,6 +22,7 @@ function lineHtml(l) {
     case "damage": return '<span class="bad">−' + l.amount + " LP</span>";
     case "heal": return l.amount ? '<span class="good">+' + l.amount + " LP</span>" : "Lebenspunkte sind schon voll";
     case "loot": return '<span class="gold">+' + l.amount + " Gold</span>";
+    case "loseGold": return '<span class="bad">−' + l.amount + " Gold</span>";
     case "gainXp": return "+" + l.amount + " Erfahrung";
     case "lockDoor": return "Die Tür nach " + DIR[l.dir].name + " ist verschlossen.";
     case "unlockDoor": return "Die Tür nach " + DIR[l.dir].name + " ist wieder offen.";
