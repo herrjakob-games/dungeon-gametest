@@ -3,6 +3,10 @@
 
 export const ATTRS = ["kraft", "geschick", "verstand"];
 export const ATTR_NAMES = { kraft: "Kraft", geschick: "Geschick", verstand: "Verstand" };
+export const ATTR_MIN = -1;
+export const ATTR_MAX = 10;  // Obergrenze, auch beim Stufenaufstieg
+export const START_ATTR_MAX = 2; // Startwerte der Völker liegen zwischen −1 und +2
+export const VOLK_NAMES = { zwerg: "Zwerg", elf: "Elf", mensch: "Mensch" };
 export const PACK_SIZE = 6;        // Rucksackplätze; angelegte Waffe und Rüstung zählen extra
 
 // Erfahrung für Stufe 2 bis 5, danach alle 30 Erfahrung eine weitere Stufe
@@ -43,11 +47,13 @@ export function newCharacter(def) {
 }
 
 // Erfüllt die Figur das Mindestattribut eines Gegenstands?
+// req: Mindestattribute und optional "volk" (zwerg, elf, mensch)
 export const meetsReq = (player, item) =>
-  Object.entries(item.req || {}).every(([a, v]) => player.attrs[a] >= v);
+  Object.entries(item.req || {}).every(([a, v]) => (a === "volk" ? player.volk === v : player.attrs[a] >= v));
 
 export const reqText = (item) =>
-  Object.entries(item.req || {}).map(([a, v]) => ATTR_NAMES[a] + " " + (v < 0 ? "−" + Math.abs(v) : "+" + v).replace("+0", "0")).join(", ");
+  Object.entries(item.req || {}).map(([a, v]) => (a === "volk" ? "Volk " + VOLK_NAMES[v]
+    : ATTR_NAMES[a] + " " + (v < 0 ? "−" + Math.abs(v) : "+" + v).replace("+0", "0"))).join(", ");
 
 // Angelegte Waffe; ohne Waffe kämpft die Figur mit den Fäusten (1 Schaden, trifft mit Kraft)
 export const FISTS = { id: null, name: "Fäuste", type: "weapon", damage: 1, hit: "kraft" };
@@ -91,14 +97,17 @@ export function unequip(player, slot) {
   return true;
 }
 
-// Stufenaufstieg: +1 auf das gewählte Attribut (ohne Obergrenze) und Lebenspunkte je nach Volk.
+// Stufenaufstieg: +1 auf das gewählte Attribut (höchstens +10) und Lebenspunkte je nach Volk.
 // Die neuen Lebenspunkte erhöhen das Maximum und heilen um denselben Wert.
 export function levelUp(player, attr) {
   player.level += 1;
   player.maxHp += player.levelHp;
   player.hp = Math.min(player.maxHp, player.hp + player.levelHp);
-  player.attrs[attr] += 1;
+  if (attr && player.attrs[attr] < ATTR_MAX) player.attrs[attr] += 1;
 }
+
+// Attribute, die beim Aufstieg noch steigen können
+export const raisableAttrs = (player) => ATTRS.filter(a => player.attrs[a] < ATTR_MAX);
 
 // Steht noch ein Stufenaufstieg aus?
 export const pendingLevelUps = (player) => levelForXp(player.xp) - player.level;

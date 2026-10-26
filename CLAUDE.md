@@ -51,7 +51,8 @@ Die Liste aller Meilensteine steht im GDD.
 | `data/events.json` | alle Events (auch die Truhe) |
 | `data/monsters.json` | Monster und Bosse mit Lebenspunkten, Rüstung, Angriff, Schaden, Satz zur Todesursache |
 | `data/characters.json` | Völker: Attribute, Lebenspunkte, LP je Stufe, Fähigkeit, Startausrüstung, Modell |
-| `data/items.json` | Gegenstände: Waffen und Rüstungen mit Stufe 1–6, Verbrauch mit Preis und Beutegewicht, Mindestattribut |
+| `data/items.json` | Gegenstände mit Rang 1–6, Preis (`preis`), Schaden/Rüstung/Nutzen, Mindestattribut und Volk (`req`); erzeugt aus `data/gegenstaende.csv` |
+| `data/gegenstaende.csv` | Gegenstandsliste als Tabelle (Quelle für `items.json`) |
 | `data/texts.json` | Sätze zur Todesursache bei Events |
 | `src/data.js` | lädt `data/*.json` und prüft die Daten |
 | `src/eventLogic.js` | Event-Regeln: Proben-Kategorien, Auswahl, Effekte, Beute, Bedingungen, Datenprüfung; rein logisch |
@@ -60,7 +61,7 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/roomTypes.js` | Raumtypen-Tabelle, befüllt aus `data/room-types.json` |
 | `src/roomBuilder.js` | baut einen Raum als 3D-Szene inklusive Einrichtung |
 | `src/player.js` | Spielfigur, Platzierung; `setFigure(volk)` tauscht das Modell |
-| `src/figures.js` | Platzhalterfiguren der Völker: Zwerg, Elfin, Mensch (Grundformen) |
+| `src/figures.js` | Platzhalterfiguren der Völker: Zwerg, Elf, Mensch (Grundformen) |
 | `src/movement.js` | Laufbewegung entlang des Weges |
 | `src/events.js` | Event-Ablauf im Textfenster, Proben-Zuschlag, Fundstücke, Stufenaufstieg, Tod, Truhe, Boss, Rastplatz, Abstieg |
 | `src/combatUI.js` | Kampf im Textfenster |

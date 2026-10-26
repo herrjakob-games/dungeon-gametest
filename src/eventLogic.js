@@ -2,7 +2,7 @@
 // Reine Logik ohne Grafik und Textfenster, damit sie in tests/ geprüft werden kann.
 // Zufall kommt immer als Funktion rand() herein: im Spiel Math.random, in Tests fest.
 import { DIR, DIRKEYS } from "./config.js";
-import { ATTRS, hasItem } from "./character.js";
+import { ATTRS, hasItem, ATTR_MIN, ATTR_MAX, START_ATTR_MAX, VOLK_NAMES } from "./character.js";
 
 export const DCS = [8, 12, 16]; // leicht, mittel, schwer
 export const EVENT_TYPES = ["combat", "choice", "trap", "treasure", "npc"];
@@ -99,10 +99,17 @@ export function pickEvent(roomType, run, rand, player) {
 export const visibleOptions = (ev, run, player) => ev.options.filter(o => checkCondition(o.condition, run, player));
 
 // ---------- Beute ----------
-// Beutepool einer Stufe: Ausrüstung genau dieser Stufe (Gewicht 1) und Verbrauchsgegenstände (lootWeight)
-export const lootPool = (items, stage) => Object.values(items)
-  .filter(i => i.type === "consumable" || i.stage === stage)
-  .map(i => ({ id: i.id, weight: i.type === "consumable" ? i.lootWeight : 1 }));
+// Beutepool: alle Gegenstände vom Rang der Beutestufe, Verbrauchsgegenstände eingeschlossen (GDD 2.0)
+export const lootPool = (items, rang) => Object.values(items)
+  .filter(i => i.rang === availableRang(items, rang))
+  .map(i => ({ id: i.id, weight: 1 }));
+
+// Ist ein Rang noch leer (etwa Rang 6 vor dem Content-Projekt), gilt der höchste Rang darunter, der Gegenstände hat
+export function availableRang(items, rang) {
+  const list = Object.values(items);
+  for (let r = rang; r >= 1; r--) if (list.some(i => i.rang === r)) return r;
+  return rang;
+}
 
 // stage: Stufe des Themas (Keller 1 bis Ork-Lager 5)
 export function rollLoot(tier, items, rand, stage = 1) {
@@ -206,8 +213,9 @@ export function validateData(data) {
     else if (m[1] === "hasItem" && !data.items[m[2]]) err(w, "unbekannter Gegenstand " + m[2]);
   };
   const checkReq = (w, req) => Object.entries(req || {}).forEach(([a, v]) => {
+    if (a === "volk") { if (!VOLK_NAMES[v]) err(w, "unbekanntes Volk " + v); return; }
     if (!ATTRS.includes(a)) err(w, "unbekanntes Attribut " + a);
-    if (!(Number.isInteger(v) && v >= -1)) err(w, "Mindestwert muss eine ganze Zahl ab −1 sein");
+    if (!(Number.isInteger(v) && v >= ATTR_MIN && v <= ATTR_MAX)) err(w, "Mindestwert muss zwischen −1 und +10 liegen");
   });
 
   for (const rt of Object.values(data.roomTypes)) {
@@ -259,30 +267,30 @@ export function validateData(data) {
     const w = "Gegenstand " + it.id;
     if (!it.name) err(w, "Name fehlt");
     checkReq(w, it.req);
+    if (!(Number.isInteger(it.rang) && it.rang >= 1 && it.rang <= MAX_ITEM_STAGE)) err(w, "Rang muss zwischen 1 und 6 liegen");
+    if (!(Number.isInteger(it.preis) && it.preis > 0)) err(w, "preis (Kaufpreis) fehlt");
     if (it.type === "weapon") {
       if (!isDice(it.damage)) err(w, "Schaden ist kein Würfel");
-      if (!["kraft", "geschick"].includes(it.hit)) err(w, "hit muss kraft oder geschick sein");
+      if (!ATTRS.includes(it.hit)) err(w, "hit muss kraft, geschick oder verstand sein");
     } else if (it.type === "armor") {
-      if (!(Number.isInteger(it.armor) && it.armor > 0)) err(w, "armor braucht eine positive Zahl");
-      if (!(Number.isInteger(it.stage) && it.stage >= 1 && it.stage <= MAX_ITEM_STAGE)) err(w, "Stufe muss zwischen 1 und 6 liegen");
-      if (!(Number.isInteger(it.stage) && it.stage >= 1 && it.stage <= MAX_ITEM_STAGE)) err(w, "Stufe muss zwischen 1 und 6 liegen");
+      if (!(Number.isInteger(it.armor) && it.armor >= 0)) err(w, "armor braucht eine Zahl ab 0");
     } else if (it.type === "consumable") {
-      if (!(it.price > 0)) err(w, "Preis fehlt");
-      if (!(it.lootWeight > 0)) err(w, "lootWeight fehlt");
       const u = Object.entries(it.use || {});
-      if (u.length !== 1 || !["heal", "damage", "shield"].includes(u[0][0])) err(w, "use braucht genau heal, damage oder shield");
+      if (u.length !== 1 || !["heal", "damage", "shield", "freeze"].includes(u[0][0])) err(w, "use braucht genau heal, damage, shield oder freeze");
+      else if (u[0][0] === "freeze" && !(Number.isInteger(u[0][1]) && u[0][1] > 0)) err(w, "freeze braucht eine positive Rundenzahl");
       else if (!isDice(u[0][1])) err(w, "use braucht Zahl oder Würfel");
-      if (u.length && u[0][0] !== "heal" && !it.combatOnly) err(w, "damage und shield gehen nur im Kampf (combatOnly)");
+      if (u.length && u[0][0] !== "heal" && !it.combatOnly) err(w, "damage, shield und freeze gehen nur im Kampf (combatOnly)");
     } else err(w, "unbekannter Typ " + it.type);
   }
-  for (let st = 1; st <= MAX_ITEM_STAGE; st++) {
-    if (!Object.values(data.items).some(i => i.stage === st)) err("Stufe " + st, "keine Ausrüstung in dieser Stufe");
+  // Rang 1 bis 5 braucht Ausrüstung; Rang 6 füllt das Content-Projekt (GDD 2.0)
+  for (let r = 1; r < MAX_ITEM_STAGE; r++) {
+    if (!Object.values(data.items).some(i => i.rang === r && i.type !== "consumable")) err("Rang " + r, "keine Ausrüstung mit diesem Rang");
   }
 
   for (const c of Object.values(data.characters)) {
     const w = "Volk " + c.id;
     if (!c.name) err(w, "Name fehlt");
-    ATTRS.forEach(a => { if (!(Number.isInteger(c.attrs && c.attrs[a]) && c.attrs[a] >= -1 && c.attrs[a] <= 3)) err(w, "Attribut " + a + " fehlt oder liegt außerhalb −1 bis +3"); });
+    ATTRS.forEach(a => { if (!(Number.isInteger(c.attrs && c.attrs[a]) && c.attrs[a] >= ATTR_MIN && c.attrs[a] <= START_ATTR_MAX)) err(w, "Startwert " + a + " fehlt oder liegt außerhalb −1 bis +2"); });
     if (!(c.hp > 0)) err(w, "Lebenspunkte fehlen");
     if (!(Number.isInteger(c.levelHp) && c.levelHp > 0)) err(w, "levelHp (Lebenspunkte je Stufe) fehlt");
     if (!c.ability || !ATTRS.includes(c.ability.attr) || !c.ability.name) err(w, "Fähigkeit unvollständig");
@@ -291,7 +299,7 @@ export function validateData(data) {
       if (!s[slot]) return;
       const it = data.items[s[slot]];
       if (!it || it.type !== type) err(w, "Start-" + slot + " " + s[slot] + " passt nicht");
-      else if (!Object.entries(it.req || {}).every(([a, v]) => c.attrs[a] >= v)) err(w, "erfüllt das Mindestattribut von " + it.id + " nicht");
+      else if (!Object.entries(it.req || {}).every(([a, v]) => (a === "volk" ? c.id === v : c.attrs[a] >= v))) err(w, "erfüllt die Anforderung von " + it.id + " nicht");
     });
     if (!Array.isArray(s.pack) || s.pack.length > 6) err(w, "Start-Rucksack fehlt oder hat mehr als 6 Plätze");
     else s.pack.forEach(id => { if (!data.items[id]) err(w, "unbekannter Gegenstand " + id); });

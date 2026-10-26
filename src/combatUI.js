@@ -84,6 +84,7 @@ function useItem(e) {
   const lines = [e.item.name + ": " + (
     res.type === "heal" ? '<span class="good">+' + res.amount + " LP</span>" :
     res.type === "damage" ? '<span class="good">−' + res.amount + " LP</span> für " + state.combat.monster.name :
+    res.type === "freeze" ? state.combat.monster.name + " ist eingefroren und setzt " + res.amount + " Runden aus" :
     "Rüstung +" + res.amount + " bis Kampfende")];
   afterPlayer(lines, null);
 }
@@ -112,8 +113,10 @@ function afterPlayer(lines, roll) {
   const p = state.player;
   const t = monsterTurn(p, DATA.items, c, Math.random);
   updateStats();
-  const enemyRoll = c.monster.name + " greift an · W20: " + t.d + " + " + t.bonus + " = " + t.total + " gegen Rüstung " + t.dc +
-    " · " + (t.hit ? '<strong class="fail">Treffer</strong>' : '<strong class="ok">Verfehlt</strong>');
+  const enemyRoll = t.frozen
+    ? c.monster.name + " ist eingefroren und greift nicht an" + (t.left ? " (noch " + t.left + " Runde" + (t.left > 1 ? "n" : "") + ")" : "")
+    : c.monster.name + " greift an · W20: " + t.d + " + " + t.bonus + " = " + t.total + " gegen Rüstung " + t.dc +
+      " · " + (t.hit ? '<strong class="fail">Treffer</strong>' : '<strong class="ok">Verfehlt</strong>');
   const all = lines.concat([enemyRoll + (t.hit ? ' · <span class="bad">−' + t.dmg + " LP</span>" : "")]);
   if (p.hp <= 0) {
     const monster = c.monster;

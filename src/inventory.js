@@ -16,7 +16,8 @@ export function itemStats(item) {
   if (item.type === "armor") parts.push("Rüstung +" + item.armor);
   if (item.type === "consumable") {
     const [t, v] = Object.entries(item.use)[0];
-    parts.push(t === "heal" ? "heilt " + v : t === "damage" ? v + " Schaden, trifft immer" : "Rüstung +" + v + " bis Kampfende");
+    parts.push(t === "heal" ? "heilt " + v : t === "damage" ? v + " Schaden, trifft immer"
+      : t === "freeze" ? "Gegner setzt " + v + " Runden aus" : "Rüstung +" + v + " bis Kampfende");
     if (item.combatOnly) parts.push("nur im Kampf");
   }
   if (item.req) parts.push("braucht " + reqText(item));

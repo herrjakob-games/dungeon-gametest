@@ -7,18 +7,18 @@
     "hp": 14,
     "levelHp": 5,
     "ability": { "id": "kraftprotz", "name": "Kraftprotz", "attr": "kraft", "text": "Einmal pro Dungeon gilt eine misslungene Kraft-Probe als bestanden." },
-    "start": { "weapon": "streitaxt", "armor": "kettenhemd", "pack": ["heiltrank"] },
+    "start": { "weapon": "langschwert", "armor": "lederwams", "pack": ["heiltrank"] },
     "model": "zwerg"
   },
   {
     "id": "elf",
-    "name": "Elfin",
+    "name": "Elf",
     "text": "Flink, scharfäugig und seit dreihundert Jahren leicht genervt von allen, die langsamer denken. Also allen.",
     "attrs": { "kraft": -1, "geschick": 2, "verstand": 1 },
     "hp": 10,
-    "levelHp": 4,
+    "levelHp": 3,
     "ability": { "id": "scharfe_sinne", "name": "Scharfe Sinne", "attr": "geschick", "text": "Einmal pro Dungeon gilt eine misslungene Geschick-Probe als bestanden." },
-    "start": { "weapon": "rapier", "armor": "elfenmantel", "pack": ["heiltrank"] },
+    "start": { "weapon": "dolch", "armor": "tunika", "pack": ["heiltrank"] },
     "model": "elf"
   },
   {
@@ -29,7 +29,7 @@
     "hp": 12,
     "levelHp": 4,
     "ability": { "id": "wacher_geist", "name": "Wacher Geist", "attr": "verstand", "text": "Einmal pro Dungeon gilt eine misslungene Verstand-Probe als bestanden." },
-    "start": { "weapon": "kurzschwert", "armor": "lederwams", "pack": ["feuerball", "heiltrank"] },
+    "start": { "weapon": "knueppel", "armor": "stoffweste", "pack": ["feuerpfeil", "schildrolle", "heiltrank"] },
     "model": "mensch"
   }
 ]
