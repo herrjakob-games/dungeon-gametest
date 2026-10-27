@@ -25,6 +25,7 @@ export const state = {
   blocked: new Set(),  // belegte Kacheln "x,z"
   interactables: [],   // anklickbare Objekte (Türen, Truhe, Lagerfeuer, Händler, Treppe nach unten)
   torches: [],
+  decorPlan: null,     // Einrichtung des Raums aus decor.js (null beim alten Muster)
   lidPivot: null,
   openLid: false,
 

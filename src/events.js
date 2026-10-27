@@ -13,6 +13,7 @@ import { updateStats } from "./hud.js";
 import { renderInventory } from "./inventory.js";
 import { runCombat } from "./combatUI.js";
 import { rollHtml, maybeRescue, signShort } from "./checkUI.js";
+import { showEventFigures, endEventFigures, combatFigure, killCombatFigure } from "./roomFigures.js";
 
 let hooks = { onDeath: () => {}, onRetreat: () => {}, onBossDefeated: () => {}, onRested: () => {} };
 export function initEvents(h) { hooks = h; }
@@ -65,6 +66,7 @@ export function startRoomEvent() {
 export function runEvent(id, onOutcome) {
   const ev = DATA.events[id];
   state.eventActive = true;
+  showEventFigures(ev); // Figuren aus dem Feld "figures" erscheinen im Raum
   const opts = visibleOptions(ev, state.run, state.player);
   showDialog(ev.title, ev.text, opts.map(o => ({ label: optionLabel(o), pick: () => choose(ev, o, onOutcome) })), { modal: true });
 }
@@ -109,8 +111,10 @@ function fight(ev, outcome, combat, onOutcome) {
   // Kampf gegen den Boss der Ebene im Bossraum: Die Siegbeute vergibt der Code, nicht das Event
   const rs = state.roomState[state.current];
   const isBoss = state.dungeon.rooms[state.current].type === "boss" && combat.monster === state.dungeon.boss;
+  combatFigure(combat.monster); // der Gegner steht neben der Spielfigur, im Bossraum in der Mitte
   runCombat(combat.monster, {
     onWin: (lines, roll) => {
+      killCombatFigure();
       const res = applyEffects(isBoss ? combat.rest.concat(BOSS_REWARD) : combat.rest, effectCtx(), Math.random);
       let text = outcome.winText || "Der Kampf ist vorbei.";
       if (isBoss) {
@@ -146,6 +150,7 @@ function pickUp(list, done) {
 
 function finish() {
   state.eventActive = false;
+  endEventFigures();
   closeDialog();
   const opened = releaseIfTrapped(roomCtx());
   if (opened) refreshLocks();
@@ -203,6 +208,12 @@ export function startBoss() {
     label: "Kämpfen",
     pick: () => fight({ title: boss.name }, {}, { monster: boss.id, rest: [] })
   }], { modal: true });
+}
+
+// Testmodus (?fight=<monster-id>): Kampf ohne Event, etwa in der Vorkammer
+export function startFight(monsterId) {
+  state.eventActive = true;
+  fight({ title: DATA.monsters[monsterId].name }, {}, { monster: monsterId, rest: [] });
 }
 
 // Rastplatz: Das Lagerfeuer heilt einmal auf volle Lebenspunkte

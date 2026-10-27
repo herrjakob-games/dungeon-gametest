@@ -32,6 +32,8 @@ Die Liste aller Meilensteine steht im GDD.
 - Three.js r128 wird per `<script>` aus cdnjs geladen und ist als `window.THREE` verfügbar.
   Die Spiellogik besteht aus ES-Modulen in `src/`, Einstieg ist `src/main.js`.
 - Lokal starten: `npm start` und dann http://localhost:8000 öffnen (Module brauchen einen Server).
+- Testmodus, nur lokal: `?event=<id>` startet das Event im ersten passenden Raum, `?fight=<monster-id>` einen Kampf
+  in der Vorkammer, optional `&volk=zwerg|elf|mensch`.
 - Tests: `npm test` (Node, ohne Abhängigkeiten). Reine Logik wie Generator und Wegfindung bleibt
   frei von Three.js, damit sie testbar ist. Für neue Logik passende Tests in `tests/` ergänzen.
 
@@ -48,7 +50,7 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/state.js` | gemeinsamer Spielzustand |
 | `data/themes.json` | Themen: Name, Stufe, Proben-Zuschlag, Raumtypen, Nachbar des Starts, Monster, Boss, Regel-Ausnahmen (`overrides`) |
 | `data/room-types.json` | Raumtypen: Name, Farben, Einrichtung als Daten (`decor`, `themeDecor`) oder altes Muster (`layout`), Bewertung, Lage- und Anzahlregeln, Event-Chance, Event-Tabelle; beim Bossraum Tabellen pro Thema (`themeEvents`) |
-| `data/events.json` | alle Events (auch die Truhe) |
+| `data/events.json` | alle Events (auch die Truhe), Figuren beim Event-Start (`figures`) |
 | `data/monsters.json` | Monster und Bosse mit Lebenspunkten, Rüstung, Angriff, Schaden, Satz zur Todesursache |
 | `data/characters.json` | Völker: Attribute, Lebenspunkte, LP je Stufe, Fähigkeit, Startausrüstung, Modell |
 | `data/items.json` | Gegenstände mit Rang 1–6, Preis (`preis`), Schaden/Rüstung/Nutzen, Mindestattribut und Volk (`req`); erzeugt aus `data/gegenstaende.csv` |
@@ -61,6 +63,9 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/roomTypes.js` | Raumtypen-Tabelle, befüllt aus `data/room-types.json` |
 | `src/decor.js` | Einrichtung als Daten: Requisiten-Größen, Platzierung (`center`, `wall-back`, `corner`, `free`, `around:`, `above:`), Wendeltreppen, Erreichbarkeit, Datenprüfung; rein logisch |
 | `src/props.js` | Requisiten und Wendeltreppen aus Grundformen |
+| `src/figurePlan.js` | Figuren im Raum: Figurenliste (Größe, Varianten), Platzierung für `figures` (inkl. `near:`), Platz im Kampf, Datenprüfung; rein logisch |
+| `src/monsterFigures.js` | Figuren der Monster und der Kröte aus Grundformen, Ersatzfigur für Monster ohne eigene Figur |
+| `src/roomFigures.js` | Figuren im Raum: erscheinen, laufen, wippen, zucken, versinken, huschen davon; `stay` |
 | `src/roomBuilder.js` | baut einen Raum als 3D-Szene: Boden, Wände, Türen, Fackeln, Wendeltreppe, Einrichtung (aus `decor.js` oder altes Muster) |
 | `src/player.js` | Spielfigur, Platzierung; `setFigure(volk)` tauscht das Modell |
 | `src/figures.js` | Platzhalterfiguren der Völker: Zwerg, Elf, Mensch (Grundformen) |
