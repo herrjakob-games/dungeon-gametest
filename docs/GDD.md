@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.3 · Oct 27, 2026 · @Christian
+Version 2.4 · Oct 27, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.4 | 27.10.2026 | Wendeltreppen: nach oben in der Vorkammer, nach unten im Abstieg und im Bossraum nach dem Sieg (ersetzt den Torbogen); Startposition am Fuß der Treppe; Einrichtung pro Raumtyp als Daten (`decor`, `themeDecor`) mit Platzierungsregeln; Requisitenliste |
 | 2.3 | 27.10.2026 | Boss-Events pro Thema (Feld `themeEvents` beim Bossraum), bei jedem Betreten neu gewürfelt; erster Boss-Inhalt Monsterratte im Keller; eigene Todessätze pro Event in `data/texts.json` (`death.events`) |
 | 2.2 | 26.10.2026 | Lebenspunkte je Stufe nach Volk (Zwerg +5, Elf +3, Mensch +4); Händler-Angebot genauer (4 Gegenstände je einmal, Heiltränke immer); leerer Rang: es gilt der höchste Rang darunter; Effekte `gold`, `item`, `loseGold`; Abstieg, Rastplatz und Bossraum ergänzt; 26 Gegenstände; veraltete Entscheidungen entfernt |
 | 2.1 | 26.10.2026 | Neue Startausrüstung: Zwerg Langschwert und Lederwams, Elf Dolch und Stofftunika, Mensch Knüppel, Stoffweste, Feuerpfeil- und Schild-Schriftrolle; alle mit Kleinem Heiltrank |
@@ -40,8 +41,8 @@ Das Spiel läuft im Browser auf Basis von Three.js. Claude schreibt den Code, Ch
 | Plattform | Browser, nur Desktop |
 | 3D-Bibliothek | Three.js (WebGL) |
 | Kamera | Orthografisch, fester Iso-Winkel (45° gedreht, ca. 35° geneigt) |
-| Modelle | Low-Poly im Format glTF/GLB, Startpaket KayKit (CC0, mit Animationen) |
-| Spieldaten | JSON-Dateien für Raumtypen, Events, Monster und Gegenstände |
+| Modelle | Low-Poly im Format glTF/GLB, Startpaket KayKit (CC0, mit Animationen); bis Meilenstein 6 Platzhalter aus Grundformen im Code |
+| Spieldaten | JSON-Dateien für Raumtypen, Einrichtung, Events, Monster und Gegenstände |
 | Text-UI | HTML-Fenster über der 3D-Szene |
 | Entwicklung | Claude Code mit GitHub-Repository |
 | Veröffentlichung | GitHub Pages oder itch.io |
@@ -66,6 +67,7 @@ Das Spiel kennt zwei Modi: freie Erkundung in Echtzeit und rundenbasierte Events
 - **Klick zum Bewegen:** Der Spieler klickt auf eine Kachel, die Figur läuft per Wegfindung (A\*) dorthin. Säulen, Truhen und Möbel blockieren Kacheln.
 - **Interaktion:** Klick auf ein Objekt lässt die Figur hinlaufen und interagieren, etwa eine Truhe öffnen.
 - **Raumwechsel:** Klick auf eine Tür. Das Bild blendet kurz ab, die Figur steht im neuen Raum an der gegenüberliegenden Tür.
+- **Startposition:** Zu Beginn jedes Dungeons, auch nach jedem Abstieg, steht die Figur in der Vorkammer am Fuß der Wendeltreppe nach oben.
 - **Kamera:** Zentriert auf den aktuellen Raum. Die vorderen Wände sind ausgeblendet, damit nichts die Figur verdeckt.
 - **Modus-Wechsel:** Löst ein Event aus, stoppt die Bewegung und das Textfenster übernimmt. Events gibt es nur beim ersten Betreten eines Raums, danach durchläuft der Spieler ihn ohne neues Event.
 - **Minimap:** Zeigt besuchte Räume und bekannte Türen. Ein Klick auf einen besuchten Raum reist sofort mit Abblende dorthin, ohne Kosten. Die Figur erscheint in der Raummitte, ist diese blockiert, auf dem nächsten freien Feld. Unbesuchte Räume sind kein Reiseziel. Während eines Events oder Kampfes ist die Schnellreise gesperrt.
@@ -114,7 +116,7 @@ Der Spieler wählt vor dem ersten Dungeon ein Volk. Das Volk legt Attribute, Leb
 - **Gegner:** Lebenspunkte, Rüstungswert, Angriffsbonus, Schaden (z. B. W6) und ein witziger Satz für den Endbildschirm. Wie Gegner mit der Tiefe stärker werden, steht im Abschnitt Raumtypen und Ebenen.
 - **Fortschritt:** Erfahrung aus Events. Stufe 2 bei 10, Stufe 3 bei 25, Stufe 4 bei 45, Stufe 5 bei 70 Erfahrung, danach alle 30 Erfahrung eine weitere Stufe. Beim Stufenaufstieg wählt der Spieler ein Attribut für +1 (höchstens +10) und bekommt maximale Lebenspunkte je nach Volk (Zwerg +5, Elf +3, Mensch +4), die ihn auch um denselben Wert heilen. Sind alle Attribute auf +10, gibt es nur die Lebenspunkte.
 - **Beute:** Beutestufe `tier1` = 2W6 Gold und mit 1/3 Chance ein einfacher Gegenstand. `tier2` = 4W6 Gold und immer ein besserer Gegenstand. Welchen Rang ein Gegenstand hat, steht in `data/items.json`. Gibt es für einen Rang noch keine Gegenstände, gilt der höchste Rang darunter, der welche hat. Die Beutestufen verschieben sich mit dem Thema (siehe Raumtypen und Ebenen). Gold ist Zahlungsmittel beim Händler.
-- **Abstieg:** Jeder Ausgang führt eine Ebene tiefer, endlos. Lebenspunkte, Gold, Erfahrung und Ausrüstung bleiben. Die Fähigkeit ist im neuen Dungeon wieder bereit.
+- **Abstieg:** Jeder Ausgang führt eine Ebene tiefer, endlos. Der Spieler klickt die Wendeltreppe nach unten an und erscheint im neuen Dungeon am Fuß der Wendeltreppe nach oben. Lebenspunkte, Gold, Erfahrung und Ausrüstung bleiben. Die Fähigkeit ist im neuen Dungeon wieder bereit.
 - **Inventar:** Je ein Platz für die angelegte Waffe und Rüstung, dazu sechs Rucksackplätze. Ist der Rucksack voll, fragt das Spiel, was liegen bleibt. Außerhalb von Events lassen sich Gegenstände anlegen, ablegen, benutzen (Heiltrank) und wegwerfen. Während Events und Kämpfen geht das nur über „Gegenstand nutzen“.
 
 ### Völker: Startausrüstung
@@ -229,9 +231,9 @@ Der Dungeon führt durch Themen, die alle drei Ebenen wechseln. Das Thema bestim
 
 | Raumtyp | Bewertung | Lage | Anzahl pro Ebene |
 | --- | --- | --- | --- |
-| Vorkammer (Start) | neutral | fest, Begrüßungs-Event, in jedem Thema | 1 |
-| Abstieg | neutral | Raum mit dem größten Abstand zum Start | 1 |
-| Bossraum | feindlich | am Ende jeder Themenwelt (Ebene 3, 6, 9, 12, 15) statt des Abstiegs; der Abstieg öffnet sich erst nach dem Sieg über den Boss | 1 auf Boss-Ebenen |
+| Vorkammer (Start) | neutral | fest, Wendeltreppe nach oben in der Raummitte, Begrüßungs-Event, in jedem Thema | 1 |
+| Abstieg | neutral | Raum mit dem größten Abstand zum Start, Wendeltreppe nach unten in der Raummitte | 1 |
+| Bossraum | feindlich | am Ende jeder Themenwelt (Ebene 3, 6, 9, 12, 15) statt des Abstiegs; die Wendeltreppe nach unten erscheint erst nach dem Sieg über den Boss | 1 auf Boss-Ebenen |
 | Schatzkammer | feindlich | nur in Sackgassen, in jedem Thema | höchstens 1 |
 | Rastplatz | neutral | etwa auf halber Strecke zwischen Start und Abstieg, in jedem Thema | 1 auf jeder zweiten Ebene |
 | Händler | neutral | beliebig, in jedem Thema | genau 1 |
@@ -261,7 +263,8 @@ Der Dungeon führt durch Themen, die alle drei Ebenen wechseln. Das Thema bestim
 - **Sackgassen:** Sackgassen, die keine Schatzkammer werden, bekommen einen anderen Raumtyp des Themas.
 - **Händler:** bietet 4 zufällige Gegenstände vom Rang der aktuellen Beutestufe an (Rang = Stufe des Themas, Verbrauchsgegenstände eingeschlossen), jeden einmal. Dazu immer die Heiltränke (Kleiner und Großer Heiltrank) in beliebiger Menge; sie zählen nicht zu den 4 Gegenständen. Ist der Rang leer, gilt der höchste Rang darunter. Verkaufen bringt den halben Preis.
 - **Rastplatz:** auf jeder geraden Ebene (2, 4, 6 …). Ein Lagerfeuer im Raum heilt einmal auf volle Lebenspunkte, danach ist es aus.
-- **Bossraum:** Betreten startet den Bosskampf, auch bei jedem weiteren Betreten, bis der Boss besiegt ist. Flucht ist erlaubt, der Boss wartet dann mit vollen Lebenspunkten. Sieg: Beute `tier2` und 10 Erfahrung, danach erscheint in der Raummitte der Torbogen zum Abstieg. Die Siegbeute vergibt das Spiel, nicht das Event.
+- **Wendeltreppen:** Vorkammer und Abstieg haben in der Raummitte eine Wendeltreppe aus 5×5 Kacheln (Kacheln 4 bis 8 in beiden Richtungen). In der Vorkammer führt sie nach oben, ist nicht anklickbar und zeigt, woher der Spieler kommt. Im Abstieg führt sie als Öffnung im Boden nach unten und ist anklickbar: Ein Klick führt eine Ebene tiefer. Der Code setzt die Treppen fest, sie stehen nicht in der Einrichtung. Die übrige Einrichtung dieser Räume steht im Ring aus 3 Kacheln Breite um die Treppe; die Türen liegen in diesem Ring und bleiben frei.
+- **Bossraum:** Betreten startet den Bosskampf, auch bei jedem weiteren Betreten, bis der Boss besiegt ist. Flucht ist erlaubt, der Boss wartet dann mit vollen Lebenspunkten. Die Raummitte (5×5 Kacheln) bleibt frei und dient als Arena. Sieg: Beute `tier2` und 10 Erfahrung, danach erscheint in der Raummitte die Wendeltreppe nach unten (ersetzt den bisherigen Torbogen). Die Siegbeute vergibt das Spiel, nicht das Event.
 - **Boss-Events:** Der Bossraum kann pro Thema eine eigene Event-Tabelle haben, in `data/room-types.json` beim Bossraum im Feld `themeEvents`, etwa `"themeEvents": { "keller": [ … ] }`, mit `eventChance` 1. Bei jedem Betreten wird daraus neu gewürfelt, bis der Boss besiegt ist. Die Events starten den Kampf gegen den Boss mit `combat`. Bedingungen wie `flag:name` unterscheiden die erste Begegnung von der Rückkehr. Themen ohne Tabelle zeigen den Einleitungstext des Bosses (`intro`) und starten den Kampf direkt. Bisher hat nur der Keller (Monsterratte) Boss-Events.
 - **Bosse:** passend zum Thema, einer am Ende jeder Themenwelt.
 
@@ -307,9 +310,73 @@ Die Grafik besteht aus einem modularen Low-Poly-Baukasten auf dem Kachelraster, 
 - **Stil:** Low-Poly mit Flat Shading und begrenzter Farbpalette. Den Stilguide legt das Art-Direction-Projekt fest.
 - **Baukasten:** Bodenkachel, Wandstück, Türrahmen, Ecke und Requisiten, alle exakt 1×1 Kachel groß oder ein Vielfaches davon.
 - **Figurenanimationen:** Idle, Laufen, Angriff, Treffer, Tod, Interagieren. Three.js spielt sie aus der GLB-Datei ab.
-- **Licht:** Fackeln als Punktlichter mit Schatten, gedämpftes Grundlicht.
+- **Licht:** Fackeln als Punktlichter mit Schatten, gedämpftes Grundlicht. Die Fackelfarbe kann pro Raumtyp in der Einrichtung stehen (`torchColor`).
 - **Ablauf:** Erst Platzhalter (Würfel, Kegel), dann KayKit-Assets, dann eigene Farbpalette per Textur-Tausch, später eigene Modelle in Blender oder per KI-3D-Generator.
 - **Lizenzen:** Jede fremde Datei kommt mit Quelle und Lizenz in eine Credits-Liste im Repository.
+
+### Einrichtung pro Raumtyp
+
+Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kann in `data/room-types.json` ein Feld `decor` haben. Für einzelne Themen gibt es zusätzlich `themeDecor`, etwa `"themeDecor": { "keller": { … } }`; es ersetzt dort `decor`. Raumtypen ohne beides behalten das bisherige Einrichtungsmuster aus dem Code.
+
+```json
+"kueche": {
+  "decor": {
+    "torchColor": "#ff8a30",
+    "layouts": [
+      { "id": "A", "props": [
+        { "prop": "herd", "place": "wall-back" },
+        { "prop": "tisch", "place": "center", "variant": "kueche" },
+        { "prop": "regal", "place": "wall-back" },
+        { "prop": "sack", "place": "corner", "count": 2 }
+      ] }
+    ]
+  }
+}
+```
+
+- **Varianten:** `layouts` enthält eine oder mehrere Varianten. Der Raum-Seed wählt eine davon, gleicher Seed ergibt gleiche Einrichtung.
+- **Platzierung (`place`):** `center` (Raummitte), `wall-back` (an der Nord- oder Westwand, weil die vorderen Wände nur Sockel sind), `corner` (in einer Ecke, bei `count` über 1 in verschiedenen Ecken), `free` (beliebige freie Kachel), `around:<prop>` (um ein anderes Requisit herum, etwa Stühle um die Tafel), `above:<prop>` (über einem anderen Requisit, etwa der Kronleuchter über der Tafel).
+- **Weitere Felder:** `count` (Anzahl, Standard 1), `variant` (Abwandlung eines Requisits, etwa der Tisch mit Töpfen statt Würfeln).
+- **Feste Regeln:** Türkacheln und die Kachel davor bleiben frei. Jede Tür und jedes anklickbare Objekt bleibt erreichbar, `npm test` prüft das für alle Varianten. Passt ein Requisit nicht, lässt der Code es weg, statt eine Regel zu brechen. In Vorkammer, Abstieg und Bossraum bleibt die Raummitte (5×5) für die Wendeltreppe frei.
+- **Modelle:** Bis Meilenstein 6 baut der Code jedes Requisit aus Grundformen. Die Requisiten-ids bleiben, wenn später Modelle sie ersetzen.
+
+**Requisiten**
+
+| id | Requisit | Größe | Blockiert | Anklickbar | Eigenes Licht | Für |
+| --- | --- | --- | --- | --- | --- | --- |
+| saeule | Säule | 1 | ja | nein | nein | mehrere |
+| saeule_liegend | Umgestürzte Säule | 2×1 | ja | nein | nein | Säulenhalle |
+| fass | Fass, meist als Gruppe aus 3 (`variant: gruppe`) | 1 | ja | nein | nein | mehrere |
+| kiste | Kiste | 1 | ja | nein | nein | mehrere |
+| sack | Sack | Deko | nein | nein | nein | Vorratskammer, Küche, Rastplatz |
+| regal | Regal mit Krügen | 2×1, Wand | ja | nein | nein | Vorratskammer, Küche, Händler |
+| herd | Herd mit Kessel und Glut | 2×1, Wand | ja | nein | ja | Küche |
+| tisch | Tisch | 3×1 | ja | nein | nein | Wachstube, Küche |
+| hocker | Hocker | 1 | ja | nein | nein | Wachstube |
+| tafel | Tafel mit Tellern und Kerzen | 5×1 | ja | nein | nein | Speisesaal |
+| stuhl | Stuhl | 1 | ja | nein | nein | Speisesaal |
+| kronleuchter | Kronleuchter, hängend | über Tafel | nein | nein | ja | Speisesaal |
+| anrichte | Anrichte | 2×1, Wand | ja | nein | nein | Speisesaal |
+| waffenstaender | Waffenständer | Wand | nein | nein | nein | Wachstube |
+| brunnen | Brunnen mit Kurbel und Eimer | 1 | ja | nein | nein | Brunnenraum |
+| moos | Moos | Deko | nein | nein | nein | Brunnenraum, Säulenhalle |
+| pfuetze | Pfütze | Deko | nein | nein | nein | Brunnenraum |
+| sarkophag | Sarkophag | 1×2 | ja | nein | nein | Gruft |
+| kerzen | Kerzengruppe | Deko | nein | nein | ja | Gruft, Speisesaal, Schatzkammer |
+| knochen | Knochen | Deko | nein | nein | nein | Gruft, Bossraum |
+| geroell | Geröll | Deko | nein | nein | nein | alle |
+| goldhaufen | Goldhaufen | Deko | nein | nein | nein | Schatzkammer |
+| truhe | Truhe | 1 | ja | ja | nein | Schatzkammer |
+| lagerfeuer | Lagerfeuer | 1 | ja | ja | ja | Rastplatz |
+| haendlerfigur | Händler | 1 | ja | ja | nein | Händler |
+| pult | Pult mit Gästebuch | 1 | ja | nein | nein | Vorkammer |
+| wegweiser | Wegweiser | 1 | ja | nein | nein | Vorkammer |
+| zettelbrett | Zettelbrett | Wand | nein | nein | nein | Vorkammer |
+| bank | Bank | 2×1 | ja | nein | nein | Abstieg |
+| souvenirkiste | Souvenirkiste | 1 | ja | nein | nein | Abstieg |
+| kaeseberg | Käseberg mit Thron | 2×2, Wand | ja | nein | ja | Bossraum (Keller) |
+| wendeltreppe_hoch | Wendeltreppe nach oben | 5×5, Mitte | ja | nein | ja | Vorkammer, vom Code gesetzt |
+| wendeltreppe_runter | Wendeltreppe nach unten | 5×5, Mitte | ja | ja | ja | Abstieg und Bossraum, vom Code gesetzt |
 
 ## Meilensteine
 
@@ -381,3 +448,5 @@ Sieben Schritte, jeder endet mit etwas Spielbarem, das Christian im Browser test
 - [x] Boss-Events pro Thema (`themeEvents` beim Bossraum, `eventChance` 1), bei jedem Betreten neu gewürfelt, bis der Boss besiegt ist; Siegbeute vergibt das Spiel; vorerst nur im Keller
 - [x] Eigene Todessätze pro Event in `data/texts.json` unter `death.events`
 - [x] Startausrüstung: Zwerg Langschwert, Lederwams, Kleiner Heiltrank · Elf Dolch, Stofftunika, Kleiner Heiltrank · Mensch Knüppel, Stoffweste, Feuerpfeil-Schriftrolle, Schild-Schriftrolle, Kleiner Heiltrank
+- [x] Wendeltreppen aus 5×5 Kacheln: nach oben in der Vorkammer, nach unten im Abstieg und im Bossraum nach dem Sieg; ersetzen den Torbogen; Start am Fuß der Treppe nach oben
+- [x] Einrichtung pro Raumtyp als Daten (`decor`, `themeDecor`) mit Varianten, Platzierungsregeln und Erreichbarkeitstest; ohne Eintrag gilt das bisherige Muster
