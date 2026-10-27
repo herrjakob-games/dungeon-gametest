@@ -47,13 +47,13 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/rng.js` | Seed-basierte Zufallszahlen und Würfel |
 | `src/state.js` | gemeinsamer Spielzustand |
 | `data/themes.json` | Themen: Name, Stufe, Proben-Zuschlag, Raumtypen, Nachbar des Starts, Monster, Boss, Regel-Ausnahmen (`overrides`) |
-| `data/room-types.json` | Raumtypen: Name, Farben, Einrichtung (`layout`), Bewertung, Lage- und Anzahlregeln, Event-Chance, Event-Tabelle |
+| `data/room-types.json` | Raumtypen: Name, Farben, Einrichtung (`layout`), Bewertung, Lage- und Anzahlregeln, Event-Chance, Event-Tabelle; beim Bossraum Tabellen pro Thema (`themeEvents`) |
 | `data/events.json` | alle Events (auch die Truhe) |
 | `data/monsters.json` | Monster und Bosse mit Lebenspunkten, Rüstung, Angriff, Schaden, Satz zur Todesursache |
 | `data/characters.json` | Völker: Attribute, Lebenspunkte, LP je Stufe, Fähigkeit, Startausrüstung, Modell |
 | `data/items.json` | Gegenstände mit Rang 1–6, Preis (`preis`), Schaden/Rüstung/Nutzen, Mindestattribut und Volk (`req`); erzeugt aus `data/gegenstaende.csv` |
 | `data/gegenstaende.csv` | Gegenstandsliste als Tabelle (Quelle für `items.json`) |
-| `data/texts.json` | Sätze zur Todesursache bei Events |
+| `data/texts.json` | Sätze zur Todesursache bei Events, eigene Sätze pro Event unter `death.events` |
 | `src/data.js` | lädt `data/*.json` und prüft die Daten |
 | `src/eventLogic.js` | Event-Regeln: Proben-Kategorien, Auswahl, Effekte, Beute, Bedingungen, Datenprüfung; rein logisch |
 | `src/character.js` | Figur: Volk, Inventar, Anlegen, Stufenaufstieg, Fähigkeit; rein logisch |

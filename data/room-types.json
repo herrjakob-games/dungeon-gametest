@@ -69,8 +69,22 @@
     "torch": "#ff5a3c",
     "layout": "boss",
     "rating": "hostile",
-    "eventChance": 0,
-    "events": []
+    "eventChance": 1,
+    "events": [],
+    "themeEvents": {
+      "keller": [
+        {
+          "id": "boss_monsterratte",
+          "weight": 3,
+          "condition": "notFlag:monsterratte_gesehen"
+        },
+        {
+          "id": "boss_monsterratte_zurueck",
+          "weight": 3,
+          "condition": "flag:monsterratte_gesehen"
+        }
+      ]
+    }
   },
   {
     "id": "schatz",
