@@ -23,7 +23,7 @@ export const state = {
 
   // Aktueller Raum (wird von buildRoom neu gesetzt)
   blocked: new Set(),  // belegte Kacheln "x,z"
-  interactables: [],   // anklickbare Objekte (Türen, Truhe, Torbogen)
+  interactables: [],   // anklickbare Objekte (Türen, Truhe, Lagerfeuer, Händler, Treppe nach unten)
   torches: [],
   lidPivot: null,
   openLid: false,

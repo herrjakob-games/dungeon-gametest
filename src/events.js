@@ -116,7 +116,7 @@ function fight(ev, outcome, combat, onOutcome) {
       if (isBoss) {
         rs.bossDefeated = true;
         hooks.onBossDefeated();
-        text = DATA.monsters[combat.monster].name + " ist besiegt. In der Mitte des Raums öffnet sich der Torbogen zum Abstieg.";
+        text = DATA.monsters[combat.monster].name + " ist besiegt. In der Mitte des Raums öffnet sich eine Wendeltreppe nach unten.";
       }
       show(ev, { text, next: outcome.next }, res, roll, onOutcome, lines);
     },
@@ -189,7 +189,7 @@ function die(cause) {
 // Bossraum: Jedes Betreten startet den Bosskampf, bis der Boss besiegt ist. Flucht ist erlaubt.
 // Hat das Thema eine Boss-Event-Tabelle (room-types.json, Bossraum, themeEvents), wird bei jedem Betreten
 // daraus neu gewürfelt; sonst startet der Kampf direkt.
-// Sieg: Beute tier2 und 10 Erfahrung (vergibt fight()), danach erscheint der Torbogen zum Abstieg.
+// Sieg: Beute tier2 und 10 Erfahrung (vergibt fight()), danach erscheint in der Raummitte die Wendeltreppe nach unten.
 export const BOSS_REWARD = [{ loot: "tier2" }, { gainXp: 10 }];
 
 export function startBoss() {
@@ -229,14 +229,6 @@ export function chestEvent() {
   runEvent("chest", (outcome, res) => {
     if (res.lines.some(l => l.type === "loot")) { rs.chestOpened = true; state.openLid = true; }
   });
-}
-
-// Der Torbogen im Ausgangsraum (feste Interaktion, kein Event aus der Tabelle)
-export function exitEvent(onDescend) {
-  showDialog("Der Abstieg", "Ein Torbogen voll kaltem, blauem Schimmer. Dahinter führen Stufen nach unten. Von dort riecht es nach Bratkartoffeln.", [
-    { label: "Hinabsteigen (Ebene " + (state.depth + 1) + ")", pick: onDescend },
-    { label: "Noch nicht", pick: closeDialog }
-  ]);
 }
 
 // Hinweis, wenn eine verschlossene Tür benutzt werden soll

@@ -1,6 +1,7 @@
-// Baut den aktuellen Raum als 3D-Szene: Boden, Wände, Türen, Fackeln, Einrichtung.
-// Regel für die Einrichtung: Das Kreuz aus Reihe und Spalte 4 bis 6 bleibt immer frei,
-// damit alle Türen miteinander verbunden sind.
+// Baut den aktuellen Raum als 3D-Szene: Boden, Wände, Türen, Fackeln, Wendeltreppen, Einrichtung.
+// Einrichtung aus den Daten (decor/themeDecor in data/room-types.json) plant decor.js; dort gelten die Regeln
+// aus dem GDD (Türkacheln frei, alles erreichbar). Raumtypen ohne Eintrag bekommen das bisherige Muster aus
+// furnish(); dort bleibt das Kreuz aus Reihe und Spalte 4 bis 6 frei.
 import { N, MID, E, DIR, DIRKEYS, key, inBounds, tw } from "./config.js";
 import { setRoomSeed, rnd, pickOne, shuffled } from "./rng.js";
 import { mat, box, stone, WOOD } from "./materials.js";
@@ -8,6 +9,8 @@ import { TYPES } from "./roomTypes.js";
 import { scene } from "./scene.js";
 import { state } from "./state.js";
 import { buildFigure } from "./figures.js";
+import * as P from "./props.js";
+import { PROPS, planDecor, decorFor, centerFeature, STAIRS_TILES } from "./decor.js";
 const THREE = window.THREE;
 
 let roomGroup = null;
@@ -37,12 +40,19 @@ export function buildRoom(id) {
   if (!state.roomState[id]) state.roomState[id] = {};
   setRoomSeed(room.seed);
 
+  // Wendeltreppen setzt der Code: nach oben in der Vorkammer, nach unten im Abstieg und im Bossraum nach dem Sieg
+  const feature = centerFeature(room.type, !!state.roomState[id].bossDefeated);
+  const spec = decorFor(type, state.theme ? state.theme.id : null);
+  const torch = spec && spec.torchColor ? parseInt(spec.torchColor.slice(1), 16) : type.torch;
+
   buildFloor(type);
   buildWalls(room);
   DIRKEYS.forEach(d => { if (room.doors & DIR[d].bit) makeDoor(d); });
-  [[tw(1), true], [tw(9), true], [tw(1), false], [tw(9), false]].forEach(([p, north]) => makeTorch(p, north, type.torch));
-  furnish(type.layout, id);
-  scatterRubble();
+  [[tw(1), true], [tw(9), true], [tw(1), false], [tw(9), false]].forEach(([p, north]) => makeTorch(p, north, torch));
+  if (feature === "up" || feature === "down") makeStairs(feature);
+  if (spec) placeDecor(spec, room, feature, id);
+  else furnish(type.layout, id);
+  scatterRubble(feature === "up" || feature === "down");
   refreshLocks();
 }
 
@@ -152,19 +162,54 @@ function makeTorch(p, alongNorth, color) {
   if (alongNorth) g.position.set(p, 1.9, -E + 0.32);
   else g.position.set(-E + 0.32, 1.9, p);
   add(g);
-  state.torches.push({ light, flame, phase: rnd() * 10 });
+  state.torches.push({ light, flame, phase: rnd() * 10, base: 1.2 });
 }
 
-function scatterRubble() {
+// Geröll in jedem Raum, nicht auf der Wendeltreppe
+function scatterRubble(skipCenter) {
   for (let k = 0; k < 9; k++) {
     const r = new THREE.Mesh(new THREE.DodecahedronGeometry(0.06 + rnd() * 0.08), stone());
-    r.position.set(tw(Math.floor(rnd() * N)) + (rnd() - 0.5) * 0.7, 0.04, tw(Math.floor(rnd() * N)) + (rnd() - 0.5) * 0.7);
+    const x = Math.floor(rnd() * N), z = Math.floor(rnd() * N);
+    if (skipCenter && Math.abs(x - MID) <= 2 && Math.abs(z - MID) <= 2) continue;
+    r.position.set(tw(x) + (rnd() - 0.5) * 0.7, 0.04, tw(z) + (rnd() - 0.5) * 0.7);
     r.castShadow = true;
     add(r);
   }
 }
 
-// ---------- Einrichtung je Raumtyp ----------
+// ---------- Wendeltreppen ----------
+// Auf Gruppen aus props.js: Mittelpunkt (in Kacheln) und Drehung setzen
+function at(g, cx, cz, rot) {
+  const outer = new THREE.Group();
+  outer.add(g);
+  outer.position.set(tw(cx), 0, tw(cz));
+  outer.rotation.y = rot || 0;
+  return add(outer);
+}
+const lightCtx = () => ({ flicker: state.torches });
+
+function makeStairs(dir) {
+  STAIRS_TILES.forEach(t => block(t[0], t[1]));
+  if (dir === "up") { at(P.wendeltreppe_hoch(null, lightCtx()), MID, MID); return; }
+  const g = at(P.wendeltreppe_runter(null, lightCtx()), MID, MID);
+  const inner = g.children[0];
+  g.userData = { kind: "exit", tiles: STAIRS_TILES, hoverMats: inner.userData.hoverMats, baseGlow: inner.userData.baseGlow };
+  state.interactables.push(g);
+}
+
+// ---------- Einrichtung aus den Daten ----------
+function placeDecor(spec, room, feature, id) {
+  const plan = planDecor(spec, { seed: room.seed, doors: room.doors, feature });
+  for (const pl of plan.placements) {
+    if (pl.prop === "truhe") { makeChest(pl.tiles[0], id, pl.rot); continue; }
+    if (pl.prop === "lagerfeuer") { makeCampfire(pl.tiles[0], id); continue; }
+    if (pl.prop === "haendlerfigur") { makeMerchant(pl.tiles[0]); continue; }
+    if (PROPS[pl.prop].blocks) pl.tiles.forEach(t => block(t[0], t[1]));
+    at(P[pl.prop](pl, lightCtx()), pl.cx, pl.cz, pl.rot);
+  }
+}
+
+// ---------- Bisheriges Einrichtungsmuster (Raumtypen ohne decor) ----------
 const CORNERS = [[1, 1], [9, 1], [1, 9], [9, 9]];
 const QUADS = [[2, 2], [8, 2], [2, 8], [8, 8]];
 const FOUR_PILLARS = [[3, 3], [7, 3], [3, 7], [7, 7]];
@@ -174,8 +219,7 @@ function furnish(t, id) {
   if (t === "pillars") {
     FOUR_PILLARS.forEach(p => pillar(...p));
   } else if (t === "boss") {
-    CORNERS.forEach(p => pillar(...p));
-    if (state.roomState[id].bossDefeated) makeExit(); else makeBossMark();
+    CORNERS.forEach(p => pillar(...p)); // die Mitte bleibt als Arena frei, nach dem Sieg steht dort die Treppe
   } else if (t === "rast") {
     makeCampfire(pickOne(QUADS), id);
     barrelCluster(pickOne(CORNERS));
@@ -186,7 +230,7 @@ function furnish(t, id) {
     crate(q[0] + sx, q[1]); crate(q[0] - sx, q[1]);
     barrelCluster(pickOne(CORNERS.filter(c => Math.abs(c[0] - q[0]) > 2 || Math.abs(c[1] - q[1]) > 2)));
   } else if (t === "start") {
-    FOUR_PILLARS.forEach(p => pillar(...p));
+    FOUR_PILLARS.forEach(p => pillar(...p)); // in der Vorkammer steht dort die Treppe, die Säulen entfallen dann
     barrelCluster(pickOne(CORNERS));
   } else if (t === "halle") {
     const pts = rnd() < 0.5
@@ -203,7 +247,7 @@ function furnish(t, id) {
     table([[q[0], q[1]], [q[0] + 1, q[1]], [q[0] + 2, q[1]]]);
     [[q[0], q[1] - 1], [q[0] + 2, q[1] - 1], [q[0] + 1, q[1] + 1]].forEach(p => stool(...p));
     barrelCluster(CORNERS[order[1]]);
-    weaponRack();
+    at(P.waffenstaender(), 3, 0); // Deko an der Nordwand, blockiert nichts
   } else if (t === "vorrat") {
     shuffled(CORNERS).slice(0, 2 + Math.floor(rnd() * 2)).forEach(c => {
       barrelCluster(c);
@@ -213,40 +257,24 @@ function furnish(t, id) {
   } else if (t === "schatz") {
     const q = pickOne(QUADS);
     makeChest(q, id);
-    for (let k = 0; k < 4; k++) goldPile(q[0] + (rnd() < 0.5 ? -1 : 1), q[1] + (rnd() < 0.5 ? -1 : 1));
+    for (let k = 0; k < 4; k++) {
+      const x = q[0] + (rnd() < 0.5 ? -1 : 1), z = q[1] + (rnd() < 0.5 ? -1 : 1);
+      if (inBounds(x, z)) at(P.goldhaufen(), x, z);
+    }
     FOUR_PILLARS.filter(p => !(Math.abs(p[0] - q[0]) <= 1 && Math.abs(p[1] - q[1]) <= 1)).forEach(p => pillar(...p));
-  } else if (t === "exit") {
-    FOUR_PILLARS.forEach(p => pillar(...p));
-    makeExit();
   }
 }
 
 function pillar(x, z) {
   if (!free(x, z)) return;
   block(x, z);
-  const g = new THREE.Group();
-  g.add(box(0.85, 0.25, 0.85, stone(), 0, 0.12, 0));
-  const col = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.34, 2.6, 7), stone());
-  col.position.y = 1.5; col.castShadow = true; col.receiveShadow = true;
-  g.add(col);
-  g.add(box(0.8, 0.2, 0.8, stone(), 0, 2.9, 0));
-  g.position.set(tw(x), 0, tw(z));
-  add(g);
+  at(P.saeule(), x, z);
 }
 
 function barrel(x, z) {
   if (!free(x, z)) return;
   block(x, z);
-  const g = new THREE.Group();
-  const b = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.8, 9), mat(0x8a5a32));
-  b.position.y = 0.4; b.castShadow = true; g.add(b);
-  [0.18, 0.62].forEach(y => {
-    const r = new THREE.Mesh(new THREE.CylinderGeometry(0.315, 0.315, 0.06, 9), mat(0x3a3330));
-    r.position.y = y; g.add(r);
-  });
-  g.position.set(tw(x) + (rnd() - 0.5) * 0.15, 0, tw(z) + (rnd() - 0.5) * 0.15);
-  g.rotation.y = rnd() * Math.PI;
-  add(g);
+  at(P.fass({ variant: null }), x, z);
 }
 
 function barrelCluster(c) {
@@ -257,79 +285,28 @@ function barrelCluster(c) {
 function crate(x, z) {
   if (!free(x, z)) return;
   block(x, z);
-  const g = new THREE.Group();
-  const s = 0.7 + rnd() * 0.1;
-  g.add(box(s, s, s, mat(0x9a7044), 0, s / 2, 0));
-  g.add(box(s + 0.02, 0.08, s + 0.02, mat(0x5e3d22), 0, s * 0.25, 0));
-  g.add(box(s + 0.02, 0.08, s + 0.02, mat(0x5e3d22), 0, s * 0.75, 0));
-  g.position.set(tw(x), 0, tw(z));
-  g.rotation.y = (rnd() - 0.5) * 0.4;
-  add(g);
+  at(P.kiste(), x, z);
 }
 
 function sarcophagus(x, z) {
   if (!free(x, z) || !free(x, z + 1)) return;
   block(x, z); block(x, z + 1);
-  const g = new THREE.Group();
-  g.add(box(0.85, 0.55, 1.8, mat(0x6d6a5c), 0, 0.28, 0));
-  const lid = box(0.92, 0.14, 1.88, mat(0x85816f), 0.04, 0.62, -0.06);
-  lid.rotation.y = (rnd() - 0.5) * 0.12;
-  g.add(lid);
-  g.add(box(0.4, 0.06, 0.4, mat(0x9c977f), 0, 0.72, -0.5));
-  g.position.set(tw(x), 0, tw(z) + 0.5);
-  add(g);
+  at(P.sarkophag(), x, z + 0.5);
 }
 
 function table(tiles) {
   tiles.forEach(t => block(t[0], t[1]));
-  const xs = tiles.map(t => tw(t[0]));
-  const cx = (Math.min(...xs) + Math.max(...xs)) / 2;
-  const len = Math.max(...xs) - Math.min(...xs) + 0.9;
-  const g = new THREE.Group();
-  g.add(box(len, 0.12, 0.9, mat(0x8b5e34), 0, 0.75, 0));
-  [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(([sx, sz]) =>
-    g.add(box(0.1, 0.7, 0.1, mat(0x5e3d22), sx * (len / 2 - 0.1), 0.35, sz * 0.35)));
-  g.add(box(0.14, 0.22, 0.14, mat(0xb9b2a4), -0.6, 0.92, 0.1));
-  const plate = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.03, 10), mat(0xcfc6b2));
-  plate.position.set(0.3, 0.83, -0.1); g.add(plate);
-  g.add(box(0.08, 0.08, 0.08, mat(0xf0e5d3), 0.9, 0.85, 0.15));
-  g.position.set(cx, 0, tw(tiles[0][1]));
-  add(g);
+  at(P.tisch(), (tiles[0][0] + tiles[tiles.length - 1][0]) / 2, tiles[0][1]);
 }
 
 function stool(x, z) {
   if (!free(x, z)) return;
   block(x, z);
-  const s = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.2, 0.45, 8), mat(0x6e4728));
-  s.position.set(tw(x), 0.23, tw(z));
-  s.castShadow = true;
-  add(s);
+  at(P.hocker(), x, z);
 }
 
-// Deko an der Nordwand, blockiert nichts
-function weaponRack() {
-  const g = new THREE.Group();
-  g.add(box(1.6, 0.08, 0.1, mat(0x5e3d22), 0, 1.6, 0));
-  [-0.5, 0, 0.5].forEach(x => {
-    g.add(box(0.04, 1.3, 0.04, mat(0x7a4a26), x, 1.1, 0.06));
-    g.add(box(0.12, 0.22, 0.03, mat(0x9aa1a8, { metalness: 0.5, roughness: 0.5 }), x, 1.75, 0.06));
-  });
-  g.position.set(tw(3), 0, -E + 0.3);
-  add(g);
-}
-
-// Deko, blockiert nichts
-function goldPile(x, z) {
-  if (!inBounds(x, z)) return;
-  const gm = mat(0xe3b341, { metalness: 0.6, roughness: 0.35, emissive: 0x3a2a00, emissiveIntensity: 0.4 });
-  for (let k = 0; k < 4; k++) {
-    const coin = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.02, 8), gm);
-    coin.position.set(tw(x) + (rnd() - 0.5) * 0.5, 0.01 + k * 0.02, tw(z) + (rnd() - 0.5) * 0.5);
-    add(coin);
-  }
-}
-
-function makeChest(pos, id) {
+// ---------- Anklickbare Requisiten ----------
+function makeChest(pos, id, rot) {
   if (!free(pos[0], pos[1])) return;
   block(pos[0], pos[1]);
   const bodyMat = mat(WOOD, { emissive: 0xe9a640, emissiveIntensity: 0 });
@@ -343,30 +320,12 @@ function makeChest(pos, id) {
   chest.add(lidPivot);
   chest.add(box(0.12, 0.14, 0.04, mat(0xd8b56a), 0, 0.42, 0.29));
   chest.position.set(tw(pos[0]), 0, tw(pos[1]));
-  chest.rotation.y = (rnd() - 0.5) * 0.4;
+  chest.rotation.y = (rot || 0) + (rnd() - 0.5) * 0.4;
   chest.userData = { kind: "chest", tile: pos, hoverMats: [bodyMat, lidMat] };
   if (state.roomState[id].chestOpened) lidPivot.rotation.x = -1.9;
   state.lidPivot = lidPivot;
   add(chest);
   state.interactables.push(chest);
-}
-
-// Bossraum: dunkler, glühender Block in der Mitte, solange der Boss nicht besiegt ist (Platzhalter)
-function makeBossMark() {
-  block(MID, MID);
-  const g = new THREE.Group();
-  const glow = mat(0x5a1a14, { emissive: 0xff3a20, emissiveIntensity: 0.25 });
-  g.add(box(1.1, 0.2, 1.1, mat(0x2a2422), 0, 0.1, 0));
-  const body = new THREE.Mesh(new THREE.ConeGeometry(0.55, 2.2, 5), glow);
-  body.position.y = 1.2; body.castShadow = true;
-  g.add(body);
-  const light = new THREE.PointLight(0xff4a2a, 1.2, 6, 2);
-  light.position.set(0, 1.6, 0.6);
-  g.add(light);
-  g.position.set(tw(MID), 0, tw(MID));
-  g.userData = { kind: "boss", tile: [MID, MID], hoverMats: [glow], baseGlow: glow };
-  add(g);
-  state.interactables.push(g);
 }
 
 // Rastplatz: Lagerfeuer, einmal benutzbar
@@ -415,30 +374,6 @@ function makeMerchant(pos) {
   g.position.set(tw(pos[0]), 0, tw(pos[1]));
   g.rotation.y = Math.atan2(tw(MID) - tw(pos[0]), tw(MID) - tw(pos[1]));
   g.userData = { kind: "merchant", tile: pos, hoverMats };
-  add(g);
-  state.interactables.push(g);
-}
-
-// Der Abstieg: Torbogen in der Raummitte
-function makeExit() {
-  block(MID, MID);
-  const g = new THREE.Group();
-  const frameMat = mat(0x6e7480, { emissive: 0x9fd0ff, emissiveIntensity: 0 });
-  g.add(box(1.1, 0.15, 1.1, mat(0x3a3f47), 0, 0.075, 0));
-  g.add(box(0.2, 1.9, 0.3, frameMat, -0.45, 1.1, 0));
-  g.add(box(0.2, 1.9, 0.3, frameMat, 0.45, 1.1, 0));
-  g.add(box(1.1, 0.3, 0.34, frameMat, 0, 2.15, 0));
-  const portal = new THREE.Mesh(
-    new THREE.PlaneGeometry(0.7, 1.85),
-    new THREE.MeshBasicMaterial({ color: 0x9fd0ff, transparent: true, opacity: 0.55, side: THREE.DoubleSide })
-  );
-  portal.position.y = 1.08;
-  g.add(portal);
-  const light = new THREE.PointLight(0x9fd0ff, 1.6, 6, 2);
-  light.position.set(0, 1.2, 0.5);
-  g.add(light);
-  g.rotation.y = Math.PI / 4;
-  g.userData = { kind: "exit", tile: [MID, MID], hoverMats: [frameMat], portal };
   add(g);
   state.interactables.push(g);
 }

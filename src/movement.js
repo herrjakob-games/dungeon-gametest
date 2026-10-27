@@ -31,18 +31,21 @@ export function stopMoving() {
   setSteps(0);
 }
 
-// Zu einem Objekt laufen: nächstgelegenes freies Nachbarfeld wählen, dann zum Objekt drehen
+// Zu einem Objekt laufen: nächstgelegenes freies Nachbarfeld wählen, dann zum Objekt drehen.
+// tile: eine Kachel [x, z] oder alle Kacheln eines großen Objekts [[x, z], …] (etwa die Wendeltreppe)
 export function approachTile(tile, onArrive) {
+  const tiles = Array.isArray(tile[0]) ? tile : [tile];
   const from = pathStart();
   let best = null;
-  for (let dx = -1; dx <= 1; dx++) for (let dz = -1; dz <= 1; dz++) {
-    if (!dx && !dz) continue;
-    const nx = tile[0] + dx, nz = tile[1] + dz;
-    if (!walkable(nx, nz)) continue;
+  const tried = new Set();
+  for (const t of tiles) for (let dx = -1; dx <= 1; dx++) for (let dz = -1; dz <= 1; dz++) {
+    const nx = t[0] + dx, nz = t[1] + dz, k = nx + "," + nz;
+    if ((!dx && !dz) || tried.has(k) || !walkable(nx, nz)) continue;
+    tried.add(k);
     const p = findPath(from[0], from[1], nx, nz, walkable);
-    if (p && (!best || p.length < best.p.length)) best = { p, x: nx, z: nz };
+    if (p && (!best || p.length < best.p.length)) best = { p, x: nx, z: nz, t };
   }
-  if (best) moveTo(best.x, best.z, () => { faceTile(tile); onArrive(); });
+  if (best) moveTo(best.x, best.z, () => { faceTile(best.t); onArrive(); });
 }
 
 function arrive() {
