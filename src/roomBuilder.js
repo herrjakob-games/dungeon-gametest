@@ -11,6 +11,7 @@ import { state } from "./state.js";
 import { buildFigure } from "./figures.js";
 import * as P from "./props.js";
 import { PROPS, planDecor, decorFor, centerFeature, STAIRS_TILES } from "./decor.js";
+import { syncRoom } from "./roomFigures.js";
 const THREE = window.THREE;
 
 let roomGroup = null;
@@ -50,10 +51,12 @@ export function buildRoom(id) {
   DIRKEYS.forEach(d => { if (room.doors & DIR[d].bit) makeDoor(d); });
   [[tw(1), true], [tw(9), true], [tw(1), false], [tw(9), false]].forEach(([p, north]) => makeTorch(p, north, torch));
   if (feature === "up" || feature === "down") makeStairs(feature);
+  state.decorPlan = null;
   if (spec) placeDecor(spec, room, feature, id);
   else furnish(type.layout, id);
   scatterRubble(feature === "up" || feature === "down");
   refreshLocks();
+  syncRoom(id); // Figuren im Raum (roomFigures.js)
 }
 
 // Schloss und Riegel an verschlossenen Türen zeigen (Zustand aus state.roomState[...].locked)
@@ -200,6 +203,7 @@ function makeStairs(dir) {
 // ---------- Einrichtung aus den Daten ----------
 function placeDecor(spec, room, feature, id) {
   const plan = planDecor(spec, { seed: room.seed, doors: room.doors, feature });
+  state.decorPlan = plan; // für Figuren mit near:<prop>
   for (const pl of plan.placements) {
     if (pl.prop === "truhe") { makeChest(pl.tiles[0], id, pl.rot); continue; }
     if (pl.prop === "lagerfeuer") { makeCampfire(pl.tiles[0], id); continue; }

@@ -2174,6 +2174,12 @@
     "type": "combat",
     "title": "Der Küchenchef",
     "text": "Am Herd steht eine Ratte mit Kochmütze und Fleischerbeil. Sie mustert dich wie eine Zutat. Offenbar fehlt noch etwas für das Tagesgericht.",
+    "figures": [
+      {
+        "figure": "kuechenratte",
+        "place": "near:herd"
+      }
+    ],
     "options": [
       {
         "label": "Angreifen",
@@ -2279,6 +2285,13 @@
     "type": "npc",
     "title": "Der Gastgeber",
     "text": "Am Kopfende der Tafel sitzt ein Skelett, den Becher erhoben. Es wartet sichtlich seit Jahrhunderten auf einen Trinkspruch. Bisher hat sich niemand getraut.",
+    "figures": [
+      {
+        "figure": "skeleton",
+        "place": "near:tafel",
+        "variant": "sitzend"
+      }
+    ],
     "options": [
       {
         "label": "Einen Trinkspruch halten",
@@ -2528,6 +2541,13 @@
     "type": "combat",
     "title": "Ungebetene Gäste",
     "text": "Auf der Tafel feiern Ratten ein Festmahl. Als du hereinkommst, verstummt das Schmatzen. Offenbar bist du der Hauptgang.",
+    "figures": [
+      {
+        "figure": "rat",
+        "place": "near:tafel",
+        "count": 3
+      }
+    ],
     "options": [
       {
         "label": "Kämpfen",
@@ -2714,6 +2734,12 @@
     "type": "npc",
     "title": "Die Kröte",
     "text": "Auf dem Brunnenrand sitzt eine fette Kröte mit Krone. Sie räuspert sich und behauptet, ein verfluchter Prinz zu sein. Ein Kuss würde alles lösen, sagt sie.",
+    "figures": [
+      {
+        "figure": "kroete",
+        "place": "near:brunnen"
+      }
+    ],
     "options": [
       {
         "label": "Den Fluch untersuchen",
@@ -3041,6 +3067,12 @@
     "type": "combat",
     "title": "Skelett mit Rücken",
     "text": "Aus einem Sarg stemmt sich ein Skelett hoch, eine Hand an der Wirbelsäule. Es stöhnt, knackt und hebt dann trotzdem das Schwert. Pflicht ist Pflicht.",
+    "figures": [
+      {
+        "figure": "skeleton",
+        "place": "near:sarkophag"
+      }
+    ],
     "options": [
       {
         "label": "Angreifen",
@@ -3119,6 +3151,14 @@
     "type": "combat",
     "title": "Würfelspiel",
     "text": "Zwei Skelette hocken über einem Würfelbecher. Laut Strichliste spielen sie seit 214 Jahren, Stand unentschieden. Eines deutet auf den freien Hocker.",
+    "figures": [
+      {
+        "figure": "skeleton",
+        "place": "near:tisch",
+        "variant": "sitzend",
+        "count": 2
+      }
+    ],
     "options": [
       {
         "label": "Mitspielen und schummeln",
@@ -3290,6 +3330,12 @@
     "type": "combat",
     "title": "Die Monsterratte",
     "text": "Auf einem Berg aus Käserinden thront eine Ratte, groß wie ein Pony. Sie trägt eine Krone aus verbogenen Gabeln. Gerochen hat sie dich schon zwei Räume früher.",
+    "figures": [
+      {
+        "figure": "monsterratte",
+        "place": "above:kaeseberg"
+      }
+    ],
     "options": [
       {
         "label": "Angreifen",
@@ -3386,6 +3432,12 @@
     "type": "combat",
     "title": "Die Monsterratte, zweiter Gang",
     "text": "In deiner Abwesenheit hat die Monsterratte ihre Wunden geleckt und nachgegessen. Sie wirkt erfreut, dich wiederzusehen. Du wirkst es weniger.",
+    "figures": [
+      {
+        "figure": "monsterratte",
+        "place": "above:kaeseberg"
+      }
+    ],
     "options": [
       {
         "label": "Noch einmal angreifen",

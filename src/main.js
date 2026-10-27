@@ -8,7 +8,8 @@ import { placePlayer, setFigure } from "./player.js";
 import { hoverMesh, showHoverTile } from "./markers.js";
 import { moveTo, stopMoving, approachTile, updateMovement } from "./movement.js";
 import { closeDialog, isDialogOpen, isDialogModal, showDialog } from "./dialog.js";
-import { initEvents, startRoomEvent, chestEvent, lockedDoorNote, startBoss, restEvent } from "./events.js";
+import { initEvents, startRoomEvent, chestEvent, lockedDoorNote, startBoss, restEvent, runEvent, startFight } from "./events.js";
+import { updateFigures } from "./roomFigures.js";
 import { STAIRS_FOOT } from "./decor.js";
 import { openShop } from "./shopUI.js";
 import { themeFor } from "./world.js";
@@ -271,8 +272,64 @@ state.player = newCharacter(Object.values(DATA.characters)[0]);
 startDungeon(randomSeed(), true);
 updateHud();
 renderInventory();
-chooseCharacter();
+if (!devStart()) chooseCharacter();
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawMinimap);
+
+// ---------- Testmodus (nur lokal, nicht auf GitHub Pages) ----------
+// ?event=<id> startet das Event im ersten passenden Raum, ?fight=<monster-id> einen Kampf in der Vorkammer.
+// Optional ?volk=zwerg|elf|mensch. Ergebnis: true, wenn der Testmodus übernommen hat.
+function devStart() {
+  if (!["localhost", "127.0.0.1"].includes(location.hostname)) return false;
+  const q = new URLSearchParams(location.search);
+  const ev = q.get("event"), monster = q.get("fight");
+  if (!ev && !monster) return false;
+  if (ev && !DATA.events[ev]) { console.error("Testmodus: unbekanntes Event " + ev); return false; }
+  if (monster && !DATA.monsters[monster]) { console.error("Testmodus: unbekanntes Monster " + monster); return false; }
+  const def = DATA.characters[q.get("volk")] || Object.values(DATA.characters)[0];
+  state.player = newCharacter(def);
+  state.stats = { rooms: 0 };
+  setFigure(def.model);
+  renderInventory();
+  if (monster) {
+    state.depth = 1;
+    startDungeon(randomSeed(), true);
+    startFight(monster);
+  } else if (!devEvent(ev)) {
+    console.error("Testmodus: kein Raum für Event " + ev + " gefunden");
+  }
+  updateHud();
+  return true;
+}
+
+// Ersten passenden Raum suchen: Raumtyp, in dessen Tabelle das Event steht, auf einer Ebene, auf der es den Raum gibt
+function devEvent(id) {
+  const world = { themes: DATA.themes, roomTypes: DATA.roomTypes };
+  for (const rt of Object.values(DATA.roomTypes)) {
+    const tables = [[null, rt.events]].concat(Object.entries(rt.themeEvents || {}));
+    for (const [themeId, table] of tables) {
+      if (!table.some(e => e.id === id)) continue;
+      for (let depth = 1; depth <= DATA.themes.length * 3; depth++) {
+        if (themeId && themeFor(DATA.themes, depth).id !== themeId) continue;
+        for (let seed = 1; seed < 300; seed++) {
+          const d = generate(seed, depth, world);
+          const k = Object.keys(d.rooms).find(r => d.rooms[r].type === rt.id);
+          if (!k) continue;
+          state.depth = depth;
+          startDungeon(seed, true);
+          const door = ["N", "E", "S", "W"].find(dd => d.rooms[k].doors & DIR[dd].bit);
+          state.current = k;
+          state.visited.add(k);
+          state.backDoor = door;
+          buildRoom(k);
+          placePlayer(DIR[door].approach, 0);
+          runEvent(id);
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
 
 // ---------- Spielschleife ----------
 const clock = new THREE.Clock();
@@ -281,6 +338,7 @@ function loop() {
   const t = clock.elapsedTime;
 
   updateMovement(dt, t);
+  updateFigures(dt, t);
 
   if (state.openLid && state.lidPivot) {
     if (state.lidPivot.rotation.x > -1.9) state.lidPivot.rotation.x -= dt * 4;

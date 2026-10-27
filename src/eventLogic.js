@@ -3,6 +3,7 @@
 // Zufall kommt immer als Funktion rand() herein: im Spiel Math.random, in Tests fest.
 import { DIR, DIRKEYS } from "./config.js";
 import { checkDecor } from "./decor.js";
+import { checkFigures } from "./figurePlan.js";
 import { ATTRS, hasItem, ATTR_MIN, ATTR_MAX, START_ATTR_MAX, VOLK_NAMES } from "./character.js";
 
 export const DCS = [8, 12, 16]; // leicht, mittel, schwer
@@ -349,6 +350,7 @@ export function validateData(data) {
 
   for (const ev of Object.values(data.events)) {
     const w = "Event " + ev.id;
+    checkFigures(ev, data, err);
     if (!EVENT_TYPES.includes(ev.type)) err(w, "unbekannter Typ " + ev.type);
     if (!ev.title) err(w, "Titel fehlt");
     if (!ev.text) err(w, "Text fehlt");

@@ -11,6 +11,7 @@ import { monsterHpBonus } from "./world.js";
 import { updateStats } from "./hud.js";
 import { renderInventory } from "./inventory.js";
 import { rollHtml, maybeRescue, signShort } from "./checkUI.js";
+import { hitCombatFigure } from "./roomFigures.js";
 
 let h = null; // { onWin(lines), onFlee(), onDeath(monster) }
 
@@ -56,6 +57,7 @@ function attack() {
     const lines = [];
     if (r.ok) {
       const n = hitMonster(state.player, DATA.items, c, Math.random);
+      hitCombatFigure();
       lines.push('Treffer: <span class="good">−' + n + " LP</span> für " + c.monster.name);
     } else {
       lines.push("Daneben.");
@@ -79,6 +81,7 @@ function useItem(e) {
   const p = state.player;
   p.pack.splice(e.index, 1);
   const res = useInCombat(p, e.item, state.combat, Math.random);
+  if (res.type === "damage") hitCombatFigure();
   renderInventory();
   updateStats();
   const lines = [e.item.name + ": " + (
