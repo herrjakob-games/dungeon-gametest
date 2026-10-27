@@ -275,11 +275,10 @@ renderInventory();
 if (!devStart()) chooseCharacter();
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawMinimap);
 
-// ---------- Testmodus (nur lokal, nicht auf GitHub Pages) ----------
+// ---------- Testmodus (lokal und auf GitHub Pages) ----------
 // ?event=<id> startet das Event im ersten passenden Raum, ?fight=<monster-id> einen Kampf in der Vorkammer.
 // Optional ?volk=zwerg|elf|mensch. Ergebnis: true, wenn der Testmodus übernommen hat.
 function devStart() {
-  if (!["localhost", "127.0.0.1"].includes(location.hostname)) return false;
   const q = new URLSearchParams(location.search);
   const ev = q.get("event"), monster = q.get("fight");
   if (!ev && !monster) return false;

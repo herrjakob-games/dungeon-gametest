@@ -32,7 +32,7 @@ Die Liste aller Meilensteine steht im GDD.
 - Three.js r128 wird per `<script>` aus cdnjs geladen und ist als `window.THREE` verfügbar.
   Die Spiellogik besteht aus ES-Modulen in `src/`, Einstieg ist `src/main.js`.
 - Lokal starten: `npm start` und dann http://localhost:8000 öffnen (Module brauchen einen Server).
-- Testmodus, nur lokal: `?event=<id>` startet das Event im ersten passenden Raum, `?fight=<monster-id>` einen Kampf
+- Testmodus, lokal und auf GitHub Pages: `?event=<id>` startet das Event im ersten passenden Raum, `?fight=<monster-id>` einen Kampf
   in der Vorkammer, optional `&volk=zwerg|elf|mensch`.
 - Tests: `npm test` (Node, ohne Abhängigkeiten). Reine Logik wie Generator und Wegfindung bleibt
   frei von Three.js, damit sie testbar ist. Für neue Logik passende Tests in `tests/` ergänzen.
