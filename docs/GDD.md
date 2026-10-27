@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.4 · Oct 27, 2026 · @Christian
+Version 2.5 · Oct 27, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.5 | 27.10.2026 | Figuren im Raum: Gegner erscheinen im Kampf, Events können Figuren schon beim Start zeigen (Feld `figures`), Regeln nach dem Event; Figurenliste |
 | 2.4 | 27.10.2026 | Wendeltreppen: nach oben in der Vorkammer, nach unten im Abstieg und im Bossraum nach dem Sieg (ersetzt den Torbogen); Startposition am Fuß der Treppe; Einrichtung pro Raumtyp als Daten (`decor`, `themeDecor`) mit Platzierungsregeln; Requisitenliste |
 | 2.3 | 27.10.2026 | Boss-Events pro Thema (Feld `themeEvents` beim Bossraum), bei jedem Betreten neu gewürfelt; erster Boss-Inhalt Monsterratte im Keller; eigene Todessätze pro Event in `data/texts.json` (`death.events`) |
 | 2.2 | 26.10.2026 | Lebenspunkte je Stufe nach Volk (Zwerg +5, Elf +3, Mensch +4); Händler-Angebot genauer (4 Gegenstände je einmal, Heiltränke immer); leerer Rang: es gilt der höchste Rang darunter; Effekte `gold`, `item`, `loseGold`; Abstieg, Rastplatz und Bossraum ergänzt; 26 Gegenstände; veraltete Entscheidungen entfernt |
@@ -113,6 +114,7 @@ Der Spieler wählt vor dem ersten Dungeon ein Volk. Das Volk legt Attribute, Leb
 - **Fliehen:** Probe Flucht gegen SG 12. Erfolg: Rückzug durch die Tür, durch die der Raum betreten wurde (im Startraum endet nur der Kampf). Das Event ist dann vorbei, ohne Beute und ohne Folge-Event. Fehlschlag: Der Gegner handelt normal.
 - **Fähigkeit im Kampf:** gilt für das tatsächlich gewürfelte Attribut. Der Elf kann also einen verfehlten Angriff mit leichter Waffe retten, der Zwerg einen mit schwerer Waffe, der Mensch einen mit magischer Waffe.
 - **Kampf in Events:** Der Effekt `combat` startet einen Rundenkampf. Die Effekte danach (etwa Beute) gelten erst nach einem Sieg.
+- **Gegner im Raum:** Startet ein Kampf, steht die Figur des Gegners auf einer freien Kachel neben der Spielfigur; zeigt das Event sie schon, läuft sie dorthin. Im Bossraum treffen sich beide in der Raummitte. Bei einem Treffer zuckt die Figur kurz, bei ihrem Tod sinkt sie in den Boden und verschwindet.
 - **Gegner:** Lebenspunkte, Rüstungswert, Angriffsbonus, Schaden (z. B. W6) und ein witziger Satz für den Endbildschirm. Wie Gegner mit der Tiefe stärker werden, steht im Abschnitt Raumtypen und Ebenen.
 - **Fortschritt:** Erfahrung aus Events. Stufe 2 bei 10, Stufe 3 bei 25, Stufe 4 bei 45, Stufe 5 bei 70 Erfahrung, danach alle 30 Erfahrung eine weitere Stufe. Beim Stufenaufstieg wählt der Spieler ein Attribut für +1 (höchstens +10) und bekommt maximale Lebenspunkte je nach Volk (Zwerg +5, Elf +3, Mensch +4), die ihn auch um denselben Wert heilen. Sind alle Attribute auf +10, gibt es nur die Lebenspunkte.
 - **Beute:** Beutestufe `tier1` = 2W6 Gold und mit 1/3 Chance ein einfacher Gegenstand. `tier2` = 4W6 Gold und immer ein besserer Gegenstand. Welchen Rang ein Gegenstand hat, steht in `data/items.json`. Gibt es für einen Rang noch keine Gegenstände, gilt der höchste Rang darunter, der welche hat. Die Beutestufen verschieben sich mit dem Thema (siehe Raumtypen und Ebenen). Gold ist Zahlungsmittel beim Händler.
@@ -209,6 +211,8 @@ Jeder Raumtyp hat eine Event-Chance und eine gewichtete Event-Tabelle. Jedes Eve
 - **Volks-Bedingungen:** Ein ganzes Event kann an ein Volk gebunden sein, dann erscheint es nur für dieses Volk. Bei ausgewählten Events kann auch eine einzelne Option an ein Volk gebunden sein, andere Völker sehen sie nicht.
 - **Türen:** `lockDoor` und `unlockDoor` nennen eine Richtung (`N`, `E`, `S`, `W`) oder `back`, die Tür, durch die der Spieler kam. Eine verschlossene Tür zeigt ein Schloss und lässt sich nicht benutzen, bis `unlockDoor` sie öffnet. Sind am Ende eines Events alle Türen eines Raums zu, öffnet sich die Rück-Tür von selbst.
 - **Monster:** Name, Lebenspunkte, Rüstung, Angriffsbonus, Schaden (z. B. W6).
+- **Figuren in Events:** Ein Event kann im Feld `figures` Figuren nennen, die beim Start des Events im Raum erscheinen, etwa `"figures": [ { "figure": "kuechenratte", "place": "near:herd" } ]`. `figure` ist eine Monster-id oder eine Figur ohne Kampfwerte aus der Figurenliste. `place` nutzt die Platzierungen der Einrichtung und zusätzlich `near:<prop>` (eine freie Kachel direkt neben dem Requisit); fehlt das Requisit, steht die Figur auf einer freien Kachel. Optional: `count` (Anzahl), `variant` (etwa `sitzend`) und `stay` (true: die Figur bleibt nach dem Event stehen, solange der Spieler auf dieser Ebene ist).
+- **Figuren nach dem Event:** Nach einem Sieg verschwindet der Gegner. Nach einer Flucht verschwindet er, sobald der Spieler den Raum verlässt. Wird das Event friedlich gelöst, verschwinden die Figuren, außer bei `stay`. Stehen mehrere gleiche Figuren im Raum und der Kampf geht gegen eine, huschen die übrigen beim Kampfstart davon.
 - **Regel:** Neue Effekt-Typen oder Bedingungen werden zuerst im Game Design festgelegt, dann programmiert, dann in Events genutzt.
 
 ## Raumtypen und Ebenen
@@ -378,6 +382,20 @@ Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kan
 | wendeltreppe_hoch | Wendeltreppe nach oben | 5×5, Mitte | ja | nein | ja | Vorkammer, vom Code gesetzt |
 | wendeltreppe_runter | Wendeltreppe nach unten | 5×5, Mitte | ja | ja | ja | Abstieg und Bossraum, vom Code gesetzt |
 
+**Figuren**
+
+| id | Figur | Art | Größe | Varianten |
+| --- | --- | --- | --- | --- |
+| rat | Riesenratte | Monster | 1 | – |
+| skeleton | Skelett | Monster | 1 | sitzend |
+| goblin | Goblin-Wache | Monster | 1 | – |
+| mimic | Mimik, sieht aus wie eine Truhe | Monster | 1 | – |
+| kuechenratte | Der Küchenchef, Ratte mit Kochmütze | Monster | 1 | – |
+| monsterratte | Die Monsterratte, ponygroß mit Gabelkrone | Boss Keller | 2×2 | – |
+| kroete | Die Kröte, mit Krone | Figur ohne Kampfwerte | Deko | – |
+
+Jede Monster-id hat eine Figur mit derselben id. Bis Meilenstein 6 baut der Code die Figuren aus Grundformen und lässt sie im Stand leicht wippen.
+
 ## Meilensteine
 
 Sieben Schritte, jeder endet mit etwas Spielbarem, das Christian im Browser testet.
@@ -450,3 +468,4 @@ Sieben Schritte, jeder endet mit etwas Spielbarem, das Christian im Browser test
 - [x] Startausrüstung: Zwerg Langschwert, Lederwams, Kleiner Heiltrank · Elf Dolch, Stofftunika, Kleiner Heiltrank · Mensch Knüppel, Stoffweste, Feuerpfeil-Schriftrolle, Schild-Schriftrolle, Kleiner Heiltrank
 - [x] Wendeltreppen aus 5×5 Kacheln: nach oben in der Vorkammer, nach unten im Abstieg und im Bossraum nach dem Sieg; ersetzen den Torbogen; Start am Fuß der Treppe nach oben
 - [x] Einrichtung pro Raumtyp als Daten (`decor`, `themeDecor`) mit Varianten, Platzierungsregeln und Erreichbarkeitstest; ohne Eintrag gilt das bisherige Muster
+- [x] Figuren im Raum: jeder Kampf zeigt den Gegner; Events können Figuren beim Start zeigen (`figures` mit `figure`, `place`, `count`, `variant`, `stay`); neue Platzierung `near:<prop>`; Regeln für Sieg, Flucht und friedliches Ende
