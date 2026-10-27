@@ -47,7 +47,7 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/rng.js` | Seed-basierte Zufallszahlen und Würfel |
 | `src/state.js` | gemeinsamer Spielzustand |
 | `data/themes.json` | Themen: Name, Stufe, Proben-Zuschlag, Raumtypen, Nachbar des Starts, Monster, Boss, Regel-Ausnahmen (`overrides`) |
-| `data/room-types.json` | Raumtypen: Name, Farben, Einrichtung (`layout`), Bewertung, Lage- und Anzahlregeln, Event-Chance, Event-Tabelle; beim Bossraum Tabellen pro Thema (`themeEvents`) |
+| `data/room-types.json` | Raumtypen: Name, Farben, Einrichtung als Daten (`decor`, `themeDecor`) oder altes Muster (`layout`), Bewertung, Lage- und Anzahlregeln, Event-Chance, Event-Tabelle; beim Bossraum Tabellen pro Thema (`themeEvents`) |
 | `data/events.json` | alle Events (auch die Truhe) |
 | `data/monsters.json` | Monster und Bosse mit Lebenspunkten, Rüstung, Angriff, Schaden, Satz zur Todesursache |
 | `data/characters.json` | Völker: Attribute, Lebenspunkte, LP je Stufe, Fähigkeit, Startausrüstung, Modell |
@@ -59,7 +59,9 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/character.js` | Figur: Volk, Inventar, Anlegen, Stufenaufstieg, Fähigkeit; rein logisch |
 | `src/combat.js` | Rundenkampf: Angriff, Gegnerzug, Verteidigen, Gegenstände, Flucht, Tiefe; rein logisch |
 | `src/roomTypes.js` | Raumtypen-Tabelle, befüllt aus `data/room-types.json` |
-| `src/roomBuilder.js` | baut einen Raum als 3D-Szene inklusive Einrichtung |
+| `src/decor.js` | Einrichtung als Daten: Requisiten-Größen, Platzierung (`center`, `wall-back`, `corner`, `free`, `around:`, `above:`), Wendeltreppen, Erreichbarkeit, Datenprüfung; rein logisch |
+| `src/props.js` | Requisiten und Wendeltreppen aus Grundformen |
+| `src/roomBuilder.js` | baut einen Raum als 3D-Szene: Boden, Wände, Türen, Fackeln, Wendeltreppe, Einrichtung (aus `decor.js` oder altes Muster) |
 | `src/player.js` | Spielfigur, Platzierung; `setFigure(volk)` tauscht das Modell |
 | `src/figures.js` | Platzhalterfiguren der Völker: Zwerg, Elf, Mensch (Grundformen) |
 | `src/movement.js` | Laufbewegung entlang des Weges |
@@ -75,8 +77,11 @@ Die Liste aller Meilensteine steht im GDD.
 
 ## Feste Regeln im Code
 
-- Die Einrichtung eines Raums lässt das Kreuz aus Reihe und Spalte 4 bis 6 (gezählt ab 0) frei, damit alle
-  Türen immer erreichbar sind. Neue Möbel nur außerhalb dieses Kreuzes platzieren.
+- Einrichtung als Daten (`decor`): Türkacheln und die Kachel davor bleiben frei, jede Tür und jedes anklickbare
+  Objekt bleibt erreichbar; passt ein Requisit nicht, lässt `decor.js` es weg. `tests/decor.test.mjs` prüft das
+  für alle Varianten und Türkombinationen. Das alte Muster in `furnish()` lässt weiter das Kreuz aus Reihe und
+  Spalte 4 bis 6 (gezählt ab 0) frei.
+- Wendeltreppen belegen die Raummitte, gezählt ab 0 die Kacheln 3 bis 7 (im GDD ab 1 gezählt: 4 bis 8).
 - Alles, was reproduzierbar sein muss (Dungeon, Einrichtung), läuft über Seeds aus `rng.js`.
   `Math.random()` nur für Würfelwürfe im Spiel.
 - Grafik bleibt bis Meilenstein 6 im Platzhalter-Stil (Grundformen, Flat Shading).

@@ -27,7 +27,55 @@
         "id": "start_gaestebuch",
         "weight": 3
       }
-    ]
+    ],
+    "decor": {
+      "layouts": [
+        {
+          "id": "A",
+          "props": [
+            {
+              "prop": "pult",
+              "place": "wall-back"
+            },
+            {
+              "prop": "zettelbrett",
+              "place": "wall-back"
+            },
+            {
+              "prop": "wegweiser",
+              "place": "free"
+            },
+            {
+              "prop": "fass",
+              "place": "corner",
+              "variant": "gruppe"
+            }
+          ]
+        },
+        {
+          "id": "B",
+          "props": [
+            {
+              "prop": "wegweiser",
+              "place": "corner"
+            },
+            {
+              "prop": "pult",
+              "place": "free"
+            },
+            {
+              "prop": "zettelbrett",
+              "place": "wall-back"
+            },
+            {
+              "prop": "kiste",
+              "place": "corner",
+              "count": 2
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "exit",
@@ -57,7 +105,47 @@
         "id": "exit_gelaender",
         "weight": 3
       }
-    ]
+    ],
+    "decor": {
+      "layouts": [
+        {
+          "id": "A",
+          "props": [
+            {
+              "prop": "bank",
+              "place": "wall-back"
+            },
+            {
+              "prop": "souvenirkiste",
+              "place": "free"
+            },
+            {
+              "prop": "fass",
+              "place": "corner",
+              "variant": "gruppe"
+            }
+          ]
+        },
+        {
+          "id": "B",
+          "props": [
+            {
+              "prop": "bank",
+              "place": "wall-back",
+              "count": 2
+            },
+            {
+              "prop": "souvenirkiste",
+              "place": "corner"
+            },
+            {
+              "prop": "kiste",
+              "place": "corner"
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "boss",
@@ -84,6 +172,49 @@
           "condition": "flag:monsterratte_gesehen"
         }
       ]
+    },
+    "themeDecor": {
+      "keller": {
+        "layouts": [
+          {
+            "id": "A",
+            "props": [
+              {
+                "prop": "kaeseberg",
+                "place": "wall-back"
+              },
+              {
+                "prop": "knochen",
+                "place": "free",
+                "count": 4
+              },
+              {
+                "prop": "saeule",
+                "place": "corner",
+                "count": 2
+              }
+            ]
+          },
+          {
+            "id": "B",
+            "props": [
+              {
+                "prop": "kaeseberg",
+                "place": "wall-back"
+              },
+              {
+                "prop": "knochen",
+                "place": "corner",
+                "count": 3
+              },
+              {
+                "prop": "fass",
+                "place": "corner"
+              }
+            ]
+          }
+        ]
+      }
     }
   },
   {
@@ -114,7 +245,59 @@
         "weight": 2,
         "once": true
       }
-    ]
+    ],
+    "decor": {
+      "layouts": [
+        {
+          "id": "A",
+          "props": [
+            {
+              "prop": "truhe",
+              "place": "center"
+            },
+            {
+              "prop": "goldhaufen",
+              "place": "around:truhe",
+              "count": 4
+            },
+            {
+              "prop": "kerzen",
+              "place": "corner",
+              "count": 2
+            },
+            {
+              "prop": "saeule",
+              "place": "corner",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "id": "B",
+          "props": [
+            {
+              "prop": "truhe",
+              "place": "wall-back"
+            },
+            {
+              "prop": "goldhaufen",
+              "place": "free",
+              "count": 3
+            },
+            {
+              "prop": "kerzen",
+              "place": "free",
+              "count": 2
+            },
+            {
+              "prop": "saeule",
+              "place": "free",
+              "count": 2
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "rast",
@@ -127,7 +310,48 @@
     "layout": "rast",
     "rating": "neutral",
     "eventChance": 0,
-    "events": []
+    "events": [],
+    "decor": {
+      "layouts": [
+        {
+          "id": "A",
+          "props": [
+            {
+              "prop": "lagerfeuer",
+              "place": "center"
+            },
+            {
+              "prop": "sack",
+              "place": "around:lagerfeuer",
+              "count": 2
+            },
+            {
+              "prop": "fass",
+              "place": "corner",
+              "variant": "gruppe"
+            }
+          ]
+        },
+        {
+          "id": "B",
+          "props": [
+            {
+              "prop": "lagerfeuer",
+              "place": "free"
+            },
+            {
+              "prop": "sack",
+              "place": "free",
+              "count": 2
+            },
+            {
+              "prop": "kiste",
+              "place": "corner"
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "haendler",
@@ -140,7 +364,56 @@
     "layout": "haendler",
     "rating": "neutral",
     "eventChance": 0,
-    "events": []
+    "events": [],
+    "decor": {
+      "layouts": [
+        {
+          "id": "A",
+          "props": [
+            {
+              "prop": "haendlerfigur",
+              "place": "free"
+            },
+            {
+              "prop": "kiste",
+              "place": "around:haendlerfigur",
+              "count": 2
+            },
+            {
+              "prop": "regal",
+              "place": "wall-back"
+            },
+            {
+              "prop": "fass",
+              "place": "corner",
+              "variant": "gruppe"
+            }
+          ]
+        },
+        {
+          "id": "B",
+          "props": [
+            {
+              "prop": "haendlerfigur",
+              "place": "center"
+            },
+            {
+              "prop": "regal",
+              "place": "wall-back"
+            },
+            {
+              "prop": "kiste",
+              "place": "corner",
+              "count": 2
+            },
+            {
+              "prop": "sack",
+              "place": "free"
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "wache",
@@ -172,7 +445,61 @@
         "id": "wache_wuerfel",
         "weight": 3
       }
-    ]
+    ],
+    "decor": {
+      "layouts": [
+        {
+          "id": "A",
+          "props": [
+            {
+              "prop": "tisch",
+              "place": "center"
+            },
+            {
+              "prop": "hocker",
+              "place": "around:tisch",
+              "count": 3
+            },
+            {
+              "prop": "waffenstaender",
+              "place": "wall-back"
+            },
+            {
+              "prop": "fass",
+              "place": "corner",
+              "variant": "gruppe"
+            }
+          ]
+        },
+        {
+          "id": "B",
+          "props": [
+            {
+              "prop": "tisch",
+              "place": "free"
+            },
+            {
+              "prop": "hocker",
+              "place": "around:tisch",
+              "count": 2
+            },
+            {
+              "prop": "waffenstaender",
+              "place": "wall-back"
+            },
+            {
+              "prop": "kiste",
+              "place": "corner",
+              "count": 2
+            },
+            {
+              "prop": "fass",
+              "place": "corner"
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "gruft",
@@ -205,7 +532,60 @@
         "id": "gruft_ruecken",
         "weight": 3
       }
-    ]
+    ],
+    "decor": {
+      "layouts": [
+        {
+          "id": "A",
+          "props": [
+            {
+              "prop": "sarkophag",
+              "place": "free",
+              "count": 4
+            },
+            {
+              "prop": "kerzen",
+              "place": "corner",
+              "count": 2
+            },
+            {
+              "prop": "knochen",
+              "place": "free",
+              "count": 3
+            },
+            {
+              "prop": "saeule",
+              "place": "corner",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "id": "B",
+          "props": [
+            {
+              "prop": "sarkophag",
+              "place": "center"
+            },
+            {
+              "prop": "sarkophag",
+              "place": "free",
+              "count": 2
+            },
+            {
+              "prop": "kerzen",
+              "place": "free",
+              "count": 3
+            },
+            {
+              "prop": "knochen",
+              "place": "free",
+              "count": 2
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "halle",
@@ -246,7 +626,52 @@
         "hostile": true,
         "rating": "hostile"
       }
-    ]
+    ],
+    "decor": {
+      "layouts": [
+        {
+          "id": "A",
+          "props": [
+            {
+              "prop": "saeule",
+              "place": "free",
+              "variant": "reihen",
+              "count": 8
+            },
+            {
+              "prop": "moos",
+              "place": "free",
+              "count": 2
+            },
+            {
+              "prop": "fass",
+              "place": "corner",
+              "variant": "gruppe"
+            }
+          ]
+        },
+        {
+          "id": "B",
+          "props": [
+            {
+              "prop": "saeule",
+              "place": "free",
+              "variant": "reihen",
+              "count": 6
+            },
+            {
+              "prop": "saeule_liegend",
+              "place": "free"
+            },
+            {
+              "prop": "moos",
+              "place": "free",
+              "count": 3
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "vorrat",
@@ -290,7 +715,62 @@
         "hostile": false,
         "rating": "neutral"
       }
-    ]
+    ],
+    "decor": {
+      "layouts": [
+        {
+          "id": "A",
+          "props": [
+            {
+              "prop": "fass",
+              "place": "corner",
+              "variant": "gruppe",
+              "count": 2
+            },
+            {
+              "prop": "kiste",
+              "place": "free",
+              "count": 3
+            },
+            {
+              "prop": "regal",
+              "place": "wall-back"
+            },
+            {
+              "prop": "sack",
+              "place": "free",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "id": "B",
+          "props": [
+            {
+              "prop": "regal",
+              "place": "wall-back",
+              "count": 2
+            },
+            {
+              "prop": "fass",
+              "place": "corner",
+              "variant": "gross"
+            },
+            {
+              "prop": "kiste",
+              "place": "free",
+              "variant": "angenagt",
+              "count": 2
+            },
+            {
+              "prop": "sack",
+              "place": "corner",
+              "count": 2
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "kueche",
@@ -339,7 +819,62 @@
         "hostile": true,
         "rating": "hostile"
       }
-    ]
+    ],
+    "decor": {
+      "torchColor": "#ff8a30",
+      "layouts": [
+        {
+          "id": "A",
+          "props": [
+            {
+              "prop": "herd",
+              "place": "wall-back"
+            },
+            {
+              "prop": "tisch",
+              "place": "center",
+              "variant": "kueche"
+            },
+            {
+              "prop": "regal",
+              "place": "wall-back"
+            },
+            {
+              "prop": "sack",
+              "place": "corner",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "id": "B",
+          "props": [
+            {
+              "prop": "herd",
+              "place": "wall-back"
+            },
+            {
+              "prop": "tisch",
+              "place": "free",
+              "variant": "kueche"
+            },
+            {
+              "prop": "fass",
+              "place": "corner",
+              "variant": "gruppe"
+            },
+            {
+              "prop": "kiste",
+              "place": "corner"
+            },
+            {
+              "prop": "sack",
+              "place": "free"
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "speisesaal",
@@ -392,7 +927,68 @@
         "hostile": true,
         "rating": "hostile"
       }
-    ]
+    ],
+    "decor": {
+      "layouts": [
+        {
+          "id": "A",
+          "props": [
+            {
+              "prop": "tafel",
+              "place": "center"
+            },
+            {
+              "prop": "stuhl",
+              "place": "around:tafel",
+              "count": 6
+            },
+            {
+              "prop": "kronleuchter",
+              "place": "above:tafel"
+            },
+            {
+              "prop": "anrichte",
+              "place": "wall-back"
+            },
+            {
+              "prop": "kerzen",
+              "place": "corner"
+            }
+          ]
+        },
+        {
+          "id": "B",
+          "props": [
+            {
+              "prop": "tafel",
+              "place": "center"
+            },
+            {
+              "prop": "stuhl",
+              "place": "around:tafel",
+              "count": 4
+            },
+            {
+              "prop": "stuhl",
+              "place": "free",
+              "variant": "umgekippt"
+            },
+            {
+              "prop": "kronleuchter",
+              "place": "above:tafel"
+            },
+            {
+              "prop": "anrichte",
+              "place": "wall-back"
+            },
+            {
+              "prop": "fass",
+              "place": "corner"
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "brunnen",
@@ -438,7 +1034,57 @@
         "hostile": true,
         "rating": "hostile"
       }
-    ]
+    ],
+    "decor": {
+      "layouts": [
+        {
+          "id": "A",
+          "props": [
+            {
+              "prop": "brunnen",
+              "place": "center"
+            },
+            {
+              "prop": "moos",
+              "place": "free",
+              "count": 3
+            },
+            {
+              "prop": "pfuetze",
+              "place": "free",
+              "count": 2
+            },
+            {
+              "prop": "fass",
+              "place": "corner"
+            }
+          ]
+        },
+        {
+          "id": "B",
+          "props": [
+            {
+              "prop": "brunnen",
+              "place": "free"
+            },
+            {
+              "prop": "moos",
+              "place": "corner",
+              "count": 2
+            },
+            {
+              "prop": "pfuetze",
+              "place": "free"
+            },
+            {
+              "prop": "saeule",
+              "place": "corner",
+              "count": 2
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "schrein",

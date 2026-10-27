@@ -8,7 +8,8 @@ import { placePlayer, setFigure } from "./player.js";
 import { hoverMesh, showHoverTile } from "./markers.js";
 import { moveTo, stopMoving, approachTile, updateMovement } from "./movement.js";
 import { closeDialog, isDialogOpen, isDialogModal, showDialog } from "./dialog.js";
-import { initEvents, startRoomEvent, chestEvent, exitEvent, lockedDoorNote, startBoss, restEvent } from "./events.js";
+import { initEvents, startRoomEvent, chestEvent, lockedDoorNote, startBoss, restEvent } from "./events.js";
+import { STAIRS_FOOT } from "./decor.js";
 import { openShop } from "./shopUI.js";
 import { themeFor } from "./world.js";
 import { loadData, DATA } from "./data.js";
@@ -51,7 +52,7 @@ function startDungeon(dSeed, quiet) {
   state.combat = null;
   if (state.player) state.player.abilityUsed = false; // Fähigkeit gilt einmal pro Dungeon
   buildRoom(state.current);
-  placePlayer([MID, MID], 0);
+  placePlayer(STAIRS_FOOT, 0); // am Fuß der Wendeltreppe nach oben
   ui.seedInput.value = dSeed;
   if (!quiet) { state.stats.rooms += 1; startRoomEvent(); } // Begrüßungs-Event im Startraum
 }
@@ -68,7 +69,7 @@ function chooseCharacter() {
   });
 }
 
-// Abstieg: eine Ebene tiefer, Werte und Ausrüstung bleiben
+// Abstieg über die Wendeltreppe: eine Ebene tiefer, Werte und Ausrüstung bleiben
 function descend() {
   state.depth += 1;
   withFade(() => startDungeon(randomSeed()));
@@ -82,7 +83,7 @@ initEvents({
   },
   // Flucht: zurück durch die Tür, durch die der Raum betreten wurde
   onRetreat: () => { if (state.backDoor) changeRoom(state.backDoor, true); },
-  // Boss besiegt: Raum neu aufbauen, damit der Torbogen erscheint
+  // Boss besiegt: Raum neu aufbauen, damit die Wendeltreppe nach unten erscheint
   onBossDefeated: () => { buildRoom(state.current); updateHud(); },
   onRested: () => douseCampfire()
 });
@@ -176,6 +177,9 @@ function pick(ev) {
   const p = new THREE.Vector3();
   if (ray.ray.intersectPlane(ground, p)) {
     const x = Math.round(p.x + MID), z = Math.round(p.z + MID);
+    // Große Objekte (Wendeltreppe) zählen auf allen ihren Kacheln als angeklickt
+    const big = state.interactables.find(o => o.userData.tiles && o.userData.tiles.some(t => t[0] === x && t[1] === z));
+    if (big) return { obj: big };
     if (inBounds(x, z)) return { tile: [x, z] };
   }
   return null;
@@ -198,7 +202,7 @@ const labelFor = (o) => {
   if (o.userData.kind === "campfire") return "Lagerfeuer";
   if (o.userData.kind === "merchant") return "Händler";
   if (o.userData.kind === "boss") return DATA.monsters[state.dungeon.boss].name;
-  return "Torbogen";
+  return "Wendeltreppe nach unten";
 };
 
 renderer.domElement.addEventListener("pointermove", (ev) => {
@@ -245,7 +249,7 @@ renderer.domElement.addEventListener("pointerup", (ev) => {
   } else if (kind === "chest") {
     approachTile(h.obj.userData.tile, chestEvent);
   } else if (kind === "exit") {
-    approachTile(h.obj.userData.tile, () => exitEvent(descend));
+    approachTile(h.obj.userData.tiles, descend); // ein Klick führt eine Ebene tiefer
   } else if (h.tile && walkable(h.tile[0], h.tile[1])) {
     moveTo(h.tile[0], h.tile[1]);
   }
@@ -286,7 +290,7 @@ function loop() {
   if (!reduceMotion) {
     state.torches.forEach(tc => {
       const f = Math.sin(t * 9 + tc.phase) * 0.12 + Math.sin(t * 23 + tc.phase * 2) * 0.08;
-      tc.light.intensity = 1.2 + f;
+      tc.light.intensity = tc.base * (1 + f / 1.2);
       tc.flame.scale.setScalar(1 + f * 0.8);
       tc.flame.rotation.y = t * 2 + tc.phase;
     });

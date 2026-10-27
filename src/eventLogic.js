@@ -2,6 +2,7 @@
 // Reine Logik ohne Grafik und Textfenster, damit sie in tests/ geprüft werden kann.
 // Zufall kommt immer als Funktion rand() herein: im Spiel Math.random, in Tests fest.
 import { DIR, DIRKEYS } from "./config.js";
+import { checkDecor } from "./decor.js";
 import { ATTRS, hasItem, ATTR_MIN, ATTR_MAX, START_ATTR_MAX, VOLK_NAMES } from "./character.js";
 
 export const DCS = [8, 12, 16]; // leicht, mittel, schwer
@@ -233,6 +234,12 @@ export function validateData(data) {
     if (rt.deadEnd !== undefined && !["only", "never", "prefer"].includes(rt.deadEnd)) err(w, "deadEnd muss only, never oder prefer sein");
     (rt.near || []).forEach(n => { if (!data.roomTypes[n]) err(w, "unbekannter Nachbar-Raumtyp " + n); });
     if (!Array.isArray(rt.events)) { err(w, "events fehlt"); continue; }
+    // Einrichtung als Daten (docs/GDD.md, Einrichtung pro Raumtyp)
+    if (rt.decor !== undefined) checkDecor(rt.decor, w + " decor", err);
+    Object.entries(rt.themeDecor || {}).forEach(([th, d]) => {
+      if (!(data.themes || []).some(t => t.id === th)) err(w, "themeDecor für unbekanntes Thema " + th);
+      checkDecor(d, w + " themeDecor " + th, err);
+    });
     const tables = Object.entries(rt.themeEvents || {});
     tables.forEach(([th]) => { if (!(data.themes || []).some(t => t.id === th)) err(w, "themeEvents für unbekanntes Thema " + th); });
     if (rt.eventChance > 0 && !rt.events.length && !tables.length) err(w, "Event-Chance ohne Events");
