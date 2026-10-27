@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.2 · Oct 26, 2026 · @Christian
+Version 2.3 · Oct 27, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.3 | 27.10.2026 | Boss-Events pro Thema (Feld `themeEvents` beim Bossraum), bei jedem Betreten neu gewürfelt; erster Boss-Inhalt Monsterratte im Keller; eigene Todessätze pro Event in `data/texts.json` (`death.events`) |
 | 2.2 | 26.10.2026 | Lebenspunkte je Stufe nach Volk (Zwerg +5, Elf +3, Mensch +4); Händler-Angebot genauer (4 Gegenstände je einmal, Heiltränke immer); leerer Rang: es gilt der höchste Rang darunter; Effekte `gold`, `item`, `loseGold`; Abstieg, Rastplatz und Bossraum ergänzt; 26 Gegenstände; veraltete Entscheidungen entfernt |
 | 2.1 | 26.10.2026 | Neue Startausrüstung: Zwerg Langschwert und Lederwams, Elf Dolch und Stofftunika, Mensch Knüppel, Stoffweste, Feuerpfeil- und Schild-Schriftrolle; alle mit Kleinem Heiltrank |
 | 2.0 | 26.10.2026 | Attribut-Skala −1 bis +10 statt +3; Proben-Zuschlag pro Thema verdoppelt (+0 bis +8); Monster-Richtwerte angepasst; Verstand als drittes Trefferattribut für magische Waffen; neuer Nutzen-Effekt `freeze`; Einzelpreise pro Gegenstand (Feld `preis`); neue Gegenstandsliste mit 26 Gegenständen; neue Startausrüstung |
@@ -196,7 +197,7 @@ Jeder Raumtyp hat eine Event-Chance und eine gewichtete Event-Tabelle. Jedes Eve
 ```
 
 - **Ablauf:** Beim ersten Betreten eines Raums würfelt das Spiel gegen die Event-Chance und wählt dann gewichtet ein Event, dessen Bedingung erfüllt ist. Der Startraum hat die Chance 100 %: Jeder Dungeon beginnt mit einem kurzen, harmlosen Begrüßungs-Event.
-- **Dateien:** `data/room-types.json`, `data/events.json`, `data/monsters.json`, `data/characters.json`, `data/items.json`, `data/texts.json` (Sätze zur Todesursache bei Events). Ein Event hat zusätzlich einen `title` für das Textfenster. Ein Ergebnis kann mit `next` ein Folge-Event starten, so laufen Proben Runde für Runde.
+- **Dateien:** `data/room-types.json`, `data/events.json`, `data/monsters.json`, `data/characters.json`, `data/items.json`, `data/texts.json` (Sätze zur Todesursache bei Events: allgemeine Sätze und unter `death.events` eigene Sätze für einzelne Events, nach Event-id). Ein Event hat zusätzlich einen `title` für das Textfenster. Ein Ergebnis kann mit `next` ein Folge-Event starten, so laufen Proben Runde für Runde.
 - **Proben in Events:** Jede Probe nennt ihre Kategorie, zum Beispiel `{ "category": "kraftakt", "dc": 12 }`. Das Attribut ergibt sich aus der Kategorie.
 - **Event-Typen:** combat, choice, trap, treasure, npc. Bossgegner und Artefakte laufen als normale Events über die Tabellen.
 - **Effekte:** damage, heal, loot, gold, item, loseGold, combat, gainXp, lockDoor, unlockDoor, setFlag. Mengen als Zahl oder Würfel, etwa `"W4"` oder `"2W6"`.
@@ -260,7 +261,8 @@ Der Dungeon führt durch Themen, die alle drei Ebenen wechseln. Das Thema bestim
 - **Sackgassen:** Sackgassen, die keine Schatzkammer werden, bekommen einen anderen Raumtyp des Themas.
 - **Händler:** bietet 4 zufällige Gegenstände vom Rang der aktuellen Beutestufe an (Rang = Stufe des Themas, Verbrauchsgegenstände eingeschlossen), jeden einmal. Dazu immer die Heiltränke (Kleiner und Großer Heiltrank) in beliebiger Menge; sie zählen nicht zu den 4 Gegenständen. Ist der Rang leer, gilt der höchste Rang darunter. Verkaufen bringt den halben Preis.
 - **Rastplatz:** auf jeder geraden Ebene (2, 4, 6 …). Ein Lagerfeuer im Raum heilt einmal auf volle Lebenspunkte, danach ist es aus.
-- **Bossraum:** Betreten startet den Bosskampf, auch bei jedem weiteren Betreten, bis der Boss besiegt ist. Flucht ist erlaubt, der Boss wartet dann mit vollen Lebenspunkten. Sieg: Beute `tier2` und 10 Erfahrung, danach erscheint in der Raummitte der Torbogen zum Abstieg.
+- **Bossraum:** Betreten startet den Bosskampf, auch bei jedem weiteren Betreten, bis der Boss besiegt ist. Flucht ist erlaubt, der Boss wartet dann mit vollen Lebenspunkten. Sieg: Beute `tier2` und 10 Erfahrung, danach erscheint in der Raummitte der Torbogen zum Abstieg. Die Siegbeute vergibt das Spiel, nicht das Event.
+- **Boss-Events:** Der Bossraum kann pro Thema eine eigene Event-Tabelle haben, in `data/room-types.json` beim Bossraum im Feld `themeEvents`, etwa `"themeEvents": { "keller": [ … ] }`, mit `eventChance` 1. Bei jedem Betreten wird daraus neu gewürfelt, bis der Boss besiegt ist. Die Events starten den Kampf gegen den Boss mit `combat`. Bedingungen wie `flag:name` unterscheiden die erste Begegnung von der Rückkehr. Themen ohne Tabelle zeigen den Einleitungstext des Bosses (`intro`) und starten den Kampf direkt. Bisher hat nur der Keller (Monsterratte) Boss-Events.
 - **Bosse:** passend zum Thema, einer am Ende jeder Themenwelt.
 
 ### Ebenen
@@ -376,4 +378,6 @@ Sieben Schritte, jeder endet mit etwas Spielbarem, das Christian im Browser test
 - [x] Nutzen-Effekt `freeze`: Gegner setzt die angegebene Zahl an Runden aus, nur im Kampf
 - [x] Einzelpreise pro Gegenstand (Feld `preis`), Verkauf zum halben Preis abgerundet; Rang-Preistabelle nur Richtwert
 - [x] Gegenstandsliste mit 26 Gegenständen (Tabelle im Abschnitt Gegenstände)
+- [x] Boss-Events pro Thema (`themeEvents` beim Bossraum, `eventChance` 1), bei jedem Betreten neu gewürfelt, bis der Boss besiegt ist; Siegbeute vergibt das Spiel; vorerst nur im Keller
+- [x] Eigene Todessätze pro Event in `data/texts.json` unter `death.events`
 - [x] Startausrüstung: Zwerg Langschwert, Lederwams, Kleiner Heiltrank · Elf Dolch, Stofftunika, Kleiner Heiltrank · Mensch Knüppel, Stoffweste, Feuerpfeil-Schriftrolle, Schild-Schriftrolle, Kleiner Heiltrank

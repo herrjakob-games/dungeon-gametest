@@ -5,7 +5,7 @@ import { DIR } from "./config.js";
 import { state } from "./state.js";
 import { DATA } from "./data.js";
 import { TYPES } from "./roomTypes.js";
-import { CATEGORY_NAMES, CATEGORIES, pickEvent, doCheck, applyEffects, releaseIfTrapped, visibleOptions } from "./eventLogic.js";
+import { CATEGORY_NAMES, CATEGORIES, pickEvent, bossEventTable, doCheck, applyEffects, releaseIfTrapped, visibleOptions } from "./eventLogic.js";
 import { ATTR_NAMES, addItem, levelUp, raisableAttrs, pendingLevelUps } from "./character.js";
 import { showDialog, closeDialog } from "./dialog.js";
 import { refreshLocks } from "./roomBuilder.js";
@@ -106,10 +106,19 @@ function show(ev, outcome, res, roll, onOutcome, before) {
 }
 
 function fight(ev, outcome, combat, onOutcome) {
+  // Kampf gegen den Boss der Ebene im Bossraum: Die Siegbeute vergibt der Code, nicht das Event
+  const rs = state.roomState[state.current];
+  const isBoss = state.dungeon.rooms[state.current].type === "boss" && combat.monster === state.dungeon.boss;
   runCombat(combat.monster, {
     onWin: (lines, roll) => {
-      const res = applyEffects(combat.rest, effectCtx(), Math.random);
-      show(ev, { text: outcome.winText || "Der Kampf ist vorbei.", next: outcome.next }, res, roll, onOutcome, lines);
+      const res = applyEffects(isBoss ? combat.rest.concat(BOSS_REWARD) : combat.rest, effectCtx(), Math.random);
+      let text = outcome.winText || "Der Kampf ist vorbei.";
+      if (isBoss) {
+        rs.bossDefeated = true;
+        hooks.onBossDefeated();
+        text = DATA.monsters[combat.monster].name + " ist besiegt. In der Mitte des Raums öffnet sich der Torbogen zum Abstieg.";
+      }
+      show(ev, { text, next: outcome.next }, res, roll, onOutcome, lines);
     },
     onFlee: () => {
       state.eventActive = false;
@@ -164,6 +173,9 @@ function levelUps(done) {
 }
 
 function eventCause(ev) {
+  // Eigener Satz für dieses Event (texts.json: death.events), sonst ein allgemeiner
+  const own = DATA.texts.death && DATA.texts.death.events && DATA.texts.death.events[ev.id];
+  if (own) return own;
   const list = DATA.texts.deathByEvent || ["»{title}« war dein Ende."];
   return list[Math.floor(Math.random() * list.length)].replace("{title}", ev.title);
 }
@@ -174,20 +186,22 @@ function die(cause) {
   hooks.onDeath(cause);
 }
 
-// Bossraum: Betreten startet den Kampf. Flucht ist erlaubt, beim nächsten Betreten wartet der Boss wieder.
-// Sieg: Beute tier2 und 10 Erfahrung, danach erscheint der Torbogen zum Abstieg.
+// Bossraum: Jedes Betreten startet den Bosskampf, bis der Boss besiegt ist. Flucht ist erlaubt.
+// Hat das Thema eine Boss-Event-Tabelle (room-types.json, Bossraum, themeEvents), wird bei jedem Betreten
+// daraus neu gewürfelt; sonst startet der Kampf direkt.
+// Sieg: Beute tier2 und 10 Erfahrung (vergibt fight()), danach erscheint der Torbogen zum Abstieg.
 export const BOSS_REWARD = [{ loot: "tier2" }, { gainXp: 10 }];
 
 export function startBoss() {
   const rs = state.roomState[state.current];
   if (rs.bossDefeated || state.eventActive) return;
+  const id = pickEvent(bossEventTable(TYPES.boss, state.theme.id), state.run, Math.random, state.player);
+  if (id) { runEvent(id); return; }
   const boss = DATA.monsters[state.dungeon.boss];
-  const ev = { title: boss.name };
   state.eventActive = true;
   showDialog(boss.name, boss.intro, [{
     label: "Kämpfen",
-    pick: () => fight(ev, { winText: boss.name + " ist besiegt. In der Mitte des Raums öffnet sich der Torbogen zum Abstieg." },
-      { monster: boss.id, rest: BOSS_REWARD }, () => { rs.bossDefeated = true; hooks.onBossDefeated(); })
+    pick: () => fight({ title: boss.name }, {}, { monster: boss.id, rest: [] })
   }], { modal: true });
 }
 

@@ -95,6 +95,12 @@ export function pickEvent(roomType, run, rand, player) {
   return allowed[allowed.length - 1].id;
 }
 
+// Event-Tabelle des Bossraums für ein Thema (Feld themeEvents); ohne Tabelle gibt es kein Boss-Event
+export const bossEventTable = (bossType, themeId) => {
+  const events = (bossType.themeEvents || {})[themeId];
+  return events ? Object.assign({}, bossType, { events }) : Object.assign({}, bossType, { eventChance: 0, events: [] });
+};
+
 // Optionen eines Events, die die Figur sehen darf (Volks-Bedingungen einzelner Optionen)
 export const visibleOptions = (ev, run, player) => ev.options.filter(o => checkCondition(o.condition, run, player));
 
@@ -227,8 +233,10 @@ export function validateData(data) {
     if (rt.deadEnd !== undefined && !["only", "never", "prefer"].includes(rt.deadEnd)) err(w, "deadEnd muss only, never oder prefer sein");
     (rt.near || []).forEach(n => { if (!data.roomTypes[n]) err(w, "unbekannter Nachbar-Raumtyp " + n); });
     if (!Array.isArray(rt.events)) { err(w, "events fehlt"); continue; }
-    if (rt.eventChance > 0 && !rt.events.length) err(w, "Event-Chance ohne Events");
-    for (const e of rt.events) {
+    const tables = Object.entries(rt.themeEvents || {});
+    tables.forEach(([th]) => { if (!(data.themes || []).some(t => t.id === th)) err(w, "themeEvents für unbekanntes Thema " + th); });
+    if (rt.eventChance > 0 && !rt.events.length && !tables.length) err(w, "Event-Chance ohne Events");
+    for (const e of rt.events.concat(...tables.map(([, l]) => l))) {
       if (!data.events[e.id]) err(w, "unbekanntes Event " + e.id);
       if (!(e.weight > 0)) err(w, "Gewicht von " + e.id + " muss größer als 0 sein");
       checkCond(w, e.condition);
@@ -254,13 +262,21 @@ export function validateData(data) {
     });
   }
 
+  // Eigene Todessätze pro Event (texts.json: death.events)
+  Object.entries(((data.texts || {}).death || {}).events || {}).forEach(([id, t]) => {
+    if (!data.events[id]) err("Todessatz " + id, "unbekanntes Event");
+    if (typeof t !== "string" || !t) err("Todessatz " + id, "Text fehlt");
+  });
+
   for (const m of Object.values(data.monsters)) {
     const w = "Monster " + m.id;
     if (!m.name) err(w, "Name fehlt");
     ["hp", "armor", "attack"].forEach(k => { if (typeof m[k] !== "number") err(w, k + " fehlt"); });
     if (!isDice(m.damage)) err(w, "Schaden ist kein Würfel");
     if (!m.deathText) err(w, "deathText fehlt");
-    if (m.boss && !m.intro) err(w, "Boss braucht einen intro-Text");
+    // Ohne Boss-Events im Thema zeigt das Spiel vor dem Kampf den intro-Text
+    const hasEvents = (data.themes || []).some(t => t.boss === m.id && ((data.roomTypes.boss || {}).themeEvents || {})[t.id]);
+    if (m.boss && !m.intro && !hasEvents) err(w, "Boss braucht einen intro-Text oder Boss-Events im Thema");
   }
 
   for (const it of Object.values(data.items)) {

@@ -3284,5 +3284,147 @@
         "effects": []
       }
     ]
+  },
+  {
+    "id": "boss_monsterratte",
+    "type": "combat",
+    "title": "Die Monsterratte",
+    "text": "Auf einem Berg aus Käserinden thront eine Ratte, groß wie ein Pony. Sie trägt eine Krone aus verbogenen Gabeln. Gerochen hat sie dich schon zwei Räume früher.",
+    "options": [
+      {
+        "label": "Angreifen",
+        "text": "Die Monsterratte erhebt sich. Der Käseberg rutscht ihr bedrohlich nach.",
+        "effects": [
+          {
+            "setFlag": "monsterratte_gesehen"
+          },
+          {
+            "combat": "monsterratte"
+          }
+        ]
+      },
+      {
+        "label": "Etwas aus dem Käseberg stibitzen",
+        "check": {
+          "category": "fingerfertigkeit",
+          "dc": 12
+        },
+        "success": {
+          "text": "Zwischen den Rinden steckt etwas Brauchbares. Die Ratte sieht zu und wartet, Bosse haben Zeit.",
+          "effects": [
+            {
+              "setFlag": "monsterratte_gesehen"
+            },
+            {
+              "item": "tier1"
+            },
+            {
+              "gainXp": 2
+            },
+            {
+              "combat": "monsterratte"
+            }
+          ]
+        },
+        "failure": {
+          "text": "Du greifst in eine Rinde, die noch jemandem gehört. Die Ratte beißt zuerst.",
+          "effects": [
+            {
+              "setFlag": "monsterratte_gesehen"
+            },
+            {
+              "damage": "W4"
+            },
+            {
+              "combat": "monsterratte"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Eine Krönungsrede halten",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Die Ratte lauscht geschmeichelt und lässt dich ausreden. Du nutzt die Pause zum Durchatmen.",
+          "effects": [
+            {
+              "setFlag": "monsterratte_gesehen"
+            },
+            {
+              "heal": "W4"
+            },
+            {
+              "gainXp": 2
+            },
+            {
+              "combat": "monsterratte"
+            }
+          ]
+        },
+        "failure": {
+          "text": "Du nennst sie „Rättchen“. Das ist Majestätsbeleidigung.",
+          "effects": [
+            {
+              "setFlag": "monsterratte_gesehen"
+            },
+            {
+              "damage": "W4"
+            },
+            {
+              "combat": "monsterratte"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "boss_monsterratte_zurueck",
+    "type": "combat",
+    "title": "Die Monsterratte, zweiter Gang",
+    "text": "In deiner Abwesenheit hat die Monsterratte ihre Wunden geleckt und nachgegessen. Sie wirkt erfreut, dich wiederzusehen. Du wirkst es weniger.",
+    "options": [
+      {
+        "label": "Noch einmal angreifen",
+        "text": "Diesmal ohne Vorspeise.",
+        "effects": [
+          {
+            "combat": "monsterratte"
+          }
+        ]
+      },
+      {
+        "label": "Abwarten, bis sie sich überfrisst",
+        "check": {
+          "category": "wahrnehmung",
+          "dc": 12
+        },
+        "success": {
+          "text": "Sie stößt auf, du nutzt den Moment und atmest durch. Mit vollem Bauch ist auch eine Monsterratte nur eine Ratte.",
+          "effects": [
+            {
+              "heal": "W4"
+            },
+            {
+              "combat": "monsterratte"
+            }
+          ]
+        },
+        "failure": {
+          "text": "Sie frisst nicht, sie wartet. Auf dich.",
+          "effects": [
+            {
+              "damage": 2
+            },
+            {
+              "combat": "monsterratte"
+            }
+          ]
+        }
+      }
+    ]
   }
 ]

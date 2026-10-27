@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import {
   indexData, validateData, newRun, rollDice, doCheck, checkCondition,
-  pickEvent, applyEffects, releaseIfTrapped, rollLoot, visibleOptions
+  pickEvent, applyEffects, releaseIfTrapped, rollLoot, visibleOptions, bossEventTable
 } from "../src/eventLogic.js";
 import { newCharacter } from "../src/character.js";
 import { generate } from "../src/generator.js";
@@ -35,7 +35,8 @@ test("Jeder Raumtyp kommt im Generator vor und hat Events (außer Boss, Rast, H�
   for (let depth = 1; depth <= 15; depth++) for (let s = 1; s <= 60; s++) Object.values(generate(s, depth, world).rooms).forEach(r => used.add(r.type));
   assert.deepEqual([...used].sort(), Object.keys(DATA.roomTypes).sort());
   for (const rt of Object.values(DATA.roomTypes)) {
-    if (["boss", "rast", "haendler"].includes(rt.id)) assert.equal(rt.eventChance, 0);
+    if (rt.id === "boss") assert.ok(rt.themeEvents.keller.length >= 2, "Bossraum: Events nur über themeEvents");
+    else if (["rast", "haendler"].includes(rt.id)) assert.equal(rt.eventChance, 0);
     else assert.ok(rt.events.length >= 2, rt.id + ": nur " + rt.events.length + " Events");
   }
 });
@@ -224,4 +225,22 @@ test("Effekte gold, item und loseGold", () => {
   p.gold = 1;
   res = applyEffects([{ loseGold: 2 }], c, Math.random);
   assert.deepEqual([p.gold, res.lines[0].amount], [0, 1]);
+});
+
+test("Bossraum: Event-Tabelle pro Thema, bei jedem Betreten neu gewürfelt, bis der Boss besiegt ist", () => {
+  const boss = DATA.roomTypes.boss;
+  assert.equal(boss.eventChance, 1);
+  assert.equal(DATA.themes.find(t => t.id === "keller").boss, "monsterratte");
+  const run = newRun(), z = newCharacter(DATA.characters.zwerg);
+  // Erstes Betreten: Begegnung, beim nächsten Betreten (Flag gesetzt) der zweite Gang
+  const keller = bossEventTable(boss, "keller");
+  for (let i = 0; i < 20; i++) assert.equal(pickEvent(keller, run, Math.random, z), "boss_monsterratte");
+  const res = applyEffects(DATA.events.boss_monsterratte.options[0].effects, { player: z, run, items: DATA.items, stage: 1 }, Math.random);
+  assert.equal(res.combat.monster, "monsterratte", "das Event startet den Bosskampf");
+  assert.deepEqual(res.combat.rest, [], "die Siegbeute vergibt der Code, nicht das Event");
+  for (let i = 0; i < 20; i++) assert.equal(pickEvent(keller, run, Math.random, z), "boss_monsterratte_zurueck");
+  // Andere Themen haben noch keine Boss-Events: dort startet der Kampf direkt
+  assert.equal(pickEvent(bossEventTable(boss, "katakomben"), newRun(), Math.random, z), null);
+  // Eigene Todessätze für die Boss-Events
+  assert.ok(DATA.texts.death.events.boss_monsterratte && DATA.texts.death.events.boss_monsterratte_zurueck);
 });
