@@ -869,7 +869,7 @@
     "id": "exit_tuersteher",
     "type": "npc",
     "title": "Der Türsteher",
-    "text": "Ein Skelett mit Sonnenbrille steht vor dem Torbogen. »Du kommst hier nicht rein. Nicht in dem Outfit.«",
+    "text": "Ein Skelett mit Sonnenbrille steht vor der Wendeltreppe. »Du kommst hier nicht rein. Nicht in dem Outfit.«",
     "options": [
       {
         "label": "»Ich kenne den Boss.«",
@@ -970,7 +970,7 @@
     "id": "exit_bank",
     "type": "choice",
     "title": "Die Bank",
-    "text": "Neben dem Torbogen steht eine Bank. Eine echte, bequeme Bank. Mit Kissen.",
+    "text": "Neben der Wendeltreppe steht eine Bank. Eine echte, bequeme Bank. Mit Kissen.",
     "options": [
       {
         "label": "Rasten",
