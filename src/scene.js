@@ -21,7 +21,7 @@ function resize() {
   const w = stage.clientWidth, h = stage.clientHeight;
   renderer.setSize(w, h, false);
   const aspect = w / h;
-  const half = Math.max(6.4, 9 / aspect); // ganzer 11×11-Raum passt ins Bild
+  const half = Math.max(5.4, 7.6 / aspect); // ganzer 9×9-Raum passt ins Bild
   camera.left = -half * aspect; camera.right = half * aspect;
   camera.top = half; camera.bottom = -half;
   camera.updateProjectionMatrix();

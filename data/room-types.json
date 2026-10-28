@@ -35,7 +35,8 @@
           "props": [
             {
               "prop": "pult",
-              "place": "wall-back"
+              "place": "wall-back",
+              "required": true
             },
             {
               "prop": "zettelbrett",
@@ -65,7 +66,8 @@
             },
             {
               "prop": "zettelbrett",
-              "place": "wall-back"
+              "place": "wall-back",
+              "required": true
             },
             {
               "prop": "kiste",
@@ -181,7 +183,8 @@
             "props": [
               {
                 "prop": "kaeseberg",
-                "place": "wall-back"
+                "place": "wall-back",
+                "required": true
               },
               {
                 "prop": "knochen",
@@ -200,7 +203,8 @@
             "props": [
               {
                 "prop": "kaeseberg",
-                "place": "wall-back"
+                "place": "wall-back",
+                "required": true
               },
               {
                 "prop": "knochen",
@@ -253,7 +257,8 @@
           "props": [
             {
               "prop": "truhe",
-              "place": "center"
+              "place": "center",
+              "required": true
             },
             {
               "prop": "goldhaufen",
@@ -277,7 +282,8 @@
           "props": [
             {
               "prop": "truhe",
-              "place": "wall-back"
+              "place": "wall-back",
+              "required": true
             },
             {
               "prop": "goldhaufen",
@@ -318,7 +324,8 @@
           "props": [
             {
               "prop": "lagerfeuer",
-              "place": "center"
+              "place": "center",
+              "required": true
             },
             {
               "prop": "sack",
@@ -337,7 +344,8 @@
           "props": [
             {
               "prop": "lagerfeuer",
-              "place": "free"
+              "place": "free",
+              "required": true
             },
             {
               "prop": "sack",
@@ -372,7 +380,8 @@
           "props": [
             {
               "prop": "haendlerfigur",
-              "place": "free"
+              "place": "free",
+              "required": true
             },
             {
               "prop": "kiste",
@@ -395,7 +404,8 @@
           "props": [
             {
               "prop": "haendlerfigur",
-              "place": "center"
+              "place": "center",
+              "required": true
             },
             {
               "prop": "regal",
@@ -453,7 +463,8 @@
           "props": [
             {
               "prop": "tisch",
-              "place": "center"
+              "place": "center",
+              "required": true
             },
             {
               "prop": "hocker",
@@ -476,7 +487,8 @@
           "props": [
             {
               "prop": "tisch",
-              "place": "free"
+              "place": "free",
+              "required": true
             },
             {
               "prop": "hocker",
@@ -541,7 +553,8 @@
             {
               "prop": "sarkophag",
               "place": "free",
-              "count": 4
+              "count": 4,
+              "required": true
             },
             {
               "prop": "kerzen",
@@ -565,12 +578,14 @@
           "props": [
             {
               "prop": "sarkophag",
-              "place": "center"
+              "place": "center",
+              "required": true
             },
             {
               "prop": "sarkophag",
               "place": "free",
-              "count": 2
+              "count": 2,
+              "required": true
             },
             {
               "prop": "kerzen",
@@ -734,7 +749,8 @@
             },
             {
               "prop": "regal",
-              "place": "wall-back"
+              "place": "wall-back",
+              "required": true
             },
             {
               "prop": "sack",
@@ -749,7 +765,8 @@
             {
               "prop": "regal",
               "place": "wall-back",
-              "count": 2
+              "count": 2,
+              "required": true
             },
             {
               "prop": "fass",
@@ -828,7 +845,8 @@
           "props": [
             {
               "prop": "herd",
-              "place": "wall-back"
+              "place": "wall-back",
+              "required": true
             },
             {
               "prop": "tisch",
@@ -851,7 +869,8 @@
           "props": [
             {
               "prop": "herd",
-              "place": "wall-back"
+              "place": "wall-back",
+              "required": true
             },
             {
               "prop": "tisch",
@@ -935,7 +954,8 @@
           "props": [
             {
               "prop": "tafel",
-              "place": "center"
+              "place": "center",
+              "required": true
             },
             {
               "prop": "stuhl",
@@ -961,7 +981,8 @@
           "props": [
             {
               "prop": "tafel",
-              "place": "center"
+              "place": "center",
+              "required": true
             },
             {
               "prop": "stuhl",
@@ -1042,7 +1063,8 @@
           "props": [
             {
               "prop": "brunnen",
-              "place": "center"
+              "place": "center",
+              "required": true
             },
             {
               "prop": "moos",
@@ -1065,7 +1087,8 @@
           "props": [
             {
               "prop": "brunnen",
-              "place": "free"
+              "place": "free",
+              "required": true
             },
             {
               "prop": "moos",

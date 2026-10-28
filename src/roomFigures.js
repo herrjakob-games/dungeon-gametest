@@ -1,7 +1,7 @@
 // Figuren im Raum: erscheinen beim Event-Start oder im Kampf, laufen, zucken bei Treffern, sinken beim Tod in den
 // Boden (Regeln: docs/GDD.md, „Gegner im Raum“, „Figuren in Events“, „Figuren nach dem Event“).
 // Wo eine Figur stehen darf, plant figurePlan.js; die Formen stehen in monsterFigures.js.
-import { tw, key, reduceMotion } from "./config.js";
+import { N, MID, tw, key, reduceMotion } from "./config.js";
 import { state, walkable } from "./state.js";
 import { scene } from "./scene.js";
 import { mulberry32 } from "./rng.js";
@@ -96,7 +96,7 @@ export function endEventFigures() {
 
 // Gerader Weg in Weltkoordinaten; für Figuren aus einer Kachel ein Weg um Hindernisse herum
 function walkTo(f, spot) {
-  const from = [Math.round(f.outer.position.x + 5), Math.round(f.outer.position.z + 5)];
+  const from = [Math.round(f.outer.position.x + MID), Math.round(f.outer.position.z + MID)];
   const own = new Set(f.tiles.map(t => key(...t)));
   let pts = null;
   if (f.tiles.length === 1 && spot.tiles.length === 1 && !f.onProp) {
@@ -139,7 +139,7 @@ export function combatFigure(monsterId) {
 // Davonhuschen: zur entferntesten Ecke, dann verschwinden
 function scurrySpot(f) {
   const p = state.pTile;
-  const corners = [[0, 0], [10, 0], [0, 10], [10, 10]].sort((a, b) => Math.hypot(b[0] - p[0], b[1] - p[1]) - Math.hypot(a[0] - p[0], a[1] - p[1]));
+  const corners = [[0, 0], [N - 1, 0], [0, N - 1], [N - 1, N - 1]].sort((a, b) => Math.hypot(b[0] - p[0], b[1] - p[1]) - Math.hypot(a[0] - p[0], a[1] - p[1]));
   return { tiles: [corners[0]], cx: corners[0][0], cz: corners[0][1] };
 }
 

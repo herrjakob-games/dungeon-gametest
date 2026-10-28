@@ -409,72 +409,75 @@ export function kaeseberg(pl, ctx) {
   return g;
 }
 
-// ---------- Wendeltreppen (5×5, vom Code gesetzt) ----------
-// Nach oben: Stufen um eine Mittelsäule, die unterste Stufe zeigt nach Süden (Fuß der Treppe), Lichtschein von oben
+// ---------- Wendeltreppen (3×3 in der Nordwest-Ecke, vom Code gesetzt) ----------
+// Richtung in den Raum: von der Ecke nach Südosten. Winkel a in der Form (cos a, sin a) = (x, z).
+const INTO_ROOM = Math.PI / 4;
+
+// Nach oben: Stufen um eine Mittelsäule; die unterste Stufe zeigt in den Raum (Fuß der Treppe), Lichtschein von oben
 export function wendeltreppe_hoch(pl, ctx) {
   const g = new THREE.Group();
-  g.add(cyl(2.25, 2.35, 0.12, 16, stone(), 0, 0.06, 0)); // Sockel
-  g.add(cyl(0.35, 0.35, 3.6, 10, stone(), 0, 1.8, 0)); // Mittelsäule
-  const steps = 16;
+  g.add(cyl(1.4, 1.45, 0.12, 16, stone(), 0, 0.06, 0)); // Sockel
+  g.add(cyl(0.22, 0.22, 3.4, 10, stone(), 0, 1.7, 0)); // Mittelsäule
+  const steps = 14, turn = Math.PI * 2 / 11;
   for (let i = 0; i < steps; i++) {
-    const a = Math.PI / 2 - i * (Math.PI * 2 / 14); // Start bei +z (Süden), gegen den Uhrzeigersinn von oben gesehen
-    const s = box(1.7, 0.16, 0.6, stone(), 0, 0, 0);
-    s.position.set(Math.cos(a) * 1.25, 0.2 + i * 0.21, Math.sin(a) * 1.25);
+    const a = INTO_ROOM - i * turn; // von oben gesehen gegen den Uhrzeigersinn nach oben
+    const s = box(1.05, 0.14, 0.42, stone(), 0, 0, 0);
+    s.position.set(Math.cos(a) * 0.78, 0.18 + i * 0.22, Math.sin(a) * 0.78);
     s.rotation.y = -a;
     g.add(s);
   }
   // Geländer außen: Pfosten
   for (let i = 0; i < steps; i += 2) {
-    const a = Math.PI / 2 - i * (Math.PI * 2 / 14);
-    g.add(box(0.06, 0.8, 0.06, mat(0x3d342e), Math.cos(a) * 2.05, 0.6 + i * 0.21, Math.sin(a) * 2.05));
+    const a = INTO_ROOM - i * turn;
+    g.add(box(0.05, 0.7, 0.05, mat(0x3d342e), Math.cos(a) * 1.3, 0.55 + i * 0.22, Math.sin(a) * 1.3));
   }
   // Lichtschein von oben
-  const shaft = new THREE.Mesh(new THREE.CylinderGeometry(1.0, 1.6, 2.2, 14, 1, true),
+  const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 1.0, 1.8, 14, 1, true),
     new THREE.MeshBasicMaterial({ color: 0xfff0c8, transparent: true, opacity: 0.12, side: THREE.DoubleSide, depthWrite: false }));
-  shaft.position.y = 3.6;
+  shaft.position.y = 3.4;
   g.add(shaft);
-  addLight(g, ctx, 0xfff0c8, 1.2, 8, 0, 4.2, 0, null);
+  addLight(g, ctx, 0xfff0c8, 1.1, 6, 0, 3.8, 0, null);
   return g;
 }
 
-// Nach unten: runde Öffnung im Boden, Stufen in die Tiefe, Geländer mit Lücke im Süden, blauer Schimmer von unten
+// Nach unten: runde Öffnung im Boden, Stufen in die Tiefe, Geländer mit Lücke zum Raum hin, blauer Schimmer von unten
 export function wendeltreppe_runter(pl, ctx) {
   const g = new THREE.Group();
   const hoverMats = [];
-  g.add(cyl(2.35, 2.35, 0.1, 20, stone(), 0, 0.02, 0)); // Rand
-  g.add(cyl(2.0, 2.0, 0.12, 20, mat(0x07090d), 0, 0.03, 0)); // Öffnung
+  g.add(cyl(1.42, 1.42, 0.1, 20, stone(), 0, 0.02, 0)); // Rand
+  g.add(cyl(1.2, 1.2, 0.12, 20, mat(0x07090d), 0, 0.03, 0)); // Öffnung
   const glow = mat(0x1f5f9f, { emissive: 0x3f8fe0, emissiveIntensity: 0.25 });
   hoverMats.push(glow);
-  const disc = cyl(0.55, 0.55, 0.02, 16, glow, 0, 0.1, 0);
+  const disc = cyl(0.32, 0.32, 0.02, 16, glow, 0, 0.1, 0);
   disc.castShadow = false;
   g.add(disc);
   // Stufen werden nach innen kleiner und dunkler: so wirkt es, als gingen sie in die Tiefe
-  const steps = 12;
+  const steps = 10;
   for (let i = 0; i < steps; i++) {
-    const a = Math.PI / 2 - i * (Math.PI * 2 / 12);
-    const r = 1.55 - i * 0.07;
-    const shade = new THREE.Color(0x6a625a).multiplyScalar(1 - i * 0.065);
-    const s = box(0.9 - i * 0.03, 0.04, 0.42, mat(shade.getHex()), 0, 0, 0);
+    const a = INTO_ROOM - i * (Math.PI * 2 / 10);
+    const r = 0.92 - i * 0.04;
+    const shade = new THREE.Color(0x6a625a).multiplyScalar(1 - i * 0.075);
+    const s = box(0.55 - i * 0.02, 0.04, 0.28, mat(shade.getHex()), 0, 0, 0);
     s.position.set(Math.cos(a) * r, 0.1 - i * 0.004, Math.sin(a) * r);
     s.rotation.y = -a;
     s.castShadow = false;
     g.add(s);
   }
-  // Geländer mit Lücke nach Süden
+  // Geländer mit Lücke zum Raum hin
   const railMat = mat(0x3d342e, { emissive: 0x9fd0ff, emissiveIntensity: 0 });
   hoverMats.push(railMat);
-  const gap = 0.9;
-  const rail = new THREE.Mesh(new THREE.TorusGeometry(2.2, 0.05, 6, 32, Math.PI * 2 - gap), railMat);
+  const gap = 1.0, R = 1.32;
+  const rail = new THREE.Mesh(new THREE.TorusGeometry(R, 0.04, 6, 28, Math.PI * 2 - gap), railMat);
   rail.rotation.x = Math.PI / 2;
-  rail.rotation.z = Math.PI / 2 + gap / 2; // Lücke zeigt nach +z
-  rail.position.y = 0.9;
+  rail.rotation.z = INTO_ROOM + gap / 2; // Lücke zeigt in den Raum
+  rail.position.y = 0.85;
   rail.castShadow = true;
   g.add(rail);
-  for (let k = 0; k < 12; k++) {
-    const a = Math.PI / 2 + gap / 2 + k * ((Math.PI * 2 - gap) / 11);
-    g.add(box(0.07, 0.9, 0.07, railMat, Math.cos(a) * 2.2, 0.45, Math.sin(a) * 2.2));
+  for (let k = 0; k < 9; k++) {
+    const a = INTO_ROOM + gap / 2 + k * ((Math.PI * 2 - gap) / 8);
+    g.add(box(0.06, 0.85, 0.06, railMat, Math.cos(a) * R, 0.43, Math.sin(a) * R));
   }
-  addLight(g, ctx, 0x6fb0ff, 1.4, 6, 0, -0.2, 0, null); // Schimmer von unten
+  addLight(g, ctx, 0x6fb0ff, 1.2, 5, 0, -0.2, 0, null); // Schimmer von unten
   g.userData.hoverMats = hoverMats;
   g.userData.baseGlow = glow;
   return g;

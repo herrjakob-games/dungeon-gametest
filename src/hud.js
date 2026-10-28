@@ -1,5 +1,5 @@
 // Infotafel und Minimap.
-import { DIR, DIRKEYS, key } from "./config.js";
+import { DIR, DIRKEYS, key, tileName } from "./config.js";
 import { TYPES } from "./roomTypes.js";
 import { state } from "./state.js";
 import { ATTRS, ATTR_NAMES, xpForLevel } from "./character.js";
@@ -28,7 +28,7 @@ let layout = null; // Lage der Räume auf der Minimap, für Klicks
 
 export function setSteps(n) { ui.steps.textContent = n ? n + " Kacheln" : "–"; }
 export function setHover(text) { ui.hover.textContent = text || "–"; }
-export function updatePos() { ui.pos.textContent = "Kachel " + (state.pTile[0] + 1) + " / " + (state.pTile[1] + 1); }
+export function updatePos() { ui.pos.textContent = "Kachel " + tileName(state.pTile[0], state.pTile[1]); }
 const signed = (n) => (n < 0 ? "−" + Math.abs(n) : "+" + n);
 
 // Werte der Figur: Volk, Stufe, Ebene, Lebenspunkte, Erfahrung, Gold, Attribute, Fähigkeit
