@@ -10,8 +10,8 @@ und trifft die Designentscheidungen.
 - Erfinde keine neuen Regeln. Wenn eine Aufgabe eine Mechanik braucht, die im GDD fehlt oder
   unklar ist, frage Christian mit konkreten Optionen und einer Empfehlung, bevor du sie baust.
 - Hat Christian in einer Sitzung etwas entschieden, trage es in `docs/GDD.md` ein (passender
-  Abschnitt und Liste „Getroffene Entscheidungen“) und weise ihn darauf hin, dass er die
-  Änderung auch in sein GDD in Claude Docs übernehmen sollte.
+  Abschnitt, Liste „Getroffene Entscheidungen“ und Versionstabelle). `docs/GDD.md` ist die einzige
+  gepflegte Fassung; eine Kopie in Claude Docs gibt es nicht mehr.
 - Inhalte gehören in Daten, nicht in Code: Raumtypen, Events, Monster, Völker, Gegenstände und Texte
   liegen als JSON in `data/`. `npm test` prüft alle Daten gegen das Regelwerk. Neue Effekt-Typen oder Bedingungen werden zuerst im GDD
   festgelegt, dann programmiert, dann in Events genutzt.
