@@ -18,7 +18,30 @@
       "rat",
       "skeleton"
     ],
-    "boss": "monsterratte"
+    "boss": "monsterratte",
+    "palette": {
+      "floor": "#5B4A3C",
+      "wall": "#7A6552",
+      "accent": "#E8B23A",
+      "torch": "#FF9A3C",
+      "ambient": "#3A3048"
+    },
+    "roomPalettes": {
+      "gruft": {
+        "floor": "#4A4440",
+        "wall": "#5F5A55",
+        "accent": "#FFD08A",
+        "torch": "#FFC27A",
+        "ambient": "#2C3448"
+      },
+      "brunnen": {
+        "floor": "#4A4440",
+        "wall": "#5F5A55",
+        "accent": "#FFD08A",
+        "torch": "#FFC27A",
+        "ambient": "#2C3448"
+      }
+    }
   },
   {
     "id": "katakomben",
@@ -45,6 +68,13 @@
       "gruft": {
         "nextToStart": null
       }
+    },
+    "palette": {
+      "floor": "#5A5348",
+      "wall": "#8A8070",
+      "accent": "#9FE0C8",
+      "torch": "#FFB05A",
+      "ambient": "#2A3330"
     }
   },
   {
@@ -67,7 +97,14 @@
       "eisengolem",
       "dunkelzwerg"
     ],
-    "boss": "schmiedemeister"
+    "boss": "schmiedemeister",
+    "palette": {
+      "floor": "#3E3A3A",
+      "wall": "#55504C",
+      "accent": "#4FB3C9",
+      "torch": "#FF6A2A",
+      "ambient": "#2A2228"
+    }
   },
   {
     "id": "goblinhoehlen",
@@ -87,7 +124,14 @@
       "goblin_schamane",
       "spinne"
     ],
-    "boss": "hoehlentroll"
+    "boss": "hoehlentroll",
+    "palette": {
+      "floor": "#4A4A32",
+      "wall": "#5E5A3E",
+      "accent": "#A6E05A",
+      "torch": "#E8B840",
+      "ambient": "#22301E"
+    }
   },
   {
     "id": "orklager",
@@ -111,6 +155,13 @@
       "riesenspinne",
       "hoehlentroll",
       "orkkriegsherr"
-    ]
+    ],
+    "palette": {
+      "floor": "#5A3E30",
+      "wall": "#6E4A38",
+      "accent": "#B0B8C0",
+      "torch": "#FF5A28",
+      "ambient": "#3A2420"
+    }
   }
 ]

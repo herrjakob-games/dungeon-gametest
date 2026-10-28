@@ -1,0 +1,271 @@
+{
+  "_info": "Zuordnung der Modelle (docs/GDD.md, Asset-Spezifikation). Pro id: file, scale (Zahl oder [x, y, z]), rotation (Grad [x, y, z]), offset ([x, y, z] in Kacheln, vor der Drehung), palette (true = Paletten-Textur des Themas), tint (Farbe, die das Modell einfärbt), lights (offset, color, intensity, distance), animations (ab Meilenstein 6b). Varianten heißen <id>_<variante>.",
+  "boden": {
+    "file": "assets/tiles/boden.glb",
+    "scale": 0.5,
+    "offset": [
+      0,
+      -0.025,
+      0
+    ],
+    "palette": true
+  },
+  "boden_bruch_a": {
+    "file": "assets/tiles/boden_bruch_a.glb",
+    "scale": 0.5,
+    "offset": [
+      0,
+      -0.025,
+      0
+    ],
+    "palette": true
+  },
+  "boden_bruch_b": {
+    "file": "assets/tiles/boden_bruch_b.glb",
+    "scale": 0.5,
+    "offset": [
+      0,
+      -0.025,
+      0
+    ],
+    "palette": true
+  },
+  "boden_deko": {
+    "file": "assets/tiles/boden_deko.glb",
+    "scale": 0.5,
+    "offset": [
+      0,
+      -0.025,
+      0
+    ],
+    "palette": true
+  },
+  "wand": {
+    "file": "assets/tiles/wand.glb",
+    "scale": 0.5,
+    "offset": [
+      -0.5,
+      0,
+      0
+    ],
+    "palette": true
+  },
+  "wand_ecke": {
+    "file": "assets/tiles/wand_ecke.glb",
+    "scale": 0.5,
+    "offset": [
+      -0.25,
+      0,
+      0
+    ],
+    "palette": true
+  },
+  "sockel": {
+    "file": "assets/tiles/sockel.glb",
+    "scale": [
+      0.5,
+      0.0625,
+      0.5
+    ],
+    "offset": [
+      -0.5,
+      0,
+      0
+    ],
+    "palette": true
+  },
+  "sockel_ecke": {
+    "file": "assets/tiles/sockel_ecke.glb",
+    "scale": [
+      0.5,
+      0.0625,
+      0.5
+    ],
+    "offset": [
+      -0.25,
+      0,
+      0
+    ],
+    "palette": true
+  },
+  "tuerrahmen": {
+    "file": "assets/tiles/tuerrahmen.glb",
+    "scale": 0.5,
+    "palette": true
+  },
+  "fackel": {
+    "file": "assets/tiles/fackel.glb",
+    "scale": 0.5,
+    "palette": true,
+    "lights": [
+      {
+        "offset": [
+          0,
+          0.36,
+          0.22
+        ],
+        "color": "#FF9A3C",
+        "intensity": 1.3,
+        "distance": 5.5
+      }
+    ]
+  },
+  "saeule": {
+    "file": "assets/props/saeule.glb",
+    "scale": 0.5,
+    "palette": true
+  },
+  "saeule_liegend": {
+    "file": "assets/props/saeule_liegend.glb",
+    "scale": 0.5,
+    "rotation": [
+      0,
+      0,
+      -90
+    ],
+    "offset": [
+      -1,
+      0.375,
+      0
+    ],
+    "palette": true
+  },
+  "fass": {
+    "file": "assets/props/fass.glb",
+    "scale": 0.5,
+    "palette": true
+  },
+  "kiste": {
+    "file": "assets/props/kiste.glb",
+    "scale": 0.5,
+    "palette": true,
+    "tint": "#E8A66E"
+  },
+  "regal": {
+    "file": "assets/props/regal.glb",
+    "scale": [
+      1,
+      0.65,
+      1
+    ],
+    "offset": [
+      0,
+      0,
+      -0.75
+    ],
+    "palette": true
+  },
+  "tisch": {
+    "file": "assets/props/tisch.glb",
+    "scale": 0.5,
+    "rotation": [
+      0,
+      90,
+      0
+    ],
+    "palette": true
+  },
+  "tisch_kueche": {
+    "file": "assets/props/tisch_kueche.glb",
+    "scale": 0.5,
+    "rotation": [
+      0,
+      90,
+      0
+    ],
+    "palette": true
+  },
+  "hocker": {
+    "file": "assets/props/hocker.glb",
+    "scale": 0.5,
+    "palette": true
+  },
+  "tafel": {
+    "file": "assets/props/tafel.glb",
+    "scale": 0.5,
+    "rotation": [
+      0,
+      90,
+      0
+    ],
+    "palette": true,
+    "lights": [
+      {
+        "offset": [
+          0,
+          0.75,
+          0
+        ],
+        "color": "#FFC27A",
+        "intensity": 0.5,
+        "distance": 3
+      }
+    ]
+  },
+  "stuhl": {
+    "file": "assets/props/stuhl.glb",
+    "scale": 0.5,
+    "palette": true
+  },
+  "waffenstaender": {
+    "file": "assets/props/waffenstaender.glb",
+    "scale": 0.5,
+    "offset": [
+      0,
+      1.0,
+      -0.42
+    ],
+    "palette": true
+  },
+  "kerzen": {
+    "file": "assets/props/kerzen.glb",
+    "scale": 0.5,
+    "palette": true,
+    "lights": [
+      {
+        "offset": [
+          0,
+          0.5,
+          0
+        ],
+        "color": "#FFC27A",
+        "intensity": 0.6,
+        "distance": 3.5
+      }
+    ]
+  },
+  "geroell": {
+    "file": "assets/props/geroell.glb",
+    "scale": [
+      0.25,
+      0.06,
+      0.3
+    ],
+    "offset": [
+      -0.5,
+      0,
+      0
+    ],
+    "palette": true
+  },
+  "goldhaufen": {
+    "file": "assets/props/goldhaufen.glb",
+    "scale": 0.3,
+    "palette": true
+  },
+  "truhe": {
+    "file": "assets/props/truhe.glb",
+    "scale": 0.5,
+    "offset": [
+      0,
+      0.085,
+      0
+    ],
+    "palette": true
+  },
+  "souvenirkiste": {
+    "file": "assets/props/souvenirkiste.glb",
+    "scale": 0.5,
+    "palette": true
+  }
+}

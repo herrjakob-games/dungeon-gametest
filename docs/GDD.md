@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.7 · Oct 28, 2026 · @Christian
+Version 2.9 · Oct 28, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,8 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.9 | 28.10.2026 | Meilenstein 6a umgesetzt: Zuordnung kennt zusätzlich `tint` (Einfärben eines Modells); Wandecken aus KayKit-Endstücken; Fackeln an vorderen Türen auf einem Pfosten |
+| 2.8 | 28.10.2026 | Stilguide „Knetkeller“ und Asset-Spezifikation aus dem Art-Direction-Projekt; Maßstab KayKit 0,5, Wände 2 Kacheln hoch; Zuordnung der Modelle über data/models.json; Wendeltreppen-Modelle 3×3; Zwerg aus KayKit Knight; Goblin aus Goblin Lowpoly Assets, Mimik aus der Truhe des KayKit Dungeon Pack |
 | 2.7 | 28.10.2026 | Raumgröße 9×9 statt 11×11, Türen auf der fünften Kachel; Kachelnamen x\|y; Wendeltreppen 3×3 in der Nordwest-Ecke statt 5×5 in der Mitte; Startposition 4\|4; Einrichtung mit Pflichtstücken (`required`) und festem Korrekturablauf |
 | 2.6 | 28.10.2026 | Meilenstein 6 geteilt in 6a (Umgebung) und 6b (Figuren); Stilguide kommt aus dem Art-Direction-Projekt; Modelle aus CC0-Paketen plus KI-Generator; volles Animationsset |
 | 2.5 | 27.10.2026 | Figuren im Raum: Gegner erscheinen im Kampf, Events können Figuren schon beim Start zeigen (Feld `figures`), Regeln nach dem Event; Figurenliste |
@@ -44,7 +46,7 @@ Das Spiel läuft im Browser auf Basis von Three.js. Claude schreibt den Code, Ch
 | Plattform | Browser, nur Desktop |
 | 3D-Bibliothek | Three.js (WebGL) |
 | Kamera | Orthografisch, fester Iso-Winkel (45° gedreht, ca. 35° geneigt) |
-| Modelle | Low-Poly im Format glTF/GLB, Startpaket KayKit (CC0, mit Animationen); bis Meilenstein 6 Platzhalter aus Grundformen im Code |
+| Modelle | Low-Poly im Format glTF/GLB, Pakete KayKit Dungeon Remastered, Adventurers und Skeletons (CC0) im Maßstab 0,5, dazu KI-Modelle; fehlende Modelle bleiben Platzhalter aus Grundformen. |
 | Spieldaten | JSON-Dateien für Raumtypen, Einrichtung, Events, Monster und Gegenstände |
 | Text-UI | HTML-Fenster über der 3D-Szene |
 | Entwicklung | Claude Code mit GitHub-Repository |
@@ -314,14 +316,99 @@ Werte und Texte der Bosse entstehen im Content-Projekt.
 
 Die Grafik besteht aus einem modularen Low-Poly-Baukasten auf dem Kachelraster, die Animationen stecken in den Modelldateien.
 
-- **Stil:** Low-Poly mit Flat Shading und begrenzter Farbpalette. Den Stilguide legt das Art-Direction-Projekt fest.
+- **Stil:** Low-Poly, weich und blockig wie KayKit, ohne Normal Maps, begrenzte Palette. Details im Stilguide.
 - **Baukasten:** Bodenkachel, Wandstück, Türrahmen, Ecke und Requisiten, alle exakt 1×1 Kachel groß oder ein Vielfaches davon.
 - **Figurenanimationen:** volles Set für Spielfiguren und Monster: Idle, Laufen, Angriff, Treffer, Tod, Interagieren. Three.js spielt sie aus der GLB-Datei ab.
 - **Licht:** Fackeln als Punktlichter mit Schatten, gedämpftes Grundlicht. Die Fackelfarbe kann pro Raumtyp in der Einrichtung stehen (`torchColor`).
-- **Stilguide:** kommt aus dem Art-Direction-Projekt und wird vor Meilenstein 6a hier eingetragen. Bis dahin gilt kein fester Look.
 - **Quellen:** eine Mischung aus fertigen CC0-Paketen (etwa KayKit, Quaternius, Kenney) für Boden, Wände und Requisiten und einem KI-3D-Generator für Figuren, die es nicht fertig gibt. Was noch fehlt, bleibt Platzhalter aus Grundformen.
 - **Reihenfolge:** zuerst die Themenwelt Keller, dann die weiteren Themen. Meilenstein 6a bringt Umgebung und Requisiten, 6b Figuren und Animationen.
 - **Lizenzen:** Jede fremde Datei kommt mit Quelle und Lizenz in eine Credits-Liste im Repository.
+
+### Stilguide „Knetkeller“
+
+Ein Dungeon wie aus warmem Ton geknetet: weiche, blockige Formen, gedeckte Erdtöne und Räume voller liebevoll schiefer Alltagsdinge. Farbe entsteht vor allem durch Licht; die Fackeln schneiden warme Inseln aus violettgrauen Schatten, und nur Gold, Gefahr und der Themenakzent leuchten heraus. Der Humor sitzt in Proportionen und Requisiten, nicht in grellen Farben.
+
+**Referenzen**
+
+- KayKit Dungeon Remastered: Formensprache und Baukasten; eine gemeinsame Atlas-Textur, daher zentral umfärbbar.
+- KayKit Adventurers und Skeletons: Figurenproportionen und ein gemeinsames Rig, Animationen sind übertragbar.
+- Wallace & Gromit: Materialgefühl (Knete, Wolle, abgenutztes Holz), Wärme, übergroße Alltagsgegenstände als Gag.
+- Tunic: Low-Poly-Figuren in Iso-Ansicht, trotz dunkler Räume klar lesbar.
+- Death's Door: starke Lichtinseln mit tiefen, aber farbigen Schatten statt Schwarz.
+
+**Palette**
+
+| Rolle | Hex | Verwendung |
+| --- | --- | --- |
+| Boden | #5B4A3C | Bodenkacheln |
+| Wand | #7A6552 | Wände, Sockel, Stein |
+| Holz | #8A5A34 | Möbel, Fässer, Türen |
+| Metall | #5E6168 | Beschläge, Waffen, Gitter |
+| Moos, Stoff | #6B7048 | Moos, Säcke, Kleidung |
+| Kühl | #4E6670 | Wasser, Gruft, Brunnen |
+| Schatten | #2A2230 | Schattenfarbe, tiefste Töne |
+| Licht | #FF9A3C | Fackeln, Glut |
+| Akzent | #E8B23A | Themenakzent, im Keller Käse |
+| Gold | #F2C14E | Wertvolles und Anklickbares |
+| Gefahr | #C8432F | Gegner, Fallen, verschlossene Türen |
+
+**Farbregeln**
+
+- Gold nur für Wertvolles und Anklickbares, Gefahr-Rot nur für Gegner, Fallen und verschlossene Türen. Beide bleiben in allen Themen gleich.
+- Deko nutzt nie Akzentfarben.
+- Pro Thema wechseln Boden, Wand, Akzent, Fackel und Grundlicht. Technisch wechselt der Code dafür die Paletten-Textur (`assets/textures/<thema>/`).
+
+| Thema | Boden | Wand | Akzent | Fackel | Grundlicht |
+| --- | --- | --- | --- | --- | --- |
+| Keller | #5B4A3C | #7A6552 | #E8B23A | #FF9A3C | #3A3048 |
+| Keller: Gruft, Brunnen | #4A4440 | #5F5A55 | #FFD08A | #FFC27A | #2C3448 |
+| Katakomben | #5A5348 | #8A8070 | #9FE0C8 | #FFB05A | #2A3330 |
+| Zwergenminen | #3E3A3A | #55504C | #4FB3C9 | #FF6A2A | #2A2228 |
+| Goblin-Höhlen | #4A4A32 | #5E5A3E | #A6E05A | #E8B840 | #22301E |
+| Ork-Lager | #5A3E30 | #6E4A38 | #B0B8C0 | #FF5A28 | #3A2420 |
+
+Gruft und Brunnen sind im Keller die düsteren Räume: kälteres Grundlicht, Kerzen statt Fackeln. Im Ork-Lager wird das Gefahr-Rot vor den rötlichen Wänden geprüft und bei Bedarf nachgeschärft.
+
+**Formensprache**
+
+- Figuren etwa 1:3 (Kopf ein Drittel der Höhe), große Hände und Füße, Augen als einfache Formen.
+- Kanten weich gefast. Spitze Formen nur bei Waffen und Gefahren: spitz heißt „tut weh“.
+- Detail steckt in der Menge der Requisiten, nicht in der Geometrie einzelner Teile. Klare Silhouette zuerst.
+- Leicht schief und handgemacht: durchgesessene Stühle, krumme Regale, zu große Käseräder.
+
+**Licht**
+
+- Grundlicht niedrig als Halbkugellicht: oben warmes Grau, unten das Grundlicht des Themas. Ecken sinken auf etwa 15 bis 20 % Helligkeit, nie auf Schwarz.
+- Fackeln als warme Punktlichter mit 5 bis 6 Kacheln Reichweite und leichtem Flackern. Höchstens zwei schattenwerfende Lichter pro Raum.
+- Requisiten mit eigenem Licht (Herd, Kerzen, Kronleuchter, Lagerfeuer) leuchten ohne Schatten.
+- Die Spielfigur trägt einen kleinen, schwachen Lichtschein.
+
+**Lesbarkeit**
+
+- Spielfigur mit hellem Bodenring, Gegner mit rotem Akzent und im Kampf rotem Ring.
+- Türrahmen eine Stufe heller als die Wand, neben jeder Tür eine Fackel. Verschlossene Tür: rotes Schloss.
+- Anklickbare Objekte (Truhe, Lagerfeuer, Händler, Treppe nach unten): goldene Umrisslinie beim Überfahren mit der Maus, leichtes Aufhellen.
+- Bodendeko (Sack, Moos, Pfütze, Geröll) flach und dunkel, damit sie nie wie ein Hindernis wirkt.
+
+### Asset-Spezifikation
+
+Gilt für alle Modelle. Bei Paketteilen gilt sie für das Ergebnis im Spiel; Abweichungen der Rohdatei korrigiert `data/models.json`.
+
+- **Format:** GLB, Modell, Material und Animationen in einer Datei, möglichst unter 1 MB.
+- **Maßstab:** 1 Einheit = 1 Kachel. Kachelteile 1×1 oder ein Vielfaches laut Requisitenliste. KayKit-Teile mit Faktor 0,5 (kleine KayKit-Bodenplatte = 1 Kachel).
+- **Ausrichtung:** Ursprung am Boden, mittig auf der Grundfläche; Figuren blicken nach +Z, oben ist +Y. Wandteile: Ursprung mittig auf der Kachelkante, Vorderseite zeigt in den Raum.
+- **Höhen:** Mensch und Elf 1,0 bis 1,2 Kacheln, Zwerg etwa 0,8, Boss nach Größe in der Figurenliste. Hohe Wand 2 Kacheln, Sockel 0,25.
+- **Dreiecke:** höchstens etwa 3.000 pro Figur (KayKit-Figuren nach dem Abspecken bis 4.000), 1.500 pro Requisit.
+- **Material:** stilisiert, Schattierung wie KayKit, keine Normal Maps. Paketteile nutzen die gemeinsame Paletten-Textur des Themas (`assets/textures/keller/dungeon_texture.png`), KI-Modelle eine eigene Textur bis 512 px in den Palettenfarben.
+- **Animationen:** Idle, Walk, Attack, Hit, Death, Interact. Heißen sie im Paket anders, ordnet `data/models.json` sie zu.
+- **Dateinamen:** id aus dem GDD; Varianten als `id_variante.glb`, etwa `fass_gruppe.glb`. Fehlt die Variante, gilt die Grunddatei. Eine Variante kann auch nur eine andere Animation sein (Skelett sitzend).
+- **Ordner:** `assets/tiles/` (Boden, Wand, Sockel, Ecken, Türrahmen), `assets/props/`, `assets/figures/`, `assets/textures/`. Rohdateien der Pakete in `assets/source/`.
+- **Bauteile:** `boden`, `wand`, `wand_ecke`, `sockel`, `sockel_ecke`, `tuerrahmen`, `fackel`, `schloss`. Der Türrahmen hinten deckt drei Kacheln (Tür mittig). Neben jeder Tür hängt eine Fackel; an den vorderen Türen steht sie auf einem Pfosten, weil der Sockel zu niedrig ist.
+- **Zuordnung:** `data/models.json` hält pro id Datei, Maßstab (Zahl oder [x, y, z]), Drehung, Versatz, Einfärbung (`tint`, Farbe, mit der die Paletten-Textur multipliziert wird, etwa Holzton für graue Kisten), Animationszuordnung und Lichtpunkte (Position relativ zum Ursprung, Farbe, Stärke, Reichweite).
+- **Build-Skript:** `tools/build-assets.mjs` setzt Teile aus Paketen zu einer GLB zusammen (Tafel, Regal, Türrahmen) und speckt Paketfiguren ab (nur benötigte Animationen und Zubehörteile, komprimiert).
+- **Platzhalter:** Fehlt eine Datei oder lädt sie nicht, baut der Code das Teil wie bisher aus Grundformen.
+- **Quellen der Figuren im Keller:** Mensch KayKit `Mage`, Elf `Rogue_Hooded`, Zwerg `Knight`, Händler `Rogue` umgefärbt (KayKit Adventurers); Skelett KayKit Skeletons; Goblin aus Goblin Lowpoly Assets (standout7, itch.io); Mimik aus der Truhe des KayKit Dungeon Pack (itch.io); Ratten und Kröte über den KI-Generator.
+- **Lizenzen:** Quelle und Lizenz jeder fremden Datei in `assets/CREDITS.md`.
 
 ### Einrichtung pro Raumtyp
 
@@ -484,3 +571,8 @@ Sieben Schritte, jeder endet mit etwas Spielbarem, das Christian im Browser test
 - [x] Kachelnamen x|y: x von West nach Ost, y von Nord nach Süd; Nordwest-Ecke 1|1, Mitte 5|5
 - [x] Wendeltreppen 3×3 in der Nordwest-Ecke (vorher 5×5 in der Mitte), in Vorkammer, Abstieg und Bossraum; Start auf 4|4
 - [x] Einrichtung mit Pflichtstücken (`required`), festem Korrekturablauf und Prüfung aller Varianten mit allen Türkombinationen
+- [x] Stilguide Knetkeller mit Palette, Themen-Abwandlung, Licht und Lesbarkeit
+- [x] Asset-Spezifikation mit Zuordnung über data/models.json, Maßstab KayKit 0,5, Wände 2 Kacheln hoch
+- [x] Modelle der Wendeltreppen 3×3 in der Nordwest-Ecke (wie GDD 2.7), Türrahmen auf der fünften Kachel
+- [x] Zwerg aus KayKit Knight; Goblin aus Goblin Lowpoly Assets (standout7), Mimik aus der Truhe des KayKit Dungeon Pack
+- [x] Meilenstein 6a: Modelle über `data/models.json` mit Einfärbung `tint`; Fackeln an vorderen Türen auf einem Pfosten

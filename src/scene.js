@@ -30,8 +30,11 @@ window.addEventListener("resize", resize);
 resize();
 
 // Feste Beleuchtung (Fackeln kommen pro Raum dazu)
-scene.add(new THREE.HemisphereLight(0x9a8a78, 0x1c1410, 0.55));
-const sun = new THREE.DirectionalLight(0xffe0bc, 0.55);
+// Grundlicht nach Stilguide: Halbkugellicht, oben warmes Grau, unten das Grundlicht des Themas (setAmbient)
+const hemi = new THREE.HemisphereLight(0x9c8c80, 0x3a3048, 0.62);
+scene.add(hemi);
+// Schwaches Licht von oben: der einzige Schattenwerfer neben höchstens einem weiteren (Stilguide: höchstens zwei)
+const sun = new THREE.DirectionalLight(0xffe0bc, 0.3);
 sun.position.set(8, 16, 5);
 sun.castShadow = true;
 sun.shadow.mapSize.set(2048, 2048);
@@ -41,4 +44,9 @@ scene.add(sun);
 export function zoomBy(deltaY) {
   camera.zoom = Math.min(2.2, Math.max(0.7, camera.zoom * (1 - deltaY * 0.0012)));
   camera.updateProjectionMatrix();
+}
+
+// Grundlicht des Themas oder Raums (Farbe als "#rrggbb")
+export function setAmbient(ground) {
+  hemi.groundColor.set(ground || "#3a3048");
 }

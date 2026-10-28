@@ -1,0 +1,290 @@
+{
+  "source": "assets/source/kaykit-dungeon-remastered/gltf/",
+  "notes": "Positionen, Drehungen (Grad um y) und Skalierungen in KayKit-Einheiten. Den Faktor 0,5 und die Lage im Raum setzt data/models.json.",
+  "parts": {
+    "boden": {
+      "dir": "tiles",
+      "file": "floor_tile_small.gltf.glb"
+    },
+    "boden_bruch_a": {
+      "dir": "tiles",
+      "file": "floor_tile_small_broken_A.gltf.glb"
+    },
+    "boden_bruch_b": {
+      "dir": "tiles",
+      "file": "floor_tile_small_broken_B.gltf.glb"
+    },
+    "boden_deko": {
+      "dir": "tiles",
+      "file": "floor_tile_small_decorated.gltf.glb"
+    },
+    "wand": {
+      "dir": "tiles",
+      "file": "wall_half.gltf.glb"
+    },
+    "wand_ecke": {
+      "dir": "tiles",
+      "file": "wall_endcap.gltf.glb"
+    },
+    "sockel": {
+      "dir": "tiles",
+      "file": "wall_half.gltf.glb"
+    },
+    "sockel_ecke": {
+      "dir": "tiles",
+      "file": "wall_endcap.gltf.glb"
+    },
+    "tuerrahmen": {
+      "dir": "tiles",
+      "pieces": [
+        {
+          "file": "wall_doorway.glb",
+          "position": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "file": "wall_endcap.gltf.glb",
+          "position": [
+            2,
+            0,
+            0
+          ]
+        },
+        {
+          "file": "wall_endcap.gltf.glb",
+          "position": [
+            -2,
+            0,
+            0
+          ],
+          "rotation": 180
+        }
+      ]
+    },
+    "fackel": {
+      "dir": "tiles",
+      "file": "torch_mounted.gltf.glb"
+    },
+    "saeule": {
+      "dir": "props",
+      "file": "pillar.gltf.glb"
+    },
+    "saeule_liegend": {
+      "dir": "props",
+      "file": "pillar.gltf.glb"
+    },
+    "fass": {
+      "dir": "props",
+      "file": "barrel_large.gltf.glb"
+    },
+    "kiste": {
+      "dir": "props",
+      "file": "box_large.gltf.glb"
+    },
+    "regal": {
+      "dir": "props",
+      "pieces": [
+        {
+          "file": "shelves.gltf.glb",
+          "position": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "file": "bottle_A_brown.gltf.glb",
+          "position": [
+            -0.55,
+            0.85,
+            0.5
+          ],
+          "scale": [
+            0.5,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "file": "bottle_B_green.gltf.glb",
+          "position": [
+            0.1,
+            0.85,
+            0.5
+          ],
+          "scale": [
+            0.5,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "file": "bottle_A_brown.gltf.glb",
+          "position": [
+            0.5,
+            1.85,
+            0.5
+          ],
+          "scale": [
+            0.5,
+            0.5,
+            0.5
+          ]
+        }
+      ]
+    },
+    "tisch": {
+      "dir": "props",
+      "pieces": [
+        {
+          "file": "table_long.gltf.glb",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1.5
+          ]
+        }
+      ]
+    },
+    "tisch_kueche": {
+      "dir": "props",
+      "pieces": [
+        {
+          "file": "table_long.gltf.glb",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1.5
+          ]
+        },
+        {
+          "file": "plate_stack.gltf.glb",
+          "position": [
+            0,
+            1,
+            -1.6
+          ]
+        },
+        {
+          "file": "bottle_A_brown.gltf.glb",
+          "position": [
+            0.3,
+            1,
+            1.4
+          ]
+        },
+        {
+          "file": "bottle_B_green.gltf.glb",
+          "position": [
+            -0.3,
+            1,
+            1.9
+          ]
+        }
+      ]
+    },
+    "hocker": {
+      "dir": "props",
+      "file": "stool.gltf.glb"
+    },
+    "tafel": {
+      "dir": "props",
+      "pieces": [
+        {
+          "file": "table_long_tablecloth.gltf.glb",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            2.5
+          ]
+        },
+        {
+          "file": "plate_food_A.gltf.glb",
+          "position": [
+            0,
+            1,
+            -3.4
+          ]
+        },
+        {
+          "file": "plate_food_B.gltf.glb",
+          "position": [
+            0,
+            1,
+            -1.6
+          ]
+        },
+        {
+          "file": "candle_triple.gltf.glb",
+          "position": [
+            0,
+            1,
+            0
+          ]
+        },
+        {
+          "file": "plate_food_B.gltf.glb",
+          "position": [
+            0,
+            1,
+            1.6
+          ]
+        },
+        {
+          "file": "plate_food_A.gltf.glb",
+          "position": [
+            0,
+            1,
+            3.4
+          ]
+        }
+      ]
+    },
+    "stuhl": {
+      "dir": "props",
+      "file": "chair.gltf.glb"
+    },
+    "waffenstaender": {
+      "dir": "props",
+      "file": "sword_shield.gltf.glb"
+    },
+    "kerzen": {
+      "dir": "props",
+      "file": "candle_triple.gltf.glb"
+    },
+    "geroell": {
+      "dir": "props",
+      "file": "rubble_half.gltf.glb"
+    },
+    "goldhaufen": {
+      "dir": "props",
+      "file": "coin_stack_large.gltf.glb"
+    },
+    "truhe": {
+      "dir": "props",
+      "file": "chest.glb"
+    },
+    "souvenirkiste": {
+      "dir": "props",
+      "file": "trunk_large_A.gltf.glb"
+    }
+  }
+}

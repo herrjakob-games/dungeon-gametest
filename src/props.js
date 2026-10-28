@@ -417,26 +417,26 @@ const INTO_ROOM = Math.PI / 4;
 export function wendeltreppe_hoch(pl, ctx) {
   const g = new THREE.Group();
   g.add(cyl(1.4, 1.45, 0.12, 16, stone(), 0, 0.06, 0)); // Sockel
-  g.add(cyl(0.22, 0.22, 3.4, 10, stone(), 0, 1.7, 0)); // Mittelsäule
+  g.add(cyl(0.22, 0.22, 2.2, 10, stone(), 0, 1.1, 0)); // Mittelsäule, so hoch wie die Wände (2 Kacheln)
   const steps = 14, turn = Math.PI * 2 / 11;
   for (let i = 0; i < steps; i++) {
     const a = INTO_ROOM - i * turn; // von oben gesehen gegen den Uhrzeigersinn nach oben
     const s = box(1.05, 0.14, 0.42, stone(), 0, 0, 0);
-    s.position.set(Math.cos(a) * 0.78, 0.18 + i * 0.22, Math.sin(a) * 0.78);
+    s.position.set(Math.cos(a) * 0.78, 0.16 + i * 0.14, Math.sin(a) * 0.78);
     s.rotation.y = -a;
     g.add(s);
   }
   // Geländer außen: Pfosten
   for (let i = 0; i < steps; i += 2) {
     const a = INTO_ROOM - i * turn;
-    g.add(box(0.05, 0.7, 0.05, mat(0x3d342e), Math.cos(a) * 1.3, 0.55 + i * 0.22, Math.sin(a) * 1.3));
+    g.add(box(0.05, 0.6, 0.05, mat(0x3d342e), Math.cos(a) * 1.3, 0.48 + i * 0.14, Math.sin(a) * 1.3));
   }
   // Lichtschein von oben
   const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 1.0, 1.8, 14, 1, true),
     new THREE.MeshBasicMaterial({ color: 0xfff0c8, transparent: true, opacity: 0.12, side: THREE.DoubleSide, depthWrite: false }));
-  shaft.position.y = 3.4;
+  shaft.position.y = 2.6;
   g.add(shaft);
-  addLight(g, ctx, 0xfff0c8, 1.1, 6, 0, 3.8, 0, null);
+  addLight(g, ctx, 0xfff0c8, 1.1, 6, 0, 2.8, 0, null);
   return g;
 }
 

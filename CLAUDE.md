@@ -23,13 +23,19 @@ Event-System aus JSON mit Proben-Kategorien, Volkswahl, Rundenkampf, Inventar, S
 Endbildschirm, endlose Ebenen). Dazu kommt „Themen und Ebenen“: Themen je drei Ebenen, 25 Raumtypen mit
 Lage- und Anzahlregeln, Bosse, Rastplatz und Händler. Monster, Bosse, Gegenstände der Stufen 5 und 6 und die
 Events der neuen Raumtypen sind Platzhalter (`"placeholder": true` bzw. Text „[Platzhalter]“), die das
-Content-Projekt ersetzt. Nächster Schritt ist Meilenstein 6: echte Assets, Animationen und Licht.
+Content-Projekt ersetzt. Meilenstein 6a (echte Modelle für Umgebung und Requisiten des Kellers, Licht nach Stilguide)
+ist umgesetzt; was noch kein Modell hat, bleibt Platzhalter. Nächster Schritt ist Meilenstein 6b: Figuren und Animationen.
 Die Liste aller Meilensteine steht im GDD.
 
 ## Technik
 
 - Kein Build-Schritt. Statische Dateien, direkt über GitHub Pages ausgeliefert.
-- Three.js r128 wird per `<script>` aus cdnjs geladen und ist als `window.THREE` verfügbar.
+- Three.js r128 wird per `<script>` aus cdnjs geladen und ist als `window.THREE` verfügbar, der passende
+  `GLTFLoader` liegt in `vendor/three/`.
+- Modelle: `assets/` (Rohdateien der Pakete in `assets/source/`, Quellen in `assets/CREDITS.md`). `npm run build:assets`
+  baut aus `tools/asset-recipes.json` die Dateien in `assets/tiles/` und `assets/props/` (braucht einmal `npm install`);
+  das Spiel selbst braucht keinen Build-Schritt. Zuordnung in `data/models.json`. `tools/palette-texture.py` erzeugt
+  die erste Fassung der Paletten-Textur.
   Die Spiellogik besteht aus ES-Modulen in `src/`, Einstieg ist `src/main.js`.
 - Lokal starten: `npm start` und dann http://localhost:8000 öffnen (Module brauchen einen Server).
 - Testmodus, lokal und auf GitHub Pages: `?event=<id>` startet das Event im ersten passenden Raum, `?room=<raumtyp-id>` betritt
@@ -49,7 +55,7 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/pathfinding.js` | A*-Wegfindung, rein logisch |
 | `src/rng.js` | Seed-basierte Zufallszahlen und Würfel |
 | `src/state.js` | gemeinsamer Spielzustand |
-| `data/themes.json` | Themen: Name, Stufe, Proben-Zuschlag, Raumtypen, Nachbar des Starts, Monster, Boss, Regel-Ausnahmen (`overrides`) |
+| `data/themes.json` | Themen: Name, Stufe, Proben-Zuschlag, Raumtypen, Nachbar des Starts, Monster, Boss, Regel-Ausnahmen (`overrides`), Palette (`palette`, `roomPalettes`) |
 | `data/room-types.json` | Raumtypen: Name, Farben, Einrichtung als Daten (`decor`, `themeDecor`) oder altes Muster (`layout`), Bewertung, Lage- und Anzahlregeln, Event-Chance, Event-Tabelle; beim Bossraum Tabellen pro Thema (`themeEvents`) |
 | `data/events.json` | alle Events (auch die Truhe), Figuren beim Event-Start (`figures`) |
 | `data/monsters.json` | Monster und Bosse mit Lebenspunkten, Rüstung, Angriff, Schaden, Satz zur Todesursache |
@@ -63,7 +69,10 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/combat.js` | Rundenkampf: Angriff, Gegnerzug, Verteidigen, Gegenstände, Flucht, Tiefe; rein logisch |
 | `src/roomTypes.js` | Raumtypen-Tabelle, befüllt aus `data/room-types.json` |
 | `src/decor.js` | Einrichtung als Daten: Requisiten-Größen, Platzierung (`center`, `wall-back`, `corner`, `free`, `around:`, `above:`), Wendeltreppen, Erreichbarkeit, Datenprüfung; rein logisch |
-| `src/props.js` | Requisiten und Wendeltreppen aus Grundformen |
+| `src/props.js` | Requisiten und Wendeltreppen aus Grundformen (Platzhalter, wenn ein Modell fehlt) |
+| `src/models.js` | Modell-Lader: `data/models.json`, Paletten-Textur des Themas, Klone pro Instanz, Rückfall auf Platzhalter |
+| `src/outline.js` | goldene Umrisslinie für anklickbare Objekte beim Überfahren mit der Maus |
+| `data/models.json` | Zuordnung der Modelle: Datei, Maßstab, Drehung, Versatz, Einfärbung (`tint`), Lichtpunkte |
 | `src/figurePlan.js` | Figuren im Raum: Figurenliste (Größe, Varianten), Platzierung für `figures` (inkl. `near:`), Platz im Kampf, Datenprüfung; rein logisch |
 | `src/monsterFigures.js` | Figuren der Monster und der Kröte aus Grundformen, Ersatzfigur für Monster ohne eigene Figur |
 | `src/roomFigures.js` | Figuren im Raum: erscheinen, laufen, wippen, zucken, versinken, huschen davon; `stay` |
@@ -92,7 +101,10 @@ Die Liste aller Meilensteine steht im GDD.
 - Wendeltreppen belegen die Nordwest-Ecke 1|1 bis 3|3 (gezählt ab 0: 0 bis 2), Start auf 4|4.
 - Alles, was reproduzierbar sein muss (Dungeon, Einrichtung), läuft über Seeds aus `rng.js`.
   `Math.random()` nur für Würfelwürfe im Spiel.
-- Grafik bleibt bis Meilenstein 6 im Platzhalter-Stil (Grundformen, Flat Shading).
+- Grafik nach Stilguide „Knetkeller“ (GDD): Teile mit Modell kommen aus `data/models.json`, alle anderen bleiben
+  Platzhalter aus Grundformen. Neues Modell einbinden: Datei nach `assets/props/<id>.glb`, Eintrag in `data/models.json`.
+- Licht: Halbkugellicht mit dem Grundlicht der Palette (`data/themes.json`, `palette`, `roomPalettes`), Fackeln neben
+  jeder Tür, höchstens zwei schattenwerfende Lichter pro Raum (heute nur das schwache Licht von oben).
 
 ## Zusammenarbeit mit Christian
 
