@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.5 · Oct 27, 2026 · @Christian
+Version 2.6 · Oct 28, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.6 | 28.10.2026 | Meilenstein 6 geteilt in 6a (Umgebung) und 6b (Figuren); Stilguide kommt aus dem Art-Direction-Projekt; Modelle aus CC0-Paketen plus KI-Generator; volles Animationsset |
 | 2.5 | 27.10.2026 | Figuren im Raum: Gegner erscheinen im Kampf, Events können Figuren schon beim Start zeigen (Feld `figures`), Regeln nach dem Event; Figurenliste |
 | 2.4 | 27.10.2026 | Wendeltreppen: nach oben in der Vorkammer, nach unten im Abstieg und im Bossraum nach dem Sieg (ersetzt den Torbogen); Startposition am Fuß der Treppe; Einrichtung pro Raumtyp als Daten (`decor`, `themeDecor`) mit Platzierungsregeln; Requisitenliste |
 | 2.3 | 27.10.2026 | Boss-Events pro Thema (Feld `themeEvents` beim Bossraum), bei jedem Betreten neu gewürfelt; erster Boss-Inhalt Monsterratte im Keller; eigene Todessätze pro Event in `data/texts.json` (`death.events`) |
@@ -313,9 +314,11 @@ Die Grafik besteht aus einem modularen Low-Poly-Baukasten auf dem Kachelraster, 
 
 - **Stil:** Low-Poly mit Flat Shading und begrenzter Farbpalette. Den Stilguide legt das Art-Direction-Projekt fest.
 - **Baukasten:** Bodenkachel, Wandstück, Türrahmen, Ecke und Requisiten, alle exakt 1×1 Kachel groß oder ein Vielfaches davon.
-- **Figurenanimationen:** Idle, Laufen, Angriff, Treffer, Tod, Interagieren. Three.js spielt sie aus der GLB-Datei ab.
+- **Figurenanimationen:** volles Set für Spielfiguren und Monster: Idle, Laufen, Angriff, Treffer, Tod, Interagieren. Three.js spielt sie aus der GLB-Datei ab.
 - **Licht:** Fackeln als Punktlichter mit Schatten, gedämpftes Grundlicht. Die Fackelfarbe kann pro Raumtyp in der Einrichtung stehen (`torchColor`).
-- **Ablauf:** Erst Platzhalter (Würfel, Kegel), dann KayKit-Assets, dann eigene Farbpalette per Textur-Tausch, später eigene Modelle in Blender oder per KI-3D-Generator.
+- **Stilguide:** kommt aus dem Art-Direction-Projekt und wird vor Meilenstein 6a hier eingetragen. Bis dahin gilt kein fester Look.
+- **Quellen:** eine Mischung aus fertigen CC0-Paketen (etwa KayKit, Quaternius, Kenney) für Boden, Wände und Requisiten und einem KI-3D-Generator für Figuren, die es nicht fertig gibt. Was noch fehlt, bleibt Platzhalter aus Grundformen.
+- **Reihenfolge:** zuerst die Themenwelt Keller, dann die weiteren Themen. Meilenstein 6a bringt Umgebung und Requisiten, 6b Figuren und Animationen.
 - **Lizenzen:** Jede fremde Datei kommt mit Quelle und Lizenz in eine Credits-Liste im Repository.
 
 ### Einrichtung pro Raumtyp
@@ -407,7 +410,8 @@ Sieben Schritte, jeder endet mit etwas Spielbarem, das Christian im Browser test
 | 3 | Dungeon-Generator mit Seed und Minimap | Alle Türen passen, keine unerreichbaren Räume |
 | 4 | Event-System aus JSON mit Textfenster und Proben | Event aus der Tabelle startet, Probe wird angezeigt |
 | 5 | Kampf, Lebenspunkte, Inventar, Tod und Sieg | Ein Durchlauf ist vollständig spielbar |
-| 6 | Echte Assets, Animationen und Licht | Optik entspricht dem Stilguide |
+| 6a | Echte Modelle für Boden, Wände, Türen, Fackeln und Requisiten des Kellers, Licht, Modell-Lader mit Platzhalter als Rückfall | Keller entspricht dem Stilguide, fehlende Modelle zeigen weiter Platzhalter |
+| 6b | Echte Figuren für die drei Völker und die Keller-Monster mit Animationen | Figuren laufen, kämpfen, werden getroffen und sterben sichtbar |
 | 7 | Speichern, Menüs, Sound, Veröffentlichung | Spiel läuft über einen öffentlichen Link |
 
 ## Getroffene Entscheidungen
@@ -469,3 +473,6 @@ Sieben Schritte, jeder endet mit etwas Spielbarem, das Christian im Browser test
 - [x] Wendeltreppen aus 5×5 Kacheln: nach oben in der Vorkammer, nach unten im Abstieg und im Bossraum nach dem Sieg; ersetzen den Torbogen; Start am Fuß der Treppe nach oben
 - [x] Einrichtung pro Raumtyp als Daten (`decor`, `themeDecor`) mit Varianten, Platzierungsregeln und Erreichbarkeitstest; ohne Eintrag gilt das bisherige Muster
 - [x] Figuren im Raum: jeder Kampf zeigt den Gegner; Events können Figuren beim Start zeigen (`figures` mit `figure`, `place`, `count`, `variant`, `stay`); neue Platzierung `near:<prop>`; Regeln für Sieg, Flucht und friedliches Ende
+- [x] Meilenstein 6 in 6a (Umgebung, Requisiten, Licht) und 6b (Figuren, Animationen), beginnend mit dem Keller
+- [x] Look wird erst im Stilguide des Art-Direction-Projekts festgelegt
+- [x] Modelle aus CC0-Paketen plus KI-3D-Generator für fehlende Figuren; volles Animationsset
