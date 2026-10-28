@@ -14,7 +14,8 @@ const MODELS = read("data/models.json");
 delete MODELS._info;
 const ROOM_TYPES = read("data/room-types.json");
 const RECIPES = read("tools/asset-recipes.json");
-const MAX_PROP_TRIS = 1500, MAX_BYTES = 1024 * 1024;
+const MAX_PROP_TRIS = 1500, MAX_FIGURE_TRIS = 4000, MAX_BYTES = 1024 * 1024;
+const FIGURE_ANIMS = ["idle", "walk", "attack", "hit", "death", "interact"];
 
 // Dreiecke einer GLB-Datei aus dem JSON-Teil zählen (ohne Abhängigkeiten); mehrfach benutzte Meshes zählen mehrfach
 function glbTriangles(path) {
@@ -25,7 +26,8 @@ function glbTriangles(path) {
   const per = j.meshes.map(m => m.primitives.reduce((s, p) =>
     s + (p.indices !== undefined ? j.accessors[p.indices].count : j.accessors[p.attributes.POSITION].count) / 3, 0));
   const hasUV = j.meshes.every(m => m.primitives.every(p => p.attributes.TEXCOORD_0 !== undefined));
-  return { tris: j.nodes.reduce((s, n) => s + (n.mesh !== undefined ? per[n.mesh] : 0), 0), hasUV, images: (j.images || []).length };
+  return { tris: j.nodes.reduce((s, n) => s + (n.mesh !== undefined ? per[n.mesh] : 0), 0), hasUV, images: (j.images || []).length,
+    animations: (j.animations || []).map(a => a.name) };
 }
 
 test("Jede Datei in data/models.json existiert und ist eine gültige GLB", () => {
@@ -60,6 +62,22 @@ test("Jede Requisiten-id hat ein Modell oder einen Platzhalter", () => {
   Object.keys(RECIPES.parts).forEach(id => assert.ok(MODELS[id], id + ": gebaut, aber nicht in data/models.json"));
 });
 
+test("Jedes Volk hat eine Figur mit allen Animationen", () => {
+  const CHARS = read("data/characters.json");
+  CHARS.forEach(c => {
+    const m = MODELS[c.model];
+    assert.ok(m, c.id + ": Modell " + c.model + " fehlt in data/models.json");
+    assert.ok(m.file.startsWith("assets/figures/"), c.id + ": Figur gehört nach assets/figures/");
+    assert.equal(m.palette, false, c.id + ": Figuren behalten ihre eigene Textur");
+    const g = glbTriangles(new URL(m.file, root));
+    FIGURE_ANIMS.forEach(a => {
+      assert.ok(m.animations && m.animations[a], c.id + ": Zuordnung der Animation " + a + " fehlt");
+      assert.ok(g.animations.includes(m.animations[a]), c.id + ": Animation " + m.animations[a] + " fehlt in " + m.file);
+    });
+  });
+  Object.keys(RECIPES.figures || {}).forEach(id => assert.ok(MODELS[id], id + ": gebaut, aber nicht in data/models.json"));
+});
+
 test("Grenzen der Asset-Spezifikation (Warnungen)", (t) => {
   const warn = [];
   for (const [id, m] of Object.entries(MODELS)) {
@@ -67,6 +85,7 @@ test("Grenzen der Asset-Spezifikation (Warnungen)", (t) => {
     const bytes = statSync(path).size, { tris } = glbTriangles(path);
     if (bytes > MAX_BYTES) warn.push(id + ": " + Math.round(bytes / 1024) + " KB (über 1 MB)");
     if (m.file.includes("/props/") && tris > MAX_PROP_TRIS) warn.push(id + ": " + tris + " Dreiecke (über " + MAX_PROP_TRIS + ")");
+    if (m.file.includes("/figures/") && tris > MAX_FIGURE_TRIS) warn.push(id + ": " + tris + " Dreiecke (über " + MAX_FIGURE_TRIS + ")");
   }
   t.diagnostic("Modelle über den Grenzen der Asset-Spezifikation: " + (warn.length ? "" : "keine"));
   warn.forEach(w => t.diagnostic("  " + w));

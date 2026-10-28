@@ -286,5 +286,61 @@
       "dir": "props",
       "file": "trunk_large_A.gltf.glb"
     }
+  },
+  "figureSource": "assets/source/kaykit-adventurers/",
+  "figureNotes": "Figuren: Paketdatei mit eigener Textur. remove nennt Zubehörteile, die wegfallen (Waffen und Schilde, die das Volk nicht trägt); animations die Animationen, die bleiben.",
+  "figures": {
+    "zwerg": {
+      "file": "Knight.glb",
+      "remove": [
+        "1H_Sword_Offhand",
+        "Badge_Shield",
+        "Rectangle_Shield",
+        "Round_Shield",
+        "Spike_Shield",
+        "2H_Sword"
+      ],
+      "animations": [
+        "Idle",
+        "Walking_A",
+        "1H_Melee_Attack_Chop",
+        "Hit_A",
+        "Death_A",
+        "Interact"
+      ]
+    },
+    "elf": {
+      "file": "Rogue_Hooded.glb",
+      "remove": [
+        "Knife_Offhand",
+        "1H_Crossbow",
+        "2H_Crossbow",
+        "Throwable"
+      ],
+      "animations": [
+        "Idle",
+        "Walking_A",
+        "1H_Melee_Attack_Chop",
+        "Hit_A",
+        "Death_A",
+        "Interact"
+      ]
+    },
+    "mensch": {
+      "file": "Mage.glb",
+      "remove": [
+        "Spellbook",
+        "Spellbook_open",
+        "2H_Staff"
+      ],
+      "animations": [
+        "Idle",
+        "Walking_A",
+        "1H_Melee_Attack_Chop",
+        "Hit_A",
+        "Death_A",
+        "Interact"
+      ]
+    }
   }
 }

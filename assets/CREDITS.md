@@ -15,7 +15,15 @@ Quelle und Lizenz jeder fremden Datei (docs/GDD.md, Asset-Spezifikation).
 - Daraus gebaut (`npm run build:assets`): alle Dateien in `tiles/` und `props/`.
 - `textures/keller/dungeon_texture.png` ist eine umgefärbte Fassung der Paletten-Textur (`tools/palette-texture.py`).
 
-## three.js GLTFLoader (r128)
+## KayKit Character Pack: Adventurers 1.0
 
-- Datei: `vendor/three/GLTFLoader.js` aus dem npm-Paket three@0.128.0
+- Autor: Kay Lousberg (www.kaylousberg.com)
+- Lizenz: CC0 1.0 (Creative Commons Zero), siehe `source/kaykit-adventurers/LICENSE.txt`
+- Quelle: https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0, Commit `672074b73ba276876a19e8816ecdc5241817ab47`
+- Übernommene Dateien (in `source/kaykit-adventurers/`, aus `Characters/gltf/`): Knight, Mage, Rogue_Hooded
+- Daraus gebaut (`npm run build:assets`): `figures/zwerg.glb`, `figures/elf.glb`, `figures/mensch.glb`
+
+## three.js GLTFLoader und SkeletonUtils (r128)
+
+- Dateien: `vendor/three/GLTFLoader.js` und `vendor/three/SkeletonUtils.js` aus dem npm-Paket three@0.128.0
 - Lizenz: MIT, siehe `vendor/three/LICENSE`

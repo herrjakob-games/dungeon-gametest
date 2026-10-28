@@ -1,5 +1,5 @@
 {
-  "_info": "Zuordnung der Modelle (docs/GDD.md, Asset-Spezifikation). Pro id: file, scale (Zahl oder [x, y, z]), rotation (Grad [x, y, z]), offset ([x, y, z] in Kacheln, vor der Drehung), palette (true = Paletten-Textur des Themas), tint (Farbe, die das Modell einfärbt), lights (offset, color, intensity, distance), animations (ab Meilenstein 6b). Varianten heißen <id>_<variante>.",
+  "_info": "Zuordnung der Modelle (docs/GDD.md, Asset-Spezifikation). Pro id: file, scale (Zahl oder [x, y, z]), rotation (Grad [x, y, z]), offset ([x, y, z] in Kacheln, vor der Drehung), palette (true = Paletten-Textur des Themas), tint (Farbe, die das Modell einfärbt), lights (offset, color, intensity, distance), animations (Figuren: Name im Spiel → Name im Paket: idle, walk, attack, hit, death, interact). Varianten heißen <id>_<variante>.",
   "boden": {
     "file": "assets/tiles/boden.glb",
     "scale": 0.5,
@@ -267,5 +267,44 @@
     "file": "assets/props/souvenirkiste.glb",
     "scale": 0.5,
     "palette": true
+  },
+  "zwerg": {
+    "file": "assets/figures/zwerg.glb",
+    "scale": 0.33,
+    "palette": false,
+    "animations": {
+      "idle": "Idle",
+      "walk": "Walking_A",
+      "attack": "1H_Melee_Attack_Chop",
+      "hit": "Hit_A",
+      "death": "Death_A",
+      "interact": "Interact"
+    }
+  },
+  "elf": {
+    "file": "assets/figures/elf.glb",
+    "scale": 0.49,
+    "palette": false,
+    "animations": {
+      "idle": "Idle",
+      "walk": "Walking_A",
+      "attack": "1H_Melee_Attack_Chop",
+      "hit": "Hit_A",
+      "death": "Death_A",
+      "interact": "Interact"
+    }
+  },
+  "mensch": {
+    "file": "assets/figures/mensch.glb",
+    "scale": 0.42,
+    "palette": false,
+    "animations": {
+      "idle": "Idle",
+      "walk": "Walking_A",
+      "attack": "1H_Melee_Attack_Chop",
+      "hit": "Hit_A",
+      "death": "Death_A",
+      "interact": "Interact"
+    }
   }
 }

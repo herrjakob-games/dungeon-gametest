@@ -31,10 +31,10 @@ resize();
 
 // Feste Beleuchtung (Fackeln kommen pro Raum dazu)
 // Grundlicht nach Stilguide: Halbkugellicht, oben warmes Grau, unten das Grundlicht des Themas (setAmbient)
-const hemi = new THREE.HemisphereLight(0x9c8c80, 0x3a3048, 0.62);
+const hemi = new THREE.HemisphereLight(0x9c8c80, 0x3a3048, 0.32);
 scene.add(hemi);
 // Schwaches Licht von oben: der einzige Schattenwerfer neben höchstens einem weiteren (Stilguide: höchstens zwei)
-const sun = new THREE.DirectionalLight(0xffe0bc, 0.3);
+const sun = new THREE.DirectionalLight(0xffe0bc, 0.12);
 sun.position.set(8, 16, 5);
 sun.castShadow = true;
 sun.shadow.mapSize.set(2048, 2048);

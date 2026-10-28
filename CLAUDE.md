@@ -24,16 +24,17 @@ Endbildschirm, endlose Ebenen). Dazu kommt „Themen und Ebenen“: Themen je dr
 Lage- und Anzahlregeln, Bosse, Rastplatz und Händler. Monster, Bosse, Gegenstände der Stufen 5 und 6 und die
 Events der neuen Raumtypen sind Platzhalter (`"placeholder": true` bzw. Text „[Platzhalter]“), die das
 Content-Projekt ersetzt. Meilenstein 6a (echte Modelle für Umgebung und Requisiten des Kellers, Licht nach Stilguide)
-ist umgesetzt; was noch kein Modell hat, bleibt Platzhalter. Nächster Schritt ist Meilenstein 6b: Figuren und Animationen.
+ist umgesetzt; was noch kein Modell hat, bleibt Platzhalter. Meilenstein 6b (Figuren und Animationen) läuft: Die Spielfiguren der drei Völker kommen aus KayKit Adventurers
+(Stand und Laufen animiert); die Monster sind noch Grundformen.
 Die Liste aller Meilensteine steht im GDD.
 
 ## Technik
 
 - Kein Build-Schritt. Statische Dateien, direkt über GitHub Pages ausgeliefert.
 - Three.js r128 wird per `<script>` aus cdnjs geladen und ist als `window.THREE` verfügbar, der passende
-  `GLTFLoader` liegt in `vendor/three/`.
+  `GLTFLoader` und `SkeletonUtils` liegen in `vendor/three/`.
 - Modelle: `assets/` (Rohdateien der Pakete in `assets/source/`, Quellen in `assets/CREDITS.md`). `npm run build:assets`
-  baut aus `tools/asset-recipes.json` die Dateien in `assets/tiles/` und `assets/props/` (braucht einmal `npm install`);
+  baut aus `tools/asset-recipes.json` die Dateien in `assets/tiles/`, `assets/props/` und `assets/figures/` (braucht einmal `npm install`);
   das Spiel selbst braucht keinen Build-Schritt. Zuordnung in `data/models.json`. `tools/palette-texture.py` erzeugt
   die erste Fassung der Paletten-Textur.
   Die Spiellogik besteht aus ES-Modulen in `src/`, Einstieg ist `src/main.js`.
@@ -70,15 +71,15 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/roomTypes.js` | Raumtypen-Tabelle, befüllt aus `data/room-types.json` |
 | `src/decor.js` | Einrichtung als Daten: Requisiten-Größen, Platzierung (`center`, `wall-back`, `corner`, `free`, `around:`, `above:`), Wendeltreppen, Erreichbarkeit, Datenprüfung; rein logisch |
 | `src/props.js` | Requisiten und Wendeltreppen aus Grundformen (Platzhalter, wenn ein Modell fehlt) |
-| `src/models.js` | Modell-Lader: `data/models.json`, Paletten-Textur des Themas, Klone pro Instanz, Rückfall auf Platzhalter |
+| `src/models.js` | Modell-Lader: `data/models.json`, Paletten-Textur des Themas, Klone pro Instanz, Figuren mit Animationen (`makeFigureModel`), Rückfall auf Platzhalter |
 | `src/outline.js` | goldene Umrisslinie für anklickbare Objekte beim Überfahren mit der Maus |
 | `data/models.json` | Zuordnung der Modelle: Datei, Maßstab, Drehung, Versatz, Einfärbung (`tint`), Lichtpunkte |
 | `src/figurePlan.js` | Figuren im Raum: Figurenliste (Größe, Varianten), Platzierung für `figures` (inkl. `near:`), Platz im Kampf, Datenprüfung; rein logisch |
 | `src/monsterFigures.js` | Figuren der Monster und der Kröte aus Grundformen, Ersatzfigur für Monster ohne eigene Figur |
 | `src/roomFigures.js` | Figuren im Raum: erscheinen, laufen, wippen, zucken, versinken, huschen davon; `stay` |
 | `src/roomBuilder.js` | baut einen Raum als 3D-Szene: Boden, Wände, Türen, Fackeln, Wendeltreppe, Einrichtung (aus `decor.js` oder altes Muster) |
-| `src/player.js` | Spielfigur, Platzierung; `setFigure(volk)` tauscht das Modell |
-| `src/figures.js` | Platzhalterfiguren der Völker: Zwerg, Elf, Mensch (Grundformen) |
+| `src/player.js` | Spielfigur, Platzierung; `setFigure(volk)` tauscht das Modell (KayKit-Figur oder Platzhalter), `animateFigure` wechselt Stehen und Laufen |
+| `src/figures.js` | Platzhalterfiguren der Völker aus Grundformen (Rückfall, wenn ein Modell fehlt) |
 | `src/movement.js` | Laufbewegung entlang des Weges |
 | `src/events.js` | Event-Ablauf im Textfenster, Proben-Zuschlag, Fundstücke, Stufenaufstieg, Tod, Truhe, Boss, Rastplatz, Abstieg |
 | `src/combatUI.js` | Kampf im Textfenster |
@@ -104,7 +105,8 @@ Die Liste aller Meilensteine steht im GDD.
 - Grafik nach Stilguide „Knetkeller“ (GDD): Teile mit Modell kommen aus `data/models.json`, alle anderen bleiben
   Platzhalter aus Grundformen. Neues Modell einbinden: Datei nach `assets/props/<id>.glb`, Eintrag in `data/models.json`.
 - Licht: Halbkugellicht mit dem Grundlicht der Palette (`data/themes.json`, `palette`, `roomPalettes`), Fackeln neben
-  jeder Tür, höchstens zwei schattenwerfende Lichter pro Raum (heute nur das schwache Licht von oben).
+  jeder Tür, höchstens zwei schattenwerfende Lichter pro Raum (heute nur das schwache Licht von oben). Werte heute: Halbkugellicht 0,32, Licht von oben 0,12,
+  Fackeln 1,8 mit 6 Kacheln Reichweite; die Ecken liegen damit bei etwa 15 bis 35 % der hellsten Stelle am Boden.
 
 ## Zusammenarbeit mit Christian
 

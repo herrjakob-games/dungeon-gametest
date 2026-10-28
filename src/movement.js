@@ -2,7 +2,7 @@
 import { tw } from "./config.js";
 import { findPath } from "./pathfinding.js";
 import { state, walkable } from "./state.js";
-import { player, figure, faceTile } from "./player.js";
+import { player, figure, faceTile, animateFigure } from "./player.js";
 import { drawDots, clearDots, removeDot } from "./markers.js";
 import { setSteps, updatePos } from "./hud.js";
 
@@ -77,11 +77,13 @@ export function updateMovement(dt, t) {
       player.position.x += (dx / dist) * stepLen;
       player.position.z += (dz / dist) * stepLen;
     }
-    // Wippen beim Laufen
+    // Wippen beim Laufen (nur beim Platzhalter; ein Modell hat seine Laufanimation)
+    if (animateFigure(dt, true)) return;
     walkT += dt;
     figure.position.y = Math.abs(Math.sin(walkT * 11)) * 0.08;
     figure.rotation.z = Math.sin(walkT * 11) * 0.06;
   } else {
+    if (animateFigure(dt, false)) return;
     // Ruhiges Atmen im Stand
     figure.position.y *= 0.8;
     figure.rotation.z *= 0.8;

@@ -6,6 +6,7 @@ const THREE = window.THREE;
 
 let MODELS = {};
 const scenes = new Map();   // Datei → geladene Szene
+const clips = new Map();    // Datei → Animationen
 const missing = new Set();  // gemeldete ids
 const materials = new Map(); // Thema → Material mit Paletten-Textur
 let themeId = "keller";
@@ -42,7 +43,7 @@ export async function loadModels() {
   const loader = new THREE.GLTFLoader();
   const files = [...new Set(Object.values(MODELS).map(m => m.file))];
   await Promise.all(files.map(f => new Promise(resolve => {
-    loader.load(f, (gltf) => { scenes.set(f, gltf.scene); resolve(); }, undefined, () => resolve());
+    loader.load(f, (gltf) => { scenes.set(f, gltf.scene); clips.set(f, gltf.animations || []); resolve(); }, undefined, () => resolve());
   })));
   paletteMaterial(themeId);
 }
@@ -70,7 +71,10 @@ export function makeModel(id, variant, opts) {
   const entry = modelEntry(id, variant);
   if (!entry) return null;
   opts = opts || {};
-  const inner = scenes.get(entry.file).clone(true);
+  const src = scenes.get(entry.file);
+  // Figuren mit Skelett brauchen SkeletonUtils, sonst hängen die Klone am Skelett des Originals
+  const skinned = !!(clips.get(entry.file) || []).length;
+  const inner = skinned && THREE.SkeletonUtils ? THREE.SkeletonUtils.clone(src) : src.clone(true);
   const s = vec(entry.scale, 1), r = vec(entry.rotation, 0), o = entry.offset || [0, 0, 0];
   inner.scale.set(s[0], s[1], s[2]);
   inner.rotation.set(r[0] * Math.PI / 180, r[1] * Math.PI / 180, r[2] * Math.PI / 180);
@@ -82,6 +86,7 @@ export function makeModel(id, variant, opts) {
     else if (opts.unique) n.material = n.material.clone();
     n.castShadow = true;
     n.receiveShadow = true;
+    if (n.isSkinnedMesh) n.frustumCulled = false; // Grenzen stammen aus der Grundhaltung, beim Laufen sonst Flackern
   });
   const g = new THREE.Group();
   g.add(inner);
@@ -99,4 +104,35 @@ export function findPart(group, name) {
   let found = null;
   group.traverse(n => { if (!found && n.name === name) found = n; });
   return found;
+}
+
+/**
+ * Figur mit Animationen (docs/GDD.md, Asset-Spezifikation): Modell, Mixer und play(name) mit den Namen im Spiel
+ * (idle, walk, attack, hit, death, interact). Null, wenn es kein Modell gibt (dann Platzhalter aus Grundformen).
+ * play(name, { once: true }) spielt einmal und bleibt am Ende stehen (etwa death); danach update(dt) pro Frame.
+ */
+export function makeFigureModel(id) {
+  const entry = modelEntry(id);
+  if (!entry || !THREE.AnimationMixer) return null;
+  const object = makeModel(id);
+  const mixer = new THREE.AnimationMixer(object);
+  const list = clips.get(entry.file) || [];
+  const names = entry.animations || {};
+  let current = null, currentName = null;
+  function play(name, opts) {
+    opts = opts || {};
+    if (name === currentName && !opts.once) return;
+    const clip = THREE.AnimationClip.findByName(list, names[name] || name);
+    if (!clip) return;
+    const action = mixer.clipAction(clip);
+    action.reset();
+    action.setLoop(opts.once ? THREE.LoopOnce : THREE.LoopRepeat, Infinity);
+    action.clampWhenFinished = !!opts.once;
+    action.play();
+    if (current && current !== action) action.crossFadeFrom(current, 0.2, false);
+    current = action;
+    currentName = name;
+  }
+  play("idle");
+  return { object, mixer, play, update: (dt) => mixer.update(dt) };
 }
