@@ -11,6 +11,8 @@ import { closeDialog, isDialogOpen, isDialogModal, showDialog } from "./dialog.j
 import { initEvents, startRoomEvent, chestEvent, lockedDoorNote, startBoss, restEvent, runEvent, startFight } from "./events.js";
 import { updateFigures } from "./roomFigures.js";
 import { showGrid } from "./gridOverlay.js";
+import { loadModels } from "./models.js";
+import { setOutline } from "./outline.js";
 import { STAIRS_FOOT } from "./decor.js";
 import { openShop } from "./shopUI.js";
 import { themeFor } from "./world.js";
@@ -190,9 +192,16 @@ function pick(ev) {
 function setHoverObj(o) {
   if (state.hovered === o) return;
   const prev = state.hovered;
-  if (prev) prev.userData.hoverMats.forEach(m => { m.emissiveIntensity = m === prev.userData.baseGlow ? 0.25 : 0; });
+  if (prev) {
+    prev.userData.hoverMats.forEach(m => { m.emissiveIntensity = m === prev.userData.baseGlow ? 0.25 : 0; });
+    setOutline(prev, false);
+  }
   state.hovered = o;
-  if (o) o.userData.hoverMats.forEach(m => { m.emissiveIntensity = 0.45; });
+  if (o) {
+    // Leicht aufhellen; anklickbare Objekte (nicht Türen) bekommen dazu die goldene Umrisslinie
+    o.userData.hoverMats.forEach(m => { m.emissiveIntensity = m.map ? 0.18 : 0.45; });
+    if (o.userData.kind !== "door") setOutline(o, true);
+  }
 }
 
 const labelFor = (o) => {
@@ -263,6 +272,7 @@ renderer.domElement.addEventListener("wheel", (ev) => { ev.preventDefault(); zoo
 // Spieldaten aus data/ laden, dann den ersten Dungeon bauen
 try {
   await loadData();
+  await loadModels(); // Modelle aus data/models.json; was fehlt, bleibt Platzhalter
 } catch (e) {
   console.error(e);
   showDialog("Daten fehlen", "Die Spieldaten aus dem Ordner data/ konnten nicht geladen werden. Läuft das Spiel über einen Server (npm start)?", [], { modal: true });

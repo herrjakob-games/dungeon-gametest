@@ -5,6 +5,11 @@
   "description": "Isometrischer Dungeon-Crawler im Browser (Three.js), entwickelt mit Claude",
   "scripts": {
     "test": "node --test tests/*.test.mjs",
-    "start": "python3 -m http.server 8000"
+    "start": "python3 -m http.server 8000",
+    "build:assets": "node tools/build-assets.mjs"
+  },
+  "devDependencies": {
+    "@gltf-transform/core": "^4.5.1",
+    "@gltf-transform/functions": "^4.5.1"
   }
 }

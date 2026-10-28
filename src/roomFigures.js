@@ -132,6 +132,15 @@ export function combatFigure(monsterId) {
   }
   f.faceTo = boss && spot.meet ? spot.meet : state.pTile;
   fighter = f;
+  // Lesbarkeit (Stilguide): Gegner im Kampf mit rotem Bodenring
+  if (!f.ring) {
+    const size = figureInfo(monsterId).size;
+    f.ring = new THREE.Mesh(new THREE.RingGeometry(0.34 * size, 0.42 * size, 24),
+      new THREE.MeshBasicMaterial({ color: 0xc8432f, transparent: true, opacity: 0.8, depthWrite: false }));
+    f.ring.rotation.x = -Math.PI / 2;
+    f.ring.position.y = 0.025;
+    f.outer.add(f.ring);
+  }
   // Im Bossraum läuft auch die Spielfigur in die Mitte
   if (boss && spot.meet) moveTo(spot.meet[0], spot.meet[1]);
 }
@@ -153,6 +162,7 @@ export function killCombatFigure() {
   if (!fighter) return;
   unblock(fighter);
   forgetStay(fighter);
+  if (fighter.ring) fighter.ring.visible = false;
   fighter.sink = 0.001;
   fighter = null;
 }

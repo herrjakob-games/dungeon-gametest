@@ -137,46 +137,46 @@ Gilt für alle Modelle. Bei Paketteilen gilt sie für das Ergebnis im Spiel; Abw
 
 | id | Teil | Quelle | Lizenz | Anpassung | Status |
 | --- | --- | --- | --- | --- | --- |
-| dungeon\_texture | Paletten-Textur | DR `../texture/dungeon_texture.png` | CC0 | auf Knetkeller-Palette umfärben | offen |
-| boden | Bodenkachel | DR `floor_tile_small.gltf.glb`, zur Abwechslung `floor_tile_small_broken_A`, `_broken_B`, `_decorated` | CC0 | – | offen |
-| wand | Hohe Wand | DR `wall_half.gltf.glb` | CC0 | – | offen |
-| wand\_ecke | Wandecke | DR `wall_corner.gltf.glb` | CC0 | Versatz prüfen | offen |
-| sockel | Vordere Wand | DR `wall_half.gltf.glb` | CC0 | Höhe auf 0,25 Kacheln | offen |
-| sockel\_ecke | Sockelecke | DR `wall_corner.gltf.glb` | CC0 | Höhe auf 0,25 Kacheln | offen |
-| tuerrahmen | Türrahmen | DR `wall_doorway.glb` + 2× `wall_endcap.gltf.glb` | CC0 | zusammensetzen, Öffnung mittig auf der Türkachel | offen |
-| fackel | Wandfackel | DR `torch_mounted.gltf.glb` | CC0 | Lichtpunkt | offen |
+| dungeon\_texture | Paletten-Textur | DR `../texture/dungeon_texture.png` | CC0 | auf Knetkeller-Palette umfärben | im Repo |
+| boden | Bodenkachel | DR `floor_tile_small.gltf.glb`, zur Abwechslung `floor_tile_small_broken_A`, `_broken_B`, `_decorated` | CC0 | – | im Repo |
+| wand | Hohe Wand | DR `wall_half.gltf.glb` | CC0 | – | im Repo |
+| wand\_ecke | Wandecke | DR `wall_endcap.gltf.glb` (statt `wall_corner`, passt ins Raster) | CC0 | Endstück auf dem Eckfeld | im Repo |
+| sockel | Vordere Wand | DR `wall_half.gltf.glb` | CC0 | Höhe auf 0,25 Kacheln | im Repo |
+| sockel\_ecke | Sockelecke | DR `wall_endcap.gltf.glb` (statt `wall_corner`) | CC0 | Höhe auf 0,25 Kacheln | im Repo |
+| tuerrahmen | Türrahmen | DR `wall_doorway.glb` + 2× `wall_endcap.gltf.glb` | CC0 | zusammensetzen, Öffnung mittig auf der Türkachel | im Repo |
+| fackel | Wandfackel | DR `torch_mounted.gltf.glb` | CC0 | Lichtpunkt | im Repo |
 | schloss | Schloss | Platzhalter bleibt | – | rot nach Palette | Platzhalter |
-| saeule | Säule | DR `pillar.gltf.glb` | CC0 | – | offen |
-| saeule\_liegend | Umgestürzte Säule | DR `pillar.gltf.glb` | CC0 | liegend, 2 Kacheln lang | offen |
-| fass | Fass | DR `barrel_large.gltf.glb` | CC0 | – | offen |
-| fass\_gruppe | Fassgruppe | DR `barrel_small_stack.gltf.glb` | CC0 | prüfen, ob es als Gruppe aus 3 wirkt | offen |
-| kiste | Kiste | DR `box_large.gltf.glb` | CC0 | – | offen |
+| saeule | Säule | DR `pillar.gltf.glb` | CC0 | – | im Repo |
+| saeule\_liegend | Umgestürzte Säule | DR `pillar.gltf.glb` | CC0 | liegend, 2 Kacheln lang | im Repo |
+| fass | Fass | DR `barrel_large.gltf.glb` | CC0 | – | im Repo |
+| fass\_gruppe | Fassgruppe | drei Mal `fass` (DR `barrel_large`) auf den drei Kacheln der L-Form | CC0 | `barrel_small_stack` wirkt nicht wie 3 Fässer | im Repo |
+| kiste | Kiste | DR `box_large.gltf.glb` | CC0 | – | im Repo |
 | sack | Sack | KI-Generator | – | – | offen |
-| regal | Regal mit Krügen | DR `shelves.gltf.glb` + `bottle_A_brown`, `bottle_B_green` | CC0 | zusammensetzen, Faktor 1,0 (2 Kacheln breit) | offen |
+| regal | Regal mit Krügen | DR `shelves.gltf.glb` + `bottle_A_brown`, `bottle_B_green` | CC0 | zusammensetzen, Faktor 1,0 (2 Kacheln breit) | im Repo |
 | herd | Herd | KI-Generator | – | Lichtpunkt | offen |
-| tisch | Tisch | DR `table_long.gltf.glb` | CC0 | auf 3 Kacheln strecken; Würfel fehlen | offen |
-| tisch\_kueche | Küchentisch | DR `table_long.gltf.glb` + `plate_stack`, `bottle_A_brown` | CC0 | zusammensetzen, strecken | offen |
-| hocker | Hocker | DR `stool.gltf.glb` | CC0 | – | offen |
-| tafel | Tafel | DR `table_long_tablecloth.gltf.glb` + `plate_food_A`, `plate_food_B`, `candle_triple` | CC0 | auf 5 Kacheln strecken, Deko aufsetzen | offen |
-| stuhl | Stuhl | DR `chair.gltf.glb` | CC0 | – | offen |
+| tisch | Tisch | DR `table_long.gltf.glb` | CC0 | auf 3 Kacheln strecken; Würfel fehlen | im Repo |
+| tisch\_kueche | Küchentisch | DR `table_long.gltf.glb` + `plate_stack`, `bottle_A_brown` | CC0 | zusammensetzen, strecken | im Repo |
+| hocker | Hocker | DR `stool.gltf.glb` | CC0 | – | im Repo |
+| tafel | Tafel | DR `table_long_tablecloth.gltf.glb` + `plate_food_A`, `plate_food_B`, `candle_triple` | CC0 | auf 5 Kacheln strecken, Deko aufsetzen | im Repo |
+| stuhl | Stuhl | DR `chair.gltf.glb` | CC0 | – | im Repo |
 | kronleuchter | Kronleuchter | KI-Generator | – | Lichtpunkt | offen |
 | anrichte | Anrichte | KI-Generator | – | – | offen |
-| waffenstaender | Waffenständer | DR `sword_shield.gltf.glb` | CC0 | Wandhalterung | offen |
+| waffenstaender | Waffenständer | DR `sword_shield.gltf.glb` | CC0 | Wandhalterung | im Repo |
 | brunnen | Brunnen | KI-Generator | – | – | offen |
 | moos | Moos | Platzhalter bleibt | – | flach, Moos-Farbe | Platzhalter |
 | pfuetze | Pfütze | Platzhalter bleibt | – | flach, Kühl-Farbe | Platzhalter |
 | sarkophag | Sarkophag | KI-Generator | – | – | offen |
-| kerzen | Kerzengruppe | DR `candle_triple.gltf.glb` | CC0 | Lichtpunkt | offen |
+| kerzen | Kerzengruppe | DR `candle_triple.gltf.glb` | CC0 | Lichtpunkt | im Repo |
 | knochen | Knochen | KI-Generator | – | – | offen |
-| geroell | Geröll | DR `rubble_half.gltf.glb` | CC0 | auf 1 Kachel verkleinern | offen |
-| goldhaufen | Goldhaufen | DR `coin_stack_large.gltf.glb` | CC0 | – | offen |
-| truhe | Truhe | DR `chest.glb` | CC0 | Deckel ist eigenes Teil, Öffnen per Code | offen |
+| geroell | Geröll | DR `rubble_half.gltf.glb` | CC0 | auf 1 Kachel verkleinern | im Repo |
+| goldhaufen | Goldhaufen | DR `coin_stack_large.gltf.glb` | CC0 | – | im Repo |
+| truhe | Truhe | DR `chest.glb` | CC0 | Deckel ist eigenes Teil, Öffnen per Code | im Repo |
 | lagerfeuer | Lagerfeuer | KI-Generator | – | Lichtpunkt | offen |
 | pult | Pult mit Gästebuch | KI-Generator | – | – | offen |
 | wegweiser | Wegweiser | KI-Generator | – | – | offen |
 | zettelbrett | Zettelbrett | KI-Generator | – | – | offen |
 | bank | Bank | KI-Generator | – | – | offen |
-| souvenirkiste | Souvenirkiste | DR `trunk_large_A.gltf.glb` | CC0 | Schild später per KI oder weglassen | offen |
+| souvenirkiste | Souvenirkiste | DR `trunk_large_A.gltf.glb` | CC0 | Schild später per KI oder weglassen | im Repo |
 | kaeseberg | Käseberg mit Thron | KI-Generator | – | 2×2, Lichtpunkt | offen |
 | wendeltreppe\_hoch | Wendeltreppe nach oben | KI-Generator | – | 3×3 in der Nordwest-Ecke, Lichtpunkt | offen |
 | wendeltreppe\_runter | Wendeltreppe nach unten | KI-Generator | – | 3×3 in der Nordwest-Ecke, anklickbar, Lichtpunkt | offen |

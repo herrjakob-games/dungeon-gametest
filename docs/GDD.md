@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.8 · Oct 28, 2026 · @Christian
+Version 2.9 · Oct 28, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.9 | 28.10.2026 | Meilenstein 6a umgesetzt: Zuordnung kennt zusätzlich `tint` (Einfärben eines Modells); Wandecken aus KayKit-Endstücken; Fackeln an vorderen Türen auf einem Pfosten |
 | 2.8 | 28.10.2026 | Stilguide „Knetkeller“ und Asset-Spezifikation aus dem Art-Direction-Projekt; Maßstab KayKit 0,5, Wände 2 Kacheln hoch; Zuordnung der Modelle über data/models.json; Wendeltreppen-Modelle 3×3; Zwerg aus KayKit Knight; Goblin aus Goblin Lowpoly Assets, Mimik aus der Truhe des KayKit Dungeon Pack |
 | 2.7 | 28.10.2026 | Raumgröße 9×9 statt 11×11, Türen auf der fünften Kachel; Kachelnamen x\|y; Wendeltreppen 3×3 in der Nordwest-Ecke statt 5×5 in der Mitte; Startposition 4\|4; Einrichtung mit Pflichtstücken (`required`) und festem Korrekturablauf |
 | 2.6 | 28.10.2026 | Meilenstein 6 geteilt in 6a (Umgebung) und 6b (Figuren); Stilguide kommt aus dem Art-Direction-Projekt; Modelle aus CC0-Paketen plus KI-Generator; volles Animationsset |
@@ -402,8 +403,8 @@ Gilt für alle Modelle. Bei Paketteilen gilt sie für das Ergebnis im Spiel; Abw
 - **Animationen:** Idle, Walk, Attack, Hit, Death, Interact. Heißen sie im Paket anders, ordnet `data/models.json` sie zu.
 - **Dateinamen:** id aus dem GDD; Varianten als `id_variante.glb`, etwa `fass_gruppe.glb`. Fehlt die Variante, gilt die Grunddatei. Eine Variante kann auch nur eine andere Animation sein (Skelett sitzend).
 - **Ordner:** `assets/tiles/` (Boden, Wand, Sockel, Ecken, Türrahmen), `assets/props/`, `assets/figures/`, `assets/textures/`. Rohdateien der Pakete in `assets/source/`.
-- **Bauteile:** `boden`, `wand`, `wand_ecke`, `sockel`, `sockel_ecke`, `tuerrahmen`, `fackel`, `schloss`.
-- **Zuordnung:** `data/models.json` hält pro id Datei, Maßstab (Zahl oder [x, y, z]), Drehung, Versatz, Animationszuordnung und Lichtpunkte (Position relativ zum Ursprung, Farbe, Stärke, Reichweite).
+- **Bauteile:** `boden`, `wand`, `wand_ecke`, `sockel`, `sockel_ecke`, `tuerrahmen`, `fackel`, `schloss`. Der Türrahmen hinten deckt drei Kacheln (Tür mittig). Neben jeder Tür hängt eine Fackel; an den vorderen Türen steht sie auf einem Pfosten, weil der Sockel zu niedrig ist.
+- **Zuordnung:** `data/models.json` hält pro id Datei, Maßstab (Zahl oder [x, y, z]), Drehung, Versatz, Einfärbung (`tint`, Farbe, mit der die Paletten-Textur multipliziert wird, etwa Holzton für graue Kisten), Animationszuordnung und Lichtpunkte (Position relativ zum Ursprung, Farbe, Stärke, Reichweite).
 - **Build-Skript:** `tools/build-assets.mjs` setzt Teile aus Paketen zu einer GLB zusammen (Tafel, Regal, Türrahmen) und speckt Paketfiguren ab (nur benötigte Animationen und Zubehörteile, komprimiert).
 - **Platzhalter:** Fehlt eine Datei oder lädt sie nicht, baut der Code das Teil wie bisher aus Grundformen.
 - **Quellen der Figuren im Keller:** Mensch KayKit `Mage`, Elf `Rogue_Hooded`, Zwerg `Knight`, Händler `Rogue` umgefärbt (KayKit Adventurers); Skelett KayKit Skeletons; Goblin aus Goblin Lowpoly Assets (standout7, itch.io); Mimik aus der Truhe des KayKit Dungeon Pack (itch.io); Ratten und Kröte über den KI-Generator.
@@ -574,3 +575,4 @@ Sieben Schritte, jeder endet mit etwas Spielbarem, das Christian im Browser test
 - [x] Asset-Spezifikation mit Zuordnung über data/models.json, Maßstab KayKit 0,5, Wände 2 Kacheln hoch
 - [x] Modelle der Wendeltreppen 3×3 in der Nordwest-Ecke (wie GDD 2.7), Türrahmen auf der fünften Kachel
 - [x] Zwerg aus KayKit Knight; Goblin aus Goblin Lowpoly Assets (standout7), Mimik aus der Truhe des KayKit Dungeon Pack
+- [x] Meilenstein 6a: Modelle über `data/models.json` mit Einfärbung `tint`; Fackeln an vorderen Türen auf einem Pfosten

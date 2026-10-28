@@ -262,6 +262,13 @@ export function validateData(data) {
     if (!th.name) err(w, "Name fehlt");
     if (!(Number.isInteger(th.stage) && th.stage >= 1 && th.stage < MAX_ITEM_STAGE)) err(w, "Stufe muss zwischen 1 und 5 liegen");
     if (!Number.isInteger(th.dcBonus)) err(w, "dcBonus fehlt");
+    // Palette nach Stilguide: Boden, Wand, Akzent, Fackel, Grundlicht als "#rrggbb"
+    const hex = (v) => /^#[0-9a-fA-F]{6}$/.test(v);
+    if (!th.palette || !["floor", "wall", "accent", "torch", "ambient"].every(k => hex(th.palette[k]))) err(w, "palette braucht floor, wall, accent, torch und ambient als Farbe");
+    Object.entries(th.roomPalettes || {}).forEach(([t, pal]) => {
+      if (!data.roomTypes[t]) err(w, "roomPalettes für unbekannten Raumtyp " + t);
+      Object.values(pal).forEach(v => { if (!hex(v)) err(w, "roomPalettes " + t + ": " + v + " ist keine Farbe"); });
+    });
     [th.startNeighbor].concat(th.roomTypes || []).forEach(t => { if (!data.roomTypes[t]) err(w, "unbekannter Raumtyp " + t); });
     [th.boss].concat(th.endlessBosses || []).concat(th.monsters || []).forEach(m => { if (!data.monsters[m]) err(w, "unbekanntes Monster " + m); });
     Object.entries(th.overrides || {}).forEach(([t, o]) => {

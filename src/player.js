@@ -18,6 +18,15 @@ export function setFigure(volk) {
 }
 
 player.add(figure);
+// Lesbarkeit (Stilguide): heller Bodenring und ein kleiner, schwacher Lichtschein um die Spielfigur
+const ring = new THREE.Mesh(new THREE.RingGeometry(0.3, 0.38, 24),
+  new THREE.MeshBasicMaterial({ color: 0xf3e6c8, transparent: true, opacity: 0.55, depthWrite: false }));
+ring.rotation.x = -Math.PI / 2;
+ring.position.y = 0.02;
+player.add(ring);
+const glow = new THREE.PointLight(0xffe2b8, 0.45, 2.8, 2);
+glow.position.y = 1.1;
+player.add(glow);
 scene.add(player);
 
 export function placePlayer(tile, facing) {
