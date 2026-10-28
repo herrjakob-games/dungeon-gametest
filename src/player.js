@@ -1,7 +1,9 @@
-// Spielfigur. Die Modelle der Völker stehen in figures.js (Platzhalter bis Meilenstein 6).
+// Spielfigur. Modelle der Völker aus data/models.json (KayKit Adventurers, mit Animationen); fehlt eins,
+// baut figures.js den Platzhalter aus Grundformen.
 // Die Gruppe "figure" schaut in Richtung +z.
 import { tw } from "./config.js";
 import { buildFigure } from "./figures.js";
+import { makeFigureModel } from "./models.js";
 import { scene } from "./scene.js";
 import { state } from "./state.js";
 const THREE = window.THREE;
@@ -9,12 +11,23 @@ const THREE = window.THREE;
 export const player = new THREE.Group();
 export const figure = new THREE.Group();
 
+let anim = null; // Modell mit Animationen, null beim Platzhalter
 figure.add(buildFigure("zwerg"));
 
 // Figur auf ein anderes Volk umstellen ("zwerg", "elf", "mensch"), z. B. nach der Volkswahl
 export function setFigure(volk) {
   while (figure.children.length) figure.remove(figure.children[0]);
-  figure.add(buildFigure(volk));
+  figure.position.set(0, 0, 0); figure.rotation.set(0, 0, 0); figure.scale.set(1, 1, 1);
+  anim = makeFigureModel(volk);
+  figure.add(anim ? anim.object : buildFigure(volk));
+}
+
+// Pro Frame: Laufen oder Stehen. true, wenn das Modell selbst animiert ist (dann kein Wippen der Grundformen)
+export function animateFigure(dt, moving) {
+  if (!anim) return false;
+  anim.play(moving ? "walk" : "idle");
+  anim.update(dt);
+  return true;
 }
 
 player.add(figure);
@@ -24,7 +37,7 @@ const ring = new THREE.Mesh(new THREE.RingGeometry(0.3, 0.38, 24),
 ring.rotation.x = -Math.PI / 2;
 ring.position.y = 0.02;
 player.add(ring);
-const glow = new THREE.PointLight(0xffe2b8, 0.45, 2.8, 2);
+const glow = new THREE.PointLight(0xffe2b8, 0.8, 2.6, 2);
 glow.position.y = 1.1;
 player.add(glow);
 scene.add(player);

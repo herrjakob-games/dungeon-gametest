@@ -24,7 +24,7 @@ def mix(a, b, t):
 
 def shade(c, l):
     # Helligkeitsverlauf der Farbfläche behalten: dunkle Stellen dunkler, helle heller, gedeckt
-    f = 0.6 + 1.0 * l
+    f = 0.45 + 1.1 * l
     return tuple(max(0, min(255, round(v * f))) for v in c)
 
 def recolor(r, g, b):
