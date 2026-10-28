@@ -10,7 +10,7 @@ import { scene } from "./scene.js";
 import { state } from "./state.js";
 import { buildFigure } from "./figures.js";
 import * as P from "./props.js";
-import { PROPS, planDecor, decorFor, centerFeature, STAIRS_TILES } from "./decor.js";
+import { PROPS, planDecor, decorFor, centerFeature, STAIRS_TILES, STAIRS_SIZE, STAIRS_CENTER } from "./decor.js";
 import { syncRoom } from "./roomFigures.js";
 const THREE = window.THREE;
 
@@ -49,7 +49,7 @@ export function buildRoom(id) {
   buildFloor(type);
   buildWalls(room);
   DIRKEYS.forEach(d => { if (room.doors & DIR[d].bit) makeDoor(d); });
-  [[tw(1), true], [tw(9), true], [tw(1), false], [tw(9), false]].forEach(([p, north]) => makeTorch(p, north, torch));
+  [[tw(1), true], [tw(N - 2), true], [tw(1), false], [tw(N - 2), false]].forEach(([p, north]) => makeTorch(p, north, torch));
   if (feature === "up" || feature === "down") makeStairs(feature);
   state.decorPlan = null;
   if (spec) placeDecor(spec, room, feature, id);
@@ -173,7 +173,7 @@ function scatterRubble(skipCenter) {
   for (let k = 0; k < 9; k++) {
     const r = new THREE.Mesh(new THREE.DodecahedronGeometry(0.06 + rnd() * 0.08), stone());
     const x = Math.floor(rnd() * N), z = Math.floor(rnd() * N);
-    if (skipCenter && Math.abs(x - MID) <= 2 && Math.abs(z - MID) <= 2) continue;
+    if (skipCenter && x < STAIRS_SIZE && z < STAIRS_SIZE) continue;
     r.position.set(tw(x) + (rnd() - 0.5) * 0.7, 0.04, tw(z) + (rnd() - 0.5) * 0.7);
     r.castShadow = true;
     add(r);
@@ -193,8 +193,8 @@ const lightCtx = () => ({ flicker: state.torches });
 
 function makeStairs(dir) {
   STAIRS_TILES.forEach(t => block(t[0], t[1]));
-  if (dir === "up") { at(P.wendeltreppe_hoch(null, lightCtx()), MID, MID); return; }
-  const g = at(P.wendeltreppe_runter(null, lightCtx()), MID, MID);
+  if (dir === "up") { at(P.wendeltreppe_hoch(null, lightCtx()), ...STAIRS_CENTER); return; }
+  const g = at(P.wendeltreppe_runter(null, lightCtx()), ...STAIRS_CENTER);
   const inner = g.children[0];
   g.userData = { kind: "exit", tiles: STAIRS_TILES, hoverMats: inner.userData.hoverMats, baseGlow: inner.userData.baseGlow };
   state.interactables.push(g);
@@ -214,16 +214,17 @@ function placeDecor(spec, room, feature, id) {
 }
 
 // ---------- Bisheriges Einrichtungsmuster (Raumtypen ohne decor) ----------
-const CORNERS = [[1, 1], [9, 1], [1, 9], [9, 9]];
-const QUADS = [[2, 2], [8, 2], [2, 8], [8, 8]];
-const FOUR_PILLARS = [[3, 3], [7, 3], [3, 7], [7, 7]];
+// Plätze für einen 9×9-Raum, alle außerhalb des Kreuzes aus Reihe und Spalte 3 bis 5 (gezählt ab 0)
+const CORNERS = [[0, 0], [N - 1, 0], [0, N - 1], [N - 1, N - 1]];
+const QUADS = [[1, 1], [N - 2, 1], [1, N - 2], [N - 2, N - 2]];
+const FOUR_PILLARS = [[2, 2], [N - 3, 2], [2, N - 3], [N - 3, N - 3]];
 
 // t: Einrichtung ("layout") des Raumtyps aus data/room-types.json
 function furnish(t, id) {
   if (t === "pillars") {
     FOUR_PILLARS.forEach(p => pillar(...p));
   } else if (t === "boss") {
-    CORNERS.forEach(p => pillar(...p)); // die Mitte bleibt als Arena frei, nach dem Sieg steht dort die Treppe
+    CORNERS.slice(1).forEach(p => pillar(...p)); // die Nordwest-Ecke bleibt frei, nach dem Sieg steht dort die Treppe
   } else if (t === "rast") {
     makeCampfire(pickOne(QUADS), id);
     barrelCluster(pickOne(CORNERS));
@@ -234,20 +235,20 @@ function furnish(t, id) {
     crate(q[0] + sx, q[1]); crate(q[0] - sx, q[1]);
     barrelCluster(pickOne(CORNERS.filter(c => Math.abs(c[0] - q[0]) > 2 || Math.abs(c[1] - q[1]) > 2)));
   } else if (t === "start") {
-    FOUR_PILLARS.forEach(p => pillar(...p)); // in der Vorkammer steht dort die Treppe, die Säulen entfallen dann
-    barrelCluster(pickOne(CORNERS));
+    FOUR_PILLARS.forEach(p => pillar(...p)); // in der Nordwest-Ecke steht die Treppe, die Säule dort entfällt
+    barrelCluster(pickOne(CORNERS.slice(1)));
   } else if (t === "halle") {
     const pts = rnd() < 0.5
-      ? [[1, 2], [3, 2], [7, 2], [9, 2], [1, 8], [3, 8], [7, 8], [9, 8]]
-      : [[2, 1], [2, 3], [2, 7], [2, 9], [8, 1], [8, 3], [8, 7], [8, 9]];
+      ? [[0, 2], [2, 2], [6, 2], [8, 2], [0, 6], [2, 6], [6, 6], [8, 6]]
+      : [[2, 0], [2, 2], [2, 6], [2, 8], [6, 0], [6, 2], [6, 6], [6, 8]];
     pts.forEach(p => pillar(...p));
     if (rnd() < 0.5) barrelCluster(pickOne(CORNERS));
   } else if (t === "gruft") {
-    [[3, 2], [7, 2], [3, 7], [7, 7]].forEach(p => sarcophagus(...p));
+    [[2, 1], [6, 1], [2, 6], [6, 6]].forEach(p => sarcophagus(...p));
     shuffled(CORNERS).slice(0, 2).forEach(p => pillar(...p));
   } else if (t === "wache") {
     const order = shuffled([0, 1, 2, 3]);
-    const q = [[1, 2], [7, 2], [1, 8], [7, 8]][order[0]];
+    const q = [[0, 1], [6, 1], [0, 7], [6, 7]][order[0]];
     table([[q[0], q[1]], [q[0] + 1, q[1]], [q[0] + 2, q[1]]]);
     [[q[0], q[1] - 1], [q[0] + 2, q[1] - 1], [q[0] + 1, q[1] + 1]].forEach(p => stool(...p));
     barrelCluster(CORNERS[order[1]]);

@@ -32,7 +32,8 @@ Die Liste aller Meilensteine steht im GDD.
 - Three.js r128 wird per `<script>` aus cdnjs geladen und ist als `window.THREE` verfügbar.
   Die Spiellogik besteht aus ES-Modulen in `src/`, Einstieg ist `src/main.js`.
 - Lokal starten: `npm start` und dann http://localhost:8000 öffnen (Module brauchen einen Server).
-- Testmodus, lokal und auf GitHub Pages: `?event=<id>` startet das Event im ersten passenden Raum, `?fight=<monster-id>` einen Kampf
+- Testmodus, lokal und auf GitHub Pages: `?event=<id>` startet das Event im ersten passenden Raum, `?room=<raumtyp-id>` betritt
+  den ersten passenden Raum (Bossraum mit `&sieg=1` nach dem Sieg), `?grid=1` zeigt die Kachelnamen x|y, `?fight=<monster-id>` einen Kampf
   in der Vorkammer, optional `&volk=zwerg|elf|mensch`.
 - Tests: `npm test` (Node, ohne Abhängigkeiten). Reine Logik wie Generator und Wegfindung bleibt
   frei von Three.js, damit sie testbar ist. Für neue Logik passende Tests in `tests/` ergänzen.
@@ -41,7 +42,7 @@ Die Liste aller Meilensteine steht im GDD.
 
 | Datei | Inhalt |
 | --- | --- |
-| `src/config.js` | Konstanten: Raumgröße 11×11, Türen als Bitmaske, Raster-Helfer |
+| `src/config.js` | Konstanten: Raumgröße 9×9, Türen als Bitmaske, Raster-Helfer, Kachelnamen x\|y (`tileName`) |
 | `src/generator.js` | Ebenen-Generator (Größe nach Tiefe, Random Walk, Raumtypen nach Thema, Lage- und Anzahlregeln), rein logisch |
 | `src/world.js` | Themen und Ebenen: Thema je Tiefe, Größe, Anteil feindlicher Räume, Boss, Rastplatz, Monster-Wachstum; rein logisch |
 | `src/shop.js` | Händler: Preise, Angebot, Kaufen, Verkaufen; rein logisch |
@@ -78,15 +79,17 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/screens.js` | Volkswahl und Endbildschirm |
 | `src/dialog.js` | Textfenster mit Optionen, Würfelergebnis und Effektzeilen |
 | `src/hud.js` | Infotafel (Werte der Figur) und Minimap |
-| `src/main.js` | Ablauf, Raumwechsel, Schnellreise, Eingabe, Spielschleife |
+| `src/gridOverlay.js` | Testhilfe `?grid=1`: Kachelnamen x\|y auf dem Boden |
+| `src/main.js` | Ablauf, Raumwechsel, Schnellreise, Eingabe, Spielschleife, Testmodus |
 
 ## Feste Regeln im Code
 
 - Einrichtung als Daten (`decor`): Türkacheln und die Kachel davor bleiben frei, jede Tür und jedes anklickbare
   Objekt bleibt erreichbar; passt ein Requisit nicht, lässt `decor.js` es weg. `tests/decor.test.mjs` prüft das
-  für alle Varianten und Türkombinationen. Das alte Muster in `furnish()` lässt weiter das Kreuz aus Reihe und
-  Spalte 4 bis 6 (gezählt ab 0) frei.
-- Wendeltreppen belegen die Raummitte, gezählt ab 0 die Kacheln 3 bis 7 (im GDD ab 1 gezählt: 4 bis 8).
+  für alle Varianten und alle 16 Türkombinationen, dazu die Pflichtstücke (`required`); Korrekturablauf siehe GDD.
+  Das alte Muster in `furnish()` lässt das Kreuz aus Reihe und Spalte 3 bis 5 (gezählt ab 0) frei.
+- Kacheln heißen im GDD x|y, ab 1 gezählt; im Code zählen x und z ab 0 (`tileName(x, z)` übersetzt).
+- Wendeltreppen belegen die Nordwest-Ecke 1|1 bis 3|3 (gezählt ab 0: 0 bis 2), Start auf 4|4.
 - Alles, was reproduzierbar sein muss (Dungeon, Einrichtung), läuft über Seeds aus `rng.js`.
   `Math.random()` nur für Würfelwürfe im Spiel.
 - Grafik bleibt bis Meilenstein 6 im Platzhalter-Stil (Grundformen, Flat Shading).

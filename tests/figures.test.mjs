@@ -9,7 +9,7 @@ const { buildMonsterFigure } = await import("../src/monsterFigures.js");
 const { FIGURE_INFO, planFigures, combatSpot, checkFigures, isFigure } = await import("../src/figurePlan.js");
 const { planDecor, decorFor, centerFeature, doorTiles, STAIRS_TILES } = await import("../src/decor.js");
 const { indexData, validateData } = await import("../src/eventLogic.js");
-const { key, MID } = await import("../src/config.js");
+const { key, MID, N } = await import("../src/config.js");
 
 const read = (f) => JSON.parse(readFileSync(new URL("../data/" + f, import.meta.url), "utf8"));
 const DATA = indexData({
@@ -88,7 +88,7 @@ test("count, variant und stay werden übernommen; fehlendes Requisit: freie Kach
   const figs = planFigures([
     { figure: "rat", place: "near:tafel", count: 3 },
     { figure: "skeleton", place: "free", variant: "sitzend", stay: true }
-  ], { placements: [], blocked: new Set(), doors: 15, player: [5, 9], rand: Math.random });
+  ], { placements: [], blocked: new Set(), doors: 15, player: [MID, N - 1], rand: Math.random });
   assert.equal(figs.filter(f => f.figure === "rat").length, 3);
   const sk = figs.find(f => f.figure === "skeleton");
   assert.deepEqual([sk.variant, sk.stay], ["sitzend", true]);
@@ -106,12 +106,12 @@ test("Kampf: Gegner neben der Spielfigur, im Bossraum in der Raummitte", () => {
   for (let dx = -1; dx <= 1; dx++) for (let dz = -1; dz <= 1; dz++) if (dx || dz) blocked.add(key(p[0] + dx, p[1] + dz));
   const s2 = combatSpot("rat", { blocked, doors: 15, player: p });
   assert.ok(!blocked.has(key(...s2.tiles[0])));
-  const boss = combatSpot("monsterratte", { blocked: new Set(), doors: 15, player: [5, 10], boss: true });
+  const boss = combatSpot("monsterratte", { blocked: new Set(), doors: 15, player: [MID, N - 1], boss: true });
   assert.equal(boss.tiles.length, 4, "2×2 Kacheln");
   assert.ok(Math.abs(boss.cx - MID) <= 0.5 && Math.abs(boss.cz - MID) <= 0.5, "in der Raummitte");
   assert.deepEqual(boss.meet, [MID, MID + 1], "die Spielfigur kommt in die Mitte");
-  const big = combatSpot("monsterratte", { blocked: new Set(), doors: 15, player: [5, 9] });
-  assert.ok(big.tiles.every(t => !(t[0] === 5 && t[1] === 9)));
+  const big = combatSpot("monsterratte", { blocked: new Set(), doors: 15, player: [MID, N - 1] });
+  assert.ok(big.tiles.every(t => !(t[0] === MID && t[1] === N - 1)), "nicht auf der Spielfigur");
 });
 
 test("Datenprüfung des Felds figures", () => {

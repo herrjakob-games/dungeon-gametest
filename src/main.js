@@ -1,5 +1,5 @@
 // Einstiegspunkt: Spielablauf, Raumwechsel, Eingabe und Spielschleife.
-import { N, MID, DIR, key, inBounds, reduceMotion } from "./config.js";
+import { N, MID, DIR, key, inBounds, reduceMotion, tileName } from "./config.js";
 import { generate } from "./generator.js";
 import { state, walkable } from "./state.js";
 import { renderer, scene, camera, zoomBy } from "./scene.js";
@@ -10,6 +10,7 @@ import { moveTo, stopMoving, approachTile, updateMovement } from "./movement.js"
 import { closeDialog, isDialogOpen, isDialogModal, showDialog } from "./dialog.js";
 import { initEvents, startRoomEvent, chestEvent, lockedDoorNote, startBoss, restEvent, runEvent, startFight } from "./events.js";
 import { updateFigures } from "./roomFigures.js";
+import { showGrid } from "./gridOverlay.js";
 import { STAIRS_FOOT } from "./decor.js";
 import { openShop } from "./shopUI.js";
 import { themeFor } from "./world.js";
@@ -217,7 +218,7 @@ renderer.domElement.addEventListener("pointermove", (ev) => {
     setHoverObj(null);
     const [x, z] = h.tile;
     showHoverTile(x, z, walkable(x, z));
-    setHover("Kachel " + (x + 1) + " / " + (z + 1));
+    setHover("Kachel " + tileName(x, z));
   } else {
     setHoverObj(null);
     hoverMesh.visible = false;
@@ -273,17 +274,21 @@ startDungeon(randomSeed(), true);
 updateHud();
 renderInventory();
 if (!devStart()) chooseCharacter();
+if (new URLSearchParams(location.search).get("grid") === "1") showGrid(); // Testhilfe: Kachelnamen x|y
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawMinimap);
 
 // ---------- Testmodus (lokal und auf GitHub Pages) ----------
-// ?event=<id> startet das Event im ersten passenden Raum, ?fight=<monster-id> einen Kampf in der Vorkammer.
-// Optional ?volk=zwerg|elf|mensch. Ergebnis: true, wenn der Testmodus übernommen hat.
+// ?event=<id> startet das Event im ersten passenden Raum, ?fight=<monster-id> einen Kampf in der Vorkammer,
+// ?room=<raumtyp-id> betritt den ersten passenden Raum ohne Event (im Bossraum mit &sieg=1 nach dem Sieg),
+// ?grid=1 zeigt die Kachelnamen x|y. Optional &volk=zwerg|elf|mensch.
+// Ergebnis: true, wenn der Testmodus übernommen hat.
 function devStart() {
   const q = new URLSearchParams(location.search);
-  const ev = q.get("event"), monster = q.get("fight");
-  if (!ev && !monster) return false;
+  const ev = q.get("event"), monster = q.get("fight"), room = q.get("room");
+  if (!ev && !monster && !room) return false;
   if (ev && !DATA.events[ev]) { console.error("Testmodus: unbekanntes Event " + ev); return false; }
   if (monster && !DATA.monsters[monster]) { console.error("Testmodus: unbekanntes Monster " + monster); return false; }
+  if (room && !DATA.roomTypes[room]) { console.error("Testmodus: unbekannter Raumtyp " + room); return false; }
   const def = DATA.characters[q.get("volk")] || Object.values(DATA.characters)[0];
   state.player = newCharacter(def);
   state.stats = { rooms: 0 };
@@ -293,6 +298,8 @@ function devStart() {
     state.depth = 1;
     startDungeon(randomSeed(), true);
     startFight(monster);
+  } else if (room) {
+    if (!devGoto(room, room === "boss" ? "keller" : null, q.get("sieg") === "1")) console.error("Testmodus: kein Raum " + room + " gefunden");
   } else if (!devEvent(ev)) {
     console.error("Testmodus: kein Raum für Event " + ev + " gefunden");
   }
@@ -300,31 +307,39 @@ function devStart() {
   return true;
 }
 
-// Ersten passenden Raum suchen: Raumtyp, in dessen Tabelle das Event steht, auf einer Ebene, auf der es den Raum gibt
-function devEvent(id) {
+// Ersten passenden Raum betreten: Raumtyp auf einer Ebene (im Thema themeId, falls angegeben), auf der es ihn gibt.
+// Die Figur steht an einer Tür, in der Vorkammer am Fuß der Treppe.
+function devGoto(typeId, themeId, bossDefeated) {
   const world = { themes: DATA.themes, roomTypes: DATA.roomTypes };
+  for (let depth = 1; depth <= DATA.themes.length * 3; depth++) {
+    if (themeId && themeFor(DATA.themes, depth).id !== themeId) continue;
+    for (let seed = 1; seed < 300; seed++) {
+      const d = generate(seed, depth, world);
+      const k = Object.keys(d.rooms).find(r => d.rooms[r].type === typeId);
+      if (!k) continue;
+      state.depth = depth;
+      startDungeon(seed, true);
+      if (k === state.current) return true; // Vorkammer: Figur steht schon am Fuß der Treppe
+      const door = ["N", "E", "S", "W"].find(dd => d.rooms[k].doors & DIR[dd].bit);
+      state.current = k;
+      state.visited.add(k);
+      state.backDoor = door;
+      if (bossDefeated) state.roomState[k] = { bossDefeated: true };
+      buildRoom(k);
+      placePlayer(DIR[door].approach, 0);
+      return true;
+    }
+  }
+  return false;
+}
+
+// Event im ersten passenden Raum: Raumtyp, in dessen Tabelle das Event steht
+function devEvent(id) {
   for (const rt of Object.values(DATA.roomTypes)) {
     const tables = [[null, rt.events]].concat(Object.entries(rt.themeEvents || {}));
     for (const [themeId, table] of tables) {
       if (!table.some(e => e.id === id)) continue;
-      for (let depth = 1; depth <= DATA.themes.length * 3; depth++) {
-        if (themeId && themeFor(DATA.themes, depth).id !== themeId) continue;
-        for (let seed = 1; seed < 300; seed++) {
-          const d = generate(seed, depth, world);
-          const k = Object.keys(d.rooms).find(r => d.rooms[r].type === rt.id);
-          if (!k) continue;
-          state.depth = depth;
-          startDungeon(seed, true);
-          const door = ["N", "E", "S", "W"].find(dd => d.rooms[k].doors & DIR[dd].bit);
-          state.current = k;
-          state.visited.add(k);
-          state.backDoor = door;
-          buildRoom(k);
-          placePlayer(DIR[door].approach, 0);
-          runEvent(id);
-          return true;
-        }
-      }
+      if (devGoto(rt.id, themeId, false)) { runEvent(id); return true; }
     }
   }
   return false;

@@ -49,18 +49,21 @@ export const VARIANTS = {
 };
 
 export const PLACES = ["center", "wall-back", "corner", "free"];
+// Reihenfolge der Ersatz-Platzierungen beim Korrigieren (GDD: center → corner → wall-back → free)
+export const CHAIN = ["center", "corner", "wall-back", "free"];
 
-// Wendeltreppe in der Raummitte: 5×5 Kacheln, gezählt ab 0 die Kacheln 3 bis 7 (ab 1 gezählt: 4 bis 8)
-export const STAIRS_MIN = MID - 2, STAIRS_MAX = MID + 2;
+// Wendeltreppe in der Nordwest-Ecke: 3×3 Kacheln, im GDD 1|1 bis 3|3 (gezählt ab 0: 0 bis 2)
+export const STAIRS_SIZE = 3;
 export const STAIRS_TILES = [];
-for (let z = STAIRS_MIN; z <= STAIRS_MAX; z++) for (let x = STAIRS_MIN; x <= STAIRS_MAX; x++) STAIRS_TILES.push([x, z]);
-// Fuß der Treppe nach oben: Startkachel der Figur (vor der Treppe, zur Kamera hin)
-export const STAIRS_FOOT = [MID, STAIRS_MAX + 1];
+for (let z = 0; z < STAIRS_SIZE; z++) for (let x = 0; x < STAIRS_SIZE; x++) STAIRS_TILES.push([x, z]);
+// Mittelpunkt der Treppe (in Kacheln) und Fuß der Treppe nach oben: Startkachel 4|4 (gezählt ab 0: 3,3)
+export const STAIRS_CENTER = [(STAIRS_SIZE - 1) / 2, (STAIRS_SIZE - 1) / 2];
+export const STAIRS_FOOT = [STAIRS_SIZE, STAIRS_SIZE];
 
 /**
- * Was der Code in der Raummitte setzt:
+ * Was der Code in der Nordwest-Ecke setzt:
  * "up" Treppe nach oben (Vorkammer), "down" Treppe nach unten (Abstieg, Bossraum nach dem Sieg),
- * "arena" freie Mitte im Bossraum, bis der Boss besiegt ist; sonst null.
+ * "arena" freie Nordwest-Ecke im Bossraum, bis der Boss besiegt ist; sonst null.
  */
 export function centerFeature(typeId, bossDefeated) {
   if (typeId === "start") return "up";
@@ -100,8 +103,15 @@ const centerOf = (tiles) => [
  */
 export function reachable(blocked, doors, clickables, extra) {
   const free = (x, z) => inBounds(x, z) && !blocked.has(key(x, z));
-  const targets = DIRKEYS.filter(d => doors & DIR[d].bit).map(d => DIR[d].approach).concat(extra || []);
-  if (!targets.length || !targets.every(t => free(t[0], t[1]))) return false;
+  let targets = DIRKEYS.filter(d => doors & DIR[d].bit).map(d => DIR[d].approach).concat(extra || []);
+  if (!targets.length) {
+    // Raum ohne Tür (nur in Tests): die anklickbaren Objekte müssen untereinander erreichbar sein
+    const start = clickables.length && clickables[0].flatMap(([x, z]) => [[x + 1, z], [x - 1, z], [x, z + 1], [x, z - 1]]).find(t => free(...t));
+    if (!clickables.length) return true;
+    if (!start) return false;
+    targets = [start];
+  }
+  if (!targets.every(t => free(t[0], t[1]))) return false;
   const seen = new Set([key(...targets[0])]);
   const queue = [targets[0]];
   while (queue.length) {
@@ -120,10 +130,12 @@ export function reachable(blocked, doors, clickables, extra) {
 
 /**
  * Plant die Einrichtung eines Raums.
- * spec: decor-Eintrag ({ torchColor, layouts: [{ id, props: [{ prop, place, count, variant }] }] })
+ * spec: decor-Eintrag ({ torchColor, layouts: [{ id, props: [{ prop, place, count, variant, required }] }] })
  * opts: { seed, doors (Bitmaske), feature (centerFeature), layoutIndex (nur für Tests) }
- * Ergebnis: { layout, placements: [{ prop, variant, tiles, cx, cz, rot, wall, target }], dropped: [{ prop, variant }],
- *            blocked (Set), torchColor }
+ * Pflichtstücke (required) kommen zuerst. Passt ein Requisit nicht, gilt der Korrekturablauf aus dem GDD:
+ * andere Kachel derselben Platzierung, dann die nächste Platzierung in CHAIN, dann eine kleinere Anzahl, dann weglassen.
+ * Ergebnis: { layout, placements: [{ prop, variant, tiles, cx, cz, rot, wall, target, place }], corrected: [{ prop, variant,
+ *            from, to }], dropped: [{ prop, variant }], missingRequired: [{ prop, variant }], blocked (Set), torchColor }
  */
 export function planDecor(spec, opts) {
   const R = mulberry32((opts.seed ^ 0x5bd1e995) >>> 0);
@@ -143,7 +155,7 @@ export function planDecor(spec, opts) {
   if (feature === "up") { reserved.add(key(...STAIRS_FOOT)); extra.push(STAIRS_FOOT); }
   if (feature === "down" || feature === "arena") clickables.push(STAIRS_TILES); // die Treppe nach unten muss erreichbar sein
 
-  const placements = [], dropped = [];
+  const placements = [], dropped = [], corrected = [], missingRequired = [];
 
   // Form eines Requisits: Rechteck (o = "h" ungedreht, "v" um 90° gedreht) oder Fass-Gruppe in L-Form
   const shape = (p, variant, x0, z0, o, sx, sz) => {
@@ -238,15 +250,16 @@ export function planDecor(spec, opts) {
     if (c.wall) c.tiles.forEach(t => wallSlots.add(c.wall + key(...t)));
     if (def.click) clickables.push(c.tiles);
     const [cx, cz] = c.at || centerOf(c.tiles);
-    placements.push({ prop: item.prop, variant: item.variant || null, tiles: c.tiles, cx, cz, rot: c.rot, wall: c.wall || null, target: c.target || null });
+    placements.push({ prop: item.prop, variant: item.variant || null, tiles: c.tiles, cx, cz, rot: c.rot, wall: c.wall || null,
+      target: c.target || null, place: item.place });
   }
 
   // Säulen in zwei Reihen (Variante "reihen"): feste Plätze, wie in der bisherigen Säulenhalle
   function rows(item) {
     const count = item.count || 8;
-    const along = [1, 3, 7, 9, 2, 8, 0, 10];
+    const along = [1, N - 2, 3, N - 4, 0, N - 1, 2, N - 3].filter(a => a !== MID); // nie in der Türspalte
     const perRow = Math.ceil(count / 2);
-    const lines = [2, N - 3]; // Reihen auf 2 und 8
+    const lines = [2, N - 3]; // zwei Reihen, je zwei Kacheln von der Wand
     const vertical = R() < 0.5;
     let left = count;
     for (const line of lines) {
@@ -260,18 +273,29 @@ export function planDecor(spec, opts) {
     }
   }
 
-  for (const item of layout.props) {
-    if (!PROPS[item.prop]) { dropped.push({ prop: item.prop, variant: item.variant || null }); continue; }
+  const tag = (item) => ({ prop: item.prop, variant: item.variant || null });
+  // Pflichtstücke zuerst, sonst die Reihenfolge der Daten
+  const order = layout.props.filter(p => p.required).concat(layout.props.filter(p => !p.required));
+  for (const item of order) {
+    if (!PROPS[item.prop]) { dropped.push(tag(item)); continue; }
     if (item.prop === "saeule" && item.variant === "reihen") { rows(item); continue; }
+    // Korrekturablauf: erst die eigene Platzierung, dann die folgenden aus CHAIN (Wandschmuck, around und above nicht)
+    const fixed = !PLACES.includes(item.place) || PROPS[item.prop].floor === false;
+    const tries = fixed ? [item.place] : CHAIN.slice(Math.max(0, CHAIN.indexOf(item.place)));
     const used = new Set();
     for (let i = 0; i < (item.count || 1); i++) {
-      const c = candidates(item, used).find(c => fits(item, c));
-      if (!c) { dropped.push({ prop: item.prop, variant: item.variant || null }); continue; }
+      let c = null, place = null;
+      for (const pl of tries) {
+        c = candidates(Object.assign({}, item, { place: pl }), used).find(cand => fits(item, cand));
+        if (c) { place = pl; break; }
+      }
+      if (!c) { (item.required ? missingRequired : dropped).push(tag(item)); continue; }
       if (c.corner) used.add(c.corner);
+      if (place !== item.place) corrected.push(Object.assign(tag(item), { from: item.place, to: place }));
       put(item, c);
     }
   }
-  return { layout: layout.id, placements, dropped, blocked, torchColor: spec.torchColor || null, clickables, extra };
+  return { layout: layout.id, placements, corrected, dropped, missingRequired, blocked, torchColor: spec.torchColor || null, clickables, extra };
 }
 
 // Datenprüfung der Einrichtung (für validateData)
@@ -292,6 +316,8 @@ export function checkDecor(spec, where, err) {
       if (m && !before.has(m[2])) err(w, p.prop + ": " + m[2] + " muss vorher in der Liste stehen");
       if (m && m[1] === "above" && p.prop !== "kronleuchter") err(w, p.prop + ": above passt nur für hängende Requisiten");
       if (p.count !== undefined && !(Number.isInteger(p.count) && p.count > 0)) err(w, p.prop + ": count muss eine positive Zahl sein");
+      if (p.required !== undefined && typeof p.required !== "boolean") err(w, p.prop + ": required muss true oder false sein");
+      if (p.required && m) err(w, p.prop + ": ein Pflichtstück braucht eine eigene Platzierung, nicht " + m[1] + ":");
       if (p.variant !== undefined && !(VARIANTS[p.prop] || []).includes(p.variant)) err(w, p.prop + ": unbekannte Variante " + p.variant);
       if (PROPS[p.prop] && PROPS[p.prop].wall && PROPS[p.prop].floor === false && p.place !== "wall-back") err(w, p.prop + " hängt an der Wand und braucht wall-back");
       before.add(p.prop);
