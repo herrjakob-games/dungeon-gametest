@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.5 · Oct 27, 2026 · @Christian
+Version 2.6 · Oct 28, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.6 | 28.10.2026 | Raumgröße 9×9 statt 11×11, Türen auf der fünften Kachel; Kachelnamen x\|y; Wendeltreppen 3×3 in der Nordwest-Ecke statt 5×5 in der Mitte; Startposition 4\|4; Einrichtung mit Pflichtstücken (`required`) und festem Korrekturablauf |
 | 2.5 | 27.10.2026 | Figuren im Raum: Gegner erscheinen im Kampf, Events können Figuren schon beim Start zeigen (Feld `figures`), Regeln nach dem Event; Figurenliste |
 | 2.4 | 27.10.2026 | Wendeltreppen: nach oben in der Vorkammer, nach unten im Abstieg und im Bossraum nach dem Sieg (ersetzt den Torbogen); Startposition am Fuß der Treppe; Einrichtung pro Raumtyp als Daten (`decor`, `themeDecor`) mit Platzierungsregeln; Requisitenliste |
 | 2.3 | 27.10.2026 | Boss-Events pro Thema (Feld `themeEvents` beim Bossraum), bei jedem Betreten neu gewürfelt; erster Boss-Inhalt Monsterratte im Keller; eigene Todessätze pro Event in `data/texts.json` (`death.events`) |
@@ -54,7 +55,8 @@ Grundregel: Inhalte stehen in den JSON-Dateien, nicht im Code. Neue Räume und E
 
 Der Dungeon ist ein Gitter aus Raumplätzen, jeder Raum ein Gitter aus Kacheln. Ein Raum hat einen Typ und null bis vier Türen.
 
-- **Raumgröße:** 11×11 Kacheln für alle Räume. Türen sitzen mittig auf der jeweiligen Seite, also auf der sechsten Kachel.
+- **Raumgröße:** 9×9 Kacheln für alle Räume. Türen sitzen mittig auf der jeweiligen Seite, also auf der fünften Kachel.
+- **Kachelnamen:** Kacheln heißen x|y. x zählt von West (1) nach Ost (9), y von Nord (1) nach Süd (9). Die Nordwest-Ecke ist 1|1 (hinten, oben im Bild), die Nordost-Ecke 9|1 (rechts), die Südwest-Ecke 1|9 (links), die Südost-Ecke 9|9 (vorne). Die Raummitte ist 5|5. Die Türen liegen auf 5|1 (Nord), 9|5 (Ost), 5|9 (Süd) und 1|5 (West).
 - **Türen als Bitmaske:** Norden = 1, Osten = 2, Süden = 4, Westen = 8. Ein Raum mit Türen nach Norden und Osten hat den Wert 3. Daraus ergeben sich 16 Raumformen. Werte 1, 2, 4 und 8 sind Sackgassen.
 - **Dungeongröße:** wächst mit der Tiefe (siehe Raumtypen und Ebenen), auf einem Gitter von 8×8 Plätzen.
 - **Generierung:** Ein Random Walk startet im Startraum und legt Räume an, bis die Zielanzahl erreicht ist. Jede Verbindung setzt die Tür in beiden Räumen.
@@ -68,7 +70,7 @@ Das Spiel kennt zwei Modi: freie Erkundung in Echtzeit und rundenbasierte Events
 - **Klick zum Bewegen:** Der Spieler klickt auf eine Kachel, die Figur läuft per Wegfindung (A\*) dorthin. Säulen, Truhen und Möbel blockieren Kacheln.
 - **Interaktion:** Klick auf ein Objekt lässt die Figur hinlaufen und interagieren, etwa eine Truhe öffnen.
 - **Raumwechsel:** Klick auf eine Tür. Das Bild blendet kurz ab, die Figur steht im neuen Raum an der gegenüberliegenden Tür.
-- **Startposition:** Zu Beginn jedes Dungeons, auch nach jedem Abstieg, steht die Figur in der Vorkammer am Fuß der Wendeltreppe nach oben.
+- **Startposition:** Zu Beginn jedes Dungeons, auch nach jedem Abstieg, steht die Figur in der Vorkammer am Fuß der Wendeltreppe nach oben, auf Kachel 4|4.
 - **Kamera:** Zentriert auf den aktuellen Raum. Die vorderen Wände sind ausgeblendet, damit nichts die Figur verdeckt.
 - **Modus-Wechsel:** Löst ein Event aus, stoppt die Bewegung und das Textfenster übernimmt. Events gibt es nur beim ersten Betreten eines Raums, danach durchläuft der Spieler ihn ohne neues Event.
 - **Minimap:** Zeigt besuchte Räume und bekannte Türen. Ein Klick auf einen besuchten Raum reist sofort mit Abblende dorthin, ohne Kosten. Die Figur erscheint in der Raummitte, ist diese blockiert, auf dem nächsten freien Feld. Unbesuchte Räume sind kein Reiseziel. Während eines Events oder Kampfes ist die Schnellreise gesperrt.
@@ -235,9 +237,9 @@ Der Dungeon führt durch Themen, die alle drei Ebenen wechseln. Das Thema bestim
 
 | Raumtyp | Bewertung | Lage | Anzahl pro Ebene |
 | --- | --- | --- | --- |
-| Vorkammer (Start) | neutral | fest, Wendeltreppe nach oben in der Raummitte, Begrüßungs-Event, in jedem Thema | 1 |
-| Abstieg | neutral | Raum mit dem größten Abstand zum Start, Wendeltreppe nach unten in der Raummitte | 1 |
-| Bossraum | feindlich | am Ende jeder Themenwelt (Ebene 3, 6, 9, 12, 15) statt des Abstiegs; die Wendeltreppe nach unten erscheint erst nach dem Sieg über den Boss | 1 auf Boss-Ebenen |
+| Vorkammer (Start) | neutral | fest, Wendeltreppe nach oben in der Nordwest-Ecke, Begrüßungs-Event, in jedem Thema | 1 |
+| Abstieg | neutral | Raum mit dem größten Abstand zum Start, Wendeltreppe nach unten in der Nordwest-Ecke | 1 |
+| Bossraum | feindlich | am Ende jeder Themenwelt (Ebene 3, 6, 9, 12, 15) statt des Abstiegs; die Wendeltreppe nach unten erscheint erst nach dem Sieg über den Boss in der Nordwest-Ecke | 1 auf Boss-Ebenen |
 | Schatzkammer | feindlich | nur in Sackgassen, in jedem Thema | höchstens 1 |
 | Rastplatz | neutral | etwa auf halber Strecke zwischen Start und Abstieg, in jedem Thema | 1 auf jeder zweiten Ebene |
 | Händler | neutral | beliebig, in jedem Thema | genau 1 |
@@ -267,8 +269,8 @@ Der Dungeon führt durch Themen, die alle drei Ebenen wechseln. Das Thema bestim
 - **Sackgassen:** Sackgassen, die keine Schatzkammer werden, bekommen einen anderen Raumtyp des Themas.
 - **Händler:** bietet 4 zufällige Gegenstände vom Rang der aktuellen Beutestufe an (Rang = Stufe des Themas, Verbrauchsgegenstände eingeschlossen), jeden einmal. Dazu immer die Heiltränke (Kleiner und Großer Heiltrank) in beliebiger Menge; sie zählen nicht zu den 4 Gegenständen. Ist der Rang leer, gilt der höchste Rang darunter. Verkaufen bringt den halben Preis.
 - **Rastplatz:** auf jeder geraden Ebene (2, 4, 6 …). Ein Lagerfeuer im Raum heilt einmal auf volle Lebenspunkte, danach ist es aus.
-- **Wendeltreppen:** Vorkammer und Abstieg haben in der Raummitte eine Wendeltreppe aus 5×5 Kacheln (Kacheln 4 bis 8 in beiden Richtungen). In der Vorkammer führt sie nach oben, ist nicht anklickbar und zeigt, woher der Spieler kommt. Im Abstieg führt sie als Öffnung im Boden nach unten und ist anklickbar: Ein Klick führt eine Ebene tiefer. Der Code setzt die Treppen fest, sie stehen nicht in der Einrichtung. Die übrige Einrichtung dieser Räume steht im Ring aus 3 Kacheln Breite um die Treppe; die Türen liegen in diesem Ring und bleiben frei.
-- **Bossraum:** Betreten startet den Bosskampf, auch bei jedem weiteren Betreten, bis der Boss besiegt ist. Flucht ist erlaubt, der Boss wartet dann mit vollen Lebenspunkten. Die Raummitte (5×5 Kacheln) bleibt frei und dient als Arena. Sieg: Beute `tier2` und 10 Erfahrung, danach erscheint in der Raummitte die Wendeltreppe nach unten (ersetzt den bisherigen Torbogen). Die Siegbeute vergibt das Spiel, nicht das Event.
+- **Wendeltreppen:** Vorkammer und Abstieg haben in der Nordwest-Ecke eine Wendeltreppe aus 3×3 Kacheln (1|1 bis 3|3). In der Vorkammer führt sie nach oben, ist nicht anklickbar und zeigt, woher der Spieler kommt. Im Abstieg führt sie als Öffnung im Boden nach unten und ist anklickbar: Ein Klick führt eine Ebene tiefer. Der Code setzt die Treppen fest, sie stehen nicht in der Einrichtung. Die Türen Nord (5|1) und West (1|5) und die Kacheln davor bleiben frei.
+- **Bossraum:** Betreten startet den Bosskampf, auch bei jedem weiteren Betreten, bis der Boss besiegt ist. Flucht ist erlaubt, der Boss wartet dann mit vollen Lebenspunkten. Die Nordwest-Ecke (1|1 bis 3|3) bleibt bis zum Sieg frei. Sieg: Beute `tier2` und 10 Erfahrung, danach erscheint in der Nordwest-Ecke die Wendeltreppe nach unten (ersetzt den bisherigen Torbogen). Die Siegbeute vergibt das Spiel, nicht das Event.
 - **Boss-Events:** Der Bossraum kann pro Thema eine eigene Event-Tabelle haben, in `data/room-types.json` beim Bossraum im Feld `themeEvents`, etwa `"themeEvents": { "keller": [ … ] }`, mit `eventChance` 1. Bei jedem Betreten wird daraus neu gewürfelt, bis der Boss besiegt ist. Die Events starten den Kampf gegen den Boss mit `combat`. Bedingungen wie `flag:name` unterscheiden die erste Begegnung von der Rückkehr. Themen ohne Tabelle zeigen den Einleitungstext des Bosses (`intro`) und starten den Kampf direkt. Bisher hat nur der Keller (Monsterratte) Boss-Events.
 - **Bosse:** passend zum Thema, einer am Ende jeder Themenwelt.
 
@@ -341,7 +343,10 @@ Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kan
 - **Varianten:** `layouts` enthält eine oder mehrere Varianten. Der Raum-Seed wählt eine davon, gleicher Seed ergibt gleiche Einrichtung.
 - **Platzierung (`place`):** `center` (Raummitte), `wall-back` (an der Nord- oder Westwand, weil die vorderen Wände nur Sockel sind), `corner` (in einer Ecke, bei `count` über 1 in verschiedenen Ecken), `free` (beliebige freie Kachel), `around:<prop>` (um ein anderes Requisit herum, etwa Stühle um die Tafel), `above:<prop>` (über einem anderen Requisit, etwa der Kronleuchter über der Tafel).
 - **Weitere Felder:** `count` (Anzahl, Standard 1), `variant` (Abwandlung eines Requisits, etwa der Tisch mit Töpfen statt Würfeln).
-- **Feste Regeln:** Türkacheln und die Kachel davor bleiben frei. Jede Tür und jedes anklickbare Objekt bleibt erreichbar, `npm test` prüft das für alle Varianten. Passt ein Requisit nicht, lässt der Code es weg, statt eine Regel zu brechen. In Vorkammer, Abstieg und Bossraum bleibt die Raummitte (5×5) für die Wendeltreppe frei.
+- **Feste Regeln:** Türkacheln und die Kachel davor bleiben frei. Jede Tür und jedes anklickbare Objekt bleibt erreichbar, `npm test` prüft das für alle Varianten. In Vorkammer, Abstieg und Bossraum bleibt die Nordwest-Ecke (1|1 bis 3|3) für die Wendeltreppe frei; `corner` meint dort nur die drei übrigen Ecken, `wall-back` nur die freien Abschnitte von Nord- und Westwand.
+- **Pflichtstücke:** Ein Requisit mit `"required": true` macht den Raumtyp erkennbar (Herd in der Küche, Tafel im Speisesaal, Brunnen im Brunnenraum). Es wird immer zuerst platziert und nie weggelassen. Passt es in einer Variante bei einer Türkombination nicht, ist das ein Fehler in den Daten, und `npm test` schlägt fehl.
+- **Korrektur:** Passt ein Requisit nicht, versucht der Code in dieser Reihenfolge: 1. eine andere Kachel mit derselben Platzierung, 2. die nächste Platzierung in der Reihe `center` → `corner` → `wall-back` → `free`, 3. eine kleinere Anzahl, 4. weglassen. Requisiten mit `around:` oder `above:` fallen mit ihrem Bezugsrequisit weg. Gleicher Seed ergibt immer dieselbe Korrektur.
+- **Prüfung:** `npm test` platziert jede Variante jedes Raumtyps mit allen 16 Türkombinationen und prüft: keine Überlappung, nichts in Wänden oder auf Türkacheln, jede Tür und jedes anklickbare Objekt ist von jeder Tür aus erreichbar, Pflichtstücke sind vorhanden. Der Test gibt eine Liste aus, welche Requisiten wie oft korrigiert oder weggelassen wurden.
 - **Modelle:** Bis Meilenstein 6 baut der Code jedes Requisit aus Grundformen. Die Requisiten-ids bleiben, wenn später Modelle sie ersetzen.
 
 **Requisiten**
@@ -379,8 +384,8 @@ Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kan
 | bank | Bank | 2×1 | ja | nein | nein | Abstieg |
 | souvenirkiste | Souvenirkiste | 1 | ja | nein | nein | Abstieg |
 | kaeseberg | Käseberg mit Thron | 2×2, Wand | ja | nein | ja | Bossraum (Keller) |
-| wendeltreppe_hoch | Wendeltreppe nach oben | 5×5, Mitte | ja | nein | ja | Vorkammer, vom Code gesetzt |
-| wendeltreppe_runter | Wendeltreppe nach unten | 5×5, Mitte | ja | ja | ja | Abstieg und Bossraum, vom Code gesetzt |
+| wendeltreppe_hoch | Wendeltreppe nach oben | 3×3, Nordwest-Ecke | ja | nein | ja | Vorkammer, vom Code gesetzt |
+| wendeltreppe_runter | Wendeltreppe nach unten | 3×3, Nordwest-Ecke | ja | ja | ja | Abstieg und Bossraum, vom Code gesetzt |
 
 **Figuren**
 
@@ -414,7 +419,7 @@ Sieben Schritte, jeder endet mit etwas Spielbarem, das Christian im Browser test
 
 - [x] Zwei Modi bestätigen: freie Erkundung in Echtzeit, Rundenmodus nur während Events
 - [x] Regelvorschlag annehmen: drei Attribute, W20, Schwierigkeiten 8/12/16
-- [x] Raumgröße 11×11 Kacheln (vorher 15×15)
+- [x] Raumgröße 9×9 Kacheln (vorher 11×11, davor 15×15); Türen auf der fünften Kachel
 - [x] Setting und Ton: klassische Fantasy, humorvoll
 - [x] Tod: Neustart mit neuem Dungeon (Permadeath)
 - [x] Verhalten beim erneuten Betreten eines Raums: Durchlaufen ohne neues Event
@@ -469,3 +474,6 @@ Sieben Schritte, jeder endet mit etwas Spielbarem, das Christian im Browser test
 - [x] Wendeltreppen aus 5×5 Kacheln: nach oben in der Vorkammer, nach unten im Abstieg und im Bossraum nach dem Sieg; ersetzen den Torbogen; Start am Fuß der Treppe nach oben
 - [x] Einrichtung pro Raumtyp als Daten (`decor`, `themeDecor`) mit Varianten, Platzierungsregeln und Erreichbarkeitstest; ohne Eintrag gilt das bisherige Muster
 - [x] Figuren im Raum: jeder Kampf zeigt den Gegner; Events können Figuren beim Start zeigen (`figures` mit `figure`, `place`, `count`, `variant`, `stay`); neue Platzierung `near:<prop>`; Regeln für Sieg, Flucht und friedliches Ende
+- [x] Kachelnamen x|y: x von West nach Ost, y von Nord nach Süd; Nordwest-Ecke 1|1, Mitte 5|5
+- [x] Wendeltreppen 3×3 in der Nordwest-Ecke (vorher 5×5 in der Mitte), in Vorkammer, Abstieg und Bossraum; Start auf 4|4
+- [x] Einrichtung mit Pflichtstücken (`required`), festem Korrekturablauf und Prüfung aller Varianten mit allen Türkombinationen
