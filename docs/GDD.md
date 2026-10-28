@@ -8,7 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
-| 2.8 | 28.10.2026 | Stilguide „Knetkeller“ und Asset-Spezifikation aus dem Art-Direction-Projekt; Maßstab KayKit 0,5, Wände 2 Kacheln hoch; Zuordnung der Modelle über data/models.json |
+| 2.8 | 28.10.2026 | Stilguide „Knetkeller“ und Asset-Spezifikation aus dem Art-Direction-Projekt; Maßstab KayKit 0,5, Wände 2 Kacheln hoch; Zuordnung der Modelle über data/models.json; Wendeltreppen-Modelle 3×3; Zwerg aus KayKit Knight; Goblin aus Goblin Lowpoly Assets, Mimik aus der Truhe des KayKit Dungeon Pack |
 | 2.7 | 28.10.2026 | Raumgröße 9×9 statt 11×11, Türen auf der fünften Kachel; Kachelnamen x\|y; Wendeltreppen 3×3 in der Nordwest-Ecke statt 5×5 in der Mitte; Startposition 4\|4; Einrichtung mit Pflichtstücken (`required`) und festem Korrekturablauf |
 | 2.6 | 28.10.2026 | Meilenstein 6 geteilt in 6a (Umgebung) und 6b (Figuren); Stilguide kommt aus dem Art-Direction-Projekt; Modelle aus CC0-Paketen plus KI-Generator; volles Animationsset |
 | 2.5 | 27.10.2026 | Figuren im Raum: Gegner erscheinen im Kampf, Events können Figuren schon beim Start zeigen (Feld `figures`), Regeln nach dem Event; Figurenliste |
@@ -406,6 +406,7 @@ Gilt für alle Modelle. Bei Paketteilen gilt sie für das Ergebnis im Spiel; Abw
 - **Zuordnung:** `data/models.json` hält pro id Datei, Maßstab (Zahl oder [x, y, z]), Drehung, Versatz, Animationszuordnung und Lichtpunkte (Position relativ zum Ursprung, Farbe, Stärke, Reichweite).
 - **Build-Skript:** `tools/build-assets.mjs` setzt Teile aus Paketen zu einer GLB zusammen (Tafel, Regal, Türrahmen) und speckt Paketfiguren ab (nur benötigte Animationen und Zubehörteile, komprimiert).
 - **Platzhalter:** Fehlt eine Datei oder lädt sie nicht, baut der Code das Teil wie bisher aus Grundformen.
+- **Quellen der Figuren im Keller:** Mensch KayKit `Mage`, Elf `Rogue_Hooded`, Zwerg `Knight`, Händler `Rogue` umgefärbt (KayKit Adventurers); Skelett KayKit Skeletons; Goblin aus Goblin Lowpoly Assets (standout7, itch.io); Mimik aus der Truhe des KayKit Dungeon Pack (itch.io); Ratten und Kröte über den KI-Generator.
 - **Lizenzen:** Quelle und Lizenz jeder fremden Datei in `assets/CREDITS.md`.
 
 ### Einrichtung pro Raumtyp
@@ -571,3 +572,5 @@ Sieben Schritte, jeder endet mit etwas Spielbarem, das Christian im Browser test
 - [x] Einrichtung mit Pflichtstücken (`required`), festem Korrekturablauf und Prüfung aller Varianten mit allen Türkombinationen
 - [x] Stilguide Knetkeller mit Palette, Themen-Abwandlung, Licht und Lesbarkeit
 - [x] Asset-Spezifikation mit Zuordnung über data/models.json, Maßstab KayKit 0,5, Wände 2 Kacheln hoch
+- [x] Modelle der Wendeltreppen 3×3 in der Nordwest-Ecke (wie GDD 2.7), Türrahmen auf der fünften Kachel
+- [x] Zwerg aus KayKit Knight; Goblin aus Goblin Lowpoly Assets (standout7), Mimik aus der Truhe des KayKit Dungeon Pack

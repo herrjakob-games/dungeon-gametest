@@ -13,8 +13,8 @@ Der Keller bekommt den Look „Knetkeller“: KayKit-Formen im Maßstab 0,5, ein
 - Maßstab: 1 Kachel = kleine KayKit-Bodenplatte (Faktor 0,5), Wände 2 Kacheln hoch
 - Abweichungen der Pakete korrigiert `data/models.json`, nicht die Datei
 - Zusammengesetzte Teile und abgespeckte Figuren baut ein Skript im Repo
-- Völker: Mensch = KayKit `Mage`, Elf = `Rogue_Hooded`, Zwerg = `K``n``i``g``ht`, Händler = `Rogue` umgefärbt
-- Goblin und Mimik nicht in der Keller-Liste, solange kein Keller-Event sie braucht
+- Völker: Mensch = KayKit `Mage`, Elf = `Rogue_Hooded`, Zwerg = `Knight`, Händler = `Rogue` umgefärbt
+- Goblin und Mimik gehören in die Keller-Liste (Wachstube und Schatzkammer brauchen sie): Goblin aus Goblin Lowpoly Assets (standout7, itch.io), Mimik aus der Truhe des KayKit Dungeon Pack (itch.io); entschieden am 28.10.2026
 
 **Reihenfolge**
 
@@ -178,8 +178,8 @@ Gilt für alle Modelle. Bei Paketteilen gilt sie für das Ergebnis im Spiel; Abw
 | bank | Bank | KI-Generator | – | – | offen |
 | souvenirkiste | Souvenirkiste | DR `trunk_large_A.gltf.glb` | CC0 | Schild später per KI oder weglassen | offen |
 | kaeseberg | Käseberg mit Thron | KI-Generator | – | 2×2, Lichtpunkt | offen |
-| wendeltreppe\_hoch | Wendeltreppe nach oben | KI-Generator | – | 5×5, Lichtpunkt | offen |
-| wendeltreppe\_runter | Wendeltreppe nach unten | KI-Generator | – | 5×5, anklickbar, Lichtpunkt | offen |
+| wendeltreppe\_hoch | Wendeltreppe nach oben | KI-Generator | – | 3×3 in der Nordwest-Ecke, Lichtpunkt | offen |
+| wendeltreppe\_runter | Wendeltreppe nach unten | KI-Generator | – | 3×3 in der Nordwest-Ecke, anklickbar, Lichtpunkt | offen |
 
 ### Meilenstein 6b: Figuren
 
@@ -187,9 +187,11 @@ Gilt für alle Modelle. Bei Paketteilen gilt sie für das Ergebnis im Spiel; Abw
 | --- | --- | --- | --- | --- | --- |
 | mensch | Spielfigur Mensch | AD `Mage.glb` | CC0 | abspecken, Zubehör ausblenden, umfärben | offen |
 | elf | Spielfigur Elf | AD `Rogue_Hooded.glb` | CC0 | abspecken, umfärben | offen |
-| zwerg | Spielfigur Zwerg | KI-Generator | – | Höhe 0,8, riggen, animieren | offen |
+| zwerg | Spielfigur Zwerg | AD `Knight.glb` | CC0 | abspecken, umfärben, auf Höhe 0,8 | offen |
 | haendlerfigur | Händler | AD `Rogue.glb` | CC0 | abspecken, umfärben; Idle und Interact genügen | offen |
 | skeleton | Skelett | SK `Skeleton_Minion.glb` | CC0 | abspecken | offen |
+| goblin | Goblin-Wache | Goblin Lowpoly Assets (standout7, itch.io) | Lizenz prüfen | abspecken, Animationen zuordnen | offen |
+| mimic | Mimik | Truhe aus KayKit Dungeon Pack (itch.io) | CC0, prüfen | Deckel mit Zähnen, Öffnen per Code | offen |
 | skeleton\_sitzend | Skelett, sitzend | SK `Skeleton_Minion.glb` | CC0 | nur Animation `Sit_Floor_Idle`, keine eigene Datei | offen |
 | rat | Riesenratte | KI-Generator | – | aufrecht, riggen, animieren | offen |
 | kuechenratte | Küchenchef | KI-Generator, Basis rat | – | Kochmütze, Schürze, Rig von rat | offen |
@@ -243,7 +245,7 @@ Baue Meilenstein 6a laut docs/GDD.md, Abschnitte „Grafik und Animation“, „
    - KayKit-Teile mit Faktor 0,5: kleine Bodenplatte = 1 Kachel.
    - Boden: boden pro Kachel, Abwechslung aus den Bruch- und Dekorvarianten über den Raum-Seed.
    - Hohe Wände (Nord, West): wand pro Kachel, 2 Kacheln hoch; Ecken mit wand_ecke. Vorne (Süd, Ost): sockel und sockel_ecke, 0,25 Kacheln hoch.
-   - Türen: tuerrahmen mittig auf der sechsten Kachel. Verschlossen: schloss (Platzhalter, rot).
+   - Türen: tuerrahmen mittig auf der fünften Kachel (GDD 2.7: Raum 9×9). Verschlossen: schloss (Platzhalter, rot).
    - Requisiten aus decor und themeDecor über models.json, Größen und Platzierung wie bisher. Gestreckte Teile (tisch 3 Kacheln, tafel 5 Kacheln) über scale [x, y, z].
    - Truhe: Deckel chest_lid beim Öffnen per Code aufklappen.
 
@@ -306,10 +308,9 @@ Priorität 1 ist für den ersten vollständigen Testlauf sichtbar, Priorität 3 
 
 | id | Priorität | Motiv ({SUBJECT}) | Grundfläche | Dreiecke |
 | --- | --- | --- | --- | --- |
-| wendeltreppe\_hoch | 1 | a chunky stone spiral staircase winding upward around a thick central pillar, wooden handrail, ends in a dark opening above | 5×5 | 1.500 |
-| wendeltreppe\_runter | 1 | a round opening in a stone floor with a spiral staircase descending into darkness, low stone rim, wooden railing posts, flat at floor level | 5×5 | 1.500 |
+| wendeltreppe\_hoch | 1 | a chunky stone spiral staircase winding upward around a thick central pillar, wooden handrail, ends in a dark opening above | 3×3 | 1.500 |
+| wendeltreppe\_runter | 1 | a round opening in a stone floor with a spiral staircase descending into darkness, low stone rim, wooden railing posts, flat at floor level | 3×3 | 1.500 |
 | rat | 1 | a giant dungeon rat standing upright on its hind legs, chubby, big head, buck teeth, beady eyes, long pink tail, mischievous grin | 1 | 2.500 |
-| zwerg | 1 | a stout dwarf adventurer, huge braided beard, leather jerkin, sturdy boots, cheerful frown | 1, Höhe 0,8 | 3.000 |
 | lagerfeuer | 1 | a campfire ring of rounded stones with stacked logs and a small cooking pot on a stick tripod, flames as simple chunky shapes | 1 | 1.000 |
 | kaeseberg | 1 | a comically large heap of cheese wheels and wedges forming a throne for a giant rat, a big fork stuck in the top like a sceptre | 2×2 | 1.500 |
 | herd | 2 | a rustic stone kitchen hearth set against a wall, iron cauldron on top, glowing embers in the firebox | 2×1 | 1.200 |
@@ -327,4 +328,4 @@ Priorität 1 ist für den ersten vollständigen Testlauf sichtbar, Priorität 3 
 | anrichte | 3 | a low wooden sideboard against a wall with plates and a jug on top | 2×1 | 1.200 |
 | kroete | 3 | a fat toad sitting on its haunches, tiny golden crown, sleepy smug face | Deko | 1.000 |
 
-Zwerg, Ratten und Kröte gehören zu Meilenstein 6b. Für die Zwerg-Referenz lohnt es sich, ein Bild der KayKit-Figur `Mage` danebenzulegen, damit Proportionen und Kopfgröße zu Mensch und Elf passen.
+Ratten und Kröte gehören zu Meilenstein 6b. Der Zwerg kommt aus KayKit `Knight` und braucht kein KI-Motiv mehr.
