@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.33 · Oct 29, 2026 · @Christian
+Version 2.34 · Oct 29, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.34 | 29.10.2026 | Vorkammer: kein Wegweiser mehr; das Pult mit Buch steht immer auf 4\|3 seitlich der Treppe |
 | 2.33 | 29.10.2026 | Vorkammer: keine Fackel hinter oder neben der Treppe (Wandkacheln 1 bis 4 von Nord- und Westwand) |
 | 2.32 | 29.10.2026 | Treppe nach oben: das obere Ende wird nur dunkler, ohne Farbstich; kein bläulicher Lichtschein von oben |
 | 2.31 | 29.10.2026 | Bossraum: bis zum Sieg liegt über Loch und Treppe ein begehbares Metallgitter; Treppe und Loch aus Grundformen als Rückfall ohne Modell |
@@ -513,8 +514,8 @@ Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kan
 | truhe | Truhe (in der Schatzkammer 2 bis 3, davon eine echt, die übrigen Mimiken) | 1 | ja | ja | nein | Schatzkammer |
 | lagerfeuer | Lagerfeuer | 1 | ja | ja | ja | Rastplatz |
 | haendlerfigur | Händler mit Wandregal hinter sich und Verkaufstisch mit Kerze vor sich; steht auf 2\|2 bis 2\|8 oder 2\|2 bis 8\|2 und schaut zur Raummitte | 1×3, Wand | ja | ja | ja | Händler |
-| pult | Pult mit Gästebuch | 1 | ja | nein | nein | Vorkammer |
-| wegweiser | Wegweiser | 1 | ja | nein | nein | Vorkammer |
+| pult | Pult mit Gästebuch | 1 | ja | nein | nein | Vorkammer, immer auf 4\|3 seitlich der Treppe |
+| wegweiser | Wegweiser | 1 | ja | nein | nein | derzeit in keinem Raum |
 | zettelbrett | Zettelbrett | Wand | nein | nein | nein | Vorkammer |
 | bank | Bank | 2×1 | ja | nein | nein | Abstieg |
 | souvenirkiste | Souvenirkiste | 1 | ja | nein | nein | Abstieg |
@@ -782,3 +783,4 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Bossraum: bis zum Sieg ein begehbares Metallgitter über Loch und Treppe, danach mit 0,5 Sekunden Abblende Loch und anklickbare Treppe; fehlt das Modell `stairs`, entstehen Treppe und Loch aus Grundformen
 - [x] Treppe nach oben ohne bläulichen Lichtschein von oben: das obere Ende dunkelt nur ab, statt in die Schattenfarbe überzugehen
 - [x] Vorkammer: keine Fackel hinter oder neben der Treppe; an Nord- und Westwand fällt die Fackel auf Kachel 3 weg
+- [x] Vorkammer ohne Wegweiser; Pult mit Buch immer auf 4|3 rechts neben der untersten Stufe der Treppe
