@@ -757,6 +757,10 @@
           ]
         }
       ]
+    },
+    "treppe_hoch": {
+      "dir": "props",
+      "file": "stairs.gltf.glb"
     }
   },
   "figureSource": "assets/source/kaykit-adventurers/",

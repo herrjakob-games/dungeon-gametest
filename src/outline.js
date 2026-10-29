@@ -24,7 +24,7 @@ export function setOutline(obj, on) {
     if (!on) return;
     const parts = [];
     obj.traverse(n => {
-      if (!n.isMesh || !n.geometry || !n.geometry.attributes.normal || n.userData.isOutline) return;
+      if (!n.isMesh || !n.geometry || !n.geometry.attributes.normal || n.userData.isOutline || n.userData.noOutline) return;
       if (n.material && (n.material.transparent || n.material.isMeshBasicMaterial)) return; // Flammen und Schimmer nicht
       const o = new THREE.Mesh(n.geometry, outlineMat);
       o.userData.isOutline = true;

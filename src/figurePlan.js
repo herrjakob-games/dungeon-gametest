@@ -39,7 +39,7 @@ const N8 = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, 1], [1, -1], [-1, -1]
  * ctx: { placements (Einrichtung aus planDecor, sonst []), blocked (Set "x,z"), doors, player [x,z],
  *        occupied (Set "x,z" weiterer Figuren), rand,
  *        anchors (Anker aus data/staging.json), canPose(figure, variant, anim) (hat das Modell die Animation?),
- *        stairsDown (true, wenn im Raum eine Wendeltreppe nach unten steht) }
+ *        stairsDown (true, wenn im Raum eine Treppe nach unten steht) }
  * Ergebnis: [{ figure, variant, tiles, cx, cz, y, rot, stay, blocks, onProp, anim, seat }]
  * anim "flat": die Figur hat keine Liege-Animation und liegt starr auf dem Rücken (Anker mit flat).
  * Passt eine Figur nirgends hin, fehlt sie im Ergebnis. Fehlt der Anker oder die Animation, steht die Figur
@@ -102,7 +102,7 @@ export function planFigures(list, ctx) {
     const pose = a.animation || "idle";
     const can = !ctx.canPose || ctx.canPose(f.figure, f.variant, pose);
     const targets = shuffle(placements.filter(p => a.props.includes(p.prop)));
-    if (a.props.includes("wendeltreppe_runter") && ctx.stairsDown) targets.push({ prop: "wendeltreppe_runter", tiles: [STAIRS_FOOT], cx: STAIRS_FOOT[0], cz: STAIRS_FOOT[1], rot: 0, foot: true });
+    if (a.props.includes("treppe_runter") && ctx.stairsDown) targets.push({ prop: "treppe_runter", tiles: [STAIRS_FOOT], cx: STAIRS_FOOT[0], cz: STAIRS_FOOT[1], rot: 0, foot: true });
     const off = a.offset || [0, 0, 0];
     const lookAt = (t) => {
       if (a.face === "random") return R() * Math.PI * 2;

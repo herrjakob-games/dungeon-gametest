@@ -44,6 +44,18 @@ function withFade(fn) {
   }, wait);
 }
 
+// Kurze Abblende ohne Sperre und ohne das Textfenster zu schließen: ms abblenden, fn, ms aufblenden
+function shortFade(fn, ms) {
+  if (!ms) { fn(); return; }
+  fade.style.transitionDuration = ms / 1000 + "s";
+  fade.style.opacity = "1";
+  setTimeout(() => {
+    fn();
+    fade.style.opacity = "0";
+    setTimeout(() => { fade.style.transitionDuration = ""; }, ms);
+  }, ms);
+}
+
 // Neuer Dungeon auf der aktuellen Ebene. quiet: ohne Begrüßungs-Event (Hintergrund der Volkswahl)
 function startDungeon(dSeed, quiet) {
   state.dungeon = generate(dSeed, state.depth, { themes: DATA.themes, roomTypes: DATA.roomTypes });
@@ -57,7 +69,7 @@ function startDungeon(dSeed, quiet) {
   state.combat = null;
   if (state.player) state.player.abilityUsed = false; // Fähigkeit gilt einmal pro Dungeon
   buildRoom(state.current);
-  placePlayer(STAIRS_FOOT, 0); // am Fuß der Wendeltreppe nach oben
+  placePlayer(STAIRS_FOOT, 0); // am Fuß der Treppe nach oben (2|4)
   ui.seedInput.value = dSeed;
   if (!quiet) { state.stats.rooms += 1; startRoomEvent(); } // Begrüßungs-Event im Startraum
 }
@@ -74,7 +86,7 @@ function chooseCharacter() {
   });
 }
 
-// Abstieg über die Wendeltreppe: eine Ebene tiefer, Werte und Ausrüstung bleiben
+// Abstieg über die Treppe: eine Ebene tiefer, Werte und Ausrüstung bleiben
 function descend() {
   play("treppe");
   state.depth += 1;
@@ -89,8 +101,8 @@ initEvents({
   },
   // Flucht: zurück durch die Tür, durch die der Raum betreten wurde
   onRetreat: () => { if (state.backDoor) changeRoom(state.backDoor, true); },
-  // Boss besiegt: Raum neu aufbauen, damit die Wendeltreppe nach unten erscheint
-  onBossDefeated: () => { buildRoom(state.current); updateHud(); },
+  // Boss besiegt: kurze Abblende (etwa 0,5 Sekunden), dabei wechselt die Nordwest-Ecke von Gitter zu Loch und Treppe
+  onBossDefeated: () => shortFade(() => { buildRoom(state.current); updateHud(); }, reduceMotion ? 0 : 250),
   onRested: () => douseCampfire()
 });
 
@@ -184,7 +196,7 @@ function pick(ev) {
   const p = new THREE.Vector3();
   if (ray.ray.intersectPlane(ground, p)) {
     const x = Math.round(p.x + MID), z = Math.round(p.z + MID);
-    // Große Objekte (Wendeltreppe) zählen auf allen ihren Kacheln als angeklickt
+    // Große Objekte (Treppe nach unten) zählen auf allen ihren Kacheln als angeklickt
     const big = state.interactables.find(o => o.userData.tiles && o.userData.tiles.some(t => t[0] === x && t[1] === z));
     if (big) return { obj: big };
     if (inBounds(x, z)) return { tile: [x, z] };
@@ -216,7 +228,7 @@ const labelFor = (o) => {
   if (o.userData.kind === "campfire") return "Lagerfeuer";
   if (o.userData.kind === "merchant") return "Händler";
   if (o.userData.kind === "boss") return DATA.monsters[state.dungeon.boss].name;
-  return "Wendeltreppe nach unten";
+  return "Treppe nach unten";
 };
 
 renderer.domElement.addEventListener("pointermove", (ev) => {

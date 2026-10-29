@@ -118,7 +118,7 @@
     },
     "vor_der_treppe": {
       "props": [
-        "wendeltreppe_runter"
+        "treppe_runter"
       ],
       "offset": [
         0,
@@ -127,7 +127,7 @@
       ],
       "face": "player",
       "animation": "idle",
-      "_": "Türsteher auf der Kachel vor der Wendeltreppe"
+      "_": "Türsteher auf der Kachel vor der Treppe"
     },
     "mitten_im_raum": {
       "props": [

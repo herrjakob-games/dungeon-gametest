@@ -111,18 +111,19 @@ export const TILE_PLACE = /^tile:(\d+)\|(\d+)$/;
 // Reihenfolge der Ersatz-Platzierungen beim Korrigieren (GDD: center → corner → wall-back → free)
 export const CHAIN = ["center", "corner", "wall-back", "free"];
 
-// Wendeltreppe in der Nordwest-Ecke: 3×3 Kacheln, im GDD 1|1 bis 3|3 (gezählt ab 0: 0 bis 2)
+// Treppe in der Nordwest-Ecke: 3×3 Kacheln, im GDD 1|1 bis 3|3 (gezählt ab 0: 0 bis 2), läuft zur Nordwand
 export const STAIRS_SIZE = 3;
 export const STAIRS_TILES = [];
 for (let z = 0; z < STAIRS_SIZE; z++) for (let x = 0; x < STAIRS_SIZE; x++) STAIRS_TILES.push([x, z]);
-// Mittelpunkt der Treppe (in Kacheln) und Fuß der Treppe nach oben: Startkachel 4|4 (gezählt ab 0: 3,3)
+// Mittelpunkt der Treppe (in Kacheln) und Fuß der Treppe vor ihrer Südkante, mittig: Startkachel 2|4 (gezählt ab 0: 1,3).
+// Auch die Treppe nach unten beginnt an der Südkante, ihr Fuß ist dieselbe Kachel.
 export const STAIRS_CENTER = [(STAIRS_SIZE - 1) / 2, (STAIRS_SIZE - 1) / 2];
-export const STAIRS_FOOT = [STAIRS_SIZE, STAIRS_SIZE];
+export const STAIRS_FOOT = [(STAIRS_SIZE - 1) / 2, STAIRS_SIZE];
 
 /**
  * Was der Code in der Nordwest-Ecke setzt:
  * "up" Treppe nach oben (Vorkammer), "down" Treppe nach unten (Abstieg, Bossraum nach dem Sieg),
- * "arena" freie Nordwest-Ecke im Bossraum, bis der Boss besiegt ist; sonst null.
+ * "arena" Nordwest-Ecke im Bossraum bis zum Sieg: Loch mit begehbarem Metallgitter; sonst null.
  */
 export function centerFeature(typeId, bossDefeated) {
   if (typeId === "start") return "up";

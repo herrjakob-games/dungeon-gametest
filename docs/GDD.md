@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.30 · Oct 29, 2026 · @Christian
+Version 2.31 · Oct 29, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.31 | 29.10.2026 | Bossraum: bis zum Sieg liegt über Loch und Treppe ein begehbares Metallgitter; Treppe und Loch aus Grundformen als Rückfall ohne Modell |
 | 2.30 | 29.10.2026 | Steintreppe `stairs` aus KayKit statt Wendeltreppe, weiter 3×3 in der Nordwest-Ecke, Laufrichtung zur Nordwand; Einstieg steigt bis unter die Decke, Abstieg führt in ein Loch im Boden mit kühlem Schimmer von unten; ids `treppe_hoch`, `treppe_runter`; Startposition 2\|4 statt 4\|4 |
 | 2.29 | 29.10.2026 | Zwerg: Haare und Augenbrauen in der Bartfarbe #4A3020 (eigene Textur) |
 | 2.28 | 29.10.2026 | Zwerg: breiter und kleiner (Maßstab ungleich, heutiger Wert × 1,3 / 0,85 / 1,3), ohne Helm, mit Bart aus Grundformen (Zubehör `bart`) |
@@ -296,7 +297,7 @@ Der Dungeon führt durch Themen, die alle drei Ebenen wechseln. Das Thema bestim
 - **Händler:** bietet 4 zufällige Gegenstände vom Rang der aktuellen Beutestufe an (Rang = Stufe des Themas, Verbrauchsgegenstände eingeschlossen), jeden einmal. Dazu immer die Heiltränke (Kleiner und Großer Heiltrank) in beliebiger Menge; sie zählen nicht zu den 4 Gegenständen. Ist der Rang leer, gilt der höchste Rang darunter. Verkaufen bringt den halben Preis.
 - **Rastplatz:** auf jeder geraden Ebene (2, 4, 6 …). Ein Lagerfeuer im Raum heilt einmal auf volle Lebenspunkte, danach ist es aus.
 - **Treppen:** Vorkammer und Abstieg haben in der Nordwest-Ecke eine gerade Steintreppe (KayKit `stairs`) aus 3×3 Kacheln (1|1 bis 3|3), die zur Nordwand hin läuft; ihr Fuß liegt an der Südkante (Reihe y=3). In der Vorkammer beginnt sie auf Bodenhöhe und steigt bis zur Wandoberkante (2 Kacheln); ihr oberes Ende läuft in einen dunklen Verlauf zur Schattenfarbe aus, wie ein Schacht nach oben, ohne eigenes Licht. Sie ist nicht anklickbar und zeigt, woher der Spieler kommt. Im Abstieg fehlt auf diesen Kacheln der Boden: Ein Loch mit Steinkante öffnet sich, die Treppe beginnt an der Südkante auf Bodenhöhe und führt nach Norden in die Tiefe. Die Innenwände des Lochs sind dunkel, unten verläuft alles in die Schattenfarbe, und ein schwacher, kühler Schimmer steigt von unten auf. Die ganze Fläche ist anklickbar und blockiert; ein Klick führt eine Ebene tiefer. Der Code setzt die Treppen fest, sie stehen nicht in der Einrichtung. Die Türen Nord (5|1) und West (1|5) und die Kacheln davor bleiben frei.
-- **Bossraum:** Betreten startet den Bosskampf, auch bei jedem weiteren Betreten, bis der Boss besiegt ist. Flucht ist erlaubt, der Boss wartet dann mit vollen Lebenspunkten. Die Nordwest-Ecke (1|1 bis 3|3) bleibt bis zum Sieg frei. Sieg: Beute `tier2` und 10 Erfahrung, danach wechselt die Nordwest-Ecke mit kurzer Abblende (etwa 0,5 Sekunden) zu Loch und Treppe nach unten. Die Siegbeute vergibt das Spiel, nicht das Event.
+- **Bossraum:** Betreten startet den Bosskampf, auch bei jedem weiteren Betreten, bis der Boss besiegt ist. Flucht ist erlaubt, der Boss wartet dann mit vollen Lebenspunkten. Die Nordwest-Ecke (1|1 bis 3|3) bleibt bis zum Sieg frei: Über Loch und Treppe liegt ein Metallgitter, das man betreten kann; es ist nicht anklickbar. Sieg: Beute `tier2` und 10 Erfahrung, danach wechselt die Nordwest-Ecke mit kurzer Abblende (etwa 0,5 Sekunden) zu Loch und Treppe nach unten. Die Siegbeute vergibt das Spiel, nicht das Event.
 - **Boss-Events:** Der Bossraum kann pro Thema eine eigene Event-Tabelle haben, in `data/room-types.json` beim Bossraum im Feld `themeEvents`, etwa `"themeEvents": { "keller": [ … ] }`, mit `eventChance` 1. Bei jedem Betreten wird daraus neu gewürfelt, bis der Boss besiegt ist. Die Events starten den Kampf gegen den Boss mit `combat`. Bedingungen wie `flag:name` unterscheiden die erste Begegnung von der Rückkehr. Themen ohne Tabelle zeigen den Einleitungstext des Bosses (`intro`) und starten den Kampf direkt. Bisher hat nur der Keller (Monsterratte) Boss-Events.
 - **Bosse:** passend zum Thema, einer am Ende jeder Themenwelt.
 
@@ -776,3 +777,4 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Speisesaal: nur die lange Tafel, keine gedeckten Tische mehr; Banner an freien Wänden
 - [x] Regel: keine abgebrannten Kerzen (Kerzenstummel) als Deko auf dem Boden; das Requisit `kerzenstummel` und der gedeckte Tisch `tisch_gedeckt` sind entfernt
 - [x] Steintreppe `stairs` aus KayKit statt Wendeltreppe (ids `treppe_hoch`, `treppe_runter`), 3×3 in der Nordwest-Ecke zur Nordwand hin; Einstieg ohne Licht bis unter die Decke, Abstieg in ein Loch mit kühlem Schimmer von unten; Start auf 2|4
+- [x] Bossraum: bis zum Sieg ein begehbares Metallgitter über Loch und Treppe, danach mit 0,5 Sekunden Abblende Loch und anklickbare Treppe; fehlt das Modell `stairs`, entstehen Treppe und Loch aus Grundformen
