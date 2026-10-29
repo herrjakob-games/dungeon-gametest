@@ -276,6 +276,7 @@
       0.429
     ],
     "palette": false,
+    "texture": "assets/textures/figures/zwerg/zwerg_texture.png",
     "animations": {
       "idle": "Idle",
       "walk": "Walking_A",
