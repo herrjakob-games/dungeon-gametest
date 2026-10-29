@@ -635,74 +635,9 @@
         }
       ]
     },
-    "tisch_gedeckt": {
-      "dir": "props",
-      "pieces": [
-        {
-          "file": "table_medium_tablecloth_decorated_B.gltf.glb",
-          "position": [
-            0,
-            0,
-            0
-          ]
-        },
-        {
-          "file": "candle_lit.gltf.glb",
-          "position": [
-            0.6,
-            1.0,
-            -0.6
-          ],
-          "scale": [
-            0.8,
-            0.8,
-            0.8
-          ]
-        }
-      ]
-    },
     "saeule_verziert": {
       "dir": "props",
       "file": "pillar_decorated.gltf.glb"
-    },
-    "kerzenstummel": {
-      "dir": "props",
-      "pieces": [
-        {
-          "file": "candle_melted.gltf.glb",
-          "position": [
-            0,
-            0,
-            0
-          ]
-        },
-        {
-          "file": "candle_melted.gltf.glb",
-          "position": [
-            0.35,
-            0,
-            0.2
-          ],
-          "scale": [
-            0.8,
-            0.7,
-            0.8
-          ]
-        },
-        {
-          "file": "candle_melted.gltf.glb",
-          "position": [
-            -0.25,
-            0,
-            0.3
-          ],
-          "scale": [
-            0.9,
-            0.5,
-            0.9
-          ]
-        }
-      ]
     },
     "geroell_gross": {
       "dir": "props",

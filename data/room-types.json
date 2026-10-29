@@ -263,10 +263,31 @@
       }
     ],
     "decor": {
+      "torches": "saeulen",
       "layouts": [
         {
           "id": "A",
           "props": [
+            {
+              "prop": "saeule",
+              "place": "tile:2|2",
+              "required": true
+            },
+            {
+              "prop": "saeule",
+              "place": "tile:8|2",
+              "required": true
+            },
+            {
+              "prop": "saeule",
+              "place": "tile:2|8",
+              "required": true
+            },
+            {
+              "prop": "saeule",
+              "place": "tile:8|8",
+              "required": true
+            },
             {
               "prop": "truhe",
               "place": "center",
@@ -279,11 +300,6 @@
             },
             {
               "prop": "kerzen",
-              "place": "corner",
-              "count": 2
-            },
-            {
-              "prop": "saeule",
               "place": "corner",
               "count": 2
             },
@@ -301,12 +317,48 @@
               "place": "free",
               "variant": "einzeln",
               "count": 2
+            },
+            {
+              "prop": "fahne_dreifach",
+              "place": "wall-back",
+              "variant": "gelb"
+            },
+            {
+              "prop": "fahne",
+              "place": "wall-back",
+              "variant": "wappen",
+              "count": 2
+            },
+            {
+              "prop": "fahne",
+              "place": "wall-back",
+              "variant": "gelb"
             }
           ]
         },
         {
           "id": "B",
           "props": [
+            {
+              "prop": "saeule",
+              "place": "tile:2|2",
+              "required": true
+            },
+            {
+              "prop": "saeule",
+              "place": "tile:8|2",
+              "required": true
+            },
+            {
+              "prop": "saeule",
+              "place": "tile:2|8",
+              "required": true
+            },
+            {
+              "prop": "saeule",
+              "place": "tile:8|8",
+              "required": true
+            },
             {
               "prop": "truhe",
               "place": "wall-back",
@@ -319,11 +371,6 @@
             },
             {
               "prop": "kerzen",
-              "place": "free",
-              "count": 2
-            },
-            {
-              "prop": "saeule",
               "place": "free",
               "count": 2
             },
@@ -341,6 +388,22 @@
               "prop": "muenzen",
               "place": "around:truhe",
               "variant": "einzeln"
+            },
+            {
+              "prop": "fahne_dreifach",
+              "place": "wall-back",
+              "variant": "gelb"
+            },
+            {
+              "prop": "fahne",
+              "place": "wall-back",
+              "variant": "wappen",
+              "count": 2
+            },
+            {
+              "prop": "fahne",
+              "place": "wall-back",
+              "variant": "gelb"
             }
           ]
         }
@@ -693,11 +756,6 @@
               "count": 2
             },
             {
-              "prop": "kerzenstummel",
-              "place": "free",
-              "count": 2
-            },
-            {
               "prop": "geroell_gross",
               "place": "free"
             }
@@ -724,11 +782,6 @@
             },
             {
               "prop": "knochen",
-              "place": "free",
-              "count": 2
-            },
-            {
-              "prop": "kerzenstummel",
               "place": "free",
               "count": 2
             },
@@ -1230,13 +1283,25 @@
               "place": "corner"
             },
             {
-              "prop": "tisch_gedeckt",
-              "place": "free",
+              "prop": "kerzen",
+              "place": "free"
+            },
+            {
+              "prop": "fahne_dreifach",
+              "place": "wall-back",
+              "variant": "blau"
+            },
+            {
+              "prop": "fahne",
+              "place": "wall-back",
+              "variant": "wappen",
               "count": 2
             },
             {
-              "prop": "kerzen",
-              "place": "free"
+              "prop": "fahne",
+              "place": "wall-back",
+              "variant": "blau",
+              "count": 2
             }
           ]
         },
@@ -1271,12 +1336,25 @@
               "place": "corner"
             },
             {
-              "prop": "tisch_gedeckt",
-              "place": "free"
-            },
-            {
               "prop": "kerzen",
               "place": "corner",
+              "count": 2
+            },
+            {
+              "prop": "fahne_dreifach",
+              "place": "wall-back",
+              "variant": "blau"
+            },
+            {
+              "prop": "fahne",
+              "place": "wall-back",
+              "variant": "wappen",
+              "count": 2
+            },
+            {
+              "prop": "fahne",
+              "place": "wall-back",
+              "variant": "blau",
               "count": 2
             }
           ]

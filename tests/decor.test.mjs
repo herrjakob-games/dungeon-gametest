@@ -232,10 +232,24 @@ test("Wandrequisiten (Regale, Fahnen, Herd …) verdecken oder überlagern keine
     for (const spec of specs) spec.layouts.forEach((layout, li) => {
       for (let doors = 0; doors < 16; doors++) for (let s = 1; s <= 10; s++) {
         const plan = planDecor(spec, { seed: s * 7919, doors, feature: centerFeature(rt.id, false), layoutIndex: li });
-        const torches = new Set(torchSlots(doors).map(f => f.wall + (f.wall === "N" ? key(f.t, 0) : key(0, f.t))));
+        const torches = new Set(torchSlots(doors, spec).map(f => f.wall + (f.wall === "N" ? key(f.t, 0) : key(0, f.t))));
         plan.placements.filter(p => PROPS[p.prop].wall && p.wall).forEach(p => p.tiles.forEach(t =>
           assert.ok(!torches.has(p.wall + key(...t)), rt.id + " " + layout.id + ": " + p.prop + " auf " + tileName(...t) + " verdeckt eine Fackel (Türen " + doors + ")")));
       }
     });
   }
+});
+
+test("Schatzkammer: Säulen immer auf 2|2, 8|2, 2|8 und 8|8, keine Fackeln an den Wänden", () => {
+  const spec = decorFor(ROOM_TYPES.find(t => t.id === "schatz"), "keller");
+  assert.equal(spec.torches, "saeulen");
+  assert.deepEqual(torchSlots(0, spec), []);
+  spec.layouts.forEach((layout, li) => {
+    for (let doors = 0; doors < 16; doors++) for (let s = 1; s <= 10; s++) {
+      const plan = planDecor(spec, { seed: s * 7919, doors, layoutIndex: li });
+      const pillars = plan.placements.filter(p => p.prop === "saeule").map(p => tileName(...p.tiles[0])).sort();
+      assert.deepEqual(pillars, ["2|2", "2|8", "8|2", "8|8"], "Variante " + layout.id + ", Türen " + doors);
+      assert.ok(plan.placements.some(p => p.prop === "fahne" || p.prop === "fahne_dreifach"), "Banner fehlen");
+    }
+  });
 });

@@ -53,9 +53,7 @@ export const PROPS = {
   zapffass_verziert: { w: 2, d: 1, blocks: true },
   kistenberg: { w: 1, d: 1, blocks: true },
   muenzen: { w: 1, d: 1, blocks: false },
-  tisch_gedeckt: { w: 1, d: 1, blocks: true, light: true },
   saeule_verziert: { w: 1, d: 1, blocks: true },
-  kerzenstummel: { w: 1, d: 1, blocks: false },
   geroell_gross: { w: 2, d: 1, blocks: true },
   regal_gross: { w: 1, d: 1, blocks: false, wall: true, floor: false },
   regal_klein: { w: 1, d: 1, blocks: false, wall: true, floor: false },
@@ -73,13 +71,19 @@ export const VARIANTS = {
  * Fackeln an den hohen Wänden (Stilguide: neben jeder Tür eine, Wände ohne Tür zwei): Kachel entlang Nord- und Westwand.
  * Ergebnis: [{ wall: "N" | "W", t }]. Die vorderen Fackeln (Süd, Ost) stehen auf Pfosten und betreffen keine Wandrequisiten.
  */
-export function torchSlots(doors) {
+export function torchSlots(doors, spec) {
   const out = [];
+  if (pillarTorches(spec)) return out; // Fackeln an den Säulen statt an den Wänden (Schatzkammer)
   ["N", "W"].forEach(w => ((doors & DIR[w].bit) ? [MID + 2] : [2, N - 3]).forEach(t => out.push({ wall: w, t })));
   return out;
 }
 
+// Einrichtung mit "torches": "saeulen": keine Fackeln an den Wänden, dafür vier an jeder Säule (eine pro Seite)
+export const pillarTorches = (spec) => !!spec && spec.torches === "saeulen";
+
 export const PLACES = ["center", "wall-back", "corner", "free"];
+// Feste Kachel: "tile:x|y" wie im GDD (ab 1 gezählt), ohne Korrekturablauf
+export const TILE_PLACE = /^tile:(\d+)\|(\d+)$/;
 // Reihenfolge der Ersatz-Platzierungen beim Korrigieren (GDD: center → corner → wall-back → free)
 export const CHAIN = ["center", "corner", "wall-back", "free"];
 
@@ -182,7 +186,7 @@ export function planDecor(spec, opts) {
   const reserved = new Set(doorTiles(doors).map(t => key(...t)));
   const blocked = new Set(), occupied = new Set(), wallSlots = new Set();
   // Wandrequisiten (Regale, Fahnen, Herd …) verdecken keine Fackel: die Wandkachel einer Fackel bleibt für sie frei
-  const torches = new Set(torchSlots(doors).map(f => f.wall + (f.wall === "N" ? key(f.t, 0) : key(0, f.t))));
+  const torches = new Set(torchSlots(doors, spec).map(f => f.wall + (f.wall === "N" ? key(f.t, 0) : key(0, f.t))));
   const clickables = [], extra = [];
   if (feature) STAIRS_TILES.forEach(t => { reserved.add(key(...t)); blocked.add(key(...t)); });
   if (feature === "up") { reserved.add(key(...STAIRS_FOOT)); extra.push(STAIRS_FOOT); }
@@ -243,6 +247,8 @@ export function planDecor(spec, opts) {
       }
       return shuffle(out);
     }
+    const ft = TILE_PLACE.exec(place || "");
+    if (ft) return [{ tiles: shape(p, v, +ft[1] - 1, +ft[2] - 1, "h", 1, 1), rot: 0 }];
     const m = /^(around|above):(\w+)$/.exec(place || "");
     if (m) {
       const targets = placements.filter(t => t.prop === m[2]);
@@ -337,6 +343,7 @@ export function planDecor(spec, opts) {
 // Datenprüfung der Einrichtung (für validateData)
 export function checkDecor(spec, where, err) {
   if (!spec || !Array.isArray(spec.layouts) || !spec.layouts.length) { err(where, "decor braucht mindestens eine Variante in layouts"); return; }
+  if (spec.torches !== undefined && spec.torches !== "saeulen") err(where, "torches kennt nur \"saeulen\"");
   if (spec.torchColor !== undefined && !/^#[0-9a-fA-F]{6}$/.test(spec.torchColor)) err(where, "torchColor muss eine Farbe wie #ff8a30 sein");
   const ids = new Set();
   spec.layouts.forEach((l, i) => {
@@ -348,7 +355,9 @@ export function checkDecor(spec, where, err) {
     (l.props || []).forEach(p => {
       if (!PROPS[p.prop]) err(w, "unbekanntes Requisit " + p.prop);
       const m = /^(around|above):(\w+)$/.exec(p.place || "");
-      if (!PLACES.includes(p.place) && !m) err(w, p.prop + ": unbekannte Platzierung " + p.place);
+      const ft = TILE_PLACE.exec(p.place || "");
+      if (ft && !inBounds(+ft[1] - 1, +ft[2] - 1)) err(w, p.prop + ": Kachel " + p.place.slice(5) + " liegt außerhalb des Raums");
+      if (!PLACES.includes(p.place) && !m && !ft) err(w, p.prop + ": unbekannte Platzierung " + p.place);
       if (m && !before.has(m[2])) err(w, p.prop + ": " + m[2] + " muss vorher in der Liste stehen");
       if (m && m[1] === "above" && p.prop !== "kronleuchter") err(w, p.prop + ": above passt nur für hängende Requisiten");
       if (p.count !== undefined && !(Number.isInteger(p.count) && p.count > 0)) err(w, p.prop + ": count muss eine positive Zahl sein");

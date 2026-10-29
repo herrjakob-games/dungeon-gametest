@@ -722,30 +722,8 @@
     "scale": 0.5,
     "palette": true
   },
-  "tisch_gedeckt": {
-    "file": "assets/props/tisch_gedeckt.glb",
-    "scale": 0.5,
-    "lights": [
-      {
-        "offset": [
-          0.3,
-          0.85,
-          -0.3
-        ],
-        "color": "#FFC27A",
-        "intensity": 0.9,
-        "distance": 3.5
-      }
-    ],
-    "palette": true
-  },
   "saeule_verziert": {
     "file": "assets/props/saeule_verziert.glb",
-    "scale": 0.5,
-    "palette": true
-  },
-  "kerzenstummel": {
-    "file": "assets/props/kerzenstummel.glb",
     "scale": 0.5,
     "palette": true
   },
