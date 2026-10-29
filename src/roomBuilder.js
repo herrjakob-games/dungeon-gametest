@@ -234,21 +234,14 @@ function placeTorches(room, color, spec) {
   if (has("E")) makeTorch(E, tw(MID + 1), -Math.PI / 2, color, true);
 }
 
-// Vier Fackeln an einer Säule, eine pro Seite; ein gemeinsames Licht pro Säule statt vier (spart Rechenzeit)
+// Eine Fackel an jeder Säule, auf der Seite zur Raummitte, mit eigenem Licht
 const PILLAR_TORCH = 0.3; // Abstand der Halterung von der Säulenmitte
-function makePillarTorches(cx, cz, color) {
-  const x = tw(cx), z = tw(cz);
-  const flames = [];
-  [[0, 1, 0], [0, -1, Math.PI], [1, 0, Math.PI / 2], [-1, 0, -Math.PI / 2]].forEach(([dx, dz, rot]) =>
-    flames.push(makeTorch(x + dx * PILLAR_TORCH, z + dz * PILLAR_TORCH, rot, color, false, true)));
-  const c = new THREE.Color(color);
-  const light = new THREE.PointLight(c, 1.8, 6, 2);
-  light.position.set(x, 1.65, z);
-  scene.add(light);
-  state.torches.push({ light, flame: flames[0], phase: rnd() * 10, base: 1.8 });
+function makePillarTorch(cx, cz, color) {
+  const dx = MID - cx, dz = MID - cz, len = Math.hypot(dx, dz) || 1;
+  makeTorch(tw(cx) + dx / len * PILLAR_TORCH, tw(cz) + dz / len * PILLAR_TORCH, Math.atan2(dx, dz), color, false);
 }
 
-function makeTorch(x, z, rot, color, onPost, noLight) {
+function makeTorch(x, z, rot, color, onPost) {
   const g = new THREE.Group();
   const c = new THREE.Color(color);
   const y = onPost ? 0.95 : 1.25;
@@ -265,13 +258,11 @@ function makeTorch(x, z, rot, color, onPost, noLight) {
     flame.position.set(0, 0.35, 0.1);
   }
   g.add(flame);
-  placeAt(g, x, z, rot, y);
-  if (noLight) return flame;
   const light = new THREE.PointLight(c, 1.8, 6, 2);
   light.position.set(0, 0.4, 0.3);
   g.add(light);
+  placeAt(g, x, z, rot, y);
   state.torches.push({ light, flame, phase: rnd() * 10, base: 1.8 });
-  return flame;
 }
 
 // Geröll in jedem Raum, nicht auf der Wendeltreppe
@@ -346,7 +337,7 @@ function placeDecor(spec, room, feature, id, torch) {
     }
     if (PROPS[pl.prop].blocks) pl.tiles.forEach(t => block(t[0], t[1]));
     at(propMesh(pl.prop, pl), pl.cx, pl.cz, pl.rot);
-    if (pl.prop === "saeule" && pillarTorches(spec)) makePillarTorches(pl.cx, pl.cz, torch);
+    if (pl.prop === "saeule" && pillarTorches(spec)) makePillarTorch(pl.cx, pl.cz, torch);
   }
 }
 

@@ -78,10 +78,12 @@ export function torchSlots(doors, spec) {
   return out;
 }
 
-// Einrichtung mit "torches": "saeulen": keine Fackeln an den Wänden, dafür vier an jeder Säule (eine pro Seite)
+// Einrichtung mit "torches": "saeulen": keine Fackeln an den Wänden, dafür an jeder Säule eine, die zur Raummitte zeigt
 export const pillarTorches = (spec) => !!spec && spec.torches === "saeulen";
 
 export const PLACES = ["center", "wall-back", "corner", "free"];
+// Wandschmuck links und rechts jeder hinteren Tür (Nord, West), eine Kachel Abstand zum Türrahmen, überall dieselbe Variante
+export const DOOR_SIDES = "door-sides";
 // Feste Kachel: "tile:x|y" wie im GDD (ab 1 gezählt), ohne Korrekturablauf
 export const TILE_PLACE = /^tile:(\d+)\|(\d+)$/;
 // Reihenfolge der Ersatz-Platzierungen beim Korrigieren (GDD: center → corner → wall-back → free)
@@ -315,12 +317,25 @@ export function planDecor(spec, opts) {
     }
   }
 
+  // Wandschmuck neben den hinteren Türen (place "door-sides"): Türrahmen deckt MID-1 bis MID+1, eine Kachel Abstand
+  function doorSides(item) {
+    const vs = VARIANTS[item.prop] || [];
+    const variant = item.variant || (vs.length ? vs[Math.floor(R() * vs.length)] : undefined);
+    const one = Object.assign({}, item, { variant });
+    ["N", "W"].filter(w => doors & DIR[w].bit).forEach(w => [MID - 2, MID + 2].forEach(t => {
+      const c = w === "N" ? { tiles: [[t, 0]], rot: 0, wall: "N" } : { tiles: [[0, t]], rot: Math.PI / 2, wall: "W" };
+      if (fits(one, c)) put(one, c); else dropped.push({ prop: item.prop, variant: variant || null });
+    }));
+  }
+
   const tag = (item) => ({ prop: item.prop, variant: item.variant || null });
-  // Pflichtstücke zuerst, sonst die Reihenfolge der Daten
-  const order = layout.props.filter(p => p.required).concat(layout.props.filter(p => !p.required));
+  // Wandschmuck neben den Türen zuerst (feste Plätze), dann Pflichtstücke, sonst die Reihenfolge der Daten
+  const sides = layout.props.filter(p => p.place === DOOR_SIDES), rest = layout.props.filter(p => p.place !== DOOR_SIDES);
+  const order = sides.concat(rest.filter(p => p.required), rest.filter(p => !p.required));
   for (const item of order) {
     if (!PROPS[item.prop]) { dropped.push(tag(item)); continue; }
     if (item.prop === "saeule" && item.variant === "reihen") { rows(item); continue; }
+    if (item.place === DOOR_SIDES) { doorSides(item); continue; }
     // Korrekturablauf: erst die eigene Platzierung, dann die folgenden aus CHAIN (Wandschmuck, around und above nicht)
     const fixed = !PLACES.includes(item.place) || PROPS[item.prop].floor === false;
     const tries = fixed ? [item.place] : CHAIN.slice(Math.max(0, CHAIN.indexOf(item.place)));
@@ -357,14 +372,15 @@ export function checkDecor(spec, where, err) {
       const m = /^(around|above):(\w+)$/.exec(p.place || "");
       const ft = TILE_PLACE.exec(p.place || "");
       if (ft && !inBounds(+ft[1] - 1, +ft[2] - 1)) err(w, p.prop + ": Kachel " + p.place.slice(5) + " liegt außerhalb des Raums");
-      if (!PLACES.includes(p.place) && !m && !ft) err(w, p.prop + ": unbekannte Platzierung " + p.place);
+      if (p.place === DOOR_SIDES && !(PROPS[p.prop] && PROPS[p.prop].wall)) err(w, p.prop + ": door-sides passt nur für Wandrequisiten");
+      if (!PLACES.includes(p.place) && !m && !ft && p.place !== DOOR_SIDES) err(w, p.prop + ": unbekannte Platzierung " + p.place);
       if (m && !before.has(m[2])) err(w, p.prop + ": " + m[2] + " muss vorher in der Liste stehen");
       if (m && m[1] === "above" && p.prop !== "kronleuchter") err(w, p.prop + ": above passt nur für hängende Requisiten");
       if (p.count !== undefined && !(Number.isInteger(p.count) && p.count > 0)) err(w, p.prop + ": count muss eine positive Zahl sein");
       if (p.required !== undefined && typeof p.required !== "boolean") err(w, p.prop + ": required muss true oder false sein");
       if (p.required && m) err(w, p.prop + ": ein Pflichtstück braucht eine eigene Platzierung, nicht " + m[1] + ":");
       if (p.variant !== undefined && !(VARIANTS[p.prop] || []).includes(p.variant)) err(w, p.prop + ": unbekannte Variante " + p.variant);
-      if (PROPS[p.prop] && PROPS[p.prop].wall && PROPS[p.prop].floor === false && p.place !== "wall-back") err(w, p.prop + " hängt an der Wand und braucht wall-back");
+      if (PROPS[p.prop] && PROPS[p.prop].wall && PROPS[p.prop].floor === false && p.place !== "wall-back" && p.place !== DOOR_SIDES) err(w, p.prop + " hängt an der Wand und braucht wall-back");
       before.add(p.prop);
     });
   });

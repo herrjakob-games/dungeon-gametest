@@ -319,19 +319,8 @@
               "count": 2
             },
             {
-              "prop": "fahne_dreifach",
-              "place": "wall-back",
-              "variant": "gelb"
-            },
-            {
               "prop": "fahne",
-              "place": "wall-back",
-              "variant": "wappen",
-              "count": 2
-            },
-            {
-              "prop": "fahne",
-              "place": "wall-back",
+              "place": "door-sides",
               "variant": "gelb"
             }
           ]
@@ -390,19 +379,8 @@
               "variant": "einzeln"
             },
             {
-              "prop": "fahne_dreifach",
-              "place": "wall-back",
-              "variant": "gelb"
-            },
-            {
               "prop": "fahne",
-              "place": "wall-back",
-              "variant": "wappen",
-              "count": 2
-            },
-            {
-              "prop": "fahne",
-              "place": "wall-back",
+              "place": "door-sides",
               "variant": "gelb"
             }
           ]

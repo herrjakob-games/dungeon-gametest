@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.22 · Oct 29, 2026 · @Christian
+Version 2.23 · Oct 29, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.23 | 29.10.2026 | Schatzkammer: ein Banner in derselben Farbe links und rechts jeder hinteren Tür mit einer Kachel Abstand, sonst kein Wandschmuck; an jeder Säule nur eine leuchtende Fackel zur Raummitte |
 | 2.22 | 29.10.2026 | Schatzkammer: Säulen fest auf 2\|2, 8\|2, 2\|8 und 8\|8, Fackeln an allen vier Seiten jeder Säule statt an den Wänden, Banner an den Wänden; Speisesaal nur mit der langen Tafel und Bannern an freien Wänden; keine abgebrannten Kerzen als Deko auf dem Boden |
 | 2.21 | 29.10.2026 | Wandrequisiten (Regale, Fahnen, Herd …) dürfen Fackeln nicht verdecken oder überlagern; Tisch des Händlers nur mit Flaschen |
 | 2.20 | 29.10.2026 | Händler auf den Kacheln 2\|2 bis 2\|8 oder 2\|2 bis 8\|2, schaut zur Raummitte; hinter ihm Wandregale mit Flaschen, vor ihm `table_medium_decorated_A` mit Kerze statt Tisch mit Gold (2.21: `table_medium` nur mit Flaschen und Kerze) |
@@ -415,7 +416,7 @@ Gruft und Brunnen sind im Keller die düsteren Räume: kälteres Grundlicht, Ker
 **Lesbarkeit**
 
 - Spielfigur mit hellem Bodenring, Gegner mit rotem Akzent und im Kampf rotem Ring.
-- Türrahmen eine Stufe heller als die Wand, neben jeder Tür eine Fackel (Ausnahme: in der Schatzkammer hängen die Fackeln an den Säulen). Verschlossene Tür: rotes Schloss.
+- Türrahmen eine Stufe heller als die Wand, neben jeder Tür eine Fackel (Ausnahme: in der Schatzkammer hängt an jeder Säule eine Fackel). Verschlossene Tür: rotes Schloss.
 - Anklickbare Objekte (Truhe, Lagerfeuer, Händler, Treppe nach unten): goldene Umrisslinie beim Überfahren mit der Maus, leichtes Aufhellen.
 - Bodendeko (Sack, Moos, Pfütze, Geröll) flach und dunkel, damit sie nie wie ein Hindernis wirkt.
 
@@ -461,8 +462,8 @@ Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kan
 ```
 
 - **Varianten:** `layouts` enthält eine oder mehrere Varianten. Der Raum-Seed wählt eine davon, gleicher Seed ergibt gleiche Einrichtung.
-- **Platzierung (`place`):** `center` (Raummitte), `wall-back` (an der Nord- oder Westwand, weil die vorderen Wände nur Sockel sind), `corner` (in einer Ecke, bei `count` über 1 in verschiedenen Ecken), `free` (beliebige freie Kachel), `around:<prop>` (um ein anderes Requisit herum, etwa Stühle um die Tafel), `above:<prop>` (über einem anderen Requisit, etwa der Kronleuchter über der Tafel), `tile:x|y` (genau diese Kachel, etwa die Säulen der Schatzkammer; ohne Korrektur, passt sie nicht, fällt das Requisit weg).
-- **Fackeln an Säulen (`torches`):** Mit `"torches": "saeulen"` in der Einrichtung hängen keine Fackeln an den Wänden und an den vorderen Pfosten. Stattdessen trägt jede Säule vier Fackeln, eine auf jeder Seite. Jede Säule hat ein gemeinsames Licht für ihre vier Fackeln. Heute so in der Schatzkammer.
+- **Platzierung (`place`):** `center` (Raummitte), `wall-back` (an der Nord- oder Westwand, weil die vorderen Wände nur Sockel sind), `corner` (in einer Ecke, bei `count` über 1 in verschiedenen Ecken), `free` (beliebige freie Kachel), `around:<prop>` (um ein anderes Requisit herum, etwa Stühle um die Tafel), `above:<prop>` (über einem anderen Requisit, etwa der Kronleuchter über der Tafel), `tile:x|y` (genau diese Kachel, etwa die Säulen der Schatzkammer; ohne Korrektur, passt sie nicht, fällt das Requisit weg), `door-sides` (Wandschmuck links und rechts jeder Tür in Nord- und Westwand, eine Kachel Abstand zum Türrahmen, an der Nordwand also 3|1 und 7|1; alle in derselben Variante; an Süd- und Osttüren nicht, weil die vorderen Wände nur Sockel sind).
+- **Fackeln an Säulen (`torches`):** Mit `"torches": "saeulen"` in der Einrichtung hängen keine Fackeln an den Wänden und an den vorderen Pfosten. Stattdessen trägt jede Säule eine leuchtende Fackel auf der Seite zur Raummitte. Heute so in der Schatzkammer.
 - **Weitere Felder:** `count` (Anzahl, Standard 1), `variant` (Abwandlung eines Requisits, etwa der Tisch mit Töpfen statt Würfeln).
 - **Feste Regeln:** Türkacheln und die Kachel davor bleiben frei. Wandrequisiten (Regale, Fahnen, Schlüsselbund, Herd, Anrichte und alle anderen an der Wand) verdecken oder überlagern keine Fackel: Die Wandkachel einer Fackel bleibt für sie frei. Abgebrannte Kerzen (Kerzenstummel) stehen nicht als Deko auf dem Boden. Jede Tür und jedes anklickbare Objekt bleibt erreichbar, `npm test` prüft das für alle Varianten. In Vorkammer, Abstieg und Bossraum bleibt die Nordwest-Ecke (1|1 bis 3|3) für die Wendeltreppe frei; `corner` meint dort nur die drei übrigen Ecken, `wall-back` nur die freien Abschnitte von Nord- und Westwand.
 - **Pflichtstücke:** Ein Requisit mit `"required": true` macht den Raumtyp erkennbar (Herd in der Küche, Tafel im Speisesaal, Brunnen im Brunnenraum). Es wird immer zuerst platziert und nie weggelassen. Passt es in einer Variante bei einer Türkombination nicht, ist das ein Fehler in den Daten, und `npm test` schlägt fehl.
@@ -751,5 +752,6 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Regel: Regale und andere Wandrequisiten verdecken oder überlagern keine Fackeln
 - [x] Tisch des Händlers (`table_medium`) nur mit Flaschen und Kerze, keine Teller oder Küchensachen
 - [x] Schatzkammer: Säulen immer auf 2|2, 8|2, 2|8 und 8|8 (`tile:x|y`); keine Fackeln an den Wänden, dafür vier an jeder Säule (`"torches": "saeulen"`); Banner an den Wänden
+- [x] Schatzkammer, Korrektur: Banner derselben Farbe (`fahne`, gelb) links und rechts jeder hinteren Tür mit einer Kachel Abstand (`door-sides`), keine weitere Wanddekoration, keine Waffenständer; an jeder Säule nur eine leuchtende Fackel zur Raummitte
 - [x] Speisesaal: nur die lange Tafel, keine gedeckten Tische mehr; Banner an freien Wänden
 - [x] Regel: keine abgebrannten Kerzen (Kerzenstummel) als Deko auf dem Boden; das Requisit `kerzenstummel` und der gedeckte Tisch `tisch_gedeckt` sind entfernt
