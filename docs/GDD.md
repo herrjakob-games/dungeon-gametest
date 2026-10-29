@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.24 · Oct 29, 2026 · @Christian
+Version 2.25 · Oct 29, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.25 | 29.10.2026 | Münzstapel: derselbe Typ steht nie im Umkreis von zwei Kacheln (`spread`); Schatzkammer A mit einem Goldhaufen an der Truhe und drei frei im Raum |
 | 2.24 | 29.10.2026 | Gold auf dem Boden einheitlich aus den KayKit-Münzen (`coin`, `coin_stack_small`, `coin_stack_medium`, `coin_stack_large`) in gleicher Größe |
 | 2.23 | 29.10.2026 | Schatzkammer: ein Banner in derselben Farbe links und rechts jeder hinteren Tür mit einer Kachel Abstand, sonst kein Wandschmuck; an jeder Säule nur eine leuchtende Fackel zur Raummitte |
 | 2.22 | 29.10.2026 | Schatzkammer: Säulen fest auf 2\|2, 8\|2, 2\|8 und 8\|8, Fackeln an allen vier Seiten jeder Säule statt an den Wänden, Banner an den Wänden; Speisesaal nur mit der langen Tafel und Bannern an freien Wänden; keine abgebrannten Kerzen als Deko auf dem Boden |
@@ -466,7 +467,7 @@ Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kan
 - **Platzierung (`place`):** `center` (Raummitte), `wall-back` (an der Nord- oder Westwand, weil die vorderen Wände nur Sockel sind), `corner` (in einer Ecke, bei `count` über 1 in verschiedenen Ecken), `free` (beliebige freie Kachel), `around:<prop>` (um ein anderes Requisit herum, etwa Stühle um die Tafel), `above:<prop>` (über einem anderen Requisit, etwa der Kronleuchter über der Tafel), `tile:x|y` (genau diese Kachel, etwa die Säulen der Schatzkammer; ohne Korrektur, passt sie nicht, fällt das Requisit weg), `door-sides` (Wandschmuck links und rechts jeder Tür in Nord- und Westwand, eine Kachel Abstand zum Türrahmen, an der Nordwand also 3|1 und 7|1; alle in derselben Variante; an Süd- und Osttüren nicht, weil die vorderen Wände nur Sockel sind).
 - **Fackeln an Säulen (`torches`):** Mit `"torches": "saeulen"` in der Einrichtung hängen keine Fackeln an den Wänden und an den vorderen Pfosten. Stattdessen trägt jede Säule eine leuchtende Fackel auf der Seite zur Raummitte. Heute so in der Schatzkammer.
 - **Weitere Felder:** `count` (Anzahl, Standard 1), `variant` (Abwandlung eines Requisits, etwa der Tisch mit Töpfen statt Würfeln).
-- **Feste Regeln:** Türkacheln und die Kachel davor bleiben frei. Wandrequisiten (Regale, Fahnen, Schlüsselbund, Herd, Anrichte und alle anderen an der Wand) verdecken oder überlagern keine Fackel: Die Wandkachel einer Fackel bleibt für sie frei. Abgebrannte Kerzen (Kerzenstummel) stehen nicht als Deko auf dem Boden. Jede Tür und jedes anklickbare Objekt bleibt erreichbar, `npm test` prüft das für alle Varianten. In Vorkammer, Abstieg und Bossraum bleibt die Nordwest-Ecke (1|1 bis 3|3) für die Wendeltreppe frei; `corner` meint dort nur die drei übrigen Ecken, `wall-back` nur die freien Abschnitte von Nord- und Westwand.
+- **Feste Regeln:** Türkacheln und die Kachel davor bleiben frei. Wandrequisiten (Regale, Fahnen, Schlüsselbund, Herd, Anrichte und alle anderen an der Wand) verdecken oder überlagern keine Fackel: Die Wandkachel einer Fackel bleibt für sie frei. Abgebrannte Kerzen (Kerzenstummel) stehen nicht als Deko auf dem Boden. Münzstapel (`goldhaufen`, `muenzen` mit allen Varianten) haben einen Mindestabstand (`spread: 2`): Derselbe Typ, also gleiches Requisit und gleiche Variante, steht nicht noch einmal im Umkreis von zwei Kacheln, auch schräg gezählt. Verschiedene Typen dürfen nebeneinander liegen. Passt ein Stapel nirgends, gilt der Korrekturablauf. Jede Tür und jedes anklickbare Objekt bleibt erreichbar, `npm test` prüft das für alle Varianten. In Vorkammer, Abstieg und Bossraum bleibt die Nordwest-Ecke (1|1 bis 3|3) für die Wendeltreppe frei; `corner` meint dort nur die drei übrigen Ecken, `wall-back` nur die freien Abschnitte von Nord- und Westwand.
 - **Pflichtstücke:** Ein Requisit mit `"required": true` macht den Raumtyp erkennbar (Herd in der Küche, Tafel im Speisesaal, Brunnen im Brunnenraum). Es wird immer zuerst platziert und nie weggelassen. Passt es in einer Variante bei einer Türkombination nicht, ist das ein Fehler in den Daten, und `npm test` schlägt fehl.
 - **Korrektur:** Passt ein Requisit nicht, versucht der Code in dieser Reihenfolge: 1. eine andere Kachel mit derselben Platzierung, 2. die nächste Platzierung in der Reihe `center` → `corner` → `wall-back` → `free`, 3. eine kleinere Anzahl, 4. weglassen. Requisiten mit `around:` oder `above:` fallen mit ihrem Bezugsrequisit weg. Gleicher Seed ergibt immer dieselbe Korrektur.
 - **Prüfung:** `npm test` platziert jede Variante jedes Raumtyps mit allen 16 Türkombinationen und prüft: keine Überlappung, nichts in Wänden oder auf Türkacheln, jede Tür und jedes anklickbare Objekt ist von jeder Tür aus erreichbar, Pflichtstücke sind vorhanden. Der Test gibt eine Liste aus, welche Requisiten wie oft korrigiert oder weggelassen wurden.
@@ -755,5 +756,6 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Schatzkammer: Säulen immer auf 2|2, 8|2, 2|8 und 8|8 (`tile:x|y`); keine Fackeln an den Wänden, dafür vier an jeder Säule (`"torches": "saeulen"`); Banner an den Wänden
 - [x] Schatzkammer, Korrektur: Banner derselben Farbe (`fahne`, gelb) links und rechts jeder hinteren Tür mit einer Kachel Abstand (`door-sides`), keine weitere Wanddekoration, keine Waffenständer; an jeder Säule nur eine leuchtende Fackel zur Raummitte
 - [x] Gold auf dem Boden einheitlich aus den KayKit-Münzen, alle im selben Maßstab (der Goldhaufen war kleiner)
+- [x] Münzstapel desselben Typs nie im Umkreis von zwei Kacheln, damit die Verteilung zufälliger aussieht; dafür in Schatzkammer A nur noch ein Goldhaufen an der Truhe, drei weitere frei im Raum
 - [x] Speisesaal: nur die lange Tafel, keine gedeckten Tische mehr; Banner an freien Wänden
 - [x] Regel: keine abgebrannten Kerzen (Kerzenstummel) als Deko auf dem Boden; das Requisit `kerzenstummel` und der gedeckte Tisch `tisch_gedeckt` sind entfernt

@@ -259,3 +259,18 @@ test("Schatzkammer: Säulen immer auf 2|2, 8|2, 2|8 und 8|8, keine Fackeln an de
     }
   });
 });
+
+test("Münzstapel: derselbe Typ steht nie im Umkreis von zwei Kacheln", () => {
+  const spec = decorFor(ROOM_TYPES.find(t => t.id === "schatz"), "keller");
+  const counts = {};
+  spec.layouts.forEach((layout, li) => {
+    for (let doors = 0; doors < 16; doors++) for (let s = 1; s <= 10; s++) {
+      const plan = planDecor(spec, { seed: s * 7919, doors, layoutIndex: li });
+      const coins = plan.placements.filter(p => PROPS[p.prop].spread);
+      coins.forEach((a, i) => coins.slice(i + 1).filter(b => b.prop === a.prop && b.variant === a.variant).forEach(b =>
+        assert.ok(Math.max(Math.abs(a.cx - b.cx), Math.abs(a.cz - b.cz)) > 2, layout.id + ": " + a.prop + " " + (a.variant || "") + " zu nah")));
+      coins.forEach(p => { const k = layout.id + " " + p.prop + (p.variant ? "_" + p.variant : ""); counts[k] = (counts[k] || 0) + 1; });
+    }
+  });
+  assert.ok(Object.keys(counts).length >= 6, "Münzen fehlen: " + JSON.stringify(counts));
+});

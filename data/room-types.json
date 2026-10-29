@@ -295,8 +295,12 @@
             },
             {
               "prop": "goldhaufen",
-              "place": "around:truhe",
-              "count": 4
+              "place": "around:truhe"
+            },
+            {
+              "prop": "goldhaufen",
+              "place": "free",
+              "count": 3
             },
             {
               "prop": "kerzen",

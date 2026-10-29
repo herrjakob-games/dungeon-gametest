@@ -8,6 +8,7 @@ import { mulberry32 } from "./rng.js";
 /**
  * Requisiten: Größe in Kacheln (w entlang x, d entlang z, ungedreht), blockiert, anklickbar, eigenes Licht.
  * floor: false = hängt an der Wand oder in der Luft und belegt keine Bodenkachel.
+ * spread: gleicher Typ (Requisit und Variante) steht nicht noch einmal im Umkreis von so vielen Kacheln (Münzstapel).
  */
 export const PROPS = {
   saeule: { w: 1, d: 1, blocks: true },
@@ -31,7 +32,7 @@ export const PROPS = {
   kerzen: { w: 1, d: 1, blocks: false, light: true },
   knochen: { w: 1, d: 1, blocks: false },
   geroell: { w: 1, d: 1, blocks: false },
-  goldhaufen: { w: 1, d: 1, blocks: false },
+  goldhaufen: { w: 1, d: 1, blocks: false, spread: 2 },
   truhe: { w: 1, d: 1, blocks: true, click: true },
   lagerfeuer: { w: 1, d: 1, blocks: true, click: true, light: true },
   // Händler: Regal an der Wand, davor der Händler, vor ihm sein Tisch mit Kerze; inset: nicht in der ersten oder letzten Reihe
@@ -52,7 +53,7 @@ export const PROPS = {
   zapffass: { w: 1, d: 1, blocks: true },
   zapffass_verziert: { w: 2, d: 1, blocks: true },
   kistenberg: { w: 1, d: 1, blocks: true },
-  muenzen: { w: 1, d: 1, blocks: false },
+  muenzen: { w: 1, d: 1, blocks: false, spread: 2 },
   saeule_verziert: { w: 1, d: 1, blocks: true },
   geroell_gross: { w: 2, d: 1, blocks: true },
   regal_gross: { w: 1, d: 1, blocks: false, wall: true, floor: false },
@@ -271,10 +272,17 @@ export function planDecor(spec, opts) {
     return out;
   }
 
+  // Gleicher Typ im Umkreis (Kacheln in jede Richtung, auch schräg)?
+  function tooClose(item, tiles, r) {
+    return placements.some(pl => pl.prop === item.prop && pl.variant === (item.variant || null) &&
+      pl.tiles.some(([x, z]) => tiles.some(([tx, tz]) => Math.max(Math.abs(x - tx), Math.abs(z - tz)) <= r)));
+  }
+
   function fits(item, c) {
     const def = PROPS[item.prop];
     if (!c.tiles.every(([x, z]) => inBounds(x, z))) return false;
     if (def.wall && c.wall && c.tiles.some(t => torches.has(c.wall + key(...t)))) return false;
+    if (def.spread && tooClose(item, c.tiles, def.spread)) return false;
     if (def.floor === false) {
       if (c.at) return true; // hängt über einem anderen Requisit
       // Wandschmuck: Wandplatz frei und nicht über einer Tür
