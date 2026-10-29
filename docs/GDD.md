@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.11 · Oct 29, 2026 · @Christian
+Version 2.12 · Oct 29, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.12 | 29.10.2026 | Figuren, die nicht sterben und nicht kämpfen, bleiben nach dem Event an ihrem Platz; Gabelkrone der Monsterratte kleiner und am Kopf; Figuren ohne Animation stehen fest am Boden (atmen statt wippen) |
 | 2.11 | 29.10.2026 | Ratten, Küchenchef, Monsterratte und Kröte aus dem Easy Animated Enemy Pack (Quaternius) statt KI-Generator; Goblin aus Basic_Goblin (standout7) ohne Animationen, Bewegung per Code; Zubehör aus Grundformen an Knochen (`accessories`); Figuren der Monster spielen Laufen, Angriff und Sterben |
 | 2.10 | 28.10.2026 | Meilenstein 6b begonnen: Spielfiguren der drei Völker aus KayKit Adventurers mit Stand- und Laufanimation; Paketfiguren behalten ihre eigene Textur; Zubehör nach der Startwaffe; Licht nach Stilguide gedimmt |
 | 2.9 | 28.10.2026 | Meilenstein 6a umgesetzt: Zuordnung kennt zusätzlich `tint` (Einfärben eines Modells); Wandecken aus KayKit-Endstücken; Fackeln an vorderen Türen auf einem Pfosten |
@@ -218,8 +219,8 @@ Jeder Raumtyp hat eine Event-Chance und eine gewichtete Event-Tabelle. Jedes Eve
 - **Volks-Bedingungen:** Ein ganzes Event kann an ein Volk gebunden sein, dann erscheint es nur für dieses Volk. Bei ausgewählten Events kann auch eine einzelne Option an ein Volk gebunden sein, andere Völker sehen sie nicht.
 - **Türen:** `lockDoor` und `unlockDoor` nennen eine Richtung (`N`, `E`, `S`, `W`) oder `back`, die Tür, durch die der Spieler kam. Eine verschlossene Tür zeigt ein Schloss und lässt sich nicht benutzen, bis `unlockDoor` sie öffnet. Sind am Ende eines Events alle Türen eines Raums zu, öffnet sich die Rück-Tür von selbst.
 - **Monster:** Name, Lebenspunkte, Rüstung, Angriffsbonus, Schaden (z. B. W6).
-- **Figuren in Events:** Ein Event kann im Feld `figures` Figuren nennen, die beim Start des Events im Raum erscheinen, etwa `"figures": [ { "figure": "kuechenratte", "place": "near:herd" } ]`. `figure` ist eine Monster-id oder eine Figur ohne Kampfwerte aus der Figurenliste. `place` nutzt die Platzierungen der Einrichtung und zusätzlich `near:<prop>` (eine freie Kachel direkt neben dem Requisit); fehlt das Requisit, steht die Figur auf einer freien Kachel. Optional: `count` (Anzahl), `variant` (etwa `sitzend`) und `stay` (true: die Figur bleibt nach dem Event stehen, solange der Spieler auf dieser Ebene ist).
-- **Figuren nach dem Event:** Nach einem Sieg verschwindet der Gegner. Nach einer Flucht verschwindet er, sobald der Spieler den Raum verlässt. Wird das Event friedlich gelöst, verschwinden die Figuren, außer bei `stay`. Stehen mehrere gleiche Figuren im Raum und der Kampf geht gegen eine, huschen die übrigen beim Kampfstart davon.
+- **Figuren in Events:** Ein Event kann im Feld `figures` Figuren nennen, die beim Start des Events im Raum erscheinen, etwa `"figures": [ { "figure": "kuechenratte", "place": "near:herd" } ]`. `figure` ist eine Monster-id oder eine Figur ohne Kampfwerte aus der Figurenliste. `place` nutzt die Platzierungen der Einrichtung und zusätzlich `near:<prop>` (eine freie Kachel direkt neben dem Requisit); fehlt das Requisit, steht die Figur auf einer freien Kachel. Optional: `count` (Anzahl), `variant` (etwa `sitzend`) und `stay` (true: die Figur bleibt nach dem Event stehen, solange der Spieler auf dieser Ebene ist; seit Version 2.12 gilt das für alle Figuren, die nicht sterben und nicht kämpfen).
+- **Figuren nach dem Event:** Nach einem Sieg verschwindet der Gegner. Nach einer Flucht verschwindet er, sobald der Spieler den Raum verlässt. Figuren, die nicht sterben und nicht kämpfen, bleiben nach dem Event an ihrem Platz, solange der Spieler auf dieser Ebene ist (auch ohne `stay`). Stehen mehrere gleiche Figuren im Raum und der Kampf geht gegen eine, huschen die übrigen beim Kampfstart davon.
 - **Regel:** Neue Effekt-Typen oder Bedingungen werden zuerst im Game Design festgelegt, dann programmiert, dann in Events genutzt.
 
 ## Raumtypen und Ebenen
@@ -492,7 +493,7 @@ Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kan
 | monsterratte | Die Monsterratte, ponygroß mit Gabelkrone | Boss Keller | 2×2 | – |
 | kroete | Die Kröte, mit Krone | Figur ohne Kampfwerte | Deko | – |
 
-Jede Monster-id hat eine Figur mit derselben id. Bis Meilenstein 6 baut der Code die Figuren aus Grundformen und lässt sie im Stand leicht wippen.
+Jede Monster-id hat eine Figur mit derselben id. Figuren ohne Modell baut der Code aus Grundformen. Figuren ohne Animation atmen im Stand leicht, die Füße bleiben dabei am Boden.
 
 ## Meilensteine
 
@@ -581,3 +582,4 @@ Sieben Schritte, jeder endet mit etwas Spielbarem, das Christian im Browser test
 - [x] Meilenstein 6a: Modelle über `data/models.json` mit Einfärbung `tint`; Fackeln an vorderen Türen auf einem Pfosten
 - [x] Meilenstein 6b, erster Teil: Spielfiguren aus KayKit Adventurers (Zwerg Knight, Elf Rogue_Hooded, Mensch Mage) mit eigener Textur und Zubehör nach der Startwaffe; Licht nach Stilguide gedimmt
 - [x] Ratten, Küchenchef, Monsterratte und Kröte aus dem Easy Animated Enemy Pack (Quaternius); Goblin aus `Basic_Goblin` ohne Animationen, bewegt per Code (Variante A); Ratte und Frosch auf höchstens 3.000 Dreiecke vereinfacht und auf die Palette umgefärbt (Ratte warmes Graubraun, Frosch Moos, rote Augen als Akzent)
+- [x] Figuren, die nicht sterben und nicht kämpfen, bleiben nach dem Event an ihrem Platz, solange der Spieler auf der Ebene ist

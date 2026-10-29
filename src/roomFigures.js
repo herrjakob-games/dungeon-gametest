@@ -36,6 +36,7 @@ function make(pl, eventId, popIn) {
   const f = { id: pl.figure, variant: pl.variant, tiles: pl.tiles, stay: !!pl.stay, blocks: pl.blocks !== false && pl.tiles.length > 0,
     outer, mid, eventId, phase: Math.random() * 6, path: [], twitch: 0, sink: 0, scurry: false, grow: popIn && !reduceMotion,
     anim: anim && anim.animated ? anim : null, dying: 0 };
+  f.pl = pl;
   figs.push(f);
   if (f.blocks) f.tiles.forEach(t => state.blocked.add(key(...t)));
   return f;
@@ -93,9 +94,16 @@ export function showEventFigures(ev) {
   });
 }
 
-// Event friedlich (oder nach einem Sieg) zu Ende: Figuren ohne stay verschwinden
+// Event zu Ende (friedlich oder nach einem Sieg): Figuren, die nicht gestorben sind und nicht gekämpft haben, bleiben
+// an ihrem Platz, solange der Spieler auf dieser Ebene ist (wie stay). Der Gegner einer Flucht bleibt nur bis zum Raumwechsel.
 export function endEventFigures() {
-  alive().filter(f => !f.stay && f !== fighter).forEach(f => { unblock(f); f.sink = 0.001; });
+  const rs = state.roomState[state.current];
+  if (!rs) return;
+  alive().filter(f => !f.stay && f !== fighter && !f.scurry && f.pl).forEach(f => {
+    f.stay = true;
+    f.saved = Object.assign({}, f.pl, { stay: true });
+    rs.stayFigures = (rs.stayFigures || []).concat([f.saved]);
+  });
 }
 
 // Gerader Weg in Weltkoordinaten; für Figuren aus einer Kachel ein Weg um Hindernisse herum
@@ -218,7 +226,7 @@ export function updateFigures(dt, t) {
       f.mid.position.y = -f.sink * 1.2;
       if (f.sink > 1.1) { remove(f); continue; }
     } else if (!reduceMotion && !f.anim) {
-      f.mid.position.y = Math.sin(t * 3 + f.phase) * 0.025; // im Stand leicht wippen (Figuren ohne Animation)
+      f.mid.scale.y = 1 + Math.sin(t * 3 + f.phase) * 0.02; // im Stand leicht atmen, Füße bleiben am Boden (Figuren ohne Animation)
     }
     if (f.twitch > 0) {
       f.twitch -= dt;
