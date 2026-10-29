@@ -99,12 +99,12 @@ function attachAccessories(g, inner, list) {
     inner.traverse(n => { if (!bone && n.name === name) bone = n; });
     const build = ACCESSORIES[a.shape];
     if (!bone || !build) { console.warn("Zubehör " + a.shape + " an " + a.bone + " fehlt"); return; }
-    const ws = bone.getWorldScale(new THREE.Vector3()).x;
-    const inv = bone.getWorldQuaternion(new THREE.Quaternion()).invert();
+    // Lage in der Welt (am Knochen plus offset, ungedreht, Größe size) in den Raum des Knochens umrechnen; so stimmt
+    // das Zubehör auch bei ungleichem Maßstab der Figur (etwa der breitere Zwerg)
     const o = build(a);
-    o.position.copy(new THREE.Vector3(...(a.offset || [0, 0, 0])).applyQuaternion(inv).divideScalar(ws));
-    o.quaternion.copy(inv);
-    o.scale.setScalar((a.size || 1) / ws);
+    const at = bone.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(...(a.offset || [0, 0, 0])));
+    const world = new THREE.Matrix4().compose(at, new THREE.Quaternion(), new THREE.Vector3().setScalar(a.size || 1));
+    new THREE.Matrix4().copy(bone.matrixWorld).invert().multiply(world).decompose(o.position, o.quaternion, o.scale);
     o.traverse(n => { if (n.isMesh) n.castShadow = true; });
     bone.add(o);
   });

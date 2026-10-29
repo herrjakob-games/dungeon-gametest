@@ -770,7 +770,8 @@
         "Rectangle_Shield",
         "Round_Shield",
         "Spike_Shield",
-        "2H_Sword"
+        "2H_Sword",
+        "Knight_Helmet"
       ],
       "animations": [
         "Idle",

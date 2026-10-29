@@ -270,7 +270,11 @@
   },
   "zwerg": {
     "file": "assets/figures/zwerg.glb",
-    "scale": 0.33,
+    "scale": [
+      0.429,
+      0.2805,
+      0.429
+    ],
     "palette": false,
     "animations": {
       "idle": "Idle",
@@ -279,7 +283,31 @@
       "hit": "Hit_A",
       "death": "Death_A",
       "interact": "Interact"
-    }
+    },
+    "accessories": [
+      {
+        "shape": "bart",
+        "part": "kinn",
+        "bone": "head",
+        "offset": [
+          0,
+          0.035,
+          0.2
+        ],
+        "size": 1
+      },
+      {
+        "shape": "bart",
+        "part": "keil",
+        "bone": "chest",
+        "offset": [
+          0,
+          0,
+          0.19
+        ],
+        "size": 1
+      }
+    ]
   },
   "elf": {
     "file": "assets/figures/elf.glb",
