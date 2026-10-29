@@ -12,7 +12,7 @@ import { makeModel, hasModel, setModelTheme, findPart, makeFigureModel } from ".
 import { state } from "./state.js";
 import { buildFigure } from "./figures.js";
 import * as P from "./props.js";
-import { PROPS, planDecor, decorFor, centerFeature, STAIRS_TILES, STAIRS_SIZE, STAIRS_CENTER } from "./decor.js";
+import { PROPS, planDecor, decorFor, centerFeature, STAIRS_TILES, STAIRS_SIZE, STAIRS_CENTER, torchSlots } from "./decor.js";
 import { syncRoom } from "./roomFigures.js";
 import { setMood } from "./sound.js";
 import { roomSound } from "./soundLogic.js";
@@ -227,8 +227,8 @@ function makeLock(d, tall, glow) {
 function placeTorches(room, color) {
   const has = (d) => (room.doors & DIR[d].bit) !== 0;
   const inner = -E + 0.25; // Innenseite der hohen Wände
-  (has("N") ? [MID + 2] : [2, N - 3]).forEach(t => makeTorch(tw(t), inner, 0, color, false));
-  (has("W") ? [MID + 2] : [2, N - 3]).forEach(t => makeTorch(inner, tw(t), Math.PI / 2, color, false));
+  // Plätze an Nord- und Westwand aus decor.js (dieselben, die Wandrequisiten freilassen)
+  torchSlots(room.doors).forEach(({ wall, t }) => (wall === "N" ? makeTorch(tw(t), inner, 0, color, false) : makeTorch(inner, tw(t), Math.PI / 2, color, false)));
   if (has("S")) makeTorch(tw(MID + 1), E, Math.PI, color, true);
   if (has("E")) makeTorch(E, tw(MID + 1), -Math.PI / 2, color, true);
 }

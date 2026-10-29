@@ -3,7 +3,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import {
-  PROPS, planDecor, decorFor, centerFeature, doorTiles, checkDecor, STAIRS_TILES, STAIRS_FOOT
+  PROPS, planDecor, decorFor, centerFeature, doorTiles, checkDecor, STAIRS_TILES, STAIRS_FOOT, torchSlots
 } from "../src/decor.js";
 import { N, DIR, DIRKEYS, key, inBounds, tileName } from "../src/config.js";
 
@@ -224,4 +224,18 @@ test("Raumtypen ohne Einrichtung behalten das bisherige Muster", () => {
   assert.equal(decorFor(boss, "katakomben"), null);
   assert.ok(decorFor(boss, "keller").layouts.every(l => l.props.some(p => p.prop === "kaeseberg")));
   assert.equal(N, 9);
+});
+
+test("Wandrequisiten (Regale, Fahnen, Herd …) verdecken oder überlagern keine Fackel", () => {
+  for (const rt of ROOM_TYPES) {
+    const specs = [rt.decor].concat(Object.values(rt.themeDecor || {})).filter(Boolean);
+    for (const spec of specs) spec.layouts.forEach((layout, li) => {
+      for (let doors = 0; doors < 16; doors++) for (let s = 1; s <= 10; s++) {
+        const plan = planDecor(spec, { seed: s * 7919, doors, feature: centerFeature(rt.id, false), layoutIndex: li });
+        const torches = new Set(torchSlots(doors).map(f => f.wall + (f.wall === "N" ? key(f.t, 0) : key(0, f.t))));
+        plan.placements.filter(p => PROPS[p.prop].wall && p.wall).forEach(p => p.tiles.forEach(t =>
+          assert.ok(!torches.has(p.wall + key(...t)), rt.id + " " + layout.id + ": " + p.prop + " auf " + tileName(...t) + " verdeckt eine Fackel (Türen " + doors + ")")));
+      }
+    });
+  }
 });

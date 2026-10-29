@@ -69,6 +69,16 @@ export const VARIANTS = {
   flaschen: ["b"], fahne: ["blau", "gruen", "gelb", "wappen"], fahne_dreifach: ["blau", "gelb"], muenzen: ["klein", "einzeln"]
 };
 
+/**
+ * Fackeln an den hohen Wänden (Stilguide: neben jeder Tür eine, Wände ohne Tür zwei): Kachel entlang Nord- und Westwand.
+ * Ergebnis: [{ wall: "N" | "W", t }]. Die vorderen Fackeln (Süd, Ost) stehen auf Pfosten und betreffen keine Wandrequisiten.
+ */
+export function torchSlots(doors) {
+  const out = [];
+  ["N", "W"].forEach(w => ((doors & DIR[w].bit) ? [MID + 2] : [2, N - 3]).forEach(t => out.push({ wall: w, t })));
+  return out;
+}
+
 export const PLACES = ["center", "wall-back", "corner", "free"];
 // Reihenfolge der Ersatz-Platzierungen beim Korrigieren (GDD: center → corner → wall-back → free)
 export const CHAIN = ["center", "corner", "wall-back", "free"];
@@ -171,6 +181,8 @@ export function planDecor(spec, opts) {
 
   const reserved = new Set(doorTiles(doors).map(t => key(...t)));
   const blocked = new Set(), occupied = new Set(), wallSlots = new Set();
+  // Wandrequisiten (Regale, Fahnen, Herd …) verdecken keine Fackel: die Wandkachel einer Fackel bleibt für sie frei
+  const torches = new Set(torchSlots(doors).map(f => f.wall + (f.wall === "N" ? key(f.t, 0) : key(0, f.t))));
   const clickables = [], extra = [];
   if (feature) STAIRS_TILES.forEach(t => { reserved.add(key(...t)); blocked.add(key(...t)); });
   if (feature === "up") { reserved.add(key(...STAIRS_FOOT)); extra.push(STAIRS_FOOT); }
@@ -254,6 +266,7 @@ export function planDecor(spec, opts) {
   function fits(item, c) {
     const def = PROPS[item.prop];
     if (!c.tiles.every(([x, z]) => inBounds(x, z))) return false;
+    if (def.wall && c.wall && c.tiles.some(t => torches.has(c.wall + key(...t)))) return false;
     if (def.floor === false) {
       if (c.at) return true; // hängt über einem anderen Requisit
       // Wandschmuck: Wandplatz frei und nicht über einer Tür

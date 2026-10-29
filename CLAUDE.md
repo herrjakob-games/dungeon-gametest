@@ -110,6 +110,7 @@ Die Liste aller Meilensteine steht im GDD.
 - Einrichtung als Daten (`decor`): Türkacheln und die Kachel davor bleiben frei, jede Tür und jedes anklickbare
   Objekt bleibt erreichbar; passt ein Requisit nicht, lässt `decor.js` es weg. `tests/decor.test.mjs` prüft das
   für alle Varianten und alle 16 Türkombinationen, dazu die Pflichtstücke (`required`); Korrekturablauf siehe GDD.
+  Wandrequisiten (`wall`) verdecken keine Fackel: `torchSlots()` in `decor.js` liefert die Fackelplätze für Planung und Raumaufbau.
   Das alte Muster in `furnish()` lässt das Kreuz aus Reihe und Spalte 3 bis 5 (gezählt ab 0) frei.
 - Kacheln heißen im GDD x|y, ab 1 gezählt; im Code zählen x und z ab 0 (`tileName(x, z)` übersetzt).
 - Wendeltreppen belegen die Nordwest-Ecke 1|1 bis 3|3 (gezählt ab 0: 0 bis 2), Start auf 4|4.

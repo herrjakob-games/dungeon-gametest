@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.20 · Oct 29, 2026 · @Christian
+Version 2.21 · Oct 29, 2026 · @Christian
 
 ## Versionen
 
@@ -8,7 +8,8 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
-| 2.20 | 29.10.2026 | Händler auf den Kacheln 2\|2 bis 2\|8 oder 2\|2 bis 8\|2, schaut zur Raummitte; hinter ihm Wandregale mit Flaschen, vor ihm `table_medium_decorated_A` mit Kerze statt Tisch mit Gold |
+| 2.21 | 29.10.2026 | Wandrequisiten (Regale, Fahnen, Herd …) dürfen Fackeln nicht verdecken oder überlagern; Tisch des Händlers nur mit Flaschen |
+| 2.20 | 29.10.2026 | Händler auf den Kacheln 2\|2 bis 2\|8 oder 2\|2 bis 8\|2, schaut zur Raummitte; hinter ihm Wandregale mit Flaschen, vor ihm `table_medium_decorated_A` mit Kerze statt Tisch mit Gold (2.21: `table_medium` nur mit Flaschen und Kerze) |
 | 2.19 | 29.10.2026 | Neue Requisiten aus dem KayKit Dungeon Kit für Händler, Wachstube, Vorratskammer, Küche, Schatzkammer, Speisesaal, Säulenhalle und Gruft; Händler mit dem Rücken zur Nord- oder Westwand, davor sein Tisch mit Kerze; Händlerraum heller (`brightness` in `roomPalettes`) |
 | 2.18 | 29.10.2026 | Händler aus KayKit Rogue (ohne Kapuze, ohne Waffen) mit dunkelblauem statt grünem Outfit |
 | 2.17 | 29.10.2026 | Requisit Knochen aus Schädel, Kiefer und Armen der KayKit-Skelette (gleiche Textur wie die Skelett-Gegner) statt Grundformen |
@@ -461,7 +462,7 @@ Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kan
 - **Varianten:** `layouts` enthält eine oder mehrere Varianten. Der Raum-Seed wählt eine davon, gleicher Seed ergibt gleiche Einrichtung.
 - **Platzierung (`place`):** `center` (Raummitte), `wall-back` (an der Nord- oder Westwand, weil die vorderen Wände nur Sockel sind), `corner` (in einer Ecke, bei `count` über 1 in verschiedenen Ecken), `free` (beliebige freie Kachel), `around:<prop>` (um ein anderes Requisit herum, etwa Stühle um die Tafel), `above:<prop>` (über einem anderen Requisit, etwa der Kronleuchter über der Tafel).
 - **Weitere Felder:** `count` (Anzahl, Standard 1), `variant` (Abwandlung eines Requisits, etwa der Tisch mit Töpfen statt Würfeln).
-- **Feste Regeln:** Türkacheln und die Kachel davor bleiben frei. Jede Tür und jedes anklickbare Objekt bleibt erreichbar, `npm test` prüft das für alle Varianten. In Vorkammer, Abstieg und Bossraum bleibt die Nordwest-Ecke (1|1 bis 3|3) für die Wendeltreppe frei; `corner` meint dort nur die drei übrigen Ecken, `wall-back` nur die freien Abschnitte von Nord- und Westwand.
+- **Feste Regeln:** Türkacheln und die Kachel davor bleiben frei. Wandrequisiten (Regale, Fahnen, Schlüsselbund, Herd, Anrichte und alle anderen an der Wand) verdecken oder überlagern keine Fackel: Die Wandkachel einer Fackel bleibt für sie frei. Jede Tür und jedes anklickbare Objekt bleibt erreichbar, `npm test` prüft das für alle Varianten. In Vorkammer, Abstieg und Bossraum bleibt die Nordwest-Ecke (1|1 bis 3|3) für die Wendeltreppe frei; `corner` meint dort nur die drei übrigen Ecken, `wall-back` nur die freien Abschnitte von Nord- und Westwand.
 - **Pflichtstücke:** Ein Requisit mit `"required": true` macht den Raumtyp erkennbar (Herd in der Küche, Tafel im Speisesaal, Brunnen im Brunnenraum). Es wird immer zuerst platziert und nie weggelassen. Passt es in einer Variante bei einer Türkombination nicht, ist das ein Fehler in den Daten, und `npm test` schlägt fehl.
 - **Korrektur:** Passt ein Requisit nicht, versucht der Code in dieser Reihenfolge: 1. eine andere Kachel mit derselben Platzierung, 2. die nächste Platzierung in der Reihe `center` → `corner` → `wall-back` → `free`, 3. eine kleinere Anzahl, 4. weglassen. Requisiten mit `around:` oder `above:` fallen mit ihrem Bezugsrequisit weg. Gleicher Seed ergibt immer dieselbe Korrektur.
 - **Prüfung:** `npm test` platziert jede Variante jedes Raumtyps mit allen 16 Türkombinationen und prüft: keine Überlappung, nichts in Wänden oder auf Türkacheln, jede Tür und jedes anklickbare Objekt ist von jeder Tür aus erreichbar, Pflichtstücke sind vorhanden. Der Test gibt eine Liste aus, welche Requisiten wie oft korrigiert oder weggelassen wurden.
@@ -747,3 +748,5 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Händler mit dem Rücken zur Nord- oder Westwand, vor ihm `table_small_decorated_B` mit brennender Kerze; Händlerraum heller; in den Ecken `box_stacked` und `barrel_small_stack`; Flaschen auf und neben Kisten
 - [x] Neue Requisiten aus dem KayKit Dungeon Kit: Fahnen, Schlüsselbund und Strohlager (Wachstube), Zapffässer, Kistenberg und Kistenstapel (Vorratskammer, Küche), alle Wandregale in der Vorratskammer, Münzen (Schatzkammer), gedeckte Tische und Kerzen (Speisesaal), verzierte Säulen und dreifache Fahnen (Säulenhalle), Kerzenstummel und großes Geröll (Gruft)
 - [x] Händler auf den Kacheln 2|2 bis 2|8 oder 2|2 bis 8|2, Blick zur Raummitte, hinter ihm Wandregale mit Flaschen, vor ihm `table_medium_decorated_A` mit Kerze; kein Gold als Dekoration beim Händler
+- [x] Regel: Regale und andere Wandrequisiten verdecken oder überlagern keine Fackeln
+- [x] Tisch des Händlers (`table_medium`) nur mit Flaschen und Kerze, keine Teller oder Küchensachen
