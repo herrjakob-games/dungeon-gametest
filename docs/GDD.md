@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.13 · Oct 29, 2026 · @Christian
+Version 2.14 · Oct 29, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.14 | 29.10.2026 | Inszenierung: Gastgeber und schlafender Goblin bleiben nach dem Event (`stay` pro Event in `data/staging.json`); Goblin liegt flach neben dem Tisch (Anker mit `flat`, `front`); Würfelspiel-Skelette sind Warrior, Skelett mit Rücken ist Minion |
 | 2.13 | 29.10.2026 | Inszenierung der Figuren (`data/staging.json`): Anker an Requisiten, Ablauf bei Kampfbeginn, Blickrichtungen, Gruppen laufen gemeinsam an und sterben gemeinsam, Besiegte bleiben liegen, friedliche Figuren gehen zur Tür (ersetzt 2.12, außer `stay`); unbekannte Anzahl 1 bis 3; Skelette aus KayKit Skeletons 1.0 mit Paletten-Textur |
 | 2.12 | 29.10.2026 | Figuren, die nicht sterben und nicht kämpfen, bleiben nach dem Event an ihrem Platz; Gabelkrone der Monsterratte kleiner und am Kopf; Figuren ohne Animation stehen fest am Boden (atmen statt wippen) |
 | 2.11 | 29.10.2026 | Ratten, Küchenchef, Monsterratte und Kröte aus dem Easy Animated Enemy Pack (Quaternius) statt KI-Generator; Goblin aus Basic_Goblin (standout7) ohne Animationen, Bewegung per Code; Zubehör aus Grundformen an Knochen (`accessories`); Figuren der Monster spielen Laufen, Angriff und Sterben |
@@ -221,7 +222,7 @@ Jeder Raumtyp hat eine Event-Chance und eine gewichtete Event-Tabelle. Jedes Eve
 - **Türen:** `lockDoor` und `unlockDoor` nennen eine Richtung (`N`, `E`, `S`, `W`) oder `back`, die Tür, durch die der Spieler kam. Eine verschlossene Tür zeigt ein Schloss und lässt sich nicht benutzen, bis `unlockDoor` sie öffnet. Sind am Ende eines Events alle Türen eines Raums zu, öffnet sich die Rück-Tür von selbst.
 - **Monster:** Name, Lebenspunkte, Rüstung, Angriffsbonus, Schaden (z. B. W6).
 - **Figuren in Events:** Ein Event kann im Feld `figures` Figuren nennen, die beim Start des Events im Raum erscheinen, etwa `"figures": [ { "figure": "kuechenratte", "place": "near:herd" } ]`. `figure` ist eine Monster-id oder eine Figur ohne Kampfwerte aus der Figurenliste. `place` nutzt die Platzierungen der Einrichtung und zusätzlich `near:<prop>` (eine freie Kachel direkt neben dem Requisit); fehlt das Requisit, steht die Figur auf einer freien Kachel. Optional: `count` (Anzahl), `variant` (etwa `sitzend`) und `stay` (true: die Figur bleibt nach dem Event stehen, solange der Spieler auf dieser Ebene ist). Wie die Figuren stehen und sich bewegen, regelt die Inszenierung (`data/staging.json`).
-- **Figuren nach dem Event:** Besiegte Gegner bleiben in der Sterbe-Haltung liegen, auch beim erneuten Betreten (solange der Spieler auf dieser Ebene ist). Nach einer Flucht verschwinden die Gegner, sobald der Spieler den Raum verlässt. Friedliche Figuren gehen nach dem Event zur nächsten Tür und verschwinden. Figuren mit `stay` (im Event oder in `data/staging.json`, heute Kröte und Händler) bleiben an ihrem Platz, solange der Spieler auf dieser Ebene ist.
+- **Figuren nach dem Event:** Besiegte Gegner bleiben in der Sterbe-Haltung liegen, auch beim erneuten Betreten (solange der Spieler auf dieser Ebene ist). Nach einer Flucht verschwinden die Gegner, sobald der Spieler den Raum verlässt. Friedliche Figuren gehen nach dem Event zur nächsten Tür und verschwinden. Figuren mit `stay` (im Event oder in `data/staging.json`, heute Kröte, Händler, der Gastgeber und der schlafende Goblin) bleiben an ihrem Platz, solange der Spieler auf dieser Ebene ist.
 - **Regel:** Neue Effekt-Typen oder Bedingungen werden zuerst im Game Design festgelegt, dann programmiert, dann in Events genutzt.
 
 ## Raumtypen und Ebenen
@@ -335,7 +336,8 @@ Figuren aus Events stehen sichtbar im Raum. Wo sie stehen, wohin sie blicken und
 - **Standard:** freie Kachel, Blick zur Spielfigur, Idle. Welche Figuren ein Event zeigt: zuerst eine eigene Inszenierung (`events`), sonst das Feld `figures` des Events, sonst der Gegner aus dem Kampf. Nennt das Event keine Anzahl, sind es 1 bis 3 Figuren nach Raum-Seed.
 - **Anker an Requisiten (`anchors`):** Requisiten-ids (`props`), Versatz in Kacheln (gedreht wie das Requisit, `world`: ungedreht), Blickrichtung (`player`, `target` = der Tisch zum Sitz, `prop`, `random`), Animation (`idle`, `sit`, `sit_floor`, `lie`, `awaken`). `seat`: die Figur sitzt auf dem Hocker oder Stuhl, `onProp`: sie steht auf dem Requisit (Monsterratte auf dem Käseberg, Kröte auf dem Brunnenrand). Anker heute: am Tisch sitzend, auf dem Hocker schlafend, am Herd, am Sarkophag (Skelett steht auf), am Lagerfeuer, zwischen Knochen liegend, auf dem Käseberg, im Mehlsack, vor der Treppe, mitten im Raum, am Brunnen.
 - **Rückfall:** Fehlt die Requisite im Raum, steht die Figur auf einer freien Kachel, nie in Wänden, Türen oder auf Requisiten. Hat das Modell die Animation nicht (etwa der Goblin kein Sitzen), steht die Figur mit Idle neben dem Anker.
-- **Figuren (`figures`):** Modell-Varianten (Skelett: Minion, Warrior, Rogue, Mage, nach Raum-Seed; ein Event kann eine festlegen) und `stays` (bleibt nach dem Event stehen).
+- **Liegen ohne Animation:** Ein Anker mit `flat` legt eine Figur ohne Liege-Animation starr auf den Rücken, statt sie stehen zu lassen (der schlafende Goblin). `front` wählt zuerst die Kachel auf der Seite zur Kamera, damit das Requisit die Figur nicht verdeckt.
+- **Figuren (`figures`):** Modell-Varianten (Skelett: Minion, Warrior, Rogue, Mage, nach Raum-Seed; ein Event kann eine festlegen) und `stays` (bleibt nach dem Event stehen). Eine Event-Inszenierung kann `stay` auch für einzelne Figuren setzen.
 - **Ablauf:** Die Figuren stehen schon da, bevor das Event-Fenster aufgeht. Beim Kampfbeginn laufen alle Figuren des Gegners mit Walk auf freie Nachbarkacheln der Spielfigur, ohne durch Wände, Türen oder Requisiten zu gehen; die Spielfigur bleibt stehen und dreht sich zum nächsten laufenden Gegner. Im Kampf blickt die Spielfigur zum Gegner, der gerade dran ist; bei mehreren wechselt er reihum mit jedem Zug. Gegner blicken immer zur Spielfigur. Attack beim eigenen Zug, Hit bei einem Treffer, Death beim Sieg. Nach dem Kampf behält die Spielfigur ihre Blickrichtung, bis der Spieler sie bewegt.
 - **Drehungen:** weich über etwa 0,25 Sekunden, immer auf dem kürzeren Weg.
 - **Lesbarkeit:** Gegner mit rotem Akzent und im Kampf mit rotem Bodenring.
@@ -601,3 +603,4 @@ Sieben Schritte, jeder endet mit etwas Spielbarem, das Christian im Browser test
 - [x] Kampf weiter gegen einen Gegner, aber alle Figuren des Gegners laufen zum Spieler, greifen reihum an und sterben gemeinsam; unbekannte Anzahl 1 bis 3 nach Raum-Seed
 - [x] Besiegte bleiben liegen; friedliche Figuren gehen zur Tür und verschwinden, Kröte und Händler bleiben stehen (ersetzt die Entscheidung aus 2.12)
 - [x] Goblin ohne Sitzen: steht neben dem Hocker; Skelette aus KayKit Skeletons 1.0, auf höchstens 4.000 Dreiecke vereinfacht
+- [x] Gastgeber und schlafender Goblin bleiben nach dem Event; der Goblin liegt zu Beginn flach neben dem Tisch; Würfelspiel-Skelette sind Warrior, das Skelett mit Rücken ist ein Minion

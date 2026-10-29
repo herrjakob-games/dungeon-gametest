@@ -41,6 +41,7 @@ const N8 = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, 1], [1, -1], [-1, -1]
  *        anchors (Anker aus data/staging.json), canPose(figure, variant, anim) (hat das Modell die Animation?),
  *        stairsDown (true, wenn im Raum eine Wendeltreppe nach unten steht) }
  * Ergebnis: [{ figure, variant, tiles, cx, cz, y, rot, stay, blocks, onProp, anim, seat }]
+ * anim "flat": die Figur hat keine Liege-Animation und liegt starr auf dem Rücken (Anker mit flat).
  * Passt eine Figur nirgends hin, fehlt sie im Ergebnis. Fehlt der Anker oder die Animation, steht die Figur
  * mit idle auf einer freien Kachel daneben (nie in Wänden, Türen oder auf Requisiten).
  */
@@ -114,7 +115,7 @@ export function planFigures(list, ctx) {
       const look = lookAt(t);
       const rot = typeof look === "number" ? look : Math.atan2(look[0] - cx, look[1] - cz);
       return Object.assign({ figure: f.figure, variant: f.variant || null, tiles, cx, cz, y, rot, stay: !!f.stay,
-        blocks: info.blocks, onProp: false, anim: can ? pose : "idle", seat: false }, extra);
+        blocks: info.blocks, onProp: false, anim: can ? pose : (a.flat ? "flat" : "idle"), seat: false }, extra);
     };
     for (const t of targets) {
       // world: Versatz ohne Drehung des Requisits (etwa der Brunnenrand auf der Seite zur Kamera)
@@ -134,6 +135,8 @@ export function planFigures(list, ctx) {
       const own = new Set(t.tiles.map(q => key(...q)));
       const near = [first];
       t.tiles.forEach(([x, z]) => N8.forEach(([dx, dz]) => { if (!own.has(key(x + dx, z + dz))) near.push([x + dx, z + dz]); }));
+      // front: zuerst die Seite zur Kamera (größeres x + z), damit das Requisit die Figur nicht verdeckt
+      if (a.front) near.sort((p, q) => (q[0] + q[1]) - (p[0] + p[1]));
       for (const [x, z] of near) {
         const tiles = fits(x, z, info);
         if (!tiles) continue;

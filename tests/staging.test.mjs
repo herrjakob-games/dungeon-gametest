@@ -55,8 +55,13 @@ test("Jedes Figuren-Event hat eine gültige Inszenierung oder fällt auf den Sta
   }
   // Kröte und Händler bleiben stehen, Skelette bekommen eine Modell-Variante
   assert.equal(eventFigures(DATA.events.brunnen_kroete, STAGING, 1)[0].stay, true);
-  assert.ok(["minion", "warrior", "rogue", "mage"].includes(eventFigures(DATA.events.gruft_ruecken, STAGING, 1)[0].variant));
+  assert.ok(["minion", "warrior", "rogue", "mage"].includes(eventFigures(DATA.events.gruft_sarkophag, STAGING, 1)[0].variant));
   assert.equal(eventFigures(DATA.events.exit_tuersteher, STAGING, 1)[0].variant, "warrior");
+  assert.deepEqual(eventFigures(DATA.events.wache_wuerfel, STAGING, 7).map(f => f.variant), ["warrior"]);
+  assert.equal(eventFigures(DATA.events.gruft_ruecken, STAGING, 7)[0].variant, "minion");
+  // Gastgeber und schlafender Goblin bleiben nach dem Event
+  assert.equal(eventFigures(DATA.events.speisesaal_gastgeber, STAGING, 1)[0].stay, true);
+  assert.equal(eventFigures(DATA.events.wache_goblin, STAGING, 1)[0].stay, true);
 });
 
 test("Figuren stehen nie auf blockierten Kacheln, in Türen oder auf der Spielfigur (außer Sitz und auf dem Requisit)", () => {
@@ -81,7 +86,7 @@ test("Figuren stehen nie auf blockierten Kacheln, in Türen oder auf der Spielfi
         figs.forEach(f => {
           if (f.onProp) { assert.equal(f.tiles.length, 0, where); anchored++; return; }
           if (f.seat) { seated++; assert.ok(canPose, where + ": sitzt ohne Sitz-Animation"); }
-          if (!canPose) assert.equal(f.anim, "idle", where + ": Animation ohne Modell");
+          if (!canPose) assert.ok(["idle", "flat"].includes(f.anim), where + ": Animation ohne Modell");
           f.tiles.forEach(t => {
             assert.ok(inBounds(...t), where + ": außerhalb des Raums");
             if (!f.seat) assert.ok(!blocked.has(key(...t)), where + ": " + f.figure + " steht auf einem Requisit");
