@@ -293,11 +293,15 @@ function makeTorch(x, z, rot, color, flameColor) {
 }
 
 // Geröll in jedem Raum, nicht auf der Treppe
+// und nicht im Freiraum um Requisiten mit "clear" (etwa zwei Kacheln um das Lagerfeuer)
 function scatterRubble(skipCenter) {
+  const clear = state.decorPlan ? state.decorPlan.placements.filter(p => p.clear) : [];
+  const nearClear = (x, z) => clear.some(p => p.tiles.some(([u, v]) => Math.max(Math.abs(x - u), Math.abs(z - v)) <= p.clear));
   for (let k = 0; k < 9; k++) {
     const r = new THREE.Mesh(new THREE.DodecahedronGeometry(0.06 + rnd() * 0.08), stone());
     const x = Math.floor(rnd() * N), z = Math.floor(rnd() * N);
     if (skipCenter && x < STAIRS_SIZE && z < STAIRS_SIZE) continue;
+    if (nearClear(x, z)) continue;
     r.position.set(tw(x) + (rnd() - 0.5) * 0.7, 0.04, tw(z) + (rnd() - 0.5) * 0.7);
     r.castShadow = true;
     add(r);

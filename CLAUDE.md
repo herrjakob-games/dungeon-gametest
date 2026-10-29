@@ -81,7 +81,7 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/character.js` | Figur: Volk, Inventar, Anlegen, Stufenaufstieg, Fähigkeit; rein logisch |
 | `src/combat.js` | Rundenkampf: Angriff, Gegnerzug, Verteidigen, Gegenstände, Flucht, Tiefe; rein logisch |
 | `src/roomTypes.js` | Raumtypen-Tabelle, befüllt aus `data/room-types.json` |
-| `src/decor.js` | Einrichtung als Daten: Requisiten-Größen, Platzierung (`center`, `wall-back`, `corner`, `free`, `around:`, `above:`, `tile:x|y`, `door-sides`), Fackeln an Säulen (`torches`) und ihre Anzahl (`torchCount`), Abstand zur Wand (`wallGap`), Treppenfläche und Startkachel, Erreichbarkeit, Datenprüfung; rein logisch |
+| `src/decor.js` | Einrichtung als Daten: Requisiten-Größen, Platzierung (`center`, `wall-back`, `corner`, `free`, `around:`, `above:`, `tile:x|y`, `door-sides`), Fackeln an Säulen (`torches`) und ihre Anzahl (`torchCount`), Abstand zur Wand (`wallGap`), Freiraum (`clear`), Abstand zu Türen (`doorGap`), Treppenfläche und Startkachel, Erreichbarkeit, Datenprüfung; rein logisch |
 | `src/props.js` | Requisiten aus Grundformen (Platzhalter, wenn ein Modell fehlt) |
 | `src/stairs.js` | Treppen in der Nordwest-Ecke: KayKit `stairs` (`treppe_hoch`, `treppe_runter`), Loch mit Steinkante und kühlem Licht, Gitter im Bossraum, Verlauf zur Schattenfarbe; Rückfall aus Grundformen |
 | `src/models.js` | Modell-Lader: `data/models.json`, Paletten-Textur des Themas, Klone pro Instanz, Figuren mit Animationen (`makeFigureModel`), Rückfall auf Platzhalter |

@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.34 · Oct 29, 2026 · @Christian
+Version 2.35 · Oct 29, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.35 | 29.10.2026 | Rastplatz: zwei Kacheln frei um das Feuer; 2 bis 3 Schlaflager (`bed_floor`) nie neben Türen, daneben dünne Kerzen; 2 bis 3 Flaschen und 2 bis 3 Fässer statt Säcken |
 | 2.34 | 29.10.2026 | Vorkammer: kein Wegweiser mehr; das Pult mit Buch steht immer auf 4\|3 seitlich der Treppe |
 | 2.33 | 29.10.2026 | Vorkammer: keine Fackel hinter oder neben der Treppe (Wandkacheln 1 bis 4 von Nord- und Westwand) |
 | 2.32 | 29.10.2026 | Treppe nach oben: das obere Ende wird nur dunkler, ohne Farbstich; kein bläulicher Lichtschein von oben |
@@ -298,7 +299,7 @@ Der Dungeon führt durch Themen, die alle drei Ebenen wechseln. Das Thema bestim
 - **Sackgassen:** Sackgassen, die keine Schatzkammer werden, bekommen einen anderen Raumtyp des Themas.
 - **Schatzkammer:** Sie kommt in jedem Thema nur einmal vor, auf der mittleren der drei Ebenen (Feld `"themeLevel": 2` im Raumtyp; im endlosen Ork-Lager auf jeder dritten Ebene, also 14, 17 …). Hat diese Ebene keine Sackgasse, fehlt die Schatzkammer in diesem Thema. Sie hat 2 bis 3 Truhen. Eine davon ist echt und öffnet sich wie jede Truhe (Event `chest`). Die übrigen sind Mimiken. Welche echt ist, sieht man nicht; der Raum-Seed legt es fest. Klickt man eine Mimik an, erwacht sie, und das Event `schatz_mimik` beginnt (Kampf mit Beute tier2, Zurücklächeln oder Rückzug). Danach ist die Truhe weg: Eine besiegte Mimik bleibt liegen, sonst hüpft sie zur Tür hinaus. Das Event `schatz_mimik` steht deshalb nicht mehr in der Event-Tabelle des Raums.
 - **Händler:** bietet 4 zufällige Gegenstände vom Rang der aktuellen Beutestufe an (Rang = Stufe des Themas, Verbrauchsgegenstände eingeschlossen), jeden einmal. Dazu immer die Heiltränke (Kleiner und Großer Heiltrank) in beliebiger Menge; sie zählen nicht zu den 4 Gegenständen. Ist der Rang leer, gilt der höchste Rang darunter. Verkaufen bringt den halben Preis.
-- **Rastplatz:** auf jeder geraden Ebene (2, 4, 6 …). Ein Lagerfeuer im Raum heilt einmal auf volle Lebenspunkte, danach ist es aus.
+- **Rastplatz:** auf jeder geraden Ebene (2, 4, 6 …). Ein Lagerfeuer im Raum heilt einmal auf volle Lebenspunkte, danach ist es aus. Um das Feuer liegt im Umkreis von zwei Kacheln nichts, auch kein Schutt. Im Raum verteilt liegen 2 bis 3 Schlaflager, nie neben einer Tür; daneben stehen dünne Kerzen (eine brennend, eine aus). Dazu 2 bis 3 Flaschen und 2 bis 3 Fässer; keine Säcke.
 - **Treppen:** Vorkammer und Abstieg haben in der Nordwest-Ecke eine gerade Steintreppe (KayKit `stairs`) aus 3×3 Kacheln (1|1 bis 3|3), die zur Nordwand hin läuft; ihr Fuß liegt an der Südkante (Reihe y=3). In der Vorkammer beginnt sie auf Bodenhöhe und steigt bis zur Wandoberkante (2 Kacheln); ihr oberes Ende wird dunkel, wie ein Schacht nach oben, ohne eigenes Licht und ohne Farbstich: Es kommt kein bläulicher Lichtschein von oben. Sie ist nicht anklickbar und zeigt, woher der Spieler kommt. Im Abstieg fehlt auf diesen Kacheln der Boden: Ein Loch mit Steinkante öffnet sich, die Treppe beginnt an der Südkante auf Bodenhöhe und führt nach Norden in die Tiefe. Die Innenwände des Lochs sind dunkel, unten verläuft alles in die Schattenfarbe, und ein schwacher, kühler Schimmer steigt von unten auf. Die ganze Fläche ist anklickbar und blockiert; ein Klick führt eine Ebene tiefer. Der Code setzt die Treppen fest, sie stehen nicht in der Einrichtung. Die Türen Nord (5|1) und West (1|5) und die Kacheln davor bleiben frei.
 - **Bossraum:** Betreten startet den Bosskampf, auch bei jedem weiteren Betreten, bis der Boss besiegt ist. Flucht ist erlaubt, der Boss wartet dann mit vollen Lebenspunkten. Die Nordwest-Ecke (1|1 bis 3|3) bleibt bis zum Sieg frei: Über Loch und Treppe liegt ein Metallgitter, das man betreten kann; es ist nicht anklickbar. Sieg: Beute `tier2` und 10 Erfahrung, danach wechselt die Nordwest-Ecke mit kurzer Abblende (etwa 0,5 Sekunden) zu Loch und Treppe nach unten. Die Siegbeute vergibt das Spiel, nicht das Event.
 - **Boss-Events:** Der Bossraum kann pro Thema eine eigene Event-Tabelle haben, in `data/room-types.json` beim Bossraum im Feld `themeEvents`, etwa `"themeEvents": { "keller": [ … ] }`, mit `eventChance` 1. Bei jedem Betreten wird daraus neu gewürfelt, bis der Boss besiegt ist. Die Events starten den Kampf gegen den Boss mit `combat`. Bedingungen wie `flag:name` unterscheiden die erste Begegnung von der Rückkehr. Themen ohne Tabelle zeigen den Einleitungstext des Bosses (`intro`) und starten den Kampf direkt. Bisher hat nur der Keller (Monsterratte) Boss-Events.
@@ -478,7 +479,7 @@ Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kan
 - **Platzierung (`place`):** `center` (Raummitte), `wall-back` (an der Nord- oder Westwand, weil die vorderen Wände nur Sockel sind), `corner` (in einer Ecke, bei `count` über 1 in verschiedenen Ecken), `free` (beliebige freie Kachel), `around:<prop>` (um ein anderes Requisit herum, etwa Stühle um die Tafel), `above:<prop>` (über einem anderen Requisit, etwa der Kronleuchter über der Tafel), `tile:x|y` (genau diese Kachel, etwa die Säulen der Schatzkammer; ohne Korrektur, passt sie nicht, fällt das Requisit weg), `door-sides` (Wandschmuck links und rechts jeder Tür in Nord- und Westwand, eine Kachel Abstand zum Türrahmen, an der Nordwand also 3|1 und 7|1; alle in derselben Variante; an Süd- und Osttüren nicht, weil die vorderen Wände nur Sockel sind).
 - **Fackeln an Säulen (`torches`):** Mit `"torches": "saeulen"` in der Einrichtung hängen keine Fackeln an den Wänden, und die Lichter der vorderen Fackeln fallen weg. Stattdessen trägt jede Säule eine leuchtende Fackel auf der Seite zur Raummitte; Säulen in Reihen (Säulengang) tragen sie auf der Seite zum Gang. Heute so in der Schatzkammer (alle Säulen) und in der Säulenhalle (3 bis 4 zufällige Säulen).
 - **Anzahl der Fackeln (`torchCount`):** Zahl oder Bereich `[von, bis]`. Mit `torches: "saeulen"` zählt es die Säulen mit Fackel, sonst die Wandfackeln an Nord- und Westwand (Auswahl nach Raum-Seed); dann fallen auch die Lichter der vorderen Fackeln weg. `torchFlame` (Farbe) legt eine eigene Flamme über die des Modells. Heute: Gruft mit zwei Fackeln, Licht `#5d86e0`, Flamme `#8fb4ff`.
-- **Weitere Felder:** `count` (Anzahl, Standard 1, oder ein Bereich wie `[2, 3]`, aus dem der Raum-Seed wählt), `mimics` (bei der Einrichtung: `true` heißt, von mehreren Truhen ist eine echt, die übrigen sind Mimiken), `variant` (Abwandlung eines Requisits, etwa der Tisch mit Töpfen statt Würfeln).
+- **Weitere Felder:** `count` (Anzahl, Standard 1, oder ein Bereich wie `[2, 3]`, aus dem der Raum-Seed wählt), `mimics` (bei der Einrichtung: `true` heißt, von mehreren Truhen ist eine echt, die übrigen sind Mimiken), `variant` (Abwandlung eines Requisits, etwa der Tisch mit Töpfen statt Würfeln), `clear` (Freiraum: im Umkreis von so vielen Kacheln um dieses Requisit liegt nichts anderes, auch schräg gezählt; Lagerfeuer 2), `doorGap` (so viele Kacheln Abstand zu Türkachel und Kachel davor; Schlaflager im Rastplatz 1).
 - **Feste Regeln:** Türkacheln und die Kachel davor bleiben frei. Wandrequisiten (Regale, Fahnen, Schlüsselbund, Herd, Anrichte und alle anderen an der Wand) verdecken oder überlagern keine Fackel: Die Wandkachel einer Fackel bleibt für sie frei. Abgebrannte Kerzen (Kerzenstummel) stehen nicht als Deko auf dem Boden. Münzstapel (`goldhaufen`, `muenzen` mit allen Varianten) haben einen Mindestabstand (`spread: 2`): Derselbe Typ, also gleiches Requisit und gleiche Variante, steht nicht noch einmal im Umkreis von zwei Kacheln, auch schräg gezählt. Verschiedene Typen dürfen nebeneinander liegen, etwa mittlerer neben kleinem Stapel, aber nicht kleiner neben kleinem. Sarkophage halten eine Kachel Abstand zur Wand (`wallGap: 1`) und zum nächsten Sarkophag (`spread: 1`). Passt ein Stapel nirgends, gilt der Korrekturablauf. Jede Tür und jedes anklickbare Objekt bleibt erreichbar, `npm test` prüft das für alle Varianten. In Vorkammer, Abstieg und Bossraum bleibt die Nordwest-Ecke (1|1 bis 3|3) für die Treppe frei; `corner` meint dort nur die drei übrigen Ecken, `wall-back` nur die freien Abschnitte von Nord- und Westwand.
 - **Pflichtstücke:** Ein Requisit mit `"required": true` macht den Raumtyp erkennbar (Herd in der Küche, Tafel im Speisesaal, Brunnen im Brunnenraum). Es wird immer zuerst platziert und nie weggelassen. Passt es in einer Variante bei einer Türkombination nicht, ist das ein Fehler in den Daten, und `npm test` schlägt fehl.
 - **Korrektur:** Passt ein Requisit nicht, versucht der Code in dieser Reihenfolge: 1. eine andere Kachel mit derselben Platzierung, 2. die nächste Platzierung in der Reihe `center` → `corner` → `wall-back` → `free`, 3. eine kleinere Anzahl, 4. weglassen. Requisiten mit `around:` oder `above:` fallen mit ihrem Bezugsrequisit weg. Gleicher Seed ergibt immer dieselbe Korrektur.
@@ -493,7 +494,7 @@ Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kan
 | saeule_liegend | Umgestürzte Säule | 2×1 | ja | nein | nein | Säulenhalle |
 | fass | Fass, meist als Gruppe aus 3 (`variant: gruppe`) | 1 | ja | nein | nein | mehrere |
 | kiste | Kiste | 1 | ja | nein | nein | mehrere |
-| sack | Sack | Deko | nein | nein | nein | Vorratskammer, Küche, Rastplatz |
+| sack | Sack | Deko | nein | nein | nein | Vorratskammer, Küche |
 | regal | Regal mit Krügen | 2×1, Wand | ja | nein | nein | Vorratskammer, Küche, Händler |
 | herd | Herd mit Kessel und Glut | 2×1, Wand | ja | nein | ja | Küche |
 | tisch | Tisch | 3×1 | ja | nein | nein | Wachstube, Küche |
@@ -522,11 +523,12 @@ Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kan
 | kaeseberg | Käseberg mit Thron | 2×2, Wand | ja | nein | ja | Bossraum (Keller) |
 | kistenstapel | Gestapelte Kisten | 2×2 | ja | nein | nein | Händler, Vorratskammer, Küche |
 | fassstapel | Kleine Fässer, gestapelt | 1 | ja | nein | nein | Händler |
-| flaschen | Flaschen auf dem Boden (Variante `b`: andere Flaschen) | 1 | nein | nein | nein | Händler |
+| flaschen | Flaschen auf dem Boden (Variante `b`: andere Flaschen) | 1 | nein | nein | nein | Händler, Rastplatz |
 | fahne | Fahne an der Wand (Varianten `blau`, `gruen`, `gelb`, `wappen`) | 1, Wand | nein | nein | nein | Wachstube, Schatzkammer, Speisesaal |
 | fahne_dreifach | Drei Fahnen nebeneinander (Varianten `blau`, `gelb`) | 2, Wand | nein | nein | nein | Säulenhalle, Schatzkammer, Speisesaal |
 | schluesselbund | Schlüsselbund am Haken | 1, Wand | nein | nein | nein | Wachstube |
-| strohlager | Strohlager auf dem Boden | 1×2 | ja | nein | nein | Wachstube |
+| strohlager | Strohlager auf dem Boden (KayKit `bed_floor`) | 1×2 | ja | nein | nein | Wachstube, Rastplatz |
+| kerze_duenn | Dünne Kerze (KayKit `candle_thin`; Variante `an`: brennend, `candle_thin_lit`, mit Licht) | 1 | nein | nein | an: ja | Rastplatz, neben dem Schlaflager |
 | zapffass | Zapffass | 1 | ja | nein | nein | Vorratskammer, Küche |
 | zapffass_verziert | Zapffass mit Gestell | 2×1 | ja | nein | nein | Vorratskammer, Küche |
 | kistenberg | Kistenberg | 1 | ja | nein | nein | Vorratskammer, Küche |
@@ -784,3 +786,4 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Treppe nach oben ohne bläulichen Lichtschein von oben: das obere Ende dunkelt nur ab, statt in die Schattenfarbe überzugehen
 - [x] Vorkammer: keine Fackel hinter oder neben der Treppe; an Nord- und Westwand fällt die Fackel auf Kachel 3 weg
 - [x] Vorkammer ohne Wegweiser; Pult mit Buch immer auf 4|3 rechts neben der untersten Stufe der Treppe
+- [x] Rastplatz: zwei Kacheln frei um das Feuer (`clear`), 2 bis 3 Schlaflager nie neben Türen (`doorGap`) mit dünnen Kerzen daneben, 2 bis 3 Flaschen und 2 bis 3 Fässer, keine Säcke

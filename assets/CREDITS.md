@@ -18,6 +18,7 @@ Quelle und Lizenz jeder fremden Datei (docs/GDD.md, Asset-Spezifikation).
   crates_stacked, keg, keg_decorated, keyring_hanging, pillar_decorated, rubble_large, shelf_large, shelf_small, shelf_small_candles,
   table_medium_tablecloth_decorated_B, wall_shelves, table_medium
   sowie (für die Treppen aus GDD 2.30) stairs
+  sowie (für den Rastplatz aus GDD 2.35) candle_thin, candle_thin_lit
 - Daraus gebaut (`npm run build:assets`): alle Dateien in `tiles/` und `props/`.
 - `textures/keller/dungeon_texture.png` ist eine umgefärbte Fassung der Paletten-Textur (`tools/palette-texture.py`).
 

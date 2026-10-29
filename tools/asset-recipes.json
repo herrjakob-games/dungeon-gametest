@@ -761,6 +761,14 @@
     "treppe_hoch": {
       "dir": "props",
       "file": "stairs.gltf.glb"
+    },
+    "kerze_duenn": {
+      "dir": "props",
+      "file": "candle_thin.gltf.glb"
+    },
+    "kerze_duenn_an": {
+      "dir": "props",
+      "file": "candle_thin_lit.gltf.glb"
     }
   },
   "figureSource": "assets/source/kaykit-adventurers/",
