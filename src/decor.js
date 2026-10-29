@@ -8,6 +8,7 @@ import { mulberry32 } from "./rng.js";
 /**
  * Requisiten: Größe in Kacheln (w entlang x, d entlang z, ungedreht), blockiert, anklickbar, eigenes Licht.
  * floor: false = hängt an der Wand oder in der Luft und belegt keine Bodenkachel.
+ * wallGap: so viele Kacheln Abstand zur Wand (Sarkophage).
  * spread: gleicher Typ (Requisit und Variante) steht nicht noch einmal im Umkreis von so vielen Kacheln (Münzstapel).
  */
 export const PROPS = {
@@ -28,7 +29,7 @@ export const PROPS = {
   brunnen: { w: 1, d: 1, blocks: true },
   moos: { w: 1, d: 1, blocks: false },
   pfuetze: { w: 1, d: 1, blocks: false },
-  sarkophag: { w: 1, d: 2, blocks: true },
+  sarkophag: { w: 1, d: 2, blocks: true, spread: 1, wallGap: 1 },
   kerzen: { w: 1, d: 1, blocks: false, light: true },
   knochen: { w: 1, d: 1, blocks: false },
   geroell: { w: 1, d: 1, blocks: false },
@@ -70,14 +71,23 @@ export const VARIANTS = {
 
 /**
  * Fackeln an den hohen Wänden (Stilguide: neben jeder Tür eine, Wände ohne Tür zwei): Kachel entlang Nord- und Westwand.
- * Ergebnis: [{ wall: "N" | "W", t }]. Die vorderen Fackeln (Süd, Ost) stehen auf Pfosten und betreffen keine Wandrequisiten.
+ * Ergebnis: [{ wall: "N" | "W", t }]. Die vorderen Fackeln (Süd, Ost) sind wie die vorderen Wände ausgeblendet (nur ihr Licht
+ * bleibt) und betreffen keine Wandrequisiten. torchCount in der Einrichtung begrenzt die Wandfackeln (Auswahl nach seed).
  */
-export function torchSlots(doors, spec) {
-  const out = [];
-  if (pillarTorches(spec)) return out; // Fackeln an den Säulen statt an den Wänden (Schatzkammer)
+export function torchSlots(doors, spec, seed) {
+  let out = [];
+  if (pillarTorches(spec)) return out; // Fackeln an den Säulen statt an den Wänden (Schatzkammer, Säulenhalle)
   ["N", "W"].forEach(w => ((doors & DIR[w].bit) ? [MID + 2] : [2, N - 3]).forEach(t => out.push({ wall: w, t })));
+  if (spec && spec.torchCount !== undefined) {
+    const R = mulberry32(((seed || 0) ^ 0x2c1b3c6d) >>> 0);
+    const [lo, hi] = countRange(spec.torchCount);
+    const n = lo + Math.floor(R() * (hi - lo + 1));
+    out = out.map(f => [R(), f]).sort((a, b) => a[0] - b[0]).slice(0, n).map(x => x[1]);
+  }
   return out;
 }
+// Nur mit torchCount: auch die (unsichtbaren) Lichter der vorderen Fackeln fallen weg, es zählen nur die Wandfackeln
+export const frontTorchLights = (spec) => !(spec && spec.torchCount !== undefined);
 
 // Einrichtung mit "torches": "saeulen": keine Fackeln an den Wänden, dafür an jeder Säule eine, die zur Raummitte zeigt
 export const pillarTorches = (spec) => !!spec && spec.torches === "saeulen";
@@ -200,7 +210,7 @@ export function planDecor(spec, opts) {
   const reserved = new Set(doorTiles(doors).map(t => key(...t)));
   const blocked = new Set(), occupied = new Set(), wallSlots = new Set();
   // Wandrequisiten (Regale, Fahnen, Herd …) verdecken keine Fackel: die Wandkachel einer Fackel bleibt für sie frei
-  const torches = new Set(torchSlots(doors, spec).map(f => f.wall + (f.wall === "N" ? key(f.t, 0) : key(0, f.t))));
+  const torches = new Set(torchSlots(doors, spec, opts.seed).map(f => f.wall + (f.wall === "N" ? key(f.t, 0) : key(0, f.t))));
   const clickables = [], extra = [];
   if (feature) STAIRS_TILES.forEach(t => { reserved.add(key(...t)); blocked.add(key(...t)); });
   if (feature === "up") { reserved.add(key(...STAIRS_FOOT)); extra.push(STAIRS_FOOT); }
@@ -294,6 +304,7 @@ export function planDecor(spec, opts) {
     if (!c.tiles.every(([x, z]) => inBounds(x, z))) return false;
     if (def.wall && c.wall && c.tiles.some(t => torches.has(c.wall + key(...t)))) return false;
     if (def.spread && tooClose(item, c.tiles, def.spread)) return false;
+    if (def.wallGap && !c.tiles.every(([x, z]) => x >= def.wallGap && z >= def.wallGap && x < N - def.wallGap && z < N - def.wallGap)) return false;
     if (def.floor === false) {
       if (c.at) return true; // hängt über einem anderen Requisit
       // Wandschmuck: Wandplatz frei und nicht über einer Tür
@@ -314,7 +325,7 @@ export function planDecor(spec, opts) {
     if (def.click) clickables.push(c.tiles);
     const [cx, cz] = c.at || centerOf(c.tiles);
     placements.push({ prop: item.prop, variant: item.variant || null, tiles: c.tiles, cx, cz, rot: c.rot, wall: c.wall || null,
-      target: c.target || null, place: item.place });
+      target: c.target || null, place: item.place, face: c.face || null });
   }
 
   // Säulen in zwei Reihen (Variante "reihen"): feste Plätze, wie in der bisherigen Säulenhalle
@@ -330,7 +341,8 @@ export function planDecor(spec, opts) {
         if (!left) break;
         left--;
         const [x, z] = vertical ? [line, a] : [a, line];
-        const c = { tiles: [[x, z]], rot: 0 };
+        const toMid = Math.sign(MID - line); // Seite zum Gang in der Raummitte
+        const c = { tiles: [[x, z]], rot: 0, face: vertical ? [toMid, 0] : [0, toMid] };
         if (fits(item, c)) put(item, c); else dropped.push({ prop: item.prop, variant: item.variant || null });
       }
     }
@@ -373,13 +385,30 @@ export function planDecor(spec, opts) {
       put(item, c);
     }
   }
-  return { layout: layout.id, placements, corrected, dropped, missingRequired, blocked, torchColor: spec.torchColor || null, clickables, extra };
+  // Fackeln an Säulen: zur Raummitte (Säulen in Reihen: zum Gang in der Mitte); torchCount wählt, wie viele Säulen eine tragen
+  let torchSpots = [];
+  if (pillarTorches(spec)) {
+    torchSpots = placements.filter(p => p.prop === "saeule").map(p => {
+      const [dx, dz] = p.face || [MID - p.cx, MID - p.cz];
+      const len = Math.hypot(dx, dz) || 1;
+      return { cx: p.cx, cz: p.cz, dx: dx / len, dz: dz / len, rot: Math.atan2(dx, dz) };
+    });
+    if (spec.torchCount !== undefined) {
+      const [lo, hi] = countRange(spec.torchCount);
+      torchSpots = shuffle(torchSpots).slice(0, lo + Math.floor(R() * (hi - lo + 1)));
+    }
+  }
+  return { layout: layout.id, placements, corrected, dropped, missingRequired, blocked, torchColor: spec.torchColor || null, torchSpots, clickables, extra };
 }
 
 // Datenprüfung der Einrichtung (für validateData)
 export function checkDecor(spec, where, err) {
   if (!spec || !Array.isArray(spec.layouts) || !spec.layouts.length) { err(where, "decor braucht mindestens eine Variante in layouts"); return; }
   if (spec.mimics !== undefined && typeof spec.mimics !== "boolean") err(where, "mimics muss true oder false sein");
+  if (spec.torchFlame !== undefined && !/^#[0-9a-fA-F]{6}$/.test(spec.torchFlame)) err(where, "torchFlame muss eine Farbe wie #6f9bff sein");
+  const okN = (c) => Number.isInteger(c) && c >= 0;
+  if (spec.torchCount !== undefined && !(okN(spec.torchCount) || (Array.isArray(spec.torchCount) && spec.torchCount.length === 2 && spec.torchCount.every(okN))))
+    err(where, "torchCount muss eine Zahl oder ein Bereich [von, bis] sein");
   if (spec.torches !== undefined && spec.torches !== "saeulen") err(where, "torches kennt nur \"saeulen\"");
   if (spec.torchColor !== undefined && !/^#[0-9a-fA-F]{6}$/.test(spec.torchColor)) err(where, "torchColor muss eine Farbe wie #ff8a30 sein");
   const ids = new Set();

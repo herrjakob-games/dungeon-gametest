@@ -6,7 +6,7 @@ import {
   mimicChests,
   PROPS, planDecor, decorFor, centerFeature, doorTiles, checkDecor, STAIRS_TILES, STAIRS_FOOT, torchSlots
 } from "../src/decor.js";
-import { N, DIR, DIRKEYS, key, inBounds, tileName } from "../src/config.js";
+import { N, MID, DIR, DIRKEYS, key, inBounds, tileName } from "../src/config.js";
 
 const ROOM_TYPES = JSON.parse(readFileSync(new URL("../data/room-types.json", import.meta.url), "utf8"));
 const SEEDS = 25;
@@ -233,7 +233,7 @@ test("Wandrequisiten (Regale, Fahnen, Herd …) verdecken oder überlagern keine
     for (const spec of specs) spec.layouts.forEach((layout, li) => {
       for (let doors = 0; doors < 16; doors++) for (let s = 1; s <= 10; s++) {
         const plan = planDecor(spec, { seed: s * 7919, doors, feature: centerFeature(rt.id, false), layoutIndex: li });
-        const torches = new Set(torchSlots(doors, spec).map(f => f.wall + (f.wall === "N" ? key(f.t, 0) : key(0, f.t))));
+        const torches = new Set(torchSlots(doors, spec, s * 7919).map(f => f.wall + (f.wall === "N" ? key(f.t, 0) : key(0, f.t))));
         plan.placements.filter(p => PROPS[p.prop].wall && p.wall).forEach(p => p.tiles.forEach(t =>
           assert.ok(!torches.has(p.wall + key(...t)), rt.id + " " + layout.id + ": " + p.prop + " auf " + tileName(...t) + " verdeckt eine Fackel (Türen " + doors + ")")));
       }
@@ -291,4 +291,34 @@ test("Schatzkammer: 2 bis 3 Truhen, genau eine echt, die übrigen Mimiken", () =
   assert.deepEqual([...seen].sort(), [2, 3]);
   // Andere Räume: eine Truhe ist nie eine Mimik
   assert.deepEqual(mimicChests({ layouts: [] }, 1, 5), [false]);
+});
+
+test("Gruft: 4 bis 5 Sarkophage mit einer Kachel Abstand zur Wand und zueinander, zwei Wandfackeln", () => {
+  const spec = decorFor(ROOM_TYPES.find(t => t.id === "gruft"), "keller");
+  spec.layouts.forEach((layout, li) => {
+    for (let doors = 0; doors < 16; doors++) for (let s = 1; s <= 10; s++) {
+      const where = "Variante " + layout.id + ", Türen " + doors + ", Seed " + s;
+      const sarg = planDecor(spec, { seed: s * 7919, doors, layoutIndex: li }).placements.filter(p => p.prop === "sarkophag");
+      assert.ok(sarg.length >= 4 && sarg.length <= 5, where + ": " + sarg.length + " Sarkophage");
+      sarg.forEach(a => a.tiles.forEach(([x, z]) => assert.ok(x >= 1 && z >= 1 && x <= N - 2 && z <= N - 2, where + ": Sarkophag an der Wand")));
+      sarg.forEach((a, i) => sarg.slice(i + 1).forEach(b => assert.ok(a.tiles.every(([x, z]) => b.tiles.every(([u, v]) =>
+        Math.max(Math.abs(x - u), Math.abs(z - v)) > 1)), where + ": Sarkophage ohne Abstand")));
+      assert.equal(torchSlots(doors, spec, s).length, 2);
+    }
+  });
+});
+
+test("Säulenhalle: nur der Säulengang, 3 bis 4 Fackeln an Säulen zum Gang, Wandschmuck nie doppelt an einer Stelle", () => {
+  const spec = decorFor(ROOM_TYPES.find(t => t.id === "halle"), "keller");
+  spec.layouts.forEach((layout, li) => {
+    for (let doors = 0; doors < 16; doors++) for (let s = 1; s <= 10; s++) {
+      const plan = planDecor(spec, { seed: s * 7919, doors, layoutIndex: li });
+      assert.ok(plan.placements.every(p => !p.prop.startsWith("saeule") || (p.prop === "saeule" && p.variant === "reihen")), "nur Säulen im Gang");
+      assert.ok(plan.torchSpots.length >= 3 && plan.torchSpots.length <= 4);
+      plan.torchSpots.forEach(t => assert.ok(Math.abs(t.cx + t.dx * 2 - MID) < Math.abs(t.cx - MID) + 0.01 || Math.abs(t.cz + t.dz * 2 - MID) < Math.abs(t.cz - MID) + 0.01, "Fackel zeigt zum Gang"));
+      assert.deepEqual(torchSlots(doors, spec, s), [], "keine Wandfackeln");
+      const slots = plan.placements.filter(p => p.wall).flatMap(p => p.tiles.map(t => p.wall + key(...t)));
+      assert.equal(new Set(slots).size, slots.length, "zwei Wandstücke an derselben Stelle");
+    }
+  });
 });

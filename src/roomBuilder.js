@@ -12,7 +12,7 @@ import { makeModel, hasModel, setModelTheme, findPart, makeFigureModel } from ".
 import { state } from "./state.js";
 import { buildFigure } from "./figures.js";
 import * as P from "./props.js";
-import { PROPS, planDecor, decorFor, centerFeature, STAIRS_TILES, STAIRS_SIZE, STAIRS_CENTER, torchSlots, pillarTorches, mimicChests } from "./decor.js";
+import { PROPS, planDecor, decorFor, centerFeature, STAIRS_TILES, STAIRS_SIZE, STAIRS_CENTER, torchSlots, pillarTorches, frontTorchLights, mimicChests } from "./decor.js";
 import { syncRoom } from "./roomFigures.js";
 import { setMood } from "./sound.js";
 import { roomSound } from "./soundLogic.js";
@@ -226,32 +226,48 @@ function makeLock(d, tall, glow) {
 // Vorne (Sockel) steht die Fackel auf einem Pfosten.
 function placeTorches(room, color, spec) {
   if (pillarTorches(spec)) return; // Fackeln hängen an den Säulen (placeDecor)
+  const flame = spec && spec.torchFlame;
   const has = (d) => (room.doors & DIR[d].bit) !== 0;
   const inner = -E + 0.25; // Innenseite der hohen Wände
   // Plätze an Nord- und Westwand aus decor.js (dieselben, die Wandrequisiten freilassen)
-  torchSlots(room.doors, spec).forEach(({ wall, t }) => (wall === "N" ? makeTorch(tw(t), inner, 0, color, false) : makeTorch(inner, tw(t), Math.PI / 2, color, false)));
-  if (has("S")) makeTorch(tw(MID + 1), E, Math.PI, color, true);
-  if (has("E")) makeTorch(E, tw(MID + 1), -Math.PI / 2, color, true);
+  torchSlots(room.doors, spec, room.seed).forEach(({ wall, t }) => (wall === "N" ? makeTorch(tw(t), inner, 0, color, flame) : makeTorch(inner, tw(t), Math.PI / 2, color, flame)));
+  // Vordere Fackeln (Süd, Ost): wie die vorderen Wände ausgeblendet, ohne Pfosten; nur ihr Licht bleibt
+  if (!frontTorchLights(spec)) return;
+  if (has("S")) makeTorchLight(tw(MID + 1), E - 0.3, color);
+  if (has("E")) makeTorchLight(E - 0.3, tw(MID + 1), color);
 }
 
-// Eine Fackel an jeder Säule, auf der Seite zur Raummitte, mit eigenem Licht
+// Fackel an einer Säule (Plan aus decor.js: Seite zur Raummitte), mit eigenem Licht
 const PILLAR_TORCH = 0.3; // Abstand der Halterung von der Säulenmitte
-function makePillarTorch(cx, cz, color) {
-  const dx = MID - cx, dz = MID - cz, len = Math.hypot(dx, dz) || 1;
-  makeTorch(tw(cx) + dx / len * PILLAR_TORCH, tw(cz) + dz / len * PILLAR_TORCH, Math.atan2(dx, dz), color, false);
+function makePillarTorch(s, color) {
+  makeTorch(tw(s.cx) + s.dx * PILLAR_TORCH, tw(s.cz) + s.dz * PILLAR_TORCH, s.rot, color);
 }
 
-function makeTorch(x, z, rot, color, onPost) {
+// Nur das Licht einer Fackel, ohne Modell (vordere Fackeln, ausgeblendet wie die vorderen Wände)
+function makeTorchLight(x, z, color) {
+  const light = new THREE.PointLight(new THREE.Color(color), 1.8, 6, 2);
+  light.position.set(x, 1.65, z);
+  add(light);
+  state.torches.push({ light, flame: new THREE.Object3D(), phase: rnd() * 10, base: 1.8 });
+}
+
+// flameColor: eigene Flammenfarbe über der Flamme des Modells (etwa blau in der Gruft)
+const FLAME_Y = 0.27, FLAME_Z = 0.22; // Lage der Flamme im Fackel-Modell
+function makeTorch(x, z, rot, color, flameColor) {
   const g = new THREE.Group();
   const c = new THREE.Color(color);
-  const y = onPost ? 0.95 : 1.25;
-  if (onPost) g.add(box(0.18, y + 0.1, 0.18, mat(0x7a6552), 0, (y + 0.1) / 2 - y, 0)); // Pfosten in Wandfarbe auf dem Sockel
+  const y = 1.25;
   const model = makeModel("fackel");
   let flame;
   if (model) {
     model.traverse(n => { if (n.isLight) n.parent.remove(n); }); // Licht setzt die Fackel selbst (Farbe des Raums)
     g.add(model);
     flame = new THREE.Object3D(); // die Flamme gehört zum Modell; geflackert wird nur das Licht
+    if (flameColor) {
+      flame = new THREE.Mesh(new THREE.OctahedronGeometry(0.11), new THREE.MeshBasicMaterial({ color: new THREE.Color(flameColor) }));
+      flame.position.set(0, FLAME_Y, FLAME_Z);
+      flame.scale.y = 1.4;
+    }
   } else {
     g.add(box(0.1, 0.5, 0.1, mat(0x4a3424), 0, 0, 0.1));
     flame = new THREE.Mesh(new THREE.OctahedronGeometry(0.13), new THREE.MeshBasicMaterial({ color: c }));
@@ -323,6 +339,7 @@ function propMesh(id, pl) {
 function placeDecor(spec, room, feature, id, torch) {
   const plan = planDecor(spec, { seed: room.seed, doors: room.doors, feature });
   state.decorPlan = plan; // für Figuren mit near:<prop>
+  plan.torchSpots.forEach(s => makePillarTorch(s, torch));
   // Truhen: eine echt, die übrigen Mimiken, wenn die Einrichtung es will (Schatzkammer)
   const mimics = mimicChests(spec, plan.placements.filter(p => p.prop === "truhe").length, room.seed);
   let chestNo = 0;
@@ -340,7 +357,7 @@ function placeDecor(spec, room, feature, id, torch) {
     }
     if (PROPS[pl.prop].blocks) pl.tiles.forEach(t => block(t[0], t[1]));
     at(propMesh(pl.prop, pl), pl.cx, pl.cz, pl.rot);
-    if (pl.prop === "saeule" && pillarTorches(spec)) makePillarTorch(pl.cx, pl.cz, torch);
+
   }
 }
 

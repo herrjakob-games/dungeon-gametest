@@ -737,6 +737,9 @@
       }
     ],
     "decor": {
+      "torchCount": 2,
+      "torchColor": "#5d86e0",
+      "torchFlame": "#8fb4ff",
       "layouts": [
         {
           "id": "A",
@@ -744,7 +747,10 @@
             {
               "prop": "sarkophag",
               "place": "free",
-              "count": 4,
+              "count": [
+                4,
+                5
+              ],
               "required": true
             },
             {
@@ -779,7 +785,10 @@
             {
               "prop": "sarkophag",
               "place": "free",
-              "count": 2,
+              "count": [
+                3,
+                4
+              ],
               "required": true
             },
             {
@@ -846,6 +855,11 @@
       }
     ],
     "decor": {
+      "torches": "saeulen",
+      "torchCount": [
+        3,
+        4
+      ],
       "layouts": [
         {
           "id": "A",
@@ -867,13 +881,13 @@
               "variant": "gruppe"
             },
             {
-              "prop": "saeule_verziert",
-              "place": "corner",
-              "count": 2
-            },
-            {
               "prop": "fahne_dreifach",
               "place": "wall-back"
+            },
+            {
+              "prop": "waffenstaender",
+              "place": "wall-back",
+              "count": 2
             },
             {
               "prop": "fahne_dreifach",
@@ -892,23 +906,25 @@
               "count": 6
             },
             {
-              "prop": "saeule_liegend",
-              "place": "free"
-            },
-            {
               "prop": "moos",
               "place": "free",
               "count": 3
             },
             {
-              "prop": "saeule_verziert",
-              "place": "corner",
-              "count": 2
-            },
-            {
               "prop": "fahne_dreifach",
               "place": "wall-back",
               "variant": "gelb"
+            },
+            {
+              "prop": "waffenstaender",
+              "place": "wall-back",
+              "count": 2
+            },
+            {
+              "prop": "fahne",
+              "place": "wall-back",
+              "variant": "wappen",
+              "count": 2
             }
           ]
         }
