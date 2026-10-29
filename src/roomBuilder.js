@@ -1,4 +1,4 @@
-// Baut den aktuellen Raum als 3D-Szene: Boden, Wände, Türen, Fackeln, Wendeltreppen, Einrichtung, Licht.
+// Baut den aktuellen Raum als 3D-Szene: Boden, Wände, Türen, Fackeln, Treppen, Einrichtung, Licht.
 // Teile mit Modell (data/models.json, models.js) kommen als Modell, alle anderen als Platzhalter aus Grundformen.
 // Einrichtung aus den Daten (decor/themeDecor in data/room-types.json) plant decor.js; dort gelten die Regeln
 // aus dem GDD (Türkacheln frei, alles erreichbar). Raumtypen ohne Eintrag bekommen das bisherige Muster aus
@@ -14,6 +14,7 @@ import { buildFigure } from "./figures.js";
 import * as P from "./props.js";
 import { PROPS, planDecor, decorFor, centerFeature, STAIRS_TILES, STAIRS_SIZE, STAIRS_CENTER, torchSlots, pillarTorches, frontTorchLights, mimicChests } from "./decor.js";
 import { syncRoom } from "./roomFigures.js";
+import { buildStairs, hasHole } from "./stairs.js";
 import { setMood } from "./sound.js";
 import { roomSound } from "./soundLogic.js";
 const THREE = window.THREE;
@@ -46,9 +47,9 @@ export function buildRoom(id) {
   if (!state.roomState[id]) state.roomState[id] = {};
   setRoomSeed(room.seed);
 
-  // Wendeltreppen setzt der Code: nach oben in der Vorkammer, nach unten im Abstieg und im Bossraum nach dem Sieg
+  // Treppen setzt der Code: nach oben in der Vorkammer, nach unten im Abstieg und im Bossraum nach dem Sieg (davor Gitter)
   const feature = centerFeature(room.type, !!state.roomState[id].bossDefeated);
-  state.stairsFeature = feature; // für Figuren-Anker an der Wendeltreppe (roomFigures.js)
+  state.stairsFeature = feature; // für Figuren-Anker an der Treppe (roomFigures.js)
   // Raum-Sound (GDD, Sound): Stimmung mit Überblendung, Boden für die Schritte; ohne Eintrag still
   const snd = roomSound(type, state.theme ? state.theme.id : null);
   setMood(snd ? snd.mood : null);
@@ -60,15 +61,15 @@ export function buildRoom(id) {
   setAmbient(pal && pal.ambient, pal && pal.brightness);
   setModelTheme(state.theme ? state.theme.id : null);
 
-  buildFloor(type);
+  buildFloor(type, hasHole(feature));
   buildWalls(room);
   DIRKEYS.forEach(d => { if (room.doors & DIR[d].bit) makeDoor(d); });
-  placeTorches(room, torch, spec);
-  if (feature === "up" || feature === "down") makeStairs(feature);
+  placeTorches(room, torch, spec, feature);
+  if (feature) makeStairs(feature);
   state.decorPlan = null;
   if (spec) placeDecor(spec, room, feature, id, torch);
   else furnish(type.layout, id);
-  scatterRubble(feature === "up" || feature === "down");
+  scatterRubble(!!feature);
   refreshLocks();
   syncRoom(id); // Figuren im Raum (roomFigures.js)
 }
@@ -103,12 +104,21 @@ function placeAt(g, x, z, rotY, y) {
   return add(g);
 }
 
-function buildFloor(type) {
-  add(box(N + 1, 0.4, N + 1, mat(0x1e1814), 0, -0.25, 0));
+// hole: auf der Fläche der Treppe nach unten (1|1 bis 3|3) fehlt der Boden
+function buildFloor(type, hole) {
+  const inHole = (x, z) => hole && x < STAIRS_SIZE && z < STAIRS_SIZE;
+  if (!hole) add(box(N + 1, 0.4, N + 1, mat(0x1e1814), 0, -0.25, 0));
+  else {
+    // Unterbau ohne die Nordwest-Ecke: ein Streifen im Süden über die ganze Breite, einer im Norden östlich des Lochs
+    const H = (N + 1) / 2, edge = -MID - 0.5 + STAIRS_SIZE, rest = H - edge; // Unterbau reicht von -H bis H
+    add(box(N + 1, 0.4, rest, mat(0x1e1814), 0, -0.25, edge + rest / 2));
+    add(box(rest, 0.4, N + 1 - rest, mat(0x1e1814), edge + rest / 2, -0.25, -H + (N + 1 - rest) / 2));
+  }
   if (hasModel("boden")) {
     // Bodenplatten, zur Abwechslung mit Rissen und selten mit Dekor (über den Raum-Seed)
     for (let z = 0; z < N; z++) for (let x = 0; x < N; x++) {
       const r = rnd();
+      if (inHole(x, z)) continue;
       const variant = r < 0.07 ? "bruch_a" : r < 0.14 ? "bruch_b" : r < 0.17 ? "deko" : null;
       placeAt(makeModel("boden", variant), tw(x), tw(z), Math.floor(rnd() * 4) * Math.PI / 2);
     }
@@ -121,6 +131,7 @@ function buildFloor(type) {
   let i = 0;
   for (let z = 0; z < N; z++) for (let x = 0; x < N; x++) {
     dummy.position.set(tw(x), -0.1 - rnd() * 0.03, tw(z));
+    if (inHole(x, z)) dummy.position.y = -50; // Platte unsichtbar weit unten statt im Loch
     dummy.updateMatrix();
     floor.setMatrixAt(i, dummy.matrix);
     c.setHSL(type.floor.h, type.floor.s, ((x + z) % 2 ? 0.30 : 0.33) + rnd() * 0.05);
@@ -223,14 +234,14 @@ function makeLock(d, tall, glow) {
 }
 
 // Fackeln nach Stilguide: neben jeder Tür eine; Wände ohne Tür bekommen zwei, damit kein Raum dunkel bleibt.
-// Vorne (Sockel) steht die Fackel auf einem Pfosten.
-function placeTorches(room, color, spec) {
+// Vorne (Süd, Ost) bleibt nur ihr Licht. In der Vorkammer hängt keine Fackel hinter oder neben der Treppe.
+function placeTorches(room, color, spec, feature) {
   if (pillarTorches(spec)) return; // Fackeln hängen an den Säulen (placeDecor)
   const flame = spec && spec.torchFlame;
   const has = (d) => (room.doors & DIR[d].bit) !== 0;
   const inner = -E + 0.25; // Innenseite der hohen Wände
   // Plätze an Nord- und Westwand aus decor.js (dieselben, die Wandrequisiten freilassen)
-  torchSlots(room.doors, spec, room.seed).forEach(({ wall, t }) => (wall === "N" ? makeTorch(tw(t), inner, 0, color, flame) : makeTorch(inner, tw(t), Math.PI / 2, color, flame)));
+  torchSlots(room.doors, spec, room.seed, feature).forEach(({ wall, t }) => (wall === "N" ? makeTorch(tw(t), inner, 0, color, flame) : makeTorch(inner, tw(t), Math.PI / 2, color, flame)));
   // Vordere Fackeln (Süd, Ost): wie die vorderen Wände ausgeblendet, ohne Pfosten; nur ihr Licht bleibt
   if (!frontTorchLights(spec)) return;
   if (has("S")) makeTorchLight(tw(MID + 1), E - 0.3, color);
@@ -281,7 +292,7 @@ function makeTorch(x, z, rot, color, flameColor) {
   state.torches.push({ light, flame, phase: rnd() * 10, base: 1.8 });
 }
 
-// Geröll in jedem Raum, nicht auf der Wendeltreppe
+// Geröll in jedem Raum, nicht auf der Treppe
 function scatterRubble(skipCenter) {
   for (let k = 0; k < 9; k++) {
     const r = new THREE.Mesh(new THREE.DodecahedronGeometry(0.06 + rnd() * 0.08), stone());
@@ -293,7 +304,7 @@ function scatterRubble(skipCenter) {
   }
 }
 
-// ---------- Wendeltreppen ----------
+// ---------- Treppen ----------
 // Auf Gruppen aus props.js: Mittelpunkt (in Kacheln) und Drehung setzen
 function at(g, cx, cz, rot) {
   const outer = new THREE.Group();
@@ -304,12 +315,15 @@ function at(g, cx, cz, rot) {
 }
 const lightCtx = () => ({ flicker: state.torches });
 
-function makeStairs(dir) {
+// Treppe in der Nordwest-Ecke (stairs.js). Nach oben und nach unten blockiert sie ihre Kacheln; nur die Treppe nach unten
+// ist anklickbar. Im Bossraum vor dem Sieg ("arena") liegt ein begehbares Gitter über dem Loch.
+function makeStairs(kind) {
+  const s = buildStairs(kind);
+  const g = at(s.group, ...STAIRS_CENTER);
+  if (kind === "arena") return;
   STAIRS_TILES.forEach(t => block(t[0], t[1]));
-  if (dir === "up") { at(P.wendeltreppe_hoch(null, lightCtx()), ...STAIRS_CENTER); return; }
-  const g = at(P.wendeltreppe_runter(null, lightCtx()), ...STAIRS_CENTER);
-  const inner = g.children[0];
-  g.userData = { kind: "exit", tiles: STAIRS_TILES, hoverMats: inner.userData.hoverMats, baseGlow: inner.userData.baseGlow };
+  if (kind !== "down") return;
+  g.userData = { kind: "exit", tiles: STAIRS_TILES, hoverMats: s.hoverMats };
   state.interactables.push(g);
 }
 

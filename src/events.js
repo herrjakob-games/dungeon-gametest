@@ -139,7 +139,7 @@ function fight(ev, outcome, combat, onOutcome) {
       if (isBoss) {
         rs.bossDefeated = true;
         hooks.onBossDefeated();
-        text = DATA.monsters[combat.monster].name + " ist besiegt. In der Mitte des Raums öffnet sich eine Wendeltreppe nach unten.";
+        text = DATA.monsters[combat.monster].name + " ist besiegt. In der Ecke öffnet sich das Gitter, eine Treppe führt nach unten.";
       }
       show(ev, { text, next: outcome.next }, res, roll, onOutcome, lines);
     },
@@ -215,7 +215,7 @@ function die(cause) {
 // Bossraum: Jedes Betreten startet den Bosskampf, bis der Boss besiegt ist. Flucht ist erlaubt.
 // Hat das Thema eine Boss-Event-Tabelle (room-types.json, Bossraum, themeEvents), wird bei jedem Betreten
 // daraus neu gewürfelt; sonst startet der Kampf direkt.
-// Sieg: Beute tier2 und 10 Erfahrung (vergibt fight()), danach erscheint in der Raummitte die Wendeltreppe nach unten.
+// Sieg: Beute tier2 und 10 Erfahrung (vergibt fight()), danach wechselt die Nordwest-Ecke vom Gitter zu Loch und Treppe nach unten.
 export const BOSS_REWARD = [{ loot: "tier2" }, { gainXp: 10 }];
 
 export function startBoss() {

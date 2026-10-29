@@ -810,5 +810,38 @@
       -0.5
     ],
     "palette": true
+  },
+  "treppe_hoch": {
+    "file": "assets/props/treppe_hoch.glb",
+    "scale": [
+      0.6,
+      0.392,
+      0.75
+    ],
+    "offset": [
+      0,
+      0,
+      -1.5
+    ],
+    "palette": true
+  },
+  "treppe_runter": {
+    "file": "assets/props/treppe_hoch.glb",
+    "scale": [
+      0.6,
+      0.392,
+      0.75
+    ],
+    "rotation": [
+      0,
+      180,
+      0
+    ],
+    "offset": [
+      0,
+      -2,
+      1.5
+    ],
+    "palette": true
   }
 }

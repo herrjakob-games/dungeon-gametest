@@ -81,8 +81,9 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/character.js` | Figur: Volk, Inventar, Anlegen, Stufenaufstieg, Fähigkeit; rein logisch |
 | `src/combat.js` | Rundenkampf: Angriff, Gegnerzug, Verteidigen, Gegenstände, Flucht, Tiefe; rein logisch |
 | `src/roomTypes.js` | Raumtypen-Tabelle, befüllt aus `data/room-types.json` |
-| `src/decor.js` | Einrichtung als Daten: Requisiten-Größen, Platzierung (`center`, `wall-back`, `corner`, `free`, `around:`, `above:`, `tile:x|y`, `door-sides`), Fackeln an Säulen (`torches`) und ihre Anzahl (`torchCount`), Abstand zur Wand (`wallGap`), Wendeltreppen, Erreichbarkeit, Datenprüfung; rein logisch |
-| `src/props.js` | Requisiten und Wendeltreppen aus Grundformen (Platzhalter, wenn ein Modell fehlt) |
+| `src/decor.js` | Einrichtung als Daten: Requisiten-Größen, Platzierung (`center`, `wall-back`, `corner`, `free`, `around:`, `above:`, `tile:x|y`, `door-sides`), Fackeln an Säulen (`torches`) und ihre Anzahl (`torchCount`), Abstand zur Wand (`wallGap`), Treppenfläche und Startkachel, Erreichbarkeit, Datenprüfung; rein logisch |
+| `src/props.js` | Requisiten aus Grundformen (Platzhalter, wenn ein Modell fehlt) |
+| `src/stairs.js` | Treppen in der Nordwest-Ecke: KayKit `stairs` (`treppe_hoch`, `treppe_runter`), Loch mit Steinkante und kühlem Licht, Gitter im Bossraum, Verlauf zur Schattenfarbe; Rückfall aus Grundformen |
 | `src/models.js` | Modell-Lader: `data/models.json`, Paletten-Textur des Themas, Klone pro Instanz, Figuren mit Animationen (`makeFigureModel`), Rückfall auf Platzhalter |
 | `src/outline.js` | goldene Umrisslinie für anklickbare Objekte beim Überfahren mit der Maus |
 | `data/models.json` | Zuordnung der Modelle: Datei, Maßstab, Drehung, Versatz, Einfärbung (`tint`), Lichtpunkte, Animationen, Zubehör an Knochen (`accessories`) |
@@ -90,7 +91,7 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/monsterFigures.js` | Figuren der Monster und der Kröte aus Grundformen (Rückfall ohne Modell), Ersatzfigur für Monster ohne eigene Figur, Zubehör für Modelle (`ACCESSORIES`) |
 | `src/staging.js` | Inszenierung: welche Figuren ein Event zeigt (Anzahl, Variante, Anker), Datenprüfung; rein logisch |
 | `src/roomFigures.js` | Figuren im Raum: erscheinen an Ankern, laufen im Kampf gemeinsam an, greifen reihum an, sterben und bleiben liegen, gehen nach dem Event zur Tür; `stay`; höchstens 6 animiert |
-| `src/roomBuilder.js` | baut einen Raum als 3D-Szene: Boden, Wände, Türen, Fackeln, Wendeltreppe, Einrichtung (aus `decor.js` oder altes Muster) |
+| `src/roomBuilder.js` | baut einen Raum als 3D-Szene: Boden, Wände, Türen, Fackeln, Treppe, Einrichtung (aus `decor.js` oder altes Muster) |
 | `src/player.js` | Spielfigur, Platzierung; `setFigure(volk)` tauscht das Modell (KayKit-Figur oder Platzhalter), `animateFigure` wechselt Stehen und Laufen |
 | `src/figures.js` | Platzhalterfiguren der Völker aus Grundformen (Rückfall, wenn ein Modell fehlt) |
 | `src/movement.js` | Laufbewegung entlang des Weges |
@@ -113,7 +114,8 @@ Die Liste aller Meilensteine steht im GDD.
   Wandrequisiten (`wall`) verdecken keine Fackel: `torchSlots()` in `decor.js` liefert die Fackelplätze für Planung und Raumaufbau.
   Das alte Muster in `furnish()` lässt das Kreuz aus Reihe und Spalte 3 bis 5 (gezählt ab 0) frei.
 - Kacheln heißen im GDD x|y, ab 1 gezählt; im Code zählen x und z ab 0 (`tileName(x, z)` übersetzt).
-- Wendeltreppen belegen die Nordwest-Ecke 1|1 bis 3|3 (gezählt ab 0: 0 bis 2), Start auf 4|4.
+- Treppen belegen die Nordwest-Ecke 1|1 bis 3|3 (gezählt ab 0: 0 bis 2) und laufen zur Nordwand, Start auf 2|4 (`STAIRS_FOOT`).
+  Im Abstieg und im Bossraum fehlt dort der Boden (Loch); im Bossraum liegt bis zum Sieg ein begehbares Gitter darüber.
 - Alles, was reproduzierbar sein muss (Dungeon, Einrichtung), läuft über Seeds aus `rng.js`.
   `Math.random()` nur für Würfelwürfe im Spiel.
 - Grafik nach Stilguide „Knetkeller“ (GDD): Teile mit Modell kommen aus `data/models.json`, alle anderen bleiben

@@ -8,7 +8,7 @@ export const UNKNOWN_COUNT = [1, 3];
 // Animationen, die ein Anker verlangen darf (Namen im Spiel, data/models.json ordnet sie pro Modell zu)
 export const POSES = ["idle", "sit", "sit_floor", "lie", "awaken"];
 // Requisiten, die der Code selbst setzt (nicht in der Einrichtung als Daten)
-export const CODE_PROPS = ["wendeltreppe_runter", "truhe", "lagerfeuer", "haendlerfigur"];
+export const CODE_PROPS = ["treppe_runter", "truhe", "lagerfeuer", "haendlerfigur"];
 
 // Erster Gegner, den ein Event im Kampf zeigt (Effekt combat irgendwo in den Optionen), sonst null
 export function combatMonsterOf(ev) {

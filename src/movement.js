@@ -32,7 +32,7 @@ export function stopMoving() {
 }
 
 // Zu einem Objekt laufen: nächstgelegenes freies Nachbarfeld wählen, dann zum Objekt drehen.
-// tile: eine Kachel [x, z] oder alle Kacheln eines großen Objekts [[x, z], …] (etwa die Wendeltreppe)
+// tile: eine Kachel [x, z] oder alle Kacheln eines großen Objekts [[x, z], …] (etwa die Treppe nach unten)
 export function approachTile(tile, onArrive) {
   const tiles = Array.isArray(tile[0]) ? tile : [tile];
   const from = pathStart();

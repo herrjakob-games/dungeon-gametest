@@ -1,4 +1,4 @@
-// Tests für die Einrichtung als Daten (docs/GDD.md, Einrichtung pro Raumtyp) und die Wendeltreppen.
+// Tests für die Einrichtung als Daten (docs/GDD.md, Einrichtung pro Raumtyp) und die Treppen.
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
@@ -54,7 +54,7 @@ function checkPlan(plan, doors, feature, where) {
       if (def.floor === false) continue;
       assert.ok(!floor.has(k), where + ": zwei Requisiten auf Kachel " + k);
       floor.add(k);
-      if (feature) assert.ok(!STAIRS_TILES.some(s => key(...s) === k), where + ": " + pl.prop + " steht auf dem Platz der Wendeltreppe");
+      if (feature) assert.ok(!STAIRS_TILES.some(s => key(...s) === k), where + ": " + pl.prop + " steht auf dem Platz der Treppe");
       if (def.blocks) blocked.add(k);
     }
     if (def.click) clickables.push(pl.tiles);
@@ -76,17 +76,18 @@ function checkPlan(plan, doors, feature, where) {
   clickables.forEach(c => assert.ok(touches(seen, c), where + ": anklickbares Objekt bei " + c[0] + " nicht erreichbar"));
 }
 
-test("Wendeltreppen: Vorkammer nach oben, Abstieg nach unten, Bossraum erst nach dem Sieg", () => {
+test("Treppen: Vorkammer nach oben, Abstieg nach unten, Bossraum erst nach dem Sieg", () => {
   assert.equal(centerFeature("start"), "up");
   assert.equal(centerFeature("exit"), "down");
   assert.equal(centerFeature("boss", false), "arena");
   assert.equal(centerFeature("boss", true), "down");
   assert.equal(centerFeature("kueche"), null);
-  // 3×3 Kacheln in der Nordwest-Ecke: 1|1 bis 3|3 (gezählt ab 0: 0 bis 2), Start auf 4|4
+  // 3×3 Kacheln in der Nordwest-Ecke: 1|1 bis 3|3 (gezählt ab 0: 0 bis 2), Start auf 2|4
   assert.equal(STAIRS_TILES.length, 9);
   assert.deepEqual([Math.min(...STAIRS_TILES.map(t => t[0])), Math.max(...STAIRS_TILES.map(t => t[0]))], [0, 2]);
   assert.deepEqual([Math.min(...STAIRS_TILES.map(t => t[1])), Math.max(...STAIRS_TILES.map(t => t[1]))], [0, 2]);
-  assert.equal(tileName(...STAIRS_FOOT), "4|4", "Fuß der Treppe");
+  assert.equal(tileName(...STAIRS_FOOT), "2|4", "Fuß der Treppe");
+  assert.ok(!doorTiles(15).some(t => key(...t) === key(...STAIRS_FOOT)), "Startkachel liegt nicht auf einer Türkachel");
   // Türen Nord 5|1 und West 1|5 und die Kacheln davor bleiben frei
   const stairs = new Set(STAIRS_TILES.map(t => key(...t)));
   doorTiles(15).forEach(t => assert.ok(!stairs.has(key(...t)), tileName(...t) + " liegt auf der Treppe"));
@@ -321,4 +322,14 @@ test("Säulenhalle: nur der Säulengang, 3 bis 4 Fackeln an Säulen zum Gang, Wa
       assert.equal(new Set(slots).size, slots.length, "zwei Wandstücke an derselben Stelle");
     }
   });
+});
+
+test("Vorkammer: keine Fackel hinter oder neben der Treppe (Wandkacheln 1 bis 4 von Nord- und Westwand)", () => {
+  for (let doors = 0; doors < 16; doors++) {
+    const slots = torchSlots(doors, null, 1, "up");
+    assert.ok(slots.every(f => f.t > STAIRS_TILES.length / 3), "Türen " + doors + ": Fackel an der Treppe");
+    assert.ok(slots.length >= 2, "Türen " + doors + ": an jeder hohen Wand bleibt eine Fackel");
+  }
+  // Andere Räume behalten beide Fackeln an Wänden ohne Tür
+  assert.equal(torchSlots(0, null, 1, null).length, 4);
 });

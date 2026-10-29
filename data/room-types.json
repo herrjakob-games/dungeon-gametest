@@ -35,16 +35,12 @@
           "props": [
             {
               "prop": "pult",
-              "place": "wall-back",
+              "place": "tile:4|3",
               "required": true
             },
             {
               "prop": "zettelbrett",
               "place": "wall-back"
-            },
-            {
-              "prop": "wegweiser",
-              "place": "free"
             },
             {
               "prop": "fass",
@@ -57,12 +53,9 @@
           "id": "B",
           "props": [
             {
-              "prop": "wegweiser",
-              "place": "corner"
-            },
-            {
               "prop": "pult",
-              "place": "free"
+              "place": "tile:4|3",
+              "required": true
             },
             {
               "prop": "zettelbrett",
