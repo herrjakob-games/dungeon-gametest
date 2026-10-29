@@ -531,5 +531,11 @@
       "lie": "Skeletons_Inactive_Floor_Pose",
       "awaken": "Skeletons_Awaken_Floor"
     }
+  },
+  "knochen": {
+    "file": "assets/props/knochen.glb",
+    "scale": 0.4,
+    "palette": false,
+    "texture": "assets/textures/figures/skeleton/skeleton_keller.png"
   }
 }

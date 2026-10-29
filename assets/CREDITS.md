@@ -30,7 +30,7 @@ Quelle und Lizenz jeder fremden Datei (docs/GDD.md, Asset-Spezifikation).
 - Quelle: https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0, Commit `15b62b9bad122f72926c10fb14d622c73819fa54`;
   Fassung 1.1 FREE von der itch.io-Seite von Kay Lousberg (hochgeladen von Christian; Textur Pixel für Pixel gleich)
 - Übernommene Dateien (in `source/kaykit-skeletons/`): Skeleton_Minion.glb, Skeleton_Warrior.glb, Skeleton_Rogue.glb, Skeleton_Mage.glb (1.0, mit Animationen), skeleton_texture.png (1.1)
-- Daraus gebaut (`npm run build:assets`): `figures/skeleton_minion.glb`, `figures/skeleton_warrior.glb`, `figures/skeleton_rogue.glb`, `figures/skeleton_mage.glb`
+- Daraus gebaut (`npm run build:assets`): `figures/skeleton_minion.glb`, `figures/skeleton_warrior.glb`, `figures/skeleton_rogue.glb`, `figures/skeleton_mage.glb`; aus Schädel, Kiefer und Armen des Skeleton_Minion das Requisit `props/knochen.glb`
 - `textures/figures/skeleton/skeleton_keller.png` ist eine umgefärbte Fassung der Textur (`tools/skeleton-texture.py`)
 
 ## Easy Animated Enemy Pack (Jan 2019)

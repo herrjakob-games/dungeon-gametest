@@ -466,5 +466,68 @@
       "simplify": 0.7,
       "maxTris": 4000
     }
+  },
+  "extractNotes": "Requisiten aus Teilen einer Paketfigur: pieces mit node (Name des Teils), position (KayKit-Einheiten, Unterseite des Teils), rotation (Grad [x, y, z]).",
+  "extracts": {
+    "knochen": {
+      "dir": "props",
+      "source": "assets/source/kaykit-skeletons/",
+      "file": "Skeleton_Minion.glb",
+      "pieces": [
+        {
+          "node": "Skeleton_Minion_Head",
+          "position": [
+            0.45,
+            0,
+            -0.35
+          ],
+          "rotation": [
+            0,
+            35,
+            18
+          ]
+        },
+        {
+          "node": "Skeleton_Minion_Jaw",
+          "position": [
+            1.0,
+            0,
+            0.35
+          ],
+          "rotation": [
+            0,
+            -50,
+            0
+          ]
+        },
+        {
+          "node": "Skeleton_Minion_ArmLeft",
+          "position": [
+            -0.35,
+            0,
+            0.5
+          ],
+          "rotation": [
+            0,
+            70,
+            0
+          ]
+        },
+        {
+          "node": "Skeleton_Minion_ArmRight",
+          "position": [
+            -0.6,
+            0,
+            -0.5
+          ],
+          "rotation": [
+            0,
+            -20,
+            0
+          ]
+        }
+      ],
+      "simplify": 0.75
+    }
   }
 }
