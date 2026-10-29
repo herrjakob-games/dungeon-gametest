@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.14 · Oct 29, 2026 · @Christian
+Version 2.15 · Oct 29, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.15 | 29.10.2026 | Sound-System (`data/sounds.json`, Meilenstein 6c): Angriffsklänge für Waffen (holz, schwert, axt, hammer, eigene für magische Waffen) und Monster (`sound` in `data/monsters.json`), Treffer und Fehlschlag getrennt; Klang pro Verbrauchsgegenstand; Raum-Stimmung (`mood`) und Boden (`floor`) mit Loop, Zufallsgeräuschen und Schritten; optionaler Event-Sound; Spielgeräusche für Türen, Truhe, Gold, Stufe, Treppe, Treffer und Tod; fehlende Sounds bleiben stumm; Lautstärke und Menü in Meilenstein 7 |
 | 2.14 | 29.10.2026 | Inszenierung: Gastgeber und schlafender Goblin bleiben nach dem Event (`stay` pro Event in `data/staging.json`); Goblin liegt flach neben dem Tisch (Anker mit `flat`, `front`); Würfelspiel-Skelette sind Warrior, Skelett mit Rücken ist Minion |
 | 2.13 | 29.10.2026 | Inszenierung der Figuren (`data/staging.json`): Anker an Requisiten, Ablauf bei Kampfbeginn, Blickrichtungen, Gruppen laufen gemeinsam an und sterben gemeinsam, Besiegte bleiben liegen, friedliche Figuren gehen zur Tür (ersetzt 2.12, außer `stay`); unbekannte Anzahl 1 bis 3; Skelette aus KayKit Skeletons 1.0 mit Paletten-Textur |
 | 2.12 | 29.10.2026 | Figuren, die nicht sterben und nicht kämpfen, bleiben nach dem Event an ihrem Platz; Gabelkrone der Monsterratte kleiner und am Kopf; Figuren ohne Animation stehen fest am Boden (atmen statt wippen) |
@@ -54,6 +55,7 @@ Das Spiel läuft im Browser auf Basis von Three.js. Claude schreibt den Code, Ch
 | Modelle | Low-Poly im Format glTF/GLB, Pakete KayKit Dungeon Remastered, Adventurers und Skeletons (CC0) im Maßstab 0,5, dazu KI-Modelle; fehlende Modelle bleiben Platzhalter aus Grundformen. |
 | Spieldaten | JSON-Dateien für Raumtypen, Einrichtung, Events, Monster und Gegenstände |
 | Text-UI | HTML-Fenster über der 3D-Szene |
+| Sound | MP3 über die Web Audio API, Zuordnung in `data/sounds.json`; ohne festgelegten Sound bleibt es still |
 | Entwicklung | Claude Code mit GitHub-Repository |
 | Veröffentlichung | GitHub Pages oder itch.io |
 
@@ -211,7 +213,7 @@ Jeder Raumtyp hat eine Event-Chance und eine gewichtete Event-Tabelle. Jedes Eve
 ```
 
 - **Ablauf:** Beim ersten Betreten eines Raums würfelt das Spiel gegen die Event-Chance und wählt dann gewichtet ein Event, dessen Bedingung erfüllt ist. Der Startraum hat die Chance 100 %: Jeder Dungeon beginnt mit einem kurzen, harmlosen Begrüßungs-Event.
-- **Dateien:** `data/room-types.json`, `data/events.json`, `data/monsters.json`, `data/characters.json`, `data/items.json`, `data/texts.json` (Sätze zur Todesursache bei Events: allgemeine Sätze und unter `death.events` eigene Sätze für einzelne Events, nach Event-id). Ein Event hat zusätzlich einen `title` für das Textfenster. Ein Ergebnis kann mit `next` ein Folge-Event starten, so laufen Proben Runde für Runde.
+- **Dateien:** `data/room-types.json`, `data/events.json`, `data/monsters.json`, `data/characters.json`, `data/items.json`, `data/texts.json` (Sätze zur Todesursache bei Events: allgemeine Sätze und unter `death.events` eigene Sätze für einzelne Events, nach Event-id). Ein Event hat zusätzlich einen `title` für das Textfenster. Ein Ergebnis kann mit `next` ein Folge-Event starten, so laufen Proben Runde für Runde. `data/sounds.json` ordnet Sound-ids den MP3-Dateien zu (siehe Sound). Ein Event kann im Feld `sound` eine Sound-id nennen.
 - **Proben in Events:** Jede Probe nennt ihre Kategorie, zum Beispiel `{ "category": "kraftakt", "dc": 12 }`. Das Attribut ergibt sich aus der Kategorie.
 - **Event-Typen:** combat, choice, trap, treasure, npc. Bossgegner und Artefakte laufen als normale Events über die Tabellen.
 - **Effekte:** damage, heal, loot, gold, item, loseGold, combat, gainXp, lockDoor, unlockDoor, setFlag. Mengen als Zahl oder Würfel, etwa `"W4"` oder `"2W6"`.
@@ -421,7 +423,7 @@ Gilt für alle Modelle. Bei Paketteilen gilt sie für das Ergebnis im Spiel; Abw
 - **Material:** stilisiert, Schattierung wie KayKit, keine Normal Maps. Paketteile nutzen die gemeinsame Paletten-Textur des Themas (`assets/textures/keller/dungeon_texture.png`), KI-Modelle eine eigene Textur bis 512 px in den Palettenfarben. Ausnahme: KayKit-Figuren behalten die Textur ihres Pakets, weil ihre Texturkoordinaten nicht auf die Paletten-Textur passen.
 - **Animationen:** Idle, Walk, Attack, Hit, Death, Interact. Heißen sie im Paket anders, ordnet `data/models.json` sie zu. Fehlt eine Animation, gilt die Bewegung aus dem Code: Hit als kurzes Zucken, Death als Versinken im Boden, eine Figur ganz ohne Animationen gleitet und wippt wie die Platzhalter.
 - **Dateinamen:** id aus dem GDD; Varianten als `id_variante.glb`, etwa `fass_gruppe.glb`. Fehlt die Variante, gilt die Grunddatei. Eine Variante kann auch nur eine andere Animation sein (Skelett sitzend).
-- **Ordner:** `assets/tiles/` (Boden, Wand, Sockel, Ecken, Türrahmen), `assets/props/`, `assets/figures/`, `assets/textures/`. Rohdateien der Pakete in `assets/source/`.
+- **Ordner:** `assets/tiles/` (Boden, Wand, Sockel, Ecken, Türrahmen), `assets/props/`, `assets/figures/`, `assets/textures/`, `assets/sounds/`. Rohdateien der Pakete in `assets/source/`.
 - **Bauteile:** `boden`, `wand`, `wand_ecke`, `sockel`, `sockel_ecke`, `tuerrahmen`, `fackel`, `schloss`. Der Türrahmen hinten deckt drei Kacheln (Tür mittig). Neben jeder Tür hängt eine Fackel; an den vorderen Türen steht sie auf einem Pfosten, weil der Sockel zu niedrig ist.
 - **Zuordnung:** `data/models.json` hält pro id Datei, Maßstab (Zahl oder [x, y, z]), Drehung, Versatz, Einfärbung (`tint`, Farbe, mit der die Paletten-Textur multipliziert wird, etwa Holzton für graue Kisten), Animationszuordnung, Lichtpunkte (Position relativ zum Ursprung, Farbe, Stärke, Reichweite) und Zubehör (`accessories`: Teil aus Grundformen wie Kochmütze, Krone oder rote Augen, an einem Knochen der Figur, mit Versatz und Größe in Kacheln). Mehrere ids dürfen dieselbe Datei nutzen (Riesenratte, Küchenchef und Monsterratte).
 - **Build-Skript:** `tools/build-assets.mjs` setzt Teile aus Paketen zu einer GLB zusammen (Tafel, Regal, Türrahmen) und speckt Paketfiguren ab (nur benötigte Animationen und Zubehörteile, komprimiert). FBX-Dateien wandelt es vorher in GLB um; es kann Materialfarben auf die Palette setzen (matt, ohne Metallglanz), eine Waffe an einen Knochen hängen und Figuren auf höchstens 3.000 Dreiecke vereinfachen.
@@ -511,9 +513,108 @@ Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kan
 
 Jede Monster-id hat eine Figur mit derselben id. Figuren ohne Modell baut der Code aus Grundformen. Figuren ohne Animation atmen im Stand leicht, die Füße bleiben dabei am Boden.
 
+## Sound
+
+Geräusche kommen als MP3-Dateien. Welche Datei wann spielt, steht in den Daten, nicht im Code. Grundregel: Ist kein Sound festgelegt oder fehlt die Datei, spielt nichts. Es gibt keine Platzhalter-Geräusche.
+
+### Zuordnung
+
+- **Datei:** `data/sounds.json` hält pro Sound-id eine oder mehrere Dateien, die Lautstärke (0 bis 1) und optional `loopStart` und `loopEnd` in Sekunden, etwa `"schritt_wood": { "files": ["schritte/wood_1.mp3", "schritte/wood_2.mp3"], "volume": 0.6 }`. Bei mehreren Dateien wählt das Spiel zufällig eine.
+- **Ordner:** `assets/sounds/` mit `angriff/`, `zauber/`, `spiel/`, `raum/`, `schritte/`, `events/`.
+- **Kanäle:** Hintergrund, Effekte und Schritte unter einer Gesamtlautstärke. Regler und Stummschalten kommen in Meilenstein 7.
+- **Start:** Der Ton beginnt mit dem ersten Klick, spätestens bei der Volkswahl (Vorgabe der Browser).
+- **Loops:** MP3 hat am Anfang und Ende kurze Stille. Loops nutzen `loopStart` und `loopEnd`, damit keine Lücke hörbar ist.
+- **Lizenzen:** Quelle und Lizenz jeder fremden Datei in `assets/CREDITS.md`, Abschnitt Sounds.
+
+### Angriffe
+
+Waffen in `data/items.json` und Monster in `data/monsters.json` nennen im Feld `sound` ihren Angriffsklang. Gespielt wird `angriff_<klang>_treffer` oder `angriff_<klang>_fehl`, je nach Ergebnis des Wurfs.
+
+- **Klänge:** `holz`, `schwert`, `axt`, `hammer`, `faust`, `biss`, `kralle`. Magische Waffen haben einen eigenen Klang mit ihrem Namen.
+- **Ohne Waffe** gilt `faust`.
+- **Gruppen:** Jede Figur einer Gruppe spielt ihren Angriff, wenn sie dran ist.
+
+| Waffe | Klang |
+| --- | --- |
+| Knüppel | holz |
+| Dolch, Kurzschwert, Langschwert, Rapier, Elfenklinge | schwert |
+| Streitaxt, Zwergische Kriegsaxt | axt |
+| Kriegshammer | hammer |
+| Eismesser | eismesser |
+| Buch des Feuers | feuerbuch |
+
+| Monster | Klang |
+| --- | --- |
+| Riesenratte, Küchenchef, Monsterratte | biss |
+| Mimik | biss |
+| Skelett | schwert |
+| Goblin-Wache | schwert |
+
+### Verbrauchsgegenstände
+
+Verbrauchsgegenstände nennen im Feld `sound` eine Sound-id, die beim Benutzen spielt.
+
+| Gegenstand | Sound-id |
+| --- | --- |
+| Kleiner Heiltrank, Großer Heiltrank | trank |
+| Feuerpfeil-Schriftrolle | zauber_feuerpfeil |
+| Schild-Schriftrolle | zauber_schild |
+| Eis-Schriftrolle | zauber_eis |
+| Feuerball-Schriftrolle | zauber_feuerball |
+
+### Räume
+
+Jeder Raumtyp hat in `data/room-types.json` das Feld `sound` mit `mood` und `floor`. Für einzelne Themen ersetzt `themeSound` es, etwa `"themeSound": { "katakomben": { "mood": "spooky", "floor": "gravel" } }`. Raumtypen ohne beides bleiben still, auch ohne Schritte.
+
+- **`mood`:** `cozy`, `wet`, `spooky` oder `empty`. Gespielt werden der Loop `raum_<mood>_loop` und Zufallsgeräusche `raum_<mood>_zufall` im Abstand von 8 bis 20 Sekunden, mit leicht wechselnder Lautstärke und Richtung.
+- **`floor`:** `wood`, `hall`, `mud` oder `gravel`, bestimmt die Schritte.
+- **Raumwechsel:** Der Hintergrund blendet mit dem Bild über, etwa 1 Sekunde, auch bei der Schnellreise.
+- **Events und Kämpfe:** Der Hintergrund läuft mit halber Lautstärke weiter.
+
+| Raumtyp (Keller) | mood | floor |
+| --- | --- | --- |
+| Vorkammer, Rastplatz, Händler, Küche, Speisesaal | cozy | wood |
+| Vorratskammer | cozy | gravel |
+| Brunnenraum | wet | mud |
+| Gruft, Bossraum | spooky | hall |
+| Schatzkammer | spooky | gravel |
+| Säulenhalle, Wachstube, Abstieg | empty | hall |
+
+### Schritte
+
+- Läuft eine Figur, spielt `schritt_<floor>` des aktuellen Raums, für Spielfigur, Gegner und friedliche Figuren.
+- Eine Figur kann in `data/staging.json` unter `figures` einen eigenen Schritt nennen (`steps`), dann spielt `schritt_<steps>`. Heute: Riesenratte, Küchenchef und Monsterratte mit `trippeln`.
+- **Takt:** Schritte folgen der Laufanimation. Figuren ohne Laufanimation (Goblin, Platzhalter) machen alle 0,35 Sekunden einen Schritt.
+- **Variation:** Jeder Schritt bekommt eine um bis zu 5 % andere Tonhöhe.
+- **Lautstärke:** Gegner leiser als die Spielfigur, Figuren der Größe 2×2 tiefer. Höchstens zwei Gegner-Schritte gleichzeitig.
+
+### Events
+
+- Ein Event kann im Feld `sound` eine Sound-id nennen. Sie spielt, wenn das Textfenster aufgeht.
+- Folge-Events über `next` und Boss-Events können eigene Sounds haben. Boss-Events spielen ihren Sound bei jedem Betreten.
+
+### Spielgeräusche
+
+Feste Sound-ids, die der Code an diesen Stellen spielt:
+
+| Sound-id | Wann |
+| --- | --- |
+| tuer | Raumwechsel durch eine Tür |
+| tuer_verschlossen | Klick auf eine verschlossene Tür |
+| tuer_riegel | `lockDoor` oder `unlockDoor` |
+| truhe | Truhe öffnet sich |
+| gold | Gold erhalten |
+| gold_zahlen | Kaufen beim Händler, `loseGold` |
+| stufe | Stufenaufstieg |
+| treppe | Klick auf die Wendeltreppe nach unten |
+| treffer_<figur-id>, sonst treffer | Figur wird getroffen, zusammen mit dem Angriffsklang |
+| tod_<figur-id>, sonst tod | Figur stirbt; bei einer Gruppe einmal |
+
+Für die Spielfigur gilt als Figur-id das Volk (`zwerg`, `elf`, `mensch`).
+
 ## Meilensteine
 
-Sieben Schritte, jeder endet mit etwas Spielbarem, das Christian im Browser testet.
+Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem, das Christian im Browser testet.
 
 | Nr. | Ergebnis | Test |
 | --- | --- | --- |
@@ -524,7 +625,8 @@ Sieben Schritte, jeder endet mit etwas Spielbarem, das Christian im Browser test
 | 5 | Kampf, Lebenspunkte, Inventar, Tod und Sieg | Ein Durchlauf ist vollständig spielbar |
 | 6a | Echte Modelle für Boden, Wände, Türen, Fackeln und Requisiten des Kellers, Licht, Modell-Lader mit Platzhalter als Rückfall | Keller entspricht dem Stilguide, fehlende Modelle zeigen weiter Platzhalter |
 | 6b | Echte Figuren für die drei Völker und die Keller-Monster mit Animationen | Figuren laufen, kämpfen, werden getroffen und sterben sichtbar |
-| 7 | Speichern, Menüs, Sound, Veröffentlichung | Spiel läuft über einen öffentlichen Link |
+| 6c | Sound-System mit `data/sounds.json`: Raum-Atmosphäre, Schritte, Angriffe, Zauber, Spielgeräusche und Event-Sounds im Keller | Räume, Schritte und Kampf klingen unterschiedlich; fehlende Sounds bleiben stumm, ohne Fehler |
+| 7 | Speichern, Menüs mit Lautstärkereglern, Veröffentlichung | Spiel läuft über einen öffentlichen Link |
 
 ## Getroffene Entscheidungen
 
@@ -604,3 +706,11 @@ Sieben Schritte, jeder endet mit etwas Spielbarem, das Christian im Browser test
 - [x] Besiegte bleiben liegen; friedliche Figuren gehen zur Tür und verschwinden, Kröte und Händler bleiben stehen (ersetzt die Entscheidung aus 2.12)
 - [x] Goblin ohne Sitzen: steht neben dem Hocker; Skelette aus KayKit Skeletons 1.0, auf höchstens 4.000 Dreiecke vereinfacht
 - [x] Gastgeber und schlafender Goblin bleiben nach dem Event; der Goblin liegt zu Beginn flach neben dem Tisch; Würfelspiel-Skelette sind Warrior, das Skelett mit Rücken ist ein Minion
+- [x] Sound über `data/sounds.json`; ohne festgelegten Sound oder Datei bleibt es still, keine Platzhalter-Geräusche
+- [x] Angriffsklänge holz, schwert, axt, hammer, faust, biss, kralle; magische Waffen eigener Klang; Treffer und Fehlschlag getrennt; Monster mit `sound` in `data/monsters.json`; ohne Waffe faust
+- [x] Jeder Verbrauchsgegenstand mit eigenem `sound` (Zauber pro Schriftrolle, Heiltrank)
+- [x] Räume mit `mood` (cozy, wet, spooky, empty) und `floor` (wood, hall, mud, gravel) im Feld `sound`, pro Thema `themeSound`; Loop und Zufallsgeräusche
+- [x] Schritte nach Boden des Raums, eigene Schritte pro Figur über `steps`
+- [x] Optionaler Event-Sound beim Öffnen des Textfensters
+- [x] Spielgeräusche für Türen, Truhe, Gold, Stufenaufstieg, Treppe, Treffer und Tod
+- [x] Sound als Meilenstein 6c; Lautstärkeregler und Menü bleiben in Meilenstein 7
