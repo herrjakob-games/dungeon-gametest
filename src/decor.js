@@ -8,6 +8,8 @@ import { mulberry32 } from "./rng.js";
 /**
  * Requisiten: Größe in Kacheln (w entlang x, d entlang z, ungedreht), blockiert, anklickbar, eigenes Licht.
  * floor: false = hängt an der Wand oder in der Luft und belegt keine Bodenkachel.
+ * wallGap: so viele Kacheln Abstand zur Wand (Sarkophage).
+ * spread: gleicher Typ (Requisit und Variante) steht nicht noch einmal im Umkreis von so vielen Kacheln (Münzstapel).
  */
 export const PROPS = {
   saeule: { w: 1, d: 1, blocks: true },
@@ -27,14 +29,15 @@ export const PROPS = {
   brunnen: { w: 1, d: 1, blocks: true },
   moos: { w: 1, d: 1, blocks: false },
   pfuetze: { w: 1, d: 1, blocks: false },
-  sarkophag: { w: 1, d: 2, blocks: true },
+  sarkophag: { w: 1, d: 2, blocks: true, spread: 1, wallGap: 1 },
   kerzen: { w: 1, d: 1, blocks: false, light: true },
   knochen: { w: 1, d: 1, blocks: false },
   geroell: { w: 1, d: 1, blocks: false },
-  goldhaufen: { w: 1, d: 1, blocks: false },
+  goldhaufen: { w: 1, d: 1, blocks: false, spread: 2 },
   truhe: { w: 1, d: 1, blocks: true, click: true },
   lagerfeuer: { w: 1, d: 1, blocks: true, click: true, light: true },
-  haendlerfigur: { w: 1, d: 2, blocks: true, click: true, wall: true, light: true }, // Händler an der Wand, davor sein Tisch mit Kerze
+  // Händler: Regal an der Wand, davor der Händler, vor ihm sein Tisch mit Kerze; inset: nicht in der ersten oder letzten Reihe
+  haendlerfigur: { w: 1, d: 3, blocks: true, click: true, wall: true, light: true, inset: true },
   pult: { w: 1, d: 1, blocks: true },
   wegweiser: { w: 1, d: 1, blocks: true },
   zettelbrett: { w: 1, d: 1, blocks: false, wall: true, floor: false },
@@ -51,10 +54,8 @@ export const PROPS = {
   zapffass: { w: 1, d: 1, blocks: true },
   zapffass_verziert: { w: 2, d: 1, blocks: true },
   kistenberg: { w: 1, d: 1, blocks: true },
-  muenzen: { w: 1, d: 1, blocks: false },
-  tisch_gedeckt: { w: 1, d: 1, blocks: true, light: true },
+  muenzen: { w: 1, d: 1, blocks: false, spread: 2 },
   saeule_verziert: { w: 1, d: 1, blocks: true },
-  kerzenstummel: { w: 1, d: 1, blocks: false },
   geroell_gross: { w: 2, d: 1, blocks: true },
   regal_gross: { w: 1, d: 1, blocks: false, wall: true, floor: false },
   regal_klein: { w: 1, d: 1, blocks: false, wall: true, floor: false },
@@ -68,7 +69,45 @@ export const VARIANTS = {
   flaschen: ["b"], fahne: ["blau", "gruen", "gelb", "wappen"], fahne_dreifach: ["blau", "gelb"], muenzen: ["klein", "einzeln"]
 };
 
+/**
+ * Fackeln an den hohen Wänden (Stilguide: neben jeder Tür eine, Wände ohne Tür zwei): Kachel entlang Nord- und Westwand.
+ * Ergebnis: [{ wall: "N" | "W", t }]. Die vorderen Fackeln (Süd, Ost) sind wie die vorderen Wände ausgeblendet (nur ihr Licht
+ * bleibt) und betreffen keine Wandrequisiten. torchCount in der Einrichtung begrenzt die Wandfackeln (Auswahl nach seed).
+ */
+export function torchSlots(doors, spec, seed) {
+  let out = [];
+  if (pillarTorches(spec)) return out; // Fackeln an den Säulen statt an den Wänden (Schatzkammer, Säulenhalle)
+  ["N", "W"].forEach(w => ((doors & DIR[w].bit) ? [MID + 2] : [2, N - 3]).forEach(t => out.push({ wall: w, t })));
+  if (spec && spec.torchCount !== undefined) {
+    const R = mulberry32(((seed || 0) ^ 0x2c1b3c6d) >>> 0);
+    const [lo, hi] = countRange(spec.torchCount);
+    const n = lo + Math.floor(R() * (hi - lo + 1));
+    out = out.map(f => [R(), f]).sort((a, b) => a[0] - b[0]).slice(0, n).map(x => x[1]);
+  }
+  return out;
+}
+// Nur mit torchCount: auch die (unsichtbaren) Lichter der vorderen Fackeln fallen weg, es zählen nur die Wandfackeln
+export const frontTorchLights = (spec) => !(spec && spec.torchCount !== undefined);
+
+// Einrichtung mit "torches": "saeulen": keine Fackeln an den Wänden, dafür an jeder Säule eine, die zur Raummitte zeigt
+export const pillarTorches = (spec) => !!spec && spec.torches === "saeulen";
+
 export const PLACES = ["center", "wall-back", "corner", "free"];
+// Wandschmuck links und rechts jeder hinteren Tür (Nord, West), eine Kachel Abstand zum Türrahmen, überall dieselbe Variante
+export const DOOR_SIDES = "door-sides";
+// Truhen mit "mimics": true in der Einrichtung: eine Truhe ist echt (nach Raum-Seed), alle anderen sind Mimiken.
+// Ergebnis: Liste mit true für jede Mimik, in der Reihenfolge der Truhen im Plan
+export function mimicChests(spec, n, seed) {
+  if (!spec || !spec.mimics || n < 2) return new Array(n).fill(false);
+  const real = (seed >>> 0) % n;
+  return Array.from({ length: n }, (_, i) => i !== real);
+}
+
+// Anzahl eines Requisits: Zahl oder Bereich [von, bis] (nach Seed)
+export const countRange = (c) => (Array.isArray(c) ? c : [c || 1, c || 1]);
+
+// Feste Kachel: "tile:x|y" wie im GDD (ab 1 gezählt), ohne Korrekturablauf
+export const TILE_PLACE = /^tile:(\d+)\|(\d+)$/;
 // Reihenfolge der Ersatz-Platzierungen beim Korrigieren (GDD: center → corner → wall-back → free)
 export const CHAIN = ["center", "corner", "wall-back", "free"];
 
@@ -170,6 +209,8 @@ export function planDecor(spec, opts) {
 
   const reserved = new Set(doorTiles(doors).map(t => key(...t)));
   const blocked = new Set(), occupied = new Set(), wallSlots = new Set();
+  // Wandrequisiten (Regale, Fahnen, Herd …) verdecken keine Fackel: die Wandkachel einer Fackel bleibt für sie frei
+  const torches = new Set(torchSlots(doors, spec, opts.seed).map(f => f.wall + (f.wall === "N" ? key(f.t, 0) : key(0, f.t))));
   const clickables = [], extra = [];
   if (feature) STAIRS_TILES.forEach(t => { reserved.add(key(...t)); blocked.add(key(...t)); });
   if (feature === "up") { reserved.add(key(...STAIRS_FOOT)); extra.push(STAIRS_FOOT); }
@@ -204,8 +245,10 @@ export function planDecor(spec, opts) {
     }
     if (place === "wall-back") {
       // Nordwand: Vorderseite zeigt nach Süden; Westwand: Vorderseite zeigt nach Osten
-      for (let x0 = 0; x0 < N; x0++) out.push({ tiles: shape(p, v, x0, 0, "h", 1, 1), rot: 0, wall: "N" });
-      for (let z0 = 0; z0 < N; z0++) out.push({ tiles: shape(p, v, 0, z0, "v", 1, 1), rot: Math.PI / 2, wall: "W" });
+      // inset: nicht direkt an der Querwand (etwa der Händler: Kacheln 2|2 bis 2|8 oder 2|2 bis 8|2)
+      const lo = PROPS[p].inset ? 1 : 0, hi = PROPS[p].inset ? N - 1 : N;
+      for (let x0 = lo; x0 < hi; x0++) out.push({ tiles: shape(p, v, x0, 0, "h", 1, 1), rot: 0, wall: "N" });
+      for (let z0 = lo; z0 < hi; z0++) out.push({ tiles: shape(p, v, 0, z0, "v", 1, 1), rot: Math.PI / 2, wall: "W" });
       return shuffle(out);
     }
     if (place === "corner") {
@@ -228,6 +271,8 @@ export function planDecor(spec, opts) {
       }
       return shuffle(out);
     }
+    const ft = TILE_PLACE.exec(place || "");
+    if (ft) return [{ tiles: shape(p, v, +ft[1] - 1, +ft[2] - 1, "h", 1, 1), rot: 0 }];
     const m = /^(around|above):(\w+)$/.exec(place || "");
     if (m) {
       const targets = placements.filter(t => t.prop === m[2]);
@@ -248,9 +293,18 @@ export function planDecor(spec, opts) {
     return out;
   }
 
+  // Gleicher Typ im Umkreis (Kacheln in jede Richtung, auch schräg)?
+  function tooClose(item, tiles, r) {
+    return placements.some(pl => pl.prop === item.prop && pl.variant === (item.variant || null) &&
+      pl.tiles.some(([x, z]) => tiles.some(([tx, tz]) => Math.max(Math.abs(x - tx), Math.abs(z - tz)) <= r)));
+  }
+
   function fits(item, c) {
     const def = PROPS[item.prop];
     if (!c.tiles.every(([x, z]) => inBounds(x, z))) return false;
+    if (def.wall && c.wall && c.tiles.some(t => torches.has(c.wall + key(...t)))) return false;
+    if (def.spread && tooClose(item, c.tiles, def.spread)) return false;
+    if (def.wallGap && !c.tiles.every(([x, z]) => x >= def.wallGap && z >= def.wallGap && x < N - def.wallGap && z < N - def.wallGap)) return false;
     if (def.floor === false) {
       if (c.at) return true; // hängt über einem anderen Requisit
       // Wandschmuck: Wandplatz frei und nicht über einer Tür
@@ -271,7 +325,7 @@ export function planDecor(spec, opts) {
     if (def.click) clickables.push(c.tiles);
     const [cx, cz] = c.at || centerOf(c.tiles);
     placements.push({ prop: item.prop, variant: item.variant || null, tiles: c.tiles, cx, cz, rot: c.rot, wall: c.wall || null,
-      target: c.target || null, place: item.place });
+      target: c.target || null, place: item.place, face: c.face || null });
   }
 
   // Säulen in zwei Reihen (Variante "reihen"): feste Plätze, wie in der bisherigen Säulenhalle
@@ -287,23 +341,39 @@ export function planDecor(spec, opts) {
         if (!left) break;
         left--;
         const [x, z] = vertical ? [line, a] : [a, line];
-        const c = { tiles: [[x, z]], rot: 0 };
+        const toMid = Math.sign(MID - line); // Seite zum Gang in der Raummitte
+        const c = { tiles: [[x, z]], rot: 0, face: vertical ? [toMid, 0] : [0, toMid] };
         if (fits(item, c)) put(item, c); else dropped.push({ prop: item.prop, variant: item.variant || null });
       }
     }
   }
 
+  // Wandschmuck neben den hinteren Türen (place "door-sides"): Türrahmen deckt MID-1 bis MID+1, eine Kachel Abstand
+  function doorSides(item) {
+    const vs = VARIANTS[item.prop] || [];
+    const variant = item.variant || (vs.length ? vs[Math.floor(R() * vs.length)] : undefined);
+    const one = Object.assign({}, item, { variant });
+    ["N", "W"].filter(w => doors & DIR[w].bit).forEach(w => [MID - 2, MID + 2].forEach(t => {
+      const c = w === "N" ? { tiles: [[t, 0]], rot: 0, wall: "N" } : { tiles: [[0, t]], rot: Math.PI / 2, wall: "W" };
+      if (fits(one, c)) put(one, c); else dropped.push({ prop: item.prop, variant: variant || null });
+    }));
+  }
+
   const tag = (item) => ({ prop: item.prop, variant: item.variant || null });
-  // Pflichtstücke zuerst, sonst die Reihenfolge der Daten
-  const order = layout.props.filter(p => p.required).concat(layout.props.filter(p => !p.required));
+  // Wandschmuck neben den Türen zuerst (feste Plätze), dann Pflichtstücke, sonst die Reihenfolge der Daten
+  const sides = layout.props.filter(p => p.place === DOOR_SIDES), rest = layout.props.filter(p => p.place !== DOOR_SIDES);
+  const order = sides.concat(rest.filter(p => p.required), rest.filter(p => !p.required));
   for (const item of order) {
     if (!PROPS[item.prop]) { dropped.push(tag(item)); continue; }
     if (item.prop === "saeule" && item.variant === "reihen") { rows(item); continue; }
+    if (item.place === DOOR_SIDES) { doorSides(item); continue; }
     // Korrekturablauf: erst die eigene Platzierung, dann die folgenden aus CHAIN (Wandschmuck, around und above nicht)
     const fixed = !PLACES.includes(item.place) || PROPS[item.prop].floor === false;
     const tries = fixed ? [item.place] : CHAIN.slice(Math.max(0, CHAIN.indexOf(item.place)));
     const used = new Set();
-    for (let i = 0; i < (item.count || 1); i++) {
+    const [lo, hi] = countRange(item.count);
+    const n = lo + Math.floor(R() * (hi - lo + 1));
+    for (let i = 0; i < n; i++) {
       let c = null, place = null;
       for (const pl of tries) {
         c = candidates(Object.assign({}, item, { place: pl }), used).find(cand => fits(item, cand));
@@ -315,12 +385,31 @@ export function planDecor(spec, opts) {
       put(item, c);
     }
   }
-  return { layout: layout.id, placements, corrected, dropped, missingRequired, blocked, torchColor: spec.torchColor || null, clickables, extra };
+  // Fackeln an Säulen: zur Raummitte (Säulen in Reihen: zum Gang in der Mitte); torchCount wählt, wie viele Säulen eine tragen
+  let torchSpots = [];
+  if (pillarTorches(spec)) {
+    torchSpots = placements.filter(p => p.prop === "saeule").map(p => {
+      const [dx, dz] = p.face || [MID - p.cx, MID - p.cz];
+      const len = Math.hypot(dx, dz) || 1;
+      return { cx: p.cx, cz: p.cz, dx: dx / len, dz: dz / len, rot: Math.atan2(dx, dz) };
+    });
+    if (spec.torchCount !== undefined) {
+      const [lo, hi] = countRange(spec.torchCount);
+      torchSpots = shuffle(torchSpots).slice(0, lo + Math.floor(R() * (hi - lo + 1)));
+    }
+  }
+  return { layout: layout.id, placements, corrected, dropped, missingRequired, blocked, torchColor: spec.torchColor || null, torchSpots, clickables, extra };
 }
 
 // Datenprüfung der Einrichtung (für validateData)
 export function checkDecor(spec, where, err) {
   if (!spec || !Array.isArray(spec.layouts) || !spec.layouts.length) { err(where, "decor braucht mindestens eine Variante in layouts"); return; }
+  if (spec.mimics !== undefined && typeof spec.mimics !== "boolean") err(where, "mimics muss true oder false sein");
+  if (spec.torchFlame !== undefined && !/^#[0-9a-fA-F]{6}$/.test(spec.torchFlame)) err(where, "torchFlame muss eine Farbe wie #6f9bff sein");
+  const okN = (c) => Number.isInteger(c) && c >= 0;
+  if (spec.torchCount !== undefined && !(okN(spec.torchCount) || (Array.isArray(spec.torchCount) && spec.torchCount.length === 2 && spec.torchCount.every(okN))))
+    err(where, "torchCount muss eine Zahl oder ein Bereich [von, bis] sein");
+  if (spec.torches !== undefined && spec.torches !== "saeulen") err(where, "torches kennt nur \"saeulen\"");
   if (spec.torchColor !== undefined && !/^#[0-9a-fA-F]{6}$/.test(spec.torchColor)) err(where, "torchColor muss eine Farbe wie #ff8a30 sein");
   const ids = new Set();
   spec.layouts.forEach((l, i) => {
@@ -332,14 +421,19 @@ export function checkDecor(spec, where, err) {
     (l.props || []).forEach(p => {
       if (!PROPS[p.prop]) err(w, "unbekanntes Requisit " + p.prop);
       const m = /^(around|above):(\w+)$/.exec(p.place || "");
-      if (!PLACES.includes(p.place) && !m) err(w, p.prop + ": unbekannte Platzierung " + p.place);
+      const ft = TILE_PLACE.exec(p.place || "");
+      if (ft && !inBounds(+ft[1] - 1, +ft[2] - 1)) err(w, p.prop + ": Kachel " + p.place.slice(5) + " liegt außerhalb des Raums");
+      if (p.place === DOOR_SIDES && !(PROPS[p.prop] && PROPS[p.prop].wall)) err(w, p.prop + ": door-sides passt nur für Wandrequisiten");
+      if (!PLACES.includes(p.place) && !m && !ft && p.place !== DOOR_SIDES) err(w, p.prop + ": unbekannte Platzierung " + p.place);
       if (m && !before.has(m[2])) err(w, p.prop + ": " + m[2] + " muss vorher in der Liste stehen");
       if (m && m[1] === "above" && p.prop !== "kronleuchter") err(w, p.prop + ": above passt nur für hängende Requisiten");
-      if (p.count !== undefined && !(Number.isInteger(p.count) && p.count > 0)) err(w, p.prop + ": count muss eine positive Zahl sein");
+      const okCount = (c) => Number.isInteger(c) && c > 0;
+      if (p.count !== undefined && !(okCount(p.count) || (Array.isArray(p.count) && p.count.length === 2 && p.count.every(okCount) && p.count[0] <= p.count[1])))
+        err(w, p.prop + ": count muss eine positive Zahl oder ein Bereich [von, bis] sein");
       if (p.required !== undefined && typeof p.required !== "boolean") err(w, p.prop + ": required muss true oder false sein");
       if (p.required && m) err(w, p.prop + ": ein Pflichtstück braucht eine eigene Platzierung, nicht " + m[1] + ":");
       if (p.variant !== undefined && !(VARIANTS[p.prop] || []).includes(p.variant)) err(w, p.prop + ": unbekannte Variante " + p.variant);
-      if (PROPS[p.prop] && PROPS[p.prop].wall && PROPS[p.prop].floor === false && p.place !== "wall-back") err(w, p.prop + " hängt an der Wand und braucht wall-back");
+      if (PROPS[p.prop] && PROPS[p.prop].wall && PROPS[p.prop].floor === false && p.place !== "wall-back" && p.place !== DOOR_SIDES) err(w, p.prop + " hängt an der Wand und braucht wall-back");
       before.add(p.prop);
     });
   });

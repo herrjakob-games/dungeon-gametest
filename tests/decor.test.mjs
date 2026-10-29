@@ -3,9 +3,10 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import {
-  PROPS, planDecor, decorFor, centerFeature, doorTiles, checkDecor, STAIRS_TILES, STAIRS_FOOT
+  mimicChests,
+  PROPS, planDecor, decorFor, centerFeature, doorTiles, checkDecor, STAIRS_TILES, STAIRS_FOOT, torchSlots
 } from "../src/decor.js";
-import { N, DIR, DIRKEYS, key, inBounds, tileName } from "../src/config.js";
+import { N, MID, DIR, DIRKEYS, key, inBounds, tileName } from "../src/config.js";
 
 const ROOM_TYPES = JSON.parse(readFileSync(new URL("../data/room-types.json", import.meta.url), "utf8"));
 const SEEDS = 25;
@@ -113,9 +114,9 @@ test("Einrichtung: alle Varianten mit allen 16 Türkombinationen; Liste der Korr
             assert.deepEqual(plan.missingRequired, [], where + ": Pflichtstück fehlt");
             l.props.filter(p => p.required).forEach(p => {
               const n = plan.placements.filter(x => x.prop === p.prop && x.variant === (p.variant || null)).length;
-              assert.ok(n >= (p.count || 1), where + ": " + p.prop + " nur " + n + "×");
+              assert.ok(n >= [].concat(p.count || 1)[0], where + ": " + p.prop + " nur " + n + "×");
             });
-            l.props.forEach(p => { row(name, l, p).wanted += p.prop === "saeule" && p.variant === "reihen" ? (p.count || 8) : (p.count || 1); });
+            l.props.forEach(p => { row(name, l, p).wanted += p.prop === "saeule" && p.variant === "reihen" ? (p.count || 8) : [].concat(p.count || 1)[0]; });
             plan.corrected.forEach(c => {
               const st = row(name, l, c); st.corrected++;
               st.how[c.from + " → " + c.to] = (st.how[c.from + " → " + c.to] || 0) + 1;
@@ -224,4 +225,100 @@ test("Raumtypen ohne Einrichtung behalten das bisherige Muster", () => {
   assert.equal(decorFor(boss, "katakomben"), null);
   assert.ok(decorFor(boss, "keller").layouts.every(l => l.props.some(p => p.prop === "kaeseberg")));
   assert.equal(N, 9);
+});
+
+test("Wandrequisiten (Regale, Fahnen, Herd …) verdecken oder überlagern keine Fackel", () => {
+  for (const rt of ROOM_TYPES) {
+    const specs = [rt.decor].concat(Object.values(rt.themeDecor || {})).filter(Boolean);
+    for (const spec of specs) spec.layouts.forEach((layout, li) => {
+      for (let doors = 0; doors < 16; doors++) for (let s = 1; s <= 10; s++) {
+        const plan = planDecor(spec, { seed: s * 7919, doors, feature: centerFeature(rt.id, false), layoutIndex: li });
+        const torches = new Set(torchSlots(doors, spec, s * 7919).map(f => f.wall + (f.wall === "N" ? key(f.t, 0) : key(0, f.t))));
+        plan.placements.filter(p => PROPS[p.prop].wall && p.wall).forEach(p => p.tiles.forEach(t =>
+          assert.ok(!torches.has(p.wall + key(...t)), rt.id + " " + layout.id + ": " + p.prop + " auf " + tileName(...t) + " verdeckt eine Fackel (Türen " + doors + ")")));
+      }
+    });
+  }
+});
+
+test("Schatzkammer: Säulen immer auf 2|2, 8|2, 2|8 und 8|8, keine Fackeln an den Wänden", () => {
+  const spec = decorFor(ROOM_TYPES.find(t => t.id === "schatz"), "keller");
+  assert.equal(spec.torches, "saeulen");
+  assert.deepEqual(torchSlots(0, spec), []);
+  spec.layouts.forEach((layout, li) => {
+    for (let doors = 0; doors < 16; doors++) for (let s = 1; s <= 10; s++) {
+      const plan = planDecor(spec, { seed: s * 7919, doors, layoutIndex: li });
+      const pillars = plan.placements.filter(p => p.prop === "saeule").map(p => tileName(...p.tiles[0])).sort();
+      assert.deepEqual(pillars, ["2|2", "2|8", "8|2", "8|8"], "Variante " + layout.id + ", Türen " + doors);
+      // Banner nur links und rechts der hinteren Türen, eine Kachel Abstand, alle in derselben Farbe; sonst kein Wandschmuck
+      const want = [];
+      if (doors & DIR.N.bit) want.push("3|1", "7|1");
+      if (doors & DIR.W.bit) want.push("1|3", "1|7");
+      const wall = plan.placements.filter(p => PROPS[p.prop].floor === false || (PROPS[p.prop].wall && p.prop !== "truhe"));
+      assert.deepEqual(wall.map(p => tileName(...p.tiles[0])).sort(), want.sort(), "Variante " + layout.id + ", Türen " + doors);
+      assert.ok(wall.every(p => p.prop === "fahne" && p.variant === wall[0].variant));
+    }
+  });
+});
+
+test("Münzstapel: derselbe Typ steht nie im Umkreis von zwei Kacheln", () => {
+  const spec = decorFor(ROOM_TYPES.find(t => t.id === "schatz"), "keller");
+  const counts = {};
+  spec.layouts.forEach((layout, li) => {
+    for (let doors = 0; doors < 16; doors++) for (let s = 1; s <= 10; s++) {
+      const plan = planDecor(spec, { seed: s * 7919, doors, layoutIndex: li });
+      const coins = plan.placements.filter(p => PROPS[p.prop].spread);
+      coins.forEach((a, i) => coins.slice(i + 1).filter(b => b.prop === a.prop && b.variant === a.variant).forEach(b =>
+        assert.ok(Math.max(Math.abs(a.cx - b.cx), Math.abs(a.cz - b.cz)) > 2, layout.id + ": " + a.prop + " " + (a.variant || "") + " zu nah")));
+      coins.forEach(p => { const k = layout.id + " " + p.prop + (p.variant ? "_" + p.variant : ""); counts[k] = (counts[k] || 0) + 1; });
+    }
+  });
+  assert.ok(Object.keys(counts).length >= 6, "Münzen fehlen: " + JSON.stringify(counts));
+});
+
+test("Schatzkammer: 2 bis 3 Truhen, genau eine echt, die übrigen Mimiken", () => {
+  const spec = decorFor(ROOM_TYPES.find(t => t.id === "schatz"), "keller");
+  const seen = new Set();
+  spec.layouts.forEach((layout, li) => {
+    for (let doors = 0; doors < 16; doors++) for (let s = 1; s <= 10; s++) {
+      const n = planDecor(spec, { seed: s * 7919, doors, layoutIndex: li }).placements.filter(p => p.prop === "truhe").length;
+      assert.ok(n >= 2 && n <= 3, "Variante " + layout.id + ", Türen " + doors + ": " + n + " Truhen");
+      seen.add(n);
+      const m = mimicChests(spec, n, s * 7919);
+      assert.equal(m.filter(x => !x).length, 1, "genau eine echte Truhe");
+    }
+  });
+  assert.deepEqual([...seen].sort(), [2, 3]);
+  // Andere Räume: eine Truhe ist nie eine Mimik
+  assert.deepEqual(mimicChests({ layouts: [] }, 1, 5), [false]);
+});
+
+test("Gruft: 4 bis 5 Sarkophage mit einer Kachel Abstand zur Wand und zueinander, zwei Wandfackeln", () => {
+  const spec = decorFor(ROOM_TYPES.find(t => t.id === "gruft"), "keller");
+  spec.layouts.forEach((layout, li) => {
+    for (let doors = 0; doors < 16; doors++) for (let s = 1; s <= 10; s++) {
+      const where = "Variante " + layout.id + ", Türen " + doors + ", Seed " + s;
+      const sarg = planDecor(spec, { seed: s * 7919, doors, layoutIndex: li }).placements.filter(p => p.prop === "sarkophag");
+      assert.ok(sarg.length >= 4 && sarg.length <= 5, where + ": " + sarg.length + " Sarkophage");
+      sarg.forEach(a => a.tiles.forEach(([x, z]) => assert.ok(x >= 1 && z >= 1 && x <= N - 2 && z <= N - 2, where + ": Sarkophag an der Wand")));
+      sarg.forEach((a, i) => sarg.slice(i + 1).forEach(b => assert.ok(a.tiles.every(([x, z]) => b.tiles.every(([u, v]) =>
+        Math.max(Math.abs(x - u), Math.abs(z - v)) > 1)), where + ": Sarkophage ohne Abstand")));
+      assert.equal(torchSlots(doors, spec, s).length, 2);
+    }
+  });
+});
+
+test("Säulenhalle: nur der Säulengang, 3 bis 4 Fackeln an Säulen zum Gang, Wandschmuck nie doppelt an einer Stelle", () => {
+  const spec = decorFor(ROOM_TYPES.find(t => t.id === "halle"), "keller");
+  spec.layouts.forEach((layout, li) => {
+    for (let doors = 0; doors < 16; doors++) for (let s = 1; s <= 10; s++) {
+      const plan = planDecor(spec, { seed: s * 7919, doors, layoutIndex: li });
+      assert.ok(plan.placements.every(p => !p.prop.startsWith("saeule") || (p.prop === "saeule" && p.variant === "reihen")), "nur Säulen im Gang");
+      assert.ok(plan.torchSpots.length >= 3 && plan.torchSpots.length <= 4);
+      plan.torchSpots.forEach(t => assert.ok(Math.abs(t.cx + t.dx * 2 - MID) < Math.abs(t.cx - MID) + 0.01 || Math.abs(t.cz + t.dz * 2 - MID) < Math.abs(t.cz - MID) + 0.01, "Fackel zeigt zum Gang"));
+      assert.deepEqual(torchSlots(doors, spec, s), [], "keine Wandfackeln");
+      const slots = plan.placements.filter(p => p.wall).flatMap(p => p.tiles.map(t => p.wall + key(...t)));
+      assert.equal(new Set(slots).size, slots.length, "zwei Wandstücke an derselben Stelle");
+    }
+  });
 });

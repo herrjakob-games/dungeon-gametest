@@ -245,12 +245,9 @@
     "rating": "hostile",
     "eventChance": 0.8,
     "max": 1,
+    "themeLevel": 2,
     "deadEnd": "only",
     "events": [
-      {
-        "id": "schatz_mimik",
-        "weight": 3
-      },
       {
         "id": "schatz_tuer",
         "weight": 3,
@@ -263,27 +260,71 @@
       }
     ],
     "decor": {
+      "torches": "saeulen",
+      "mimics": true,
       "layouts": [
         {
           "id": "A",
           "props": [
+            {
+              "prop": "saeule",
+              "place": "tile:2|2",
+              "required": true
+            },
+            {
+              "prop": "saeule",
+              "place": "tile:8|2",
+              "required": true
+            },
+            {
+              "prop": "saeule",
+              "place": "tile:2|8",
+              "required": true
+            },
+            {
+              "prop": "saeule",
+              "place": "tile:8|8",
+              "required": true
+            },
             {
               "prop": "truhe",
               "place": "center",
               "required": true
             },
             {
-              "prop": "goldhaufen",
-              "place": "around:truhe",
-              "count": 4
+              "prop": "truhe",
+              "place": "wall-back",
+              "count": [
+                1,
+                2
+              ],
+              "required": true
             },
             {
-              "prop": "kerzen",
-              "place": "corner",
+              "prop": "goldhaufen",
+              "place": "around:truhe"
+            },
+            {
+              "prop": "muenzen",
+              "place": "around:truhe"
+            },
+            {
+              "prop": "muenzen",
+              "place": "around:truhe",
+              "variant": "klein"
+            },
+            {
+              "prop": "muenzen",
+              "place": "around:truhe",
+              "variant": "einzeln"
+            },
+            {
+              "prop": "goldhaufen",
+              "place": "free",
               "count": 2
             },
             {
-              "prop": "saeule",
+              "prop": "kerzen",
               "place": "corner",
               "count": 2
             },
@@ -301,6 +342,11 @@
               "place": "free",
               "variant": "einzeln",
               "count": 2
+            },
+            {
+              "prop": "fahne",
+              "place": "door-sides",
+              "variant": "gelb"
             }
           ]
         },
@@ -308,9 +354,33 @@
           "id": "B",
           "props": [
             {
+              "prop": "saeule",
+              "place": "tile:2|2",
+              "required": true
+            },
+            {
+              "prop": "saeule",
+              "place": "tile:8|2",
+              "required": true
+            },
+            {
+              "prop": "saeule",
+              "place": "tile:2|8",
+              "required": true
+            },
+            {
+              "prop": "saeule",
+              "place": "tile:8|8",
+              "required": true
+            },
+            {
               "prop": "truhe",
               "place": "wall-back",
-              "required": true
+              "required": true,
+              "count": [
+                2,
+                3
+              ]
             },
             {
               "prop": "goldhaufen",
@@ -319,11 +389,6 @@
             },
             {
               "prop": "kerzen",
-              "place": "free",
-              "count": 2
-            },
-            {
-              "prop": "saeule",
               "place": "free",
               "count": 2
             },
@@ -341,6 +406,11 @@
               "prop": "muenzen",
               "place": "around:truhe",
               "variant": "einzeln"
+            },
+            {
+              "prop": "fahne",
+              "place": "door-sides",
+              "variant": "gelb"
             }
           ]
         }
@@ -667,6 +737,9 @@
       }
     ],
     "decor": {
+      "torchCount": 2,
+      "torchColor": "#5d86e0",
+      "torchFlame": "#8fb4ff",
       "layouts": [
         {
           "id": "A",
@@ -674,7 +747,10 @@
             {
               "prop": "sarkophag",
               "place": "free",
-              "count": 4,
+              "count": [
+                4,
+                5
+              ],
               "required": true
             },
             {
@@ -690,11 +766,6 @@
             {
               "prop": "saeule",
               "place": "corner",
-              "count": 2
-            },
-            {
-              "prop": "kerzenstummel",
-              "place": "free",
               "count": 2
             },
             {
@@ -714,7 +785,10 @@
             {
               "prop": "sarkophag",
               "place": "free",
-              "count": 2,
+              "count": [
+                3,
+                4
+              ],
               "required": true
             },
             {
@@ -724,11 +798,6 @@
             },
             {
               "prop": "knochen",
-              "place": "free",
-              "count": 2
-            },
-            {
-              "prop": "kerzenstummel",
               "place": "free",
               "count": 2
             },
@@ -786,6 +855,11 @@
       }
     ],
     "decor": {
+      "torches": "saeulen",
+      "torchCount": [
+        3,
+        4
+      ],
       "layouts": [
         {
           "id": "A",
@@ -807,13 +881,13 @@
               "variant": "gruppe"
             },
             {
-              "prop": "saeule_verziert",
-              "place": "corner",
-              "count": 2
-            },
-            {
               "prop": "fahne_dreifach",
               "place": "wall-back"
+            },
+            {
+              "prop": "waffenstaender",
+              "place": "wall-back",
+              "count": 2
             },
             {
               "prop": "fahne_dreifach",
@@ -832,23 +906,25 @@
               "count": 6
             },
             {
-              "prop": "saeule_liegend",
-              "place": "free"
-            },
-            {
               "prop": "moos",
               "place": "free",
               "count": 3
             },
             {
-              "prop": "saeule_verziert",
-              "place": "corner",
-              "count": 2
-            },
-            {
               "prop": "fahne_dreifach",
               "place": "wall-back",
               "variant": "gelb"
+            },
+            {
+              "prop": "waffenstaender",
+              "place": "wall-back",
+              "count": 2
+            },
+            {
+              "prop": "fahne",
+              "place": "wall-back",
+              "variant": "wappen",
+              "count": 2
             }
           ]
         }
@@ -1230,13 +1306,25 @@
               "place": "corner"
             },
             {
-              "prop": "tisch_gedeckt",
-              "place": "free",
+              "prop": "kerzen",
+              "place": "free"
+            },
+            {
+              "prop": "fahne_dreifach",
+              "place": "wall-back",
+              "variant": "blau"
+            },
+            {
+              "prop": "fahne",
+              "place": "wall-back",
+              "variant": "wappen",
               "count": 2
             },
             {
-              "prop": "kerzen",
-              "place": "free"
+              "prop": "fahne",
+              "place": "wall-back",
+              "variant": "blau",
+              "count": 2
             }
           ]
         },
@@ -1271,12 +1359,25 @@
               "place": "corner"
             },
             {
-              "prop": "tisch_gedeckt",
-              "place": "free"
-            },
-            {
               "prop": "kerzen",
               "place": "corner",
+              "count": 2
+            },
+            {
+              "prop": "fahne_dreifach",
+              "place": "wall-back",
+              "variant": "blau"
+            },
+            {
+              "prop": "fahne",
+              "place": "wall-back",
+              "variant": "wappen",
+              "count": 2
+            },
+            {
+              "prop": "fahne",
+              "place": "wall-back",
+              "variant": "blau",
               "count": 2
             }
           ]

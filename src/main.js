@@ -261,7 +261,7 @@ renderer.domElement.addEventListener("pointerup", (ev) => {
   } else if (kind === "boss") {
     approachTile(h.obj.userData.tile, startBoss);
   } else if (kind === "chest") {
-    approachTile(h.obj.userData.tile, chestEvent);
+    approachTile(h.obj.userData.tile, () => chestEvent(h.obj));
   } else if (kind === "exit") {
     approachTile(h.obj.userData.tiles, descend); // ein Klick führt eine Ebene tiefer
   } else if (h.tile && walkable(h.tile[0], h.tile[1])) {

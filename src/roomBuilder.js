@@ -12,7 +12,7 @@ import { makeModel, hasModel, setModelTheme, findPart, makeFigureModel } from ".
 import { state } from "./state.js";
 import { buildFigure } from "./figures.js";
 import * as P from "./props.js";
-import { PROPS, planDecor, decorFor, centerFeature, STAIRS_TILES, STAIRS_SIZE, STAIRS_CENTER } from "./decor.js";
+import { PROPS, planDecor, decorFor, centerFeature, STAIRS_TILES, STAIRS_SIZE, STAIRS_CENTER, torchSlots, pillarTorches, frontTorchLights, mimicChests } from "./decor.js";
 import { syncRoom } from "./roomFigures.js";
 import { setMood } from "./sound.js";
 import { roomSound } from "./soundLogic.js";
@@ -63,10 +63,10 @@ export function buildRoom(id) {
   buildFloor(type);
   buildWalls(room);
   DIRKEYS.forEach(d => { if (room.doors & DIR[d].bit) makeDoor(d); });
-  placeTorches(room, torch);
+  placeTorches(room, torch, spec);
   if (feature === "up" || feature === "down") makeStairs(feature);
   state.decorPlan = null;
-  if (spec) placeDecor(spec, room, feature, id);
+  if (spec) placeDecor(spec, room, feature, id, torch);
   else furnish(type.layout, id);
   scatterRubble(feature === "up" || feature === "down");
   refreshLocks();
@@ -224,26 +224,50 @@ function makeLock(d, tall, glow) {
 
 // Fackeln nach Stilguide: neben jeder Tür eine; Wände ohne Tür bekommen zwei, damit kein Raum dunkel bleibt.
 // Vorne (Sockel) steht die Fackel auf einem Pfosten.
-function placeTorches(room, color) {
+function placeTorches(room, color, spec) {
+  if (pillarTorches(spec)) return; // Fackeln hängen an den Säulen (placeDecor)
+  const flame = spec && spec.torchFlame;
   const has = (d) => (room.doors & DIR[d].bit) !== 0;
   const inner = -E + 0.25; // Innenseite der hohen Wände
-  (has("N") ? [MID + 2] : [2, N - 3]).forEach(t => makeTorch(tw(t), inner, 0, color, false));
-  (has("W") ? [MID + 2] : [2, N - 3]).forEach(t => makeTorch(inner, tw(t), Math.PI / 2, color, false));
-  if (has("S")) makeTorch(tw(MID + 1), E, Math.PI, color, true);
-  if (has("E")) makeTorch(E, tw(MID + 1), -Math.PI / 2, color, true);
+  // Plätze an Nord- und Westwand aus decor.js (dieselben, die Wandrequisiten freilassen)
+  torchSlots(room.doors, spec, room.seed).forEach(({ wall, t }) => (wall === "N" ? makeTorch(tw(t), inner, 0, color, flame) : makeTorch(inner, tw(t), Math.PI / 2, color, flame)));
+  // Vordere Fackeln (Süd, Ost): wie die vorderen Wände ausgeblendet, ohne Pfosten; nur ihr Licht bleibt
+  if (!frontTorchLights(spec)) return;
+  if (has("S")) makeTorchLight(tw(MID + 1), E - 0.3, color);
+  if (has("E")) makeTorchLight(E - 0.3, tw(MID + 1), color);
 }
 
-function makeTorch(x, z, rot, color, onPost) {
+// Fackel an einer Säule (Plan aus decor.js: Seite zur Raummitte), mit eigenem Licht
+const PILLAR_TORCH = 0.3; // Abstand der Halterung von der Säulenmitte
+function makePillarTorch(s, color) {
+  makeTorch(tw(s.cx) + s.dx * PILLAR_TORCH, tw(s.cz) + s.dz * PILLAR_TORCH, s.rot, color);
+}
+
+// Nur das Licht einer Fackel, ohne Modell (vordere Fackeln, ausgeblendet wie die vorderen Wände)
+function makeTorchLight(x, z, color) {
+  const light = new THREE.PointLight(new THREE.Color(color), 1.8, 6, 2);
+  light.position.set(x, 1.65, z);
+  add(light);
+  state.torches.push({ light, flame: new THREE.Object3D(), phase: rnd() * 10, base: 1.8 });
+}
+
+// flameColor: eigene Flammenfarbe über der Flamme des Modells (etwa blau in der Gruft)
+const FLAME_Y = 0.27, FLAME_Z = 0.22; // Lage der Flamme im Fackel-Modell
+function makeTorch(x, z, rot, color, flameColor) {
   const g = new THREE.Group();
   const c = new THREE.Color(color);
-  const y = onPost ? 0.95 : 1.25;
-  if (onPost) g.add(box(0.18, y + 0.1, 0.18, mat(0x7a6552), 0, (y + 0.1) / 2 - y, 0)); // Pfosten in Wandfarbe auf dem Sockel
+  const y = 1.25;
   const model = makeModel("fackel");
   let flame;
   if (model) {
     model.traverse(n => { if (n.isLight) n.parent.remove(n); }); // Licht setzt die Fackel selbst (Farbe des Raums)
     g.add(model);
     flame = new THREE.Object3D(); // die Flamme gehört zum Modell; geflackert wird nur das Licht
+    if (flameColor) {
+      flame = new THREE.Mesh(new THREE.OctahedronGeometry(0.11), new THREE.MeshBasicMaterial({ color: new THREE.Color(flameColor) }));
+      flame.position.set(0, FLAME_Y, FLAME_Z);
+      flame.scale.y = 1.4;
+    }
   } else {
     g.add(box(0.1, 0.5, 0.1, mat(0x4a3424), 0, 0, 0.1));
     flame = new THREE.Mesh(new THREE.OctahedronGeometry(0.13), new THREE.MeshBasicMaterial({ color: c }));
@@ -312,15 +336,28 @@ function propMesh(id, pl) {
 }
 
 // ---------- Einrichtung aus den Daten ----------
-function placeDecor(spec, room, feature, id) {
+function placeDecor(spec, room, feature, id, torch) {
   const plan = planDecor(spec, { seed: room.seed, doors: room.doors, feature });
   state.decorPlan = plan; // für Figuren mit near:<prop>
+  plan.torchSpots.forEach(s => makePillarTorch(s, torch));
+  // Truhen: eine echt, die übrigen Mimiken, wenn die Einrichtung es will (Schatzkammer)
+  const mimics = mimicChests(spec, plan.placements.filter(p => p.prop === "truhe").length, room.seed);
+  let chestNo = 0;
   for (const pl of plan.placements) {
-    if (pl.prop === "truhe") { makeChest(pl.tiles[0], id, pl.rot); continue; }
+    if (pl.prop === "truhe") { makeChest(pl.tiles[0], id, pl.rot, mimics[chestNo++]); continue; }
     if (pl.prop === "lagerfeuer") { makeCampfire(pl.tiles[0], id); continue; }
-    if (pl.prop === "haendlerfigur") { makeMerchant(pl.tiles[0], pl.tiles[1] || null, pl.rot); continue; }
+    if (pl.prop === "haendlerfigur") {
+      // Kacheln von der Wand aus: Regal, Händler, Tisch
+      const [shelf, pos, front] = pl.tiles;
+      block(shelf[0], shelf[1]);
+      const reg = makeModel("haendlerregal");
+      if (reg) at(reg, shelf[0], shelf[1], pl.rot);
+      makeMerchant(pos, front, pl.rot);
+      continue;
+    }
     if (PROPS[pl.prop].blocks) pl.tiles.forEach(t => block(t[0], t[1]));
     at(propMesh(pl.prop, pl), pl.cx, pl.cz, pl.rot);
+
   }
 }
 
@@ -422,8 +459,13 @@ function stool(x, z) {
 }
 
 // ---------- Anklickbare Requisiten ----------
-function makeChest(pos, id, rot) {
+// Zustand jeder Truhe im Raum (roomState.chests, Schlüssel ist die Kachel): "open" geöffnet, "gone" Mimik ist erwacht
+export const chestState = (rs, tile) => ((rs && rs.chests) || {})[key(...tile)];
+
+function makeChest(pos, id, rot, mimic) {
   if (!free(pos[0], pos[1])) return;
+  const st = chestState(state.roomState[id], pos);
+  if (st === "gone") return; // die Mimik ist erwacht: tot liegt sie als Figur da oder ist davongehüpft
   block(pos[0], pos[1]);
   const model = makeModel("truhe", null, { unique: true });
   if (model) {
@@ -433,9 +475,8 @@ function makeChest(pos, id, rot) {
     const lid = findPart(model, "chest_lid");
     model.position.set(tw(pos[0]), 0, tw(pos[1]));
     model.rotation.y = (rot || 0) + (rnd() - 0.5) * 0.4;
-    model.userData = { kind: "chest", tile: pos, hoverMats };
-    if (lid && state.roomState[id].chestOpened) lid.rotation.x = -1.9;
-    state.lidPivot = lid;
+    model.userData = { kind: "chest", tile: pos, hoverMats, lid, mimic: !!mimic };
+    if (lid && st === "open") lid.rotation.x = -1.9;
     add(model);
     state.interactables.push(model);
     return;
@@ -452,11 +493,17 @@ function makeChest(pos, id, rot) {
   chest.add(box(0.12, 0.14, 0.04, mat(0xd8b56a), 0, 0.42, 0.29));
   chest.position.set(tw(pos[0]), 0, tw(pos[1]));
   chest.rotation.y = (rot || 0) + (rnd() - 0.5) * 0.4;
-  chest.userData = { kind: "chest", tile: pos, hoverMats: [bodyMat, lidMat] };
-  if (state.roomState[id].chestOpened) lidPivot.rotation.x = -1.9;
-  state.lidPivot = lidPivot;
+  chest.userData = { kind: "chest", tile: pos, hoverMats: [bodyMat, lidMat], lid: lidPivot, mimic: !!mimic };
+  if (st === "open") lidPivot.rotation.x = -1.9;
   add(chest);
   state.interactables.push(chest);
+}
+
+// Mimik erwacht: die Truhe verschwindet aus dem Raum, an ihrer Stelle steht die Figur (roomFigures.js)
+export function removeChest(obj) {
+  if (obj.parent) obj.parent.remove(obj);
+  state.interactables = state.interactables.filter(o => o !== obj);
+  state.blocked.delete(key(...obj.userData.tile));
 }
 
 // Rastplatz: Lagerfeuer, einmal benutzbar
@@ -490,8 +537,8 @@ export function douseCampfire() {
   if (fire) { fire.userData.flame.visible = false; fire.userData.light.intensity = 0; }
 }
 
-// Händler (GDD: Händler aus KayKit Rogue): steht mit dem Rücken zur Nord- oder Westwand und schaut in den Raum,
-// vor ihm sein Tisch mit brennender Kerze. pos: Kachel des Händlers, front: Kachel des Tisches (oder null), rot: Blickrichtung
+// Händler (GDD: Händler aus KayKit Rogue): steht mit dem Rücken zur Nord- oder Westwand und schaut zur Raummitte,
+// vor ihm sein Tisch mit brennender Kerze. pos: Kachel des Händlers, front: Kachel des Tisches (oder null), rot: Ausrichtung der Wand
 function makeMerchant(pos, front, rot) {
   if (!free(pos[0], pos[1])) return;
   block(pos[0], pos[1]);
@@ -508,7 +555,7 @@ function makeMerchant(pos, front, rot) {
     g.add(hat);
   }
   g.position.set(tw(pos[0]), 0, tw(pos[1]));
-  g.rotation.y = rot !== undefined ? rot : Math.atan2(tw(MID) - tw(pos[0]), tw(MID) - tw(pos[1]));
+  g.rotation.y = Math.atan2(tw(MID) - tw(pos[0]), tw(MID) - tw(pos[1])); // schaut zur Raummitte
   // Angesprochen wird er über den Tisch: die Spielfigur läuft auf eine Kachel neben dem Tisch
   g.userData = { kind: "merchant", tile: front || pos, hoverMats };
   add(g);
@@ -518,6 +565,6 @@ function makeMerchant(pos, front, rot) {
     const lights = [];
     const table = makeModel("verkaufstisch", null, { lights }) || box(0.5, 0.5, 0.5, mat(0x7a4a26), 0, 0.25, 0);
     lights.forEach(l => { l.castShadow = false; });
-    at(table, front[0], front[1], g.rotation.y);
+    at(table, front[0], front[1], rot !== undefined ? rot : g.rotation.y); // Tisch gerade vor der Wand
   }
 }

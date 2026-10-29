@@ -65,7 +65,7 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/rng.js` | Seed-basierte Zufallszahlen und Würfel |
 | `src/state.js` | gemeinsamer Spielzustand |
 | `data/themes.json` | Themen: Name, Stufe, Proben-Zuschlag, Raumtypen, Nachbar des Starts, Monster, Boss, Regel-Ausnahmen (`overrides`), Palette (`palette`, `roomPalettes`, dort optional `brightness` für hellere Räume) |
-| `data/room-types.json` | Raumtypen: Name, Farben, Einrichtung als Daten (`decor`, `themeDecor`) oder altes Muster (`layout`), Bewertung, Lage- und Anzahlregeln, Event-Chance, Event-Tabelle; beim Bossraum Tabellen pro Thema (`themeEvents`) |
+| `data/room-types.json` | Raumtypen: Name, Farben, Einrichtung als Daten (`decor`, `themeDecor`, dort `mimics` für Mimik-Truhen) oder altes Muster (`layout`), Bewertung, Lage- und Anzahlregeln (`themeLevel`: Ebene im Thema), Event-Chance, Event-Tabelle; beim Bossraum Tabellen pro Thema (`themeEvents`) |
 | `data/events.json` | alle Events (auch die Truhe), Figuren beim Event-Start (`figures`) |
 | `data/staging.json` | Inszenierung der Event-Figuren: Standard, Anker an Requisiten, Modell-Varianten und `stays`, eigene Inszenierung pro Event |
 | `data/monsters.json` | Monster und Bosse mit Lebenspunkten, Rüstung, Angriff, Schaden, Satz zur Todesursache, Angriffsklang (`sound`) |
@@ -81,7 +81,7 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/character.js` | Figur: Volk, Inventar, Anlegen, Stufenaufstieg, Fähigkeit; rein logisch |
 | `src/combat.js` | Rundenkampf: Angriff, Gegnerzug, Verteidigen, Gegenstände, Flucht, Tiefe; rein logisch |
 | `src/roomTypes.js` | Raumtypen-Tabelle, befüllt aus `data/room-types.json` |
-| `src/decor.js` | Einrichtung als Daten: Requisiten-Größen, Platzierung (`center`, `wall-back`, `corner`, `free`, `around:`, `above:`), Wendeltreppen, Erreichbarkeit, Datenprüfung; rein logisch |
+| `src/decor.js` | Einrichtung als Daten: Requisiten-Größen, Platzierung (`center`, `wall-back`, `corner`, `free`, `around:`, `above:`, `tile:x|y`, `door-sides`), Fackeln an Säulen (`torches`) und ihre Anzahl (`torchCount`), Abstand zur Wand (`wallGap`), Wendeltreppen, Erreichbarkeit, Datenprüfung; rein logisch |
 | `src/props.js` | Requisiten und Wendeltreppen aus Grundformen (Platzhalter, wenn ein Modell fehlt) |
 | `src/models.js` | Modell-Lader: `data/models.json`, Paletten-Textur des Themas, Klone pro Instanz, Figuren mit Animationen (`makeFigureModel`), Rückfall auf Platzhalter |
 | `src/outline.js` | goldene Umrisslinie für anklickbare Objekte beim Überfahren mit der Maus |
@@ -110,6 +110,7 @@ Die Liste aller Meilensteine steht im GDD.
 - Einrichtung als Daten (`decor`): Türkacheln und die Kachel davor bleiben frei, jede Tür und jedes anklickbare
   Objekt bleibt erreichbar; passt ein Requisit nicht, lässt `decor.js` es weg. `tests/decor.test.mjs` prüft das
   für alle Varianten und alle 16 Türkombinationen, dazu die Pflichtstücke (`required`); Korrekturablauf siehe GDD.
+  Wandrequisiten (`wall`) verdecken keine Fackel: `torchSlots()` in `decor.js` liefert die Fackelplätze für Planung und Raumaufbau.
   Das alte Muster in `furnish()` lässt das Kreuz aus Reihe und Spalte 3 bis 5 (gezählt ab 0) frei.
 - Kacheln heißen im GDD x|y, ab 1 gezählt; im Code zählen x und z ab 0 (`tileName(x, z)` übersetzt).
 - Wendeltreppen belegen die Nordwest-Ecke 1|1 bis 3|3 (gezählt ab 0: 0 bis 2), Start auf 4|4.
@@ -118,7 +119,7 @@ Die Liste aller Meilensteine steht im GDD.
 - Grafik nach Stilguide „Knetkeller“ (GDD): Teile mit Modell kommen aus `data/models.json`, alle anderen bleiben
   Platzhalter aus Grundformen. Neues Modell einbinden: Datei nach `assets/props/<id>.glb`, Eintrag in `data/models.json`.
 - Licht: Halbkugellicht mit dem Grundlicht der Palette (`data/themes.json`, `palette`, `roomPalettes`), Fackeln neben
-  jeder Tür, höchstens zwei schattenwerfende Lichter pro Raum (heute nur das schwache Licht von oben). Werte heute: Halbkugellicht 0,32, Licht von oben 0,12,
+  jeder Tür (an Süd- und Ostwand ausgeblendet, nur Licht; Schatzkammer und Säulenhalle: an den Säulen; Gruft: zwei blaue), höchstens zwei schattenwerfende Lichter pro Raum (heute nur das schwache Licht von oben). Werte heute: Halbkugellicht 0,32, Licht von oben 0,12,
   Fackeln 1,8 mit 6 Kacheln Reichweite; die Ecken liegen damit bei etwa 15 bis 35 % der hellsten Stelle am Boden.
 
 ## Zusammenarbeit mit Christian

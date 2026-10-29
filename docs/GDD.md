@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.19 · Oct 29, 2026 · @Christian
+Version 2.27 · Oct 29, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,14 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.27 | 29.10.2026 | Fackeln an Süd- und Ostwand wie die Wände ausgeblendet, ohne Pfosten, nur ihr Licht bleibt; Säulenhalle nur mit dem Säulengang, 3 bis 4 Fackeln an den Säulen zum Gang, Banner und Waffenständer an der Wand; Gruft mit 4 bis 5 Sarkophagen mit Abstand und zwei blauen Fackeln |
+| 2.26 | 29.10.2026 | Schatzkammer nur auf der mittleren Ebene jedes Themas (Ebene 2, 5, 8 …); 2 bis 3 Truhen, eine echt, die übrigen sind Mimiken; Münzstapel verschiedener Typen um die Truhe |
+| 2.25 | 29.10.2026 | Münzstapel: derselbe Typ steht nie im Umkreis von zwei Kacheln (`spread`); Schatzkammer A mit einem Goldhaufen an der Truhe und drei frei im Raum |
+| 2.24 | 29.10.2026 | Gold auf dem Boden einheitlich aus den KayKit-Münzen (`coin`, `coin_stack_small`, `coin_stack_medium`, `coin_stack_large`) in gleicher Größe |
+| 2.23 | 29.10.2026 | Schatzkammer: ein Banner in derselben Farbe links und rechts jeder hinteren Tür mit einer Kachel Abstand, sonst kein Wandschmuck; an jeder Säule nur eine leuchtende Fackel zur Raummitte |
+| 2.22 | 29.10.2026 | Schatzkammer: Säulen fest auf 2\|2, 8\|2, 2\|8 und 8\|8, Fackeln an allen vier Seiten jeder Säule statt an den Wänden, Banner an den Wänden; Speisesaal nur mit der langen Tafel und Bannern an freien Wänden; keine abgebrannten Kerzen als Deko auf dem Boden |
+| 2.21 | 29.10.2026 | Wandrequisiten (Regale, Fahnen, Herd …) dürfen Fackeln nicht verdecken oder überlagern; Tisch des Händlers nur mit Flaschen |
+| 2.20 | 29.10.2026 | Händler auf den Kacheln 2\|2 bis 2\|8 oder 2\|2 bis 8\|2, schaut zur Raummitte; hinter ihm Wandregale mit Flaschen, vor ihm `table_medium_decorated_A` mit Kerze statt Tisch mit Gold (2.21: `table_medium` nur mit Flaschen und Kerze) |
 | 2.19 | 29.10.2026 | Neue Requisiten aus dem KayKit Dungeon Kit für Händler, Wachstube, Vorratskammer, Küche, Schatzkammer, Speisesaal, Säulenhalle und Gruft; Händler mit dem Rücken zur Nord- oder Westwand, davor sein Tisch mit Kerze; Händlerraum heller (`brightness` in `roomPalettes`) |
 | 2.18 | 29.10.2026 | Händler aus KayKit Rogue (ohne Kapuze, ohne Waffen) mit dunkelblauem statt grünem Outfit |
 | 2.17 | 29.10.2026 | Requisit Knochen aus Schädel, Kiefer und Armen der KayKit-Skelette (gleiche Textur wie die Skelett-Gegner) statt Grundformen |
@@ -254,7 +262,7 @@ Der Dungeon führt durch Themen, die alle drei Ebenen wechseln. Das Thema bestim
 | Vorkammer (Start) | neutral | fest, Wendeltreppe nach oben in der Nordwest-Ecke, Begrüßungs-Event, in jedem Thema | 1 |
 | Abstieg | neutral | Raum mit dem größten Abstand zum Start, Wendeltreppe nach unten in der Nordwest-Ecke | 1 |
 | Bossraum | feindlich | am Ende jeder Themenwelt (Ebene 3, 6, 9, 12, 15) statt des Abstiegs; die Wendeltreppe nach unten erscheint erst nach dem Sieg über den Boss in der Nordwest-Ecke | 1 auf Boss-Ebenen |
-| Schatzkammer | feindlich | nur in Sackgassen, in jedem Thema | höchstens 1 |
+| Schatzkammer | feindlich | nur in Sackgassen, in jedem Thema nur auf der mittleren Ebene (2, 5, 8 …) | höchstens 1 |
 | Rastplatz | neutral | etwa auf halber Strecke zwischen Start und Abstieg, in jedem Thema | 1 auf jeder zweiten Ebene |
 | Händler | neutral | beliebig, in jedem Thema | genau 1 |
 | Wachstube | feindlich | immer direkt neben dem Start (Keller, Zwergenminen) | – |
@@ -281,6 +289,7 @@ Der Dungeon führt durch Themen, die alle drei Ebenen wechseln. Das Thema bestim
 - **Feindlich:** Events mit Kämpfen und Fallen. **Neutral:** Rätsel, Gespräche, Fundstücke oder gar kein Event, nur Start, Rastplatz und Händler sind verlässlich sicher. Der Abstieg ist neutral, seine Events dürfen aber kleine Folgen haben (etwas Schaden, Goldverlust) und einen Kampf, etwa mit dem Türsteher. **Gemischt:** Wenn ein Event auslöst, ist es in etwa 30 % der Fälle ein Gegner oder eine Falle, sonst harmlos. Dafür trägt jedes Event in der Tabelle eines gemischten Raumtyps die Markierung feindlich oder neutral, und zwar doppelt: `"hostile": true` oder `false` (Feld des Content-Projekts) und `"rating": "hostile"` oder `"neutral"` (wertet der Code aus). Beide müssen übereinstimmen, `npm test` prüft das. Für den Anteil feindlicher Räume zählen gemischte Räume nicht als feindlich.
 - **Anteil feindlicher Räume:** steigt von etwa 40 % auf Ebene 1 auf 70 % ab Ebene 13.
 - **Sackgassen:** Sackgassen, die keine Schatzkammer werden, bekommen einen anderen Raumtyp des Themas.
+- **Schatzkammer:** Sie kommt in jedem Thema nur einmal vor, auf der mittleren der drei Ebenen (Feld `"themeLevel": 2` im Raumtyp; im endlosen Ork-Lager auf jeder dritten Ebene, also 14, 17 …). Hat diese Ebene keine Sackgasse, fehlt die Schatzkammer in diesem Thema. Sie hat 2 bis 3 Truhen. Eine davon ist echt und öffnet sich wie jede Truhe (Event `chest`). Die übrigen sind Mimiken. Welche echt ist, sieht man nicht; der Raum-Seed legt es fest. Klickt man eine Mimik an, erwacht sie, und das Event `schatz_mimik` beginnt (Kampf mit Beute tier2, Zurücklächeln oder Rückzug). Danach ist die Truhe weg: Eine besiegte Mimik bleibt liegen, sonst hüpft sie zur Tür hinaus. Das Event `schatz_mimik` steht deshalb nicht mehr in der Event-Tabelle des Raums.
 - **Händler:** bietet 4 zufällige Gegenstände vom Rang der aktuellen Beutestufe an (Rang = Stufe des Themas, Verbrauchsgegenstände eingeschlossen), jeden einmal. Dazu immer die Heiltränke (Kleiner und Großer Heiltrank) in beliebiger Menge; sie zählen nicht zu den 4 Gegenständen. Ist der Rang leer, gilt der höchste Rang darunter. Verkaufen bringt den halben Preis.
 - **Rastplatz:** auf jeder geraden Ebene (2, 4, 6 …). Ein Lagerfeuer im Raum heilt einmal auf volle Lebenspunkte, danach ist es aus.
 - **Wendeltreppen:** Vorkammer und Abstieg haben in der Nordwest-Ecke eine Wendeltreppe aus 3×3 Kacheln (1|1 bis 3|3). In der Vorkammer führt sie nach oben, ist nicht anklickbar und zeigt, woher der Spieler kommt. Im Abstieg führt sie als Öffnung im Boden nach unten und ist anklickbar: Ein Klick führt eine Ebene tiefer. Der Code setzt die Treppen fest, sie stehen nicht in der Einrichtung. Die Türen Nord (5|1) und West (1|5) und die Kacheln davor bleiben frei.
@@ -392,7 +401,7 @@ Ein Dungeon wie aus warmem Ton geknetet: weiche, blockige Formen, gedeckte Erdt�
 | Goblin-Höhlen | #4A4A32 | #5E5A3E | #A6E05A | #E8B840 | #22301E |
 | Ork-Lager | #5A3E30 | #6E4A38 | #B0B8C0 | #FF5A28 | #3A2420 |
 
-Gruft und Brunnen sind im Keller die düsteren Räume: kälteres Grundlicht, Kerzen statt Fackeln. Im Ork-Lager wird das Gefahr-Rot vor den rötlichen Wänden geprüft und bei Bedarf nachgeschärft.
+Gruft und Brunnen sind im Keller die düsteren Räume: kälteres Grundlicht, Kerzen statt Fackeln. In der Gruft hängen höchstens zwei Fackeln mit blauem Licht und blauer Flamme, damit der Raum düster und kühl wirkt. Im Ork-Lager wird das Gefahr-Rot vor den rötlichen Wänden geprüft und bei Bedarf nachgeschärft.
 
 **Formensprache**
 
@@ -412,7 +421,7 @@ Gruft und Brunnen sind im Keller die düsteren Räume: kälteres Grundlicht, Ker
 **Lesbarkeit**
 
 - Spielfigur mit hellem Bodenring, Gegner mit rotem Akzent und im Kampf rotem Ring.
-- Türrahmen eine Stufe heller als die Wand, neben jeder Tür eine Fackel. Verschlossene Tür: rotes Schloss.
+- Türrahmen eine Stufe heller als die Wand, neben jeder Tür eine Fackel (Ausnahme: in der Schatzkammer hängt an jeder Säule eine Fackel). Verschlossene Tür: rotes Schloss.
 - Anklickbare Objekte (Truhe, Lagerfeuer, Händler, Treppe nach unten): goldene Umrisslinie beim Überfahren mit der Maus, leichtes Aufhellen.
 - Bodendeko (Sack, Moos, Pfütze, Geröll) flach und dunkel, damit sie nie wie ein Hindernis wirkt.
 
@@ -429,7 +438,7 @@ Gilt für alle Modelle. Bei Paketteilen gilt sie für das Ergebnis im Spiel; Abw
 - **Animationen:** Idle, Walk, Attack, Hit, Death, Interact. Heißen sie im Paket anders, ordnet `data/models.json` sie zu. Fehlt eine Animation, gilt die Bewegung aus dem Code: Hit als kurzes Zucken, Death als Versinken im Boden, eine Figur ganz ohne Animationen gleitet und wippt wie die Platzhalter.
 - **Dateinamen:** id aus dem GDD; Varianten als `id_variante.glb`, etwa `fass_gruppe.glb`. Fehlt die Variante, gilt die Grunddatei. Eine Variante kann auch nur eine andere Animation sein (Skelett sitzend).
 - **Ordner:** `assets/tiles/` (Boden, Wand, Sockel, Ecken, Türrahmen), `assets/props/`, `assets/figures/`, `assets/textures/`, `assets/sounds/`. Rohdateien der Pakete in `assets/source/`.
-- **Bauteile:** `boden`, `wand`, `wand_ecke`, `sockel`, `sockel_ecke`, `tuerrahmen`, `fackel`, `schloss`. Der Türrahmen hinten deckt drei Kacheln (Tür mittig). Neben jeder Tür hängt eine Fackel; an den vorderen Türen steht sie auf einem Pfosten, weil der Sockel zu niedrig ist.
+- **Bauteile:** `boden`, `wand`, `wand_ecke`, `sockel`, `sockel_ecke`, `tuerrahmen`, `fackel`, `schloss`. Der Türrahmen hinten deckt drei Kacheln (Tür mittig). Neben jeder Tür hängt eine Fackel. An den vorderen Türen (Süd, Ost) ist sie wie die vorderen Wände ausgeblendet: kein Modell und kein Pfosten, nur ihr Licht bleibt, damit der Raum gleich hell bleibt.
 - **Zuordnung:** `data/models.json` hält pro id Datei, Maßstab (Zahl oder [x, y, z]), Drehung, Versatz, Einfärbung (`tint`, Farbe, mit der die Paletten-Textur multipliziert wird, etwa Holzton für graue Kisten), Animationszuordnung, Lichtpunkte (Position relativ zum Ursprung, Farbe, Stärke, Reichweite) und Zubehör (`accessories`: Teil aus Grundformen wie Kochmütze, Krone oder rote Augen, an einem Knochen der Figur, mit Versatz und Größe in Kacheln). Mehrere ids dürfen dieselbe Datei nutzen (Riesenratte, Küchenchef und Monsterratte).
 - **Build-Skript:** `tools/build-assets.mjs` setzt Teile aus Paketen zu einer GLB zusammen (Tafel, Regal, Türrahmen) und speckt Paketfiguren ab (nur benötigte Animationen und Zubehörteile, komprimiert). FBX-Dateien wandelt es vorher in GLB um; es kann Materialfarben auf die Palette setzen (matt, ohne Metallglanz), eine Waffe an einen Knochen hängen und Figuren auf höchstens 3.000 Dreiecke vereinfachen. Requisiten kann es aus Teilen einer Paketfigur zusammensetzen (`extracts`), etwa die Knochen aus Schädel, Kiefer und Armen der Skelette.
 - **Platzhalter:** Fehlt eine Datei oder lädt sie nicht, baut der Code das Teil wie bisher aus Grundformen.
@@ -458,9 +467,11 @@ Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kan
 ```
 
 - **Varianten:** `layouts` enthält eine oder mehrere Varianten. Der Raum-Seed wählt eine davon, gleicher Seed ergibt gleiche Einrichtung.
-- **Platzierung (`place`):** `center` (Raummitte), `wall-back` (an der Nord- oder Westwand, weil die vorderen Wände nur Sockel sind), `corner` (in einer Ecke, bei `count` über 1 in verschiedenen Ecken), `free` (beliebige freie Kachel), `around:<prop>` (um ein anderes Requisit herum, etwa Stühle um die Tafel), `above:<prop>` (über einem anderen Requisit, etwa der Kronleuchter über der Tafel).
-- **Weitere Felder:** `count` (Anzahl, Standard 1), `variant` (Abwandlung eines Requisits, etwa der Tisch mit Töpfen statt Würfeln).
-- **Feste Regeln:** Türkacheln und die Kachel davor bleiben frei. Jede Tür und jedes anklickbare Objekt bleibt erreichbar, `npm test` prüft das für alle Varianten. In Vorkammer, Abstieg und Bossraum bleibt die Nordwest-Ecke (1|1 bis 3|3) für die Wendeltreppe frei; `corner` meint dort nur die drei übrigen Ecken, `wall-back` nur die freien Abschnitte von Nord- und Westwand.
+- **Platzierung (`place`):** `center` (Raummitte), `wall-back` (an der Nord- oder Westwand, weil die vorderen Wände nur Sockel sind), `corner` (in einer Ecke, bei `count` über 1 in verschiedenen Ecken), `free` (beliebige freie Kachel), `around:<prop>` (um ein anderes Requisit herum, etwa Stühle um die Tafel), `above:<prop>` (über einem anderen Requisit, etwa der Kronleuchter über der Tafel), `tile:x|y` (genau diese Kachel, etwa die Säulen der Schatzkammer; ohne Korrektur, passt sie nicht, fällt das Requisit weg), `door-sides` (Wandschmuck links und rechts jeder Tür in Nord- und Westwand, eine Kachel Abstand zum Türrahmen, an der Nordwand also 3|1 und 7|1; alle in derselben Variante; an Süd- und Osttüren nicht, weil die vorderen Wände nur Sockel sind).
+- **Fackeln an Säulen (`torches`):** Mit `"torches": "saeulen"` in der Einrichtung hängen keine Fackeln an den Wänden, und die Lichter der vorderen Fackeln fallen weg. Stattdessen trägt jede Säule eine leuchtende Fackel auf der Seite zur Raummitte; Säulen in Reihen (Säulengang) tragen sie auf der Seite zum Gang. Heute so in der Schatzkammer (alle Säulen) und in der Säulenhalle (3 bis 4 zufällige Säulen).
+- **Anzahl der Fackeln (`torchCount`):** Zahl oder Bereich `[von, bis]`. Mit `torches: "saeulen"` zählt es die Säulen mit Fackel, sonst die Wandfackeln an Nord- und Westwand (Auswahl nach Raum-Seed); dann fallen auch die Lichter der vorderen Fackeln weg. `torchFlame` (Farbe) legt eine eigene Flamme über die des Modells. Heute: Gruft mit zwei Fackeln, Licht `#5d86e0`, Flamme `#8fb4ff`.
+- **Weitere Felder:** `count` (Anzahl, Standard 1, oder ein Bereich wie `[2, 3]`, aus dem der Raum-Seed wählt), `mimics` (bei der Einrichtung: `true` heißt, von mehreren Truhen ist eine echt, die übrigen sind Mimiken), `variant` (Abwandlung eines Requisits, etwa der Tisch mit Töpfen statt Würfeln).
+- **Feste Regeln:** Türkacheln und die Kachel davor bleiben frei. Wandrequisiten (Regale, Fahnen, Schlüsselbund, Herd, Anrichte und alle anderen an der Wand) verdecken oder überlagern keine Fackel: Die Wandkachel einer Fackel bleibt für sie frei. Abgebrannte Kerzen (Kerzenstummel) stehen nicht als Deko auf dem Boden. Münzstapel (`goldhaufen`, `muenzen` mit allen Varianten) haben einen Mindestabstand (`spread: 2`): Derselbe Typ, also gleiches Requisit und gleiche Variante, steht nicht noch einmal im Umkreis von zwei Kacheln, auch schräg gezählt. Verschiedene Typen dürfen nebeneinander liegen, etwa mittlerer neben kleinem Stapel, aber nicht kleiner neben kleinem. Sarkophage halten eine Kachel Abstand zur Wand (`wallGap: 1`) und zum nächsten Sarkophag (`spread: 1`). Passt ein Stapel nirgends, gilt der Korrekturablauf. Jede Tür und jedes anklickbare Objekt bleibt erreichbar, `npm test` prüft das für alle Varianten. In Vorkammer, Abstieg und Bossraum bleibt die Nordwest-Ecke (1|1 bis 3|3) für die Wendeltreppe frei; `corner` meint dort nur die drei übrigen Ecken, `wall-back` nur die freien Abschnitte von Nord- und Westwand.
 - **Pflichtstücke:** Ein Requisit mit `"required": true` macht den Raumtyp erkennbar (Herd in der Küche, Tafel im Speisesaal, Brunnen im Brunnenraum). Es wird immer zuerst platziert und nie weggelassen. Passt es in einer Variante bei einer Türkombination nicht, ist das ein Fehler in den Daten, und `npm test` schlägt fehl.
 - **Korrektur:** Passt ein Requisit nicht, versucht der Code in dieser Reihenfolge: 1. eine andere Kachel mit derselben Platzierung, 2. die nächste Platzierung in der Reihe `center` → `corner` → `wall-back` → `free`, 3. eine kleinere Anzahl, 4. weglassen. Requisiten mit `around:` oder `above:` fallen mit ihrem Bezugsrequisit weg. Gleicher Seed ergibt immer dieselbe Korrektur.
 - **Prüfung:** `npm test` platziert jede Variante jedes Raumtyps mit allen 16 Türkombinationen und prüft: keine Überlappung, nichts in Wänden oder auf Türkacheln, jede Tür und jedes anklickbare Objekt ist von jeder Tür aus erreichbar, Pflichtstücke sind vorhanden. Der Test gibt eine Liste aus, welche Requisiten wie oft korrigiert oder weggelassen wurden.
@@ -483,18 +494,18 @@ Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kan
 | stuhl | Stuhl | 1 | ja | nein | nein | Speisesaal |
 | kronleuchter | Kronleuchter, hängend | über Tafel | nein | nein | ja | Speisesaal |
 | anrichte | Anrichte | 2×1, Wand | ja | nein | nein | Speisesaal |
-| waffenstaender | Waffenständer | Wand | nein | nein | nein | Wachstube |
+| waffenstaender | Waffenständer | 2, Wand | nein | nein | nein | Wachstube, Säulenhalle |
 | brunnen | Brunnen mit Kurbel und Eimer | 1 | ja | nein | nein | Brunnenraum |
 | moos | Moos | Deko | nein | nein | nein | Brunnenraum, Säulenhalle |
 | pfuetze | Pfütze | Deko | nein | nein | nein | Brunnenraum |
-| sarkophag | Sarkophag | 1×2 | ja | nein | nein | Gruft |
+| sarkophag | Sarkophag (eine Kachel Abstand zur Wand und zum nächsten Sarkophag) | 1×2 | ja | nein | nein | Gruft |
 | kerzen | Kerzengruppe | Deko | nein | nein | ja | Gruft, Speisesaal, Schatzkammer |
 | knochen | Knochen | Deko | nein | nein | nein | Gruft, Bossraum |
 | geroell | Geröll | Deko | nein | nein | nein | alle |
-| goldhaufen | Goldhaufen | Deko | nein | nein | nein | Schatzkammer |
-| truhe | Truhe | 1 | ja | ja | nein | Schatzkammer |
+| goldhaufen | Goldhaufen (KayKit `coin_stack_large`) | Deko | nein | nein | nein | Schatzkammer |
+| truhe | Truhe (in der Schatzkammer 2 bis 3, davon eine echt, die übrigen Mimiken) | 1 | ja | ja | nein | Schatzkammer |
 | lagerfeuer | Lagerfeuer | 1 | ja | ja | ja | Rastplatz |
-| haendlerfigur | Händler mit Verkaufstisch und Kerze davor; steht mit dem Rücken zur Nord- oder Westwand und schaut in den Raum | 1×2, Wand | ja | ja | ja | Händler |
+| haendlerfigur | Händler mit Wandregal hinter sich und Verkaufstisch mit Kerze vor sich; steht auf 2\|2 bis 2\|8 oder 2\|2 bis 8\|2 und schaut zur Raummitte | 1×3, Wand | ja | ja | ja | Händler |
 | pult | Pult mit Gästebuch | 1 | ja | nein | nein | Vorkammer |
 | wegweiser | Wegweiser | 1 | ja | nein | nein | Vorkammer |
 | zettelbrett | Zettelbrett | Wand | nein | nein | nein | Vorkammer |
@@ -504,17 +515,15 @@ Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kan
 | kistenstapel | Gestapelte Kisten | 2×2 | ja | nein | nein | Händler, Vorratskammer, Küche |
 | fassstapel | Kleine Fässer, gestapelt | 1 | ja | nein | nein | Händler |
 | flaschen | Flaschen auf dem Boden (Variante `b`: andere Flaschen) | 1 | nein | nein | nein | Händler |
-| fahne | Fahne an der Wand (Varianten `blau`, `gruen`, `gelb`, `wappen`) | 1, Wand | nein | nein | nein | Wachstube |
-| fahne_dreifach | Drei Fahnen nebeneinander (Varianten `blau`, `gelb`) | 2, Wand | nein | nein | nein | Säulenhalle |
+| fahne | Fahne an der Wand (Varianten `blau`, `gruen`, `gelb`, `wappen`) | 1, Wand | nein | nein | nein | Wachstube, Schatzkammer, Speisesaal |
+| fahne_dreifach | Drei Fahnen nebeneinander (Varianten `blau`, `gelb`) | 2, Wand | nein | nein | nein | Säulenhalle, Schatzkammer, Speisesaal |
 | schluesselbund | Schlüsselbund am Haken | 1, Wand | nein | nein | nein | Wachstube |
 | strohlager | Strohlager auf dem Boden | 1×2 | ja | nein | nein | Wachstube |
 | zapffass | Zapffass | 1 | ja | nein | nein | Vorratskammer, Küche |
 | zapffass_verziert | Zapffass mit Gestell | 2×1 | ja | nein | nein | Vorratskammer, Küche |
 | kistenberg | Kistenberg | 1 | ja | nein | nein | Vorratskammer, Küche |
-| muenzen | Münzstapel (Varianten `klein`, `einzeln`) | 1 | nein | nein | nein | Schatzkammer |
-| tisch_gedeckt | Gedeckter Tisch mit Kerze | 1 | ja | nein | ja | Speisesaal |
+| muenzen | Münzstapel aus KayKit-Münzen (Varianten `klein`, `einzeln`) | 1 | nein | nein | nein | Schatzkammer |
 | saeule_verziert | Verzierte Säule | 1 | ja | nein | nein | Säulenhalle |
-| kerzenstummel | Heruntergebrannte Kerzen | 1 | nein | nein | nein | Gruft |
 | geroell_gross | Großer Geröllhaufen | 2×1 | ja | nein | nein | Gruft |
 | regal_gross, regal_klein | Wandbrett, groß und klein | 1, Wand | nein | nein | nein | Vorratskammer |
 | regal_kerzen | Wandbrett mit Kerzen | 1, Wand | nein | nein | nein | Vorratskammer |
@@ -745,3 +754,18 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Händler aus KayKit Rogue ohne Kapuze, Outfit dunkelblau statt grün
 - [x] Händler mit dem Rücken zur Nord- oder Westwand, vor ihm `table_small_decorated_B` mit brennender Kerze; Händlerraum heller; in den Ecken `box_stacked` und `barrel_small_stack`; Flaschen auf und neben Kisten
 - [x] Neue Requisiten aus dem KayKit Dungeon Kit: Fahnen, Schlüsselbund und Strohlager (Wachstube), Zapffässer, Kistenberg und Kistenstapel (Vorratskammer, Küche), alle Wandregale in der Vorratskammer, Münzen (Schatzkammer), gedeckte Tische und Kerzen (Speisesaal), verzierte Säulen und dreifache Fahnen (Säulenhalle), Kerzenstummel und großes Geröll (Gruft)
+- [x] Händler auf den Kacheln 2|2 bis 2|8 oder 2|2 bis 8|2, Blick zur Raummitte, hinter ihm Wandregale mit Flaschen, vor ihm `table_medium_decorated_A` mit Kerze; kein Gold als Dekoration beim Händler
+- [x] Regel: Regale und andere Wandrequisiten verdecken oder überlagern keine Fackeln
+- [x] Tisch des Händlers (`table_medium`) nur mit Flaschen und Kerze, keine Teller oder Küchensachen
+- [x] Schatzkammer: Säulen immer auf 2|2, 8|2, 2|8 und 8|8 (`tile:x|y`); keine Fackeln an den Wänden, dafür vier an jeder Säule (`"torches": "saeulen"`); Banner an den Wänden
+- [x] Schatzkammer, Korrektur: Banner derselben Farbe (`fahne`, gelb) links und rechts jeder hinteren Tür mit einer Kachel Abstand (`door-sides`), keine weitere Wanddekoration, keine Waffenständer; an jeder Säule nur eine leuchtende Fackel zur Raummitte
+- [x] Gold auf dem Boden einheitlich aus den KayKit-Münzen, alle im selben Maßstab (der Goldhaufen war kleiner)
+- [x] Münzstapel desselben Typs nie im Umkreis von zwei Kacheln, damit die Verteilung zufälliger aussieht; dafür in Schatzkammer A nur noch ein Goldhaufen an der Truhe, drei weitere frei im Raum
+- [x] Schatzkammer nur noch einmal pro Thema, immer auf der mittleren Ebene; ohne Sackgasse dort fehlt sie im Thema
+- [x] Schatzkammer mit 2 bis 3 Truhen: eine echt, die übrigen Mimiken (Event `schatz_mimik` beim Anklicken, nicht mehr beim Betreten)
+- [x] Münzstapel: verschiedene Typen dürfen nebeneinander liegen, nur gleiche nicht; um die Truhe in Variante A je ein Goldhaufen, Münzstapel, kleiner Stapel und einzelne Münzen
+- [x] Fackeln an Süd- und Ostwand wie die Wände ausgeblendet, kein Pfosten mehr; ihr Licht bleibt
+- [x] Säulenhalle: nur der feste Säulengang (keine verzierten oder liegenden Säulen mehr), an den Wänden Banner und Waffenständer, nie zwei an derselben Stelle; 3 bis 4 Fackeln zufällig an den Säulen auf der Seite zum Gang, keine Wandfackeln
+- [x] Gruft: immer 4 bis 5 Sarkophage, eine Kachel Abstand zur Wand und zueinander; zwei Fackeln mit blauem Licht
+- [x] Speisesaal: nur die lange Tafel, keine gedeckten Tische mehr; Banner an freien Wänden
+- [x] Regel: keine abgebrannten Kerzen (Kerzenstummel) als Deko auf dem Boden; das Requisit `kerzenstummel` und der gedeckte Tisch `tisch_gedeckt` sind entfernt

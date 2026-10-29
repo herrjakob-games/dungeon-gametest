@@ -1,7 +1,7 @@
 // Dungeon-Generator. Reine Logik ohne Grafik, damit er in tests/ geprüft werden kann.
 import { GRID, DIR, DIRKEYS, key } from "./config.js";
 import { mulberry32 } from "./rng.js";
-import { themeFor, levelSize, hostileShare, isBossLevel, isRestLevel, bossFor } from "./world.js";
+import { themeFor, levelInTheme, levelSize, hostileShare, isBossLevel, isRestLevel, bossFor } from "./world.js";
 
 export const doorCount = (m) => (m & 1) + ((m >> 1) & 1) + ((m >> 2) & 1) + ((m >> 3) & 1);
 
@@ -78,9 +78,10 @@ export function generate(dSeed, depth, world) {
   const startSlots = free().filter(k => nextToStart.has(k));
   if (startSlots.length) set(pick(startSlots), theme.startNeighbor);
 
-  // Schatzkammer: nur in Sackgassen, höchstens eine
+  // Schatzkammer: nur in Sackgassen, höchstens eine, und nur auf ihrer Ebene im Thema (themeLevel, heute die mittlere)
   const deadEnds = free().filter(isDead);
-  if (deadEnds.length) set(pick(deadEnds), "schatz");
+  const lvl = rule("schatz").themeLevel;
+  if (deadEnds.length && (!lvl || lvl === levelInTheme(depth))) set(pick(deadEnds), "schatz");
 
   // Rastplatz auf geraden Ebenen, möglichst auf halber Strecke zwischen Start und Abstieg
   if (isRestLevel(depth) && free().length) {
