@@ -20,8 +20,9 @@ Quelle und Lizenz jeder fremden Datei (docs/GDD.md, Asset-Spezifikation).
 - Autor: Kay Lousberg (www.kaylousberg.com)
 - Lizenz: CC0 1.0 (Creative Commons Zero), siehe `source/kaykit-adventurers/LICENSE.txt`
 - Quelle: https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0, Commit `672074b73ba276876a19e8816ecdc5241817ab47`
-- Übernommene Dateien (in `source/kaykit-adventurers/`, aus `Characters/gltf/`): Knight, Mage, Rogue_Hooded
-- Daraus gebaut (`npm run build:assets`): `figures/zwerg.glb`, `figures/elf.glb`, `figures/mensch.glb`
+- Übernommene Dateien (in `source/kaykit-adventurers/`, aus `Characters/gltf/`): Knight, Mage, Rogue_Hooded, Rogue, rogue_texture.png
+- Daraus gebaut (`npm run build:assets`): `figures/zwerg.glb`, `figures/elf.glb`, `figures/mensch.glb`, `figures/haendlerfigur.glb` (Händler)
+- `textures/figures/haendler/haendler_texture.png` ist die Rogue-Textur mit dunkelblauem statt grünem Outfit (`tools/merchant-texture.py`)
 
 ## KayKit Character Pack: Skeletons 1.0 (und 1.1 FREE)
 

@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.17 · Oct 29, 2026 · @Christian
+Version 2.18 · Oct 29, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.18 | 29.10.2026 | Händler aus KayKit Rogue (ohne Kapuze, ohne Waffen) mit dunkelblauem statt grünem Outfit |
 | 2.17 | 29.10.2026 | Requisit Knochen aus Schädel, Kiefer und Armen der KayKit-Skelette (gleiche Textur wie die Skelett-Gegner) statt Grundformen |
 | 2.16 | 29.10.2026 | Neue Raum-Stimmung `kitchen` (Küche) und neuer Boden `stone` (trockener Stein) für alle Keller-Räume außer Gruft, Brunnenraum und Säulenhalle (`hall`); Event-Sound `klopfen_stein` beim Sarkophag; erste Sounds von Freepik |
 | 2.15 | 29.10.2026 | Sound-System (`data/sounds.json`, Meilenstein 6c): Angriffsklänge für Waffen (holz, schwert, axt, hammer, eigene für magische Waffen) und Monster (`sound` in `data/monsters.json`), Treffer und Fehlschlag getrennt; Klang pro Verbrauchsgegenstand; Raum-Stimmung (`mood`) und Boden (`floor`) mit Loop, Zufallsgeräuschen und Schritten; optionaler Event-Sound; Spielgeräusche für Türen, Truhe, Gold, Stufe, Treppe, Treffer und Tod; fehlende Sounds bleiben stumm; Lautstärke und Menü in Meilenstein 7 |
@@ -431,7 +432,7 @@ Gilt für alle Modelle. Bei Paketteilen gilt sie für das Ergebnis im Spiel; Abw
 - **Build-Skript:** `tools/build-assets.mjs` setzt Teile aus Paketen zu einer GLB zusammen (Tafel, Regal, Türrahmen) und speckt Paketfiguren ab (nur benötigte Animationen und Zubehörteile, komprimiert). FBX-Dateien wandelt es vorher in GLB um; es kann Materialfarben auf die Palette setzen (matt, ohne Metallglanz), eine Waffe an einen Knochen hängen und Figuren auf höchstens 3.000 Dreiecke vereinfachen. Requisiten kann es aus Teilen einer Paketfigur zusammensetzen (`extracts`), etwa die Knochen aus Schädel, Kiefer und Armen der Skelette.
 - **Platzhalter:** Fehlt eine Datei oder lädt sie nicht, baut der Code das Teil wie bisher aus Grundformen.
 - **Zubehör der Spielfiguren:** Die Figur trägt das Teil des Pakets, das der Startwaffe am nächsten kommt: Zwerg Schwert (Langschwert), Elf Messer (Dolch), Mensch Zauberstab (das Paket hat keinen Knüppel). Schilde, Zweithand-Waffen und Bücher fallen weg.
-- **Quellen der Figuren im Keller:** Mensch KayKit `Mage`, Elf `Rogue_Hooded`, Zwerg `Knight`, Händler `Rogue` umgefärbt (KayKit Adventurers); Skelett aus KayKit Skeletons 1.0 (Minion, Warrior, Rogue, Mage; die Fassung 1.1 FREE hat kein Sitzen, Liegen und Angreifen, Textur gleich) mit der auf die Palette umgefärbten Textur `assets/textures/figures/skeleton/skeleton_keller.png`; Goblin aus Goblin Lowpoly Assets (standout7, itch.io); Mimik aus der Truhe des KayKit Dungeon Pack (itch.io); Riesenratte, Küchenchef und Monsterratte aus `Rat`, Kröte aus `Frog` (Easy Animated Enemy Pack, Quaternius). Goblin: `Basic_Goblin` mit `Rusty Shiv`; die kostenlose Fassung hat keine Animationen.
+- **Quellen der Figuren im Keller:** Mensch KayKit `Mage`, Elf `Rogue_Hooded`, Zwerg `Knight`, Händler `Rogue` ohne Kapuze und Waffen, Outfit dunkelblau statt grün (KayKit Adventurers); Skelett aus KayKit Skeletons 1.0 (Minion, Warrior, Rogue, Mage; die Fassung 1.1 FREE hat kein Sitzen, Liegen und Angreifen, Textur gleich) mit der auf die Palette umgefärbten Textur `assets/textures/figures/skeleton/skeleton_keller.png`; Goblin aus Goblin Lowpoly Assets (standout7, itch.io); Mimik aus der Truhe des KayKit Dungeon Pack (itch.io); Riesenratte, Küchenchef und Monsterratte aus `Rat`, Kröte aus `Frog` (Easy Animated Enemy Pack, Quaternius). Goblin: `Basic_Goblin` mit `Rusty Shiv`; die kostenlose Fassung hat keine Animationen.
 - **Lizenzen:** Quelle und Lizenz jeder fremden Datei in `assets/CREDITS.md`.
 
 ### Einrichtung pro Raumtyp
@@ -721,3 +722,4 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Sound als Meilenstein 6c; Lautstärkeregler und Menü bleiben in Meilenstein 7
 - [x] Neue Raum-Stimmung `kitchen` für die Küche; neuer Boden `stone` (trockener Stein) einheitlich im Keller, nur Gruft, Brunnenraum und Säulenhalle mit `hall`; Event-Sound `klopfen_stein` beim Sarkophag
 - [x] Knochen-Requisit aus Teilen der KayKit-Skelette (Schädel, Kiefer, zwei Arme) mit der Skelett-Textur
+- [x] Händler aus KayKit Rogue ohne Kapuze, Outfit dunkelblau statt grün

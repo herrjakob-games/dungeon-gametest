@@ -8,7 +8,7 @@ import { setRoomSeed, rnd, pickOne, shuffled } from "./rng.js";
 import { mat, box, stone, WOOD } from "./materials.js";
 import { TYPES } from "./roomTypes.js";
 import { scene, setAmbient } from "./scene.js";
-import { makeModel, hasModel, setModelTheme, findPart } from "./models.js";
+import { makeModel, hasModel, setModelTheme, findPart, makeFigureModel } from "./models.js";
 import { state } from "./state.js";
 import { buildFigure } from "./figures.js";
 import * as P from "./props.js";
@@ -39,6 +39,7 @@ export function buildRoom(id) {
   state.interactables = [];
   state.torches = [];
   state.lidPivot = null;
+  state.merchantAnim = null;
   state.openLid = false;
   state.hovered = null;
   state.doorLocks = {};
@@ -489,13 +490,18 @@ function makeMerchant(pos) {
   if (!free(pos[0], pos[1])) return;
   block(pos[0], pos[1]);
   const g = new THREE.Group();
-  const fig = buildFigure("mensch");
+  // Händler: KayKit Rogue mit dunkelblauem Outfit (data/models.json, haendlerfigur), sonst der alte Platzhalter
+  const anim = makeFigureModel("haendlerfigur");
+  const fig = anim ? anim.object : buildFigure("mensch");
+  state.merchantAnim = anim && anim.animated ? anim : null;
   const hoverMats = [];
   fig.traverse(o => { if (o.material && o.material.emissive) { o.material = o.material.clone(); hoverMats.push(o.material); } });
   g.add(fig);
-  const hat = new THREE.Mesh(new THREE.ConeGeometry(0.28, 0.45, 8), mat(0x6a3a8a));
-  hat.position.y = 1.25; hat.castShadow = true;
-  g.add(hat);
+  if (!anim) {
+    const hat = new THREE.Mesh(new THREE.ConeGeometry(0.28, 0.45, 8), mat(0x6a3a8a));
+    hat.position.y = 1.25; hat.castShadow = true;
+    g.add(hat);
+  }
   g.position.set(tw(pos[0]), 0, tw(pos[1]));
   g.rotation.y = Math.atan2(tw(MID) - tw(pos[0]), tw(MID) - tw(pos[1]));
   g.userData = { kind: "merchant", tile: pos, hoverMats };

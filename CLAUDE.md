@@ -39,7 +39,8 @@ Die Liste aller Meilensteine steht im GDD.
 - Modelle: `assets/` (Rohdateien der Pakete in `assets/source/`, Quellen in `assets/CREDITS.md`). `npm run build:assets`
   baut aus `tools/asset-recipes.json` die Dateien in `assets/tiles/`, `assets/props/` und `assets/figures/` (braucht einmal `npm install`; FBX wandelt das npm-Paket `fbx2gltf` um, `meshoptimizer` vereinfacht);
   das Spiel selbst braucht keinen Build-Schritt. Zuordnung in `data/models.json`. `tools/palette-texture.py` erzeugt
-  die erste Fassung der Paletten-Textur, `tools/skeleton-texture.py` die Skelett-Textur.
+  die erste Fassung der Paletten-Textur, `tools/skeleton-texture.py` die Skelett-Textur,
+  `tools/merchant-texture.py` die Textur des Händlers.
   Die Spiellogik besteht aus ES-Modulen in `src/`, Einstieg ist `src/main.js`.
 - Sounds: MP3s in `assets/sounds/` (Ordner laut GDD), Zuordnung in `data/sounds.json`. Nach dem Hinzufügen oder Entfernen von
   MP3s `npm run sounds` ausführen: Das schreibt `assets/sounds/files.json`, und das Spiel lädt nur Dateien aus dieser Liste.
