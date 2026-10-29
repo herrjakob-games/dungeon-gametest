@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.23 · Oct 29, 2026 · @Christian
+Version 2.24 · Oct 29, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.24 | 29.10.2026 | Gold auf dem Boden einheitlich aus den KayKit-Münzen (`coin`, `coin_stack_small`, `coin_stack_medium`, `coin_stack_large`) in gleicher Größe |
 | 2.23 | 29.10.2026 | Schatzkammer: ein Banner in derselben Farbe links und rechts jeder hinteren Tür mit einer Kachel Abstand, sonst kein Wandschmuck; an jeder Säule nur eine leuchtende Fackel zur Raummitte |
 | 2.22 | 29.10.2026 | Schatzkammer: Säulen fest auf 2\|2, 8\|2, 2\|8 und 8\|8, Fackeln an allen vier Seiten jeder Säule statt an den Wänden, Banner an den Wänden; Speisesaal nur mit der langen Tafel und Bannern an freien Wänden; keine abgebrannten Kerzen als Deko auf dem Boden |
 | 2.21 | 29.10.2026 | Wandrequisiten (Regale, Fahnen, Herd …) dürfen Fackeln nicht verdecken oder überlagern; Tisch des Händlers nur mit Flaschen |
@@ -496,7 +497,7 @@ Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kan
 | kerzen | Kerzengruppe | Deko | nein | nein | ja | Gruft, Speisesaal, Schatzkammer |
 | knochen | Knochen | Deko | nein | nein | nein | Gruft, Bossraum |
 | geroell | Geröll | Deko | nein | nein | nein | alle |
-| goldhaufen | Goldhaufen | Deko | nein | nein | nein | Schatzkammer |
+| goldhaufen | Goldhaufen (KayKit `coin_stack_large`) | Deko | nein | nein | nein | Schatzkammer |
 | truhe | Truhe | 1 | ja | ja | nein | Schatzkammer |
 | lagerfeuer | Lagerfeuer | 1 | ja | ja | ja | Rastplatz |
 | haendlerfigur | Händler mit Wandregal hinter sich und Verkaufstisch mit Kerze vor sich; steht auf 2\|2 bis 2\|8 oder 2\|2 bis 8\|2 und schaut zur Raummitte | 1×3, Wand | ja | ja | ja | Händler |
@@ -516,7 +517,7 @@ Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kan
 | zapffass | Zapffass | 1 | ja | nein | nein | Vorratskammer, Küche |
 | zapffass_verziert | Zapffass mit Gestell | 2×1 | ja | nein | nein | Vorratskammer, Küche |
 | kistenberg | Kistenberg | 1 | ja | nein | nein | Vorratskammer, Küche |
-| muenzen | Münzstapel (Varianten `klein`, `einzeln`) | 1 | nein | nein | nein | Schatzkammer |
+| muenzen | Münzstapel aus KayKit-Münzen (Varianten `klein`, `einzeln`) | 1 | nein | nein | nein | Schatzkammer |
 | saeule_verziert | Verzierte Säule | 1 | ja | nein | nein | Säulenhalle |
 | geroell_gross | Großer Geröllhaufen | 2×1 | ja | nein | nein | Gruft |
 | regal_gross, regal_klein | Wandbrett, groß und klein | 1, Wand | nein | nein | nein | Vorratskammer |
@@ -753,5 +754,6 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Tisch des Händlers (`table_medium`) nur mit Flaschen und Kerze, keine Teller oder Küchensachen
 - [x] Schatzkammer: Säulen immer auf 2|2, 8|2, 2|8 und 8|8 (`tile:x|y`); keine Fackeln an den Wänden, dafür vier an jeder Säule (`"torches": "saeulen"`); Banner an den Wänden
 - [x] Schatzkammer, Korrektur: Banner derselben Farbe (`fahne`, gelb) links und rechts jeder hinteren Tür mit einer Kachel Abstand (`door-sides`), keine weitere Wanddekoration, keine Waffenständer; an jeder Säule nur eine leuchtende Fackel zur Raummitte
+- [x] Gold auf dem Boden einheitlich aus den KayKit-Münzen, alle im selben Maßstab (der Goldhaufen war kleiner)
 - [x] Speisesaal: nur die lange Tafel, keine gedeckten Tische mehr; Banner an freien Wänden
 - [x] Regel: keine abgebrannten Kerzen (Kerzenstummel) als Deko auf dem Boden; das Requisit `kerzenstummel` und der gedeckte Tisch `tisch_gedeckt` sind entfernt

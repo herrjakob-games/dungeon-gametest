@@ -250,7 +250,7 @@
   },
   "goldhaufen": {
     "file": "assets/props/goldhaufen.glb",
-    "scale": 0.3,
+    "scale": 0.5,
     "palette": true
   },
   "truhe": {
