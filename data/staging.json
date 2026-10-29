@@ -1,5 +1,5 @@
 {
-  "_info": "Inszenierung der Event-Figuren (docs/GDD.md, Grafik und Animation, „Inszenierung der Figuren“): wo Figuren stehen, wohin sie blicken, welche Animation sie zeigen. Spielregeln, Texte und Ergebnisse stehen weiter in data/events.json. defaults: Standard ohne eigene Inszenierung; anchors: Anker an Requisiten (props, offset [x, y, z] in Kacheln gedreht wie das Requisit, face player|target|prop|random, animation idle|sit|sit_floor|lie|awaken, seat: sitzt auf dem Requisit, onProp: steht auf dem Requisit, world: Versatz ohne Drehung des Requisits); figures: Modell-Varianten (variants, nach Raum-Seed) und stays (bleibt nach dem Event stehen); events: eigene Inszenierung pro Event (figure, count, anchor, variant). Fehlt die Animation im Modell, steht die Figur mit idle neben dem Anker.",
+  "_info": "Inszenierung der Event-Figuren (docs/GDD.md, Grafik und Animation, „Inszenierung der Figuren“): wo Figuren stehen, wohin sie blicken, welche Animation sie zeigen. Spielregeln, Texte und Ergebnisse stehen weiter in data/events.json. defaults: Standard ohne eigene Inszenierung; anchors: Anker an Requisiten (props, offset [x, y, z] in Kacheln gedreht wie das Requisit, face player|target|prop|random, animation idle|sit|sit_floor|lie|awaken, seat: sitzt auf dem Requisit, onProp: steht auf dem Requisit, world: Versatz ohne Drehung des Requisits, front: zuerst die Seite zur Kamera, flat: ohne Liege-Animation liegt die Figur starr auf dem Rücken statt zu stehen); figures: Modell-Varianten (variants, nach Raum-Seed) und stays (bleibt nach dem Event stehen); events: eigene Inszenierung pro Event (figure, count, anchor, variant, stay: bleibt nach dem Event). Fehlt die Animation im Modell, steht die Figur mit idle neben dem Anker.",
   "defaults": {
     "place": "free",
     "face": "player",
@@ -156,6 +156,21 @@
       "animation": "idle",
       "_": "Kröte sitzt auf dem Brunnenrand",
       "world": true
+    },
+    "neben_dem_tisch_liegend": {
+      "props": [
+        "tisch"
+      ],
+      "offset": [
+        0,
+        0,
+        0
+      ],
+      "face": "prop",
+      "animation": "lie",
+      "flat": true,
+      "_": "Liegt flach neben dem Tisch, Füße zum Tisch; ohne Liege-Animation (Goblin) liegt die Figur starr auf dem Rücken",
+      "front": true
     }
   },
   "figures": {
@@ -188,7 +203,8 @@
       "figures": [
         {
           "figure": "skeleton",
-          "anchor": "am_sarkophag"
+          "anchor": "am_sarkophag",
+          "variant": "minion"
         }
       ]
     },
@@ -196,7 +212,8 @@
       "figures": [
         {
           "figure": "goblin",
-          "anchor": "auf_dem_hocker_schlafend"
+          "anchor": "neben_dem_tisch_liegend",
+          "stay": true
         }
       ]
     },
@@ -213,7 +230,8 @@
         {
           "figure": "skeleton",
           "count": 2,
-          "anchor": "am_tisch_sitzend"
+          "anchor": "am_tisch_sitzend",
+          "variant": "warrior"
         }
       ]
     },
@@ -255,7 +273,8 @@
         {
           "figure": "skeleton",
           "variant": "mage",
-          "anchor": "am_tisch_sitzend"
+          "anchor": "am_tisch_sitzend",
+          "stay": true
         }
       ]
     },

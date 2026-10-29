@@ -83,6 +83,7 @@ export function checkStaging(staging, data, props, err) {
     else a.props.forEach(p => { if (!props.includes(p)) err(w, "Anker " + id + ": unbekannte Requisite " + p); });
     if (a.animation !== undefined && !POSES.includes(a.animation)) err(w, "Anker " + id + ": unbekannte Animation " + a.animation);
     if (a.offset !== undefined && !(Array.isArray(a.offset) && a.offset.length === 3 && a.offset.every(Number.isFinite))) err(w, "Anker " + id + ": offset muss [x, y, z] sein");
+    if (a.flat !== undefined && typeof a.flat !== "boolean") err(w, "Anker " + id + ": flat muss true oder false sein");
     if (a.face !== undefined && !["player", "target", "prop", "random"].includes(a.face)) err(w, "Anker " + id + ": unbekannte Blickrichtung " + a.face);
   }
   for (const [id, f] of Object.entries(staging.figures || {})) {
@@ -96,6 +97,7 @@ export function checkStaging(staging, data, props, err) {
       if (!isFigure(f.figure, data.monsters)) err(w, id + ": unbekannte Figur " + f.figure);
       if (f.anchor !== undefined && !anchors[f.anchor]) err(w, id + ": unbekannter Anker " + f.anchor);
       if (f.count !== undefined && !(Number.isInteger(f.count) && f.count > 0)) err(w, id + ": count muss eine positive Zahl sein");
+      if (f.stay !== undefined && typeof f.stay !== "boolean") err(w, id + ": stay muss true oder false sein");
       const vs = ((staging.figures || {})[f.figure] || {}).variants;
       if (f.variant !== undefined && !(vs || []).includes(f.variant)) err(w, id + ": unbekannte Variante " + f.variant);
     });

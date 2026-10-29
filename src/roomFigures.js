@@ -59,10 +59,19 @@ function make(pl, eventId, popIn, dead) {
     mid.rotation.z = Math.PI / 2; // Platzhalter liegen auf der Seite
     mid.position.y = 0.15;
   }
+  if (!dead && pl.anim === "flat") layFlat(f, true);
   f.dead = !!dead;
   figs.push(f);
   if (f.blocks) f.tiles.forEach(t => state.blocked.add(key(...t)));
   return f;
+}
+
+// Figur ohne Liege-Animation (etwa der Goblin) liegt starr auf dem Rücken, Füße auf der Kachelmitte, Kopf nach hinten;
+// steht beim Kampfbeginn oder beim Gehen wieder auf
+function layFlat(f, on) {
+  f.flat = on;
+  f.mid.rotation.x = on ? -Math.PI / 2 : 0;
+  f.mid.position.set(0, on ? 0.12 : 0, on ? 0.4 : 0);
 }
 
 function unblock(f) {
@@ -163,6 +172,7 @@ function leave(f) {
   unblock(f);
   f.leaving = true;
   f.pose = null;
+  if (f.flat) layFlat(f, false);
   const from = [Math.round(f.outer.position.x + MID), Math.round(f.outer.position.z + MID)];
   const exit = doorExit(from);
   if (!exit) { f.sink = 0.001; return; }
@@ -220,6 +230,7 @@ export function combatFigure(monsterId) {
     spot.tiles.forEach(t => taken.add(key(...t)));
     f.onProp = f.tiles.length === 0;
     f.pose = null;
+    if (f.flat) layFlat(f, false);
     walkTo(f, spot);
     f.tiles = spot.tiles;
     f.blocks = figureInfo(monsterId).blocks;
