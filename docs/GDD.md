@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.27 · Oct 29, 2026 · @Christian
+Version 2.29 · Oct 29, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,8 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.29 | 29.10.2026 | Zwerg: Haare und Augenbrauen in der Bartfarbe #4A3020 (eigene Textur) |
+| 2.28 | 29.10.2026 | Zwerg: breiter und kleiner (Maßstab ungleich, heutiger Wert × 1,3 / 0,85 / 1,3), ohne Helm, mit Bart aus Grundformen (Zubehör `bart`) |
 | 2.27 | 29.10.2026 | Fackeln an Süd- und Ostwand wie die Wände ausgeblendet, ohne Pfosten, nur ihr Licht bleibt; Säulenhalle nur mit dem Säulengang, 3 bis 4 Fackeln an den Säulen zum Gang, Banner und Waffenständer an der Wand; Gruft mit 4 bis 5 Sarkophagen mit Abstand und zwei blauen Fackeln |
 | 2.26 | 29.10.2026 | Schatzkammer nur auf der mittleren Ebene jedes Themas (Ebene 2, 5, 8 …); 2 bis 3 Truhen, eine echt, die übrigen sind Mimiken; Münzstapel verschiedener Typen um die Truhe |
 | 2.25 | 29.10.2026 | Münzstapel: derselbe Typ steht nie im Umkreis von zwei Kacheln (`spread`); Schatzkammer A mit einem Goldhaufen an der Truhe und drei frei im Raum |
@@ -432,7 +434,7 @@ Gilt für alle Modelle. Bei Paketteilen gilt sie für das Ergebnis im Spiel; Abw
 - **Format:** GLB, Modell, Material und Animationen in einer Datei, möglichst unter 1 MB.
 - **Maßstab:** 1 Einheit = 1 Kachel. Kachelteile 1×1 oder ein Vielfaches laut Requisitenliste. KayKit-Teile mit Faktor 0,5 (kleine KayKit-Bodenplatte = 1 Kachel).
 - **Ausrichtung:** Ursprung am Boden, mittig auf der Grundfläche; Figuren blicken nach +Z, oben ist +Y. Wandteile: Ursprung mittig auf der Kachelkante, Vorderseite zeigt in den Raum.
-- **Höhen:** Mensch und Elf 1,0 bis 1,2 Kacheln, Zwerg etwa 0,8, Boss nach Größe in der Figurenliste. Hohe Wand 2 Kacheln, Sockel 0,25.
+- **Höhen:** Mensch und Elf 1,0 bis 1,2 Kacheln, Zwerg etwa 0,7 (gemessen 0,65 ohne Helm) und dafür breiter, Boss nach Größe in der Figurenliste. Hohe Wand 2 Kacheln, Sockel 0,25.
 - **Dreiecke:** höchstens etwa 3.000 pro Figur (KayKit-Figuren nach dem Abspecken bis 4.000), 1.500 pro Requisit.
 - **Material:** stilisiert, Schattierung wie KayKit, keine Normal Maps. Paketteile nutzen die gemeinsame Paletten-Textur des Themas (`assets/textures/keller/dungeon_texture.png`), KI-Modelle eine eigene Textur bis 512 px in den Palettenfarben. Ausnahme: KayKit-Figuren behalten die Textur ihres Pakets, weil ihre Texturkoordinaten nicht auf die Paletten-Textur passen.
 - **Animationen:** Idle, Walk, Attack, Hit, Death, Interact. Heißen sie im Paket anders, ordnet `data/models.json` sie zu. Fehlt eine Animation, gilt die Bewegung aus dem Code: Hit als kurzes Zucken, Death als Versinken im Boden, eine Figur ganz ohne Animationen gleitet und wippt wie die Platzhalter.
@@ -442,8 +444,9 @@ Gilt für alle Modelle. Bei Paketteilen gilt sie für das Ergebnis im Spiel; Abw
 - **Zuordnung:** `data/models.json` hält pro id Datei, Maßstab (Zahl oder [x, y, z]), Drehung, Versatz, Einfärbung (`tint`, Farbe, mit der die Paletten-Textur multipliziert wird, etwa Holzton für graue Kisten), Animationszuordnung, Lichtpunkte (Position relativ zum Ursprung, Farbe, Stärke, Reichweite) und Zubehör (`accessories`: Teil aus Grundformen wie Kochmütze, Krone oder rote Augen, an einem Knochen der Figur, mit Versatz und Größe in Kacheln). Mehrere ids dürfen dieselbe Datei nutzen (Riesenratte, Küchenchef und Monsterratte).
 - **Build-Skript:** `tools/build-assets.mjs` setzt Teile aus Paketen zu einer GLB zusammen (Tafel, Regal, Türrahmen) und speckt Paketfiguren ab (nur benötigte Animationen und Zubehörteile, komprimiert). FBX-Dateien wandelt es vorher in GLB um; es kann Materialfarben auf die Palette setzen (matt, ohne Metallglanz), eine Waffe an einen Knochen hängen und Figuren auf höchstens 3.000 Dreiecke vereinfachen. Requisiten kann es aus Teilen einer Paketfigur zusammensetzen (`extracts`), etwa die Knochen aus Schädel, Kiefer und Armen der Skelette.
 - **Platzhalter:** Fehlt eine Datei oder lädt sie nicht, baut der Code das Teil wie bisher aus Grundformen.
+- **Bart des Zwergs:** Zubehör `bart` aus Grundformen, Farbe `#4A3020`, matt und weich, in zwei Teilen: Kinnansatz mit Schnurrbart-Wulst am Kopfknochen (`part: "kinn"`, Knochen `head`) und ein breiter Keil bis zum Bauch, unten leicht gegabelt, am Brustknochen (`part: "keil"`, Knochen `chest`); beide überlappen leicht. Am Kinn etwa 0,27 Kacheln breit, der Keil oben 0,24 (schmaler als geplant, damit die Schwerthand beim Angriff frei bleibt), nach unten schmaler; gesamt etwa 0,34 Kacheln lang, weil der Kopf der Figur groß ist und 0,45 bis zu den Füßen reichen würde. Der Bart schneidet bei Stehen, Laufen und Angriff nicht ins Schwert.
 - **Zubehör der Spielfiguren:** Die Figur trägt das Teil des Pakets, das der Startwaffe am nächsten kommt: Zwerg Schwert (Langschwert), Elf Messer (Dolch), Mensch Zauberstab (das Paket hat keinen Knüppel). Schilde, Zweithand-Waffen und Bücher fallen weg.
-- **Quellen der Figuren im Keller:** Mensch KayKit `Mage`, Elf `Rogue_Hooded`, Zwerg `Knight`, Händler `Rogue` ohne Kapuze und Waffen, Outfit dunkelblau statt grün (KayKit Adventurers); Skelett aus KayKit Skeletons 1.0 (Minion, Warrior, Rogue, Mage; die Fassung 1.1 FREE hat kein Sitzen, Liegen und Angreifen, Textur gleich) mit der auf die Palette umgefärbten Textur `assets/textures/figures/skeleton/skeleton_keller.png`; Goblin aus Goblin Lowpoly Assets (standout7, itch.io); Mimik aus der Truhe des KayKit Dungeon Pack (itch.io); Riesenratte, Küchenchef und Monsterratte aus `Rat`, Kröte aus `Frog` (Easy Animated Enemy Pack, Quaternius). Goblin: `Basic_Goblin` mit `Rusty Shiv`; die kostenlose Fassung hat keine Animationen.
+- **Quellen der Figuren im Keller:** Mensch KayKit `Mage`, Elf `Rogue_Hooded`, Zwerg `Knight` ohne Helm, Haare und Augenbrauen in der Bartfarbe (Textur `assets/textures/figures/zwerg/zwerg_texture.png`), ungleich skaliert (Maßstab `[0,429, 0,2805, 0,429]`: breiter und kleiner), mit Bart, Händler `Rogue` ohne Kapuze und Waffen, Outfit dunkelblau statt grün (KayKit Adventurers); Skelett aus KayKit Skeletons 1.0 (Minion, Warrior, Rogue, Mage; die Fassung 1.1 FREE hat kein Sitzen, Liegen und Angreifen, Textur gleich) mit der auf die Palette umgefärbten Textur `assets/textures/figures/skeleton/skeleton_keller.png`; Goblin aus Goblin Lowpoly Assets (standout7, itch.io); Mimik aus der Truhe des KayKit Dungeon Pack (itch.io); Riesenratte, Küchenchef und Monsterratte aus `Rat`, Kröte aus `Frog` (Easy Animated Enemy Pack, Quaternius). Goblin: `Basic_Goblin` mit `Rusty Shiv`; die kostenlose Fassung hat keine Animationen.
 - **Lizenzen:** Quelle und Lizenz jeder fremden Datei in `assets/CREDITS.md`.
 
 ### Einrichtung pro Raumtyp
@@ -767,5 +770,7 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Fackeln an Süd- und Ostwand wie die Wände ausgeblendet, kein Pfosten mehr; ihr Licht bleibt
 - [x] Säulenhalle: nur der feste Säulengang (keine verzierten oder liegenden Säulen mehr), an den Wänden Banner und Waffenständer, nie zwei an derselben Stelle; 3 bis 4 Fackeln zufällig an den Säulen auf der Seite zum Gang, keine Wandfackeln
 - [x] Gruft: immer 4 bis 5 Sarkophage, eine Kachel Abstand zur Wand und zueinander; zwei Fackeln mit blauem Licht
+- [x] Zwerg breiter und kleiner (Maßstab × 1,3 / 0,85 / 1,3), Helm des KayKit `Knight` weggelassen, Bart aus Grundformen in zwei Teilen (Kinn und Schnurrbart am Kopf, Keil bis zum Bauch an der Brust)
+- [x] Haare und Augenbrauen des Zwergs in der Farbe des Barts
 - [x] Speisesaal: nur die lange Tafel, keine gedeckten Tische mehr; Banner an freien Wänden
 - [x] Regel: keine abgebrannten Kerzen (Kerzenstummel) als Deko auf dem Boden; das Requisit `kerzenstummel` und der gedeckte Tisch `tisch_gedeckt` sind entfernt

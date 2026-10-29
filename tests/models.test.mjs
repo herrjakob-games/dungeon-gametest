@@ -30,7 +30,7 @@ function glbTriangles(path) {
     s + (p.indices !== undefined ? j.accessors[p.indices].count : j.accessors[p.attributes.POSITION].count) / 3, 0));
   const hasUV = j.meshes.every(m => m.primitives.every(p => p.attributes.TEXCOORD_0 !== undefined));
   return { tris: j.nodes.reduce((s, n) => s + (n.mesh !== undefined ? per[n.mesh] : 0), 0), hasUV, images: (j.images || []).length,
-    animations: (j.animations || []).map(a => a.name) };
+    animations: (j.animations || []).map(a => a.name), nodes: j.nodes.map(n => n.name) };
 }
 
 test("Jede Datei in data/models.json existiert und ist eine gültige GLB", () => {
@@ -101,6 +101,9 @@ test("Jede Figuren-id hat ein Modell, das lädt", (t) => {
     (m.accessories || []).forEach(a => {
       assert.ok(ACCESSORIES[a.shape], id + ": unbekanntes Zubehör " + a.shape);
       assert.ok(typeof a.bone === "string" && a.size > 0, id + ": Zubehör braucht bone und size");
+      if (a.shape === "bart") assert.ok(["kinn", "keil"].includes(a.part), id + ": Bart braucht part kinn oder keil");
+      // Knochen muss in der Datei stehen (Namen wie im Paket, etwa head, chest)
+      assert.ok(g.nodes.includes(a.bone), id + ": Knochen " + a.bone + " fehlt in " + m.file);
     });
   }
   t.diagnostic("Noch ohne Modell: " + FIGURES_PENDING.join(", "));

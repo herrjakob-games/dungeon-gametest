@@ -202,6 +202,28 @@ export function buildMonsterFigure(id, variant) {
 // models.js hängt es an einen Knochen der Figur.
 const ACCENT = 0xc8432f; // Gefahr-Rot aus der Palette
 export const ACCESSORIES = {
+  // Zwergenbart in zwei Teilen (Maße in Kacheln bei size 1), matt und weich: part "kinn" (Kinnansatz und Schnurrbart-Wulst,
+  // am Kopfknochen) und part "keil" (breiter Keil bis zum Bauch, unten leicht gegabelt, am Brustknochen); beide überlappen leicht
+  bart(a) {
+    const g = new THREE.Group();
+    const part = maker(g);
+    const hair = mat(0x4a3020, { roughness: 1, flatShading: false });
+    const soft = (r) => new THREE.SphereGeometry(r, 12, 8);
+    if (a.part === "kinn") {
+      part(soft(0.5), hair, 0, 0, 0).scale.set(0.27, 0.13, 0.09);          // Kinnansatz
+      [-1, 1].forEach(k => {                                                // Schnurrbart: zwei Wülste, außen leicht hängend
+        const w = part(soft(0.5), hair, k * 0.065, 0.05, 0.035);
+        w.scale.set(0.15, 0.05, 0.06);
+        w.rotation.z = k * -0.35;
+      });
+    } else {
+      // Keil aus weichen Wülsten: oben breit (0,3), nach unten schmaler, unten zwei Spitzen (Gabel)
+      part(soft(0.5), hair, 0, 0.07, 0.015).scale.set(0.24, 0.15, 0.075);  // oben, überlappt den Kinnansatz
+      part(soft(0.5), hair, 0, -0.02, 0).scale.set(0.18, 0.16, 0.075);  // schmaler, damit die Schwerthand beim Angriff frei bleibt
+      [-1, 1].forEach(k => part(soft(0.5), hair, k * 0.042, -0.1, -0.01).scale.set(0.09, 0.1, 0.065)); // Gabel unten
+    }
+    return g;
+  },
   // Weiße Kochmütze: Band und gebauschter Kopf
   kochmuetze() {
     const g = new THREE.Group();
