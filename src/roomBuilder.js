@@ -64,7 +64,7 @@ export function buildRoom(id) {
   buildFloor(type, hasHole(feature));
   buildWalls(room);
   DIRKEYS.forEach(d => { if (room.doors & DIR[d].bit) makeDoor(d); });
-  placeTorches(room, torch, spec);
+  placeTorches(room, torch, spec, feature);
   if (feature) makeStairs(feature);
   state.decorPlan = null;
   if (spec) placeDecor(spec, room, feature, id, torch);
@@ -234,14 +234,14 @@ function makeLock(d, tall, glow) {
 }
 
 // Fackeln nach Stilguide: neben jeder Tür eine; Wände ohne Tür bekommen zwei, damit kein Raum dunkel bleibt.
-// Vorne (Sockel) steht die Fackel auf einem Pfosten.
-function placeTorches(room, color, spec) {
+// Vorne (Süd, Ost) bleibt nur ihr Licht. In der Vorkammer hängt keine Fackel hinter oder neben der Treppe.
+function placeTorches(room, color, spec, feature) {
   if (pillarTorches(spec)) return; // Fackeln hängen an den Säulen (placeDecor)
   const flame = spec && spec.torchFlame;
   const has = (d) => (room.doors & DIR[d].bit) !== 0;
   const inner = -E + 0.25; // Innenseite der hohen Wände
   // Plätze an Nord- und Westwand aus decor.js (dieselben, die Wandrequisiten freilassen)
-  torchSlots(room.doors, spec, room.seed).forEach(({ wall, t }) => (wall === "N" ? makeTorch(tw(t), inner, 0, color, flame) : makeTorch(inner, tw(t), Math.PI / 2, color, flame)));
+  torchSlots(room.doors, spec, room.seed, feature).forEach(({ wall, t }) => (wall === "N" ? makeTorch(tw(t), inner, 0, color, flame) : makeTorch(inner, tw(t), Math.PI / 2, color, flame)));
   // Vordere Fackeln (Süd, Ost): wie die vorderen Wände ausgeblendet, ohne Pfosten; nur ihr Licht bleibt
   if (!frontTorchLights(spec)) return;
   if (has("S")) makeTorchLight(tw(MID + 1), E - 0.3, color);

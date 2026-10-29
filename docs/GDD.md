@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.32 · Oct 29, 2026 · @Christian
+Version 2.33 · Oct 29, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.33 | 29.10.2026 | Vorkammer: keine Fackel hinter oder neben der Treppe (Wandkacheln 1 bis 4 von Nord- und Westwand) |
 | 2.32 | 29.10.2026 | Treppe nach oben: das obere Ende wird nur dunkler, ohne Farbstich; kein bläulicher Lichtschein von oben |
 | 2.31 | 29.10.2026 | Bossraum: bis zum Sieg liegt über Loch und Treppe ein begehbares Metallgitter; Treppe und Loch aus Grundformen als Rückfall ohne Modell |
 | 2.30 | 29.10.2026 | Steintreppe `stairs` aus KayKit statt Wendeltreppe, weiter 3×3 in der Nordwest-Ecke, Laufrichtung zur Nordwand; Einstieg steigt bis unter die Decke, Abstieg führt in ein Loch im Boden mit kühlem Schimmer von unten; ids `treppe_hoch`, `treppe_runter`; Startposition 2\|4 statt 4\|4 |
@@ -443,7 +444,7 @@ Gilt für alle Modelle. Bei Paketteilen gilt sie für das Ergebnis im Spiel; Abw
 - **Animationen:** Idle, Walk, Attack, Hit, Death, Interact. Heißen sie im Paket anders, ordnet `data/models.json` sie zu. Fehlt eine Animation, gilt die Bewegung aus dem Code: Hit als kurzes Zucken, Death als Versinken im Boden, eine Figur ganz ohne Animationen gleitet und wippt wie die Platzhalter.
 - **Dateinamen:** id aus dem GDD; Varianten als `id_variante.glb`, etwa `fass_gruppe.glb`. Fehlt die Variante, gilt die Grunddatei. Eine Variante kann auch nur eine andere Animation sein (Skelett sitzend).
 - **Ordner:** `assets/tiles/` (Boden, Wand, Sockel, Ecken, Türrahmen), `assets/props/`, `assets/figures/`, `assets/textures/`, `assets/sounds/`. Rohdateien der Pakete in `assets/source/`.
-- **Bauteile:** `boden`, `wand`, `wand_ecke`, `sockel`, `sockel_ecke`, `tuerrahmen`, `fackel`, `schloss`. Der Türrahmen hinten deckt drei Kacheln (Tür mittig). Neben jeder Tür hängt eine Fackel. An den vorderen Türen (Süd, Ost) ist sie wie die vorderen Wände ausgeblendet: kein Modell und kein Pfosten, nur ihr Licht bleibt, damit der Raum gleich hell bleibt.
+- **Bauteile:** `boden`, `wand`, `wand_ecke`, `sockel`, `sockel_ecke`, `tuerrahmen`, `fackel`, `schloss`. Der Türrahmen hinten deckt drei Kacheln (Tür mittig). Neben jeder Tür hängt eine Fackel. In der Vorkammer hängt keine Fackel hinter oder neben der Treppe, also nicht auf den Kacheln 1 bis 4 von Nord- und Westwand; die Fackel dort fällt weg. An den vorderen Türen (Süd, Ost) ist sie wie die vorderen Wände ausgeblendet: kein Modell und kein Pfosten, nur ihr Licht bleibt, damit der Raum gleich hell bleibt.
 - **Zuordnung:** `data/models.json` hält pro id Datei, Maßstab (Zahl oder [x, y, z]), Drehung, Versatz, Einfärbung (`tint`, Farbe, mit der die Paletten-Textur multipliziert wird, etwa Holzton für graue Kisten), Animationszuordnung, Lichtpunkte (Position relativ zum Ursprung, Farbe, Stärke, Reichweite) und Zubehör (`accessories`: Teil aus Grundformen wie Kochmütze, Krone oder rote Augen, an einem Knochen der Figur, mit Versatz und Größe in Kacheln). Mehrere ids dürfen dieselbe Datei nutzen (Riesenratte, Küchenchef und Monsterratte).
 - **Build-Skript:** `tools/build-assets.mjs` setzt Teile aus Paketen zu einer GLB zusammen (Tafel, Regal, Türrahmen) und speckt Paketfiguren ab (nur benötigte Animationen und Zubehörteile, komprimiert). FBX-Dateien wandelt es vorher in GLB um; es kann Materialfarben auf die Palette setzen (matt, ohne Metallglanz), eine Waffe an einen Knochen hängen und Figuren auf höchstens 3.000 Dreiecke vereinfachen. Requisiten kann es aus Teilen einer Paketfigur zusammensetzen (`extracts`), etwa die Knochen aus Schädel, Kiefer und Armen der Skelette.
 - **Platzhalter:** Fehlt eine Datei oder lädt sie nicht, baut der Code das Teil wie bisher aus Grundformen.
@@ -780,3 +781,4 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Steintreppe `stairs` aus KayKit statt Wendeltreppe (ids `treppe_hoch`, `treppe_runter`), 3×3 in der Nordwest-Ecke zur Nordwand hin; Einstieg ohne Licht bis unter die Decke, Abstieg in ein Loch mit kühlem Schimmer von unten; Start auf 2|4
 - [x] Bossraum: bis zum Sieg ein begehbares Metallgitter über Loch und Treppe, danach mit 0,5 Sekunden Abblende Loch und anklickbare Treppe; fehlt das Modell `stairs`, entstehen Treppe und Loch aus Grundformen
 - [x] Treppe nach oben ohne bläulichen Lichtschein von oben: das obere Ende dunkelt nur ab, statt in die Schattenfarbe überzugehen
+- [x] Vorkammer: keine Fackel hinter oder neben der Treppe; an Nord- und Westwand fällt die Fackel auf Kachel 3 weg

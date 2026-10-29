@@ -73,11 +73,14 @@ export const VARIANTS = {
  * Fackeln an den hohen Wänden (Stilguide: neben jeder Tür eine, Wände ohne Tür zwei): Kachel entlang Nord- und Westwand.
  * Ergebnis: [{ wall: "N" | "W", t }]. Die vorderen Fackeln (Süd, Ost) sind wie die vorderen Wände ausgeblendet (nur ihr Licht
  * bleibt) und betreffen keine Wandrequisiten. torchCount in der Einrichtung begrenzt die Wandfackeln (Auswahl nach seed).
+ * feature (centerFeature): in der Vorkammer ("up") hängt keine Fackel hinter oder neben der Treppe, also nicht auf den
+ * Wandkacheln 1 bis 4 von Nord- und Westwand; die Fackel dort fällt weg.
  */
-export function torchSlots(doors, spec, seed) {
+export function torchSlots(doors, spec, seed, feature) {
   let out = [];
   if (pillarTorches(spec)) return out; // Fackeln an den Säulen statt an den Wänden (Schatzkammer, Säulenhalle)
   ["N", "W"].forEach(w => ((doors & DIR[w].bit) ? [MID + 2] : [2, N - 3]).forEach(t => out.push({ wall: w, t })));
+  if (feature === "up") out = out.filter(f => f.t > STAIRS_SIZE);
   if (spec && spec.torchCount !== undefined) {
     const R = mulberry32(((seed || 0) ^ 0x2c1b3c6d) >>> 0);
     const [lo, hi] = countRange(spec.torchCount);
@@ -211,7 +214,7 @@ export function planDecor(spec, opts) {
   const reserved = new Set(doorTiles(doors).map(t => key(...t)));
   const blocked = new Set(), occupied = new Set(), wallSlots = new Set();
   // Wandrequisiten (Regale, Fahnen, Herd …) verdecken keine Fackel: die Wandkachel einer Fackel bleibt für sie frei
-  const torches = new Set(torchSlots(doors, spec, opts.seed).map(f => f.wall + (f.wall === "N" ? key(f.t, 0) : key(0, f.t))));
+  const torches = new Set(torchSlots(doors, spec, opts.seed, feature).map(f => f.wall + (f.wall === "N" ? key(f.t, 0) : key(0, f.t))));
   const clickables = [], extra = [];
   if (feature) STAIRS_TILES.forEach(t => { reserved.add(key(...t)); blocked.add(key(...t)); });
   if (feature === "up") { reserved.add(key(...STAIRS_FOOT)); extra.push(STAIRS_FOOT); }

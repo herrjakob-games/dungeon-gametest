@@ -323,3 +323,13 @@ test("Säulenhalle: nur der Säulengang, 3 bis 4 Fackeln an Säulen zum Gang, Wa
     }
   });
 });
+
+test("Vorkammer: keine Fackel hinter oder neben der Treppe (Wandkacheln 1 bis 4 von Nord- und Westwand)", () => {
+  for (let doors = 0; doors < 16; doors++) {
+    const slots = torchSlots(doors, null, 1, "up");
+    assert.ok(slots.every(f => f.t > STAIRS_TILES.length / 3), "Türen " + doors + ": Fackel an der Treppe");
+    assert.ok(slots.length >= 2, "Türen " + doors + ": an jeder hohen Wand bleibt eine Fackel");
+  }
+  // Andere Räume behalten beide Fackeln an Wänden ohne Tür
+  assert.equal(torchSlots(0, null, 1, null).length, 4);
+});
