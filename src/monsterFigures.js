@@ -197,3 +197,62 @@ const BUILDERS = { rat, skeleton, goblin, mimic, kuechenratte, monsterratte, kro
 export function buildMonsterFigure(id, variant) {
   return BUILDERS[id] ? BUILDERS[id](variant) : fallback(id);
 }
+
+// Zubehör für Paketfiguren (data/models.json, Feld accessories): Größe 1 = eine Kachel, Blick nach +z.
+// models.js hängt es an einen Knochen der Figur.
+const ACCENT = 0xc8432f; // Gefahr-Rot aus der Palette
+export const ACCESSORIES = {
+  // Weiße Kochmütze: Band und gebauschter Kopf
+  kochmuetze() {
+    const g = new THREE.Group();
+    const part = maker(g);
+    part(cylG(0.5, 0.45, 0.35, 12), mat(0xf2f0ea), 0, 0, 0);
+    part(sph(0.62), mat(0xf2f0ea), 0, 0.55, 0).scale.set(1, 0.8, 1);
+    return g;
+  },
+  // Krone aus verbogenen Gabeln (Monsterratte), mit rotem Stein
+  gabelkrone() {
+    const g = new THREE.Group();
+    const part = maker(g);
+    const metal = mat(0xb0b4ba, { metalness: 0.4, roughness: 0.5 });
+    part(new THREE.CylinderGeometry(0.5, 0.5, 0.22, 12, 1, true), metal, 0, 0, 0).material.side = THREE.DoubleSide;
+    for (let i = 0; i < 6; i++) {
+      const a = i / 6 * Math.PI * 2;
+      const f = part(boxG(0.07, 0.6, 0.07), metal, Math.sin(a) * 0.48, 0.32, Math.cos(a) * 0.48);
+      f.rotation.set(Math.cos(a) * 0.3, 0, -Math.sin(a) * 0.3 + (i % 2 ? 0.25 : -0.15)); // verbogen
+    }
+    part(sph(0.12), mat(ACCENT), 0, 0, 0.5);
+    return g;
+  },
+  // Kleine goldene Krone (Kröte)
+  krone() {
+    const g = new THREE.Group();
+    const part = maker(g);
+    const gold = mat(0xf2c14e, { metalness: 0.4, roughness: 0.45 });
+    part(new THREE.CylinderGeometry(0.5, 0.5, 0.3, 12, 1, true), gold, 0, 0, 0).material.side = THREE.DoubleSide;
+    for (let i = 0; i < 5; i++) {
+      const a = i / 5 * Math.PI * 2;
+      part(new THREE.ConeGeometry(0.14, 0.4, 4), gold, Math.sin(a) * 0.48, 0.33, Math.cos(a) * 0.48);
+    }
+    return g;
+  },
+  // Zwei rote Augen (roter Akzent der Gegner); spread: Abstand der Augen in Kacheln
+  augen(a) {
+    const g = new THREE.Group();
+    const d = (a.spread || 0.1) / (a.size || 1) / 2;
+    [-1, 1].forEach(k => {
+      const e = new THREE.Mesh(sph(0.5), new THREE.MeshBasicMaterial({ color: 0xff3020 }));
+      e.position.x = k * d;
+      g.add(e);
+    });
+    return g;
+  },
+  // Fleischerbeil (Küchenchef)
+  beil() {
+    const g = new THREE.Group();
+    const part = maker(g);
+    part(boxG(0.1, 1, 0.1), mat(0x5e3d22), 0, 0, 0);
+    part(boxG(0.08, 0.5, 0.7), mat(0xb0b4ba, { metalness: 0.5 }), 0, 0.6, 0.3);
+    return g;
+  }
+};

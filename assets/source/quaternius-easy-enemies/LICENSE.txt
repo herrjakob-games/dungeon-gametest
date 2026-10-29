@@ -1,0 +1,8 @@
+Easy Animated Enemy Pack - Jan 2019
+Autor: Quaternius
+Quelle: https://quaternius.itch.io/animated-easy-enemies
+
+Lizenz laut Download-Seite (das Paket enthält keine Lizenzdatei):
+"FBX, OBJ and Blend formats and CC0 license."
+
+CC0 1.0 Universal: https://creativecommons.org/publicdomain/zero/1.0/

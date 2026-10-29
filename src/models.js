@@ -2,6 +2,7 @@
 // setzt die Paletten-Textur des Themas und liefert pro Instanz einen Klon.
 // Fehlt eine Datei oder schlägt das Laden fehl, gibt es kein Modell: Der Aufrufer baut das Teil wie bisher aus
 // Grundformen. Die id wird dann einmal in der Konsole gemeldet.
+import { ACCESSORIES } from "./monsterFigures.js";
 const THREE = window.THREE;
 
 let MODELS = {};
@@ -61,6 +62,27 @@ export function modelEntry(id, variant) {
 
 export const hasModel = (id, variant) => !!modelEntry(id, variant);
 
+// Zubehör aus Grundformen an einen Knochen hängen (Kochmütze, Krone, Augen): offset und size in Kacheln, gemessen in
+// der Grundhaltung der Figur; der Knochen trägt es beim Animieren mit.
+function attachAccessories(g, inner, list) {
+  g.updateMatrixWorld(true);
+  list.forEach(a => {
+    const name = THREE.PropertyBinding.sanitizeNodeName(a.bone);
+    let bone = null;
+    inner.traverse(n => { if (!bone && n.name === name) bone = n; });
+    const build = ACCESSORIES[a.shape];
+    if (!bone || !build) { console.warn("Zubehör " + a.shape + " an " + a.bone + " fehlt"); return; }
+    const ws = bone.getWorldScale(new THREE.Vector3()).x;
+    const inv = bone.getWorldQuaternion(new THREE.Quaternion()).invert();
+    const o = build(a);
+    o.position.copy(new THREE.Vector3(...(a.offset || [0, 0, 0])).applyQuaternion(inv).divideScalar(ws));
+    o.quaternion.copy(inv);
+    o.scale.setScalar((a.size || 1) / ws);
+    o.traverse(n => { if (n.isMesh) n.castShadow = true; });
+    bone.add(o);
+  });
+}
+
 const vec = (v, d) => (Array.isArray(v) ? v : [v === undefined ? d : v, v === undefined ? d : v, v === undefined ? d : v]);
 
 /**
@@ -73,7 +95,8 @@ export function makeModel(id, variant, opts) {
   opts = opts || {};
   const src = scenes.get(entry.file);
   // Figuren mit Skelett brauchen SkeletonUtils, sonst hängen die Klone am Skelett des Originals
-  const skinned = !!(clips.get(entry.file) || []).length;
+  let skinned = false;
+  src.traverse(n => { if (n.isSkinnedMesh) skinned = true; });
   const inner = skinned && THREE.SkeletonUtils ? THREE.SkeletonUtils.clone(src) : src.clone(true);
   const s = vec(entry.scale, 1), r = vec(entry.rotation, 0), o = entry.offset || [0, 0, 0];
   inner.scale.set(s[0], s[1], s[2]);
@@ -90,6 +113,7 @@ export function makeModel(id, variant, opts) {
   });
   const g = new THREE.Group();
   g.add(inner);
+  if (entry.accessories) attachAccessories(g, inner, entry.accessories);
   (entry.lights || []).forEach(l => {
     const light = new THREE.PointLight(new THREE.Color(l.color), l.intensity, l.distance, 2);
     light.position.set(...l.offset);
@@ -107,32 +131,60 @@ export function findPart(group, name) {
 }
 
 /**
- * Figur mit Animationen (docs/GDD.md, Asset-Spezifikation): Modell, Mixer und play(name) mit den Namen im Spiel
+ * Figur mit Animationen (docs/GDD.md, Asset-Spezifikation): Modell, Mixer und Steuerung mit den Namen im Spiel
  * (idle, walk, attack, hit, death, interact). Null, wenn es kein Modell gibt (dann Platzhalter aus Grundformen).
- * play(name, { once: true }) spielt einmal und bleibt am Ende stehen (etwa death); danach update(dt) pro Frame.
+ * - loop(name): Dauerschleife (idle, walk); wird ignoriert, solange eine einmalige Animation läuft.
+ * - once(name): spielt einmal (attack, hit), danach wieder die Dauerschleife; death bleibt am Ende stehen.
+ * - has(name): gibt es die Animation? duration(name): Länge in Sekunden.
+ * update(dt) pro Frame.
  */
-export function makeFigureModel(id) {
-  const entry = modelEntry(id);
+export function makeFigureModel(id, variant) {
+  const entry = modelEntry(id, variant);
   if (!entry || !THREE.AnimationMixer) return null;
-  const object = makeModel(id);
+  const object = makeModel(id, variant);
   const mixer = new THREE.AnimationMixer(object);
   const list = clips.get(entry.file) || [];
   const names = entry.animations || {};
-  let current = null, currentName = null;
-  function play(name, opts) {
-    opts = opts || {};
-    if (name === currentName && !opts.once) return;
-    const clip = THREE.AnimationClip.findByName(list, names[name] || name);
-    if (!clip) return;
+  const clipOf = (name) => (names[name] ? THREE.AnimationClip.findByName(list, names[name]) : null);
+  let current = null, loopName = null, busy = false, dead = false;
+  function start(name, once) {
+    const clip = clipOf(name);
+    if (!clip) return false;
     const action = mixer.clipAction(clip);
     action.reset();
-    action.setLoop(opts.once ? THREE.LoopOnce : THREE.LoopRepeat, Infinity);
-    action.clampWhenFinished = !!opts.once;
+    action.setLoop(once ? THREE.LoopOnce : THREE.LoopRepeat, Infinity);
+    action.clampWhenFinished = once;
     action.play();
-    if (current && current !== action) action.crossFadeFrom(current, 0.2, false);
+    if (current && current !== action) action.crossFadeFrom(current, 0.15, false);
     current = action;
-    currentName = name;
+    return true;
   }
-  play("idle");
-  return { object, mixer, play, update: (dt) => mixer.update(dt) };
+  mixer.addEventListener("finished", () => {
+    if (dead) return;
+    busy = false;
+    const back = loopName;
+    loopName = null;
+    loop(back || "idle");
+  });
+  function loop(name) {
+    if (busy || dead || name === loopName) return;
+    if (!clipOf(name)) name = "idle";
+    if (name === loopName) return;
+    if (start(name, false)) loopName = name;
+  }
+  function once(name) {
+    if (dead) return false;
+    if (!start(name, true)) return false;
+    busy = true;
+    if (name === "death") dead = true;
+    return true;
+  }
+  loop("idle");
+  return {
+    object, mixer, loop, once,
+    has: (name) => !!clipOf(name),
+    duration: (name) => (clipOf(name) ? clipOf(name).duration : 0),
+    animated: list.length > 0,
+    update: (dt) => mixer.update(dt)
+  };
 }

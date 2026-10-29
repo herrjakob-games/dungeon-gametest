@@ -1,12 +1,14 @@
 // Figuren im Raum: erscheinen beim Event-Start oder im Kampf, laufen, zucken bei Treffern, sinken beim Tod in den
 // Boden (Regeln: docs/GDD.md, „Gegner im Raum“, „Figuren in Events“, „Figuren nach dem Event“).
-// Wo eine Figur stehen darf, plant figurePlan.js; die Formen stehen in monsterFigures.js.
+// Wo eine Figur stehen darf, plant figurePlan.js. Figuren mit Modell (data/models.json) kommen aus models.js und
+// spielen ihre Animationen; alle anderen baut monsterFigures.js aus Grundformen.
 import { N, MID, tw, key, reduceMotion } from "./config.js";
 import { state, walkable } from "./state.js";
 import { scene } from "./scene.js";
 import { mulberry32 } from "./rng.js";
 import { planFigures, combatSpot, figureInfo } from "./figurePlan.js";
 import { buildMonsterFigure } from "./monsterFigures.js";
+import { makeFigureModel } from "./models.js";
 import { findPath } from "./pathfinding.js";
 import { moveTo } from "./movement.js";
 const THREE = window.THREE;
@@ -19,19 +21,21 @@ let fighter = null; // Figur des aktuellen Gegners
 
 const SPEED = 2.6; // Kacheln pro Sekunde
 const tilesOf = (list) => new Set(list.flatMap(f => f.tiles.map(t => key(...t))));
-const alive = () => figs.filter(f => !f.sink);
+const alive = () => figs.filter(f => !f.sink && !f.dying); // sterbende Figuren zählen nicht mehr mit
 
 function make(pl, eventId, popIn) {
   const outer = new THREE.Group();
   const mid = new THREE.Group();
-  mid.add(buildMonsterFigure(pl.figure, pl.variant));
+  const anim = makeFigureModel(pl.figure, pl.variant);
+  mid.add(anim ? anim.object : buildMonsterFigure(pl.figure, pl.variant));
   outer.add(mid);
   outer.position.set(tw(pl.cx), pl.y || 0, tw(pl.cz));
   outer.rotation.y = pl.rot || 0;
   if (popIn && !reduceMotion) outer.scale.setScalar(0.01);
   group.add(outer);
   const f = { id: pl.figure, variant: pl.variant, tiles: pl.tiles, stay: !!pl.stay, blocks: pl.blocks !== false && pl.tiles.length > 0,
-    outer, mid, eventId, phase: Math.random() * 6, path: [], twitch: 0, sink: 0, scurry: false, grow: popIn && !reduceMotion };
+    outer, mid, eventId, phase: Math.random() * 6, path: [], twitch: 0, sink: 0, scurry: false, grow: popIn && !reduceMotion,
+    anim: anim && anim.animated ? anim : null, dying: 0 };
   figs.push(f);
   if (f.blocks) f.tiles.forEach(t => state.blocked.add(key(...t)));
   return f;
@@ -152,18 +156,26 @@ function scurrySpot(f) {
   return { tiles: [corners[0]], cx: corners[0][0], cz: corners[0][1] };
 }
 
-// Treffer: kurzes Zucken
+// Treffer: kurzes Zucken, mit Modell zusätzlich die Treffer-Animation (falls das Paket eine hat)
 export function hitCombatFigure() {
-  if (fighter) fighter.twitch = 0.35;
+  if (!fighter) return;
+  fighter.twitch = 0.35;
+  if (fighter.anim) fighter.anim.once("hit");
 }
 
-// Tod des Gegners: Figur sinkt in den Boden und verschwindet
+// Angriff des Gegners: Angriffs-Animation
+export function attackCombatFigure() {
+  if (fighter && fighter.anim) fighter.anim.once("attack");
+}
+
+// Tod des Gegners: mit Modell erst die Sterbe-Animation, dann sinkt die Figur in den Boden und verschwindet
 export function killCombatFigure() {
   if (!fighter) return;
   unblock(fighter);
   forgetStay(fighter);
   if (fighter.ring) fighter.ring.visible = false;
-  fighter.sink = 0.001;
+  if (fighter.anim && fighter.anim.once("death")) fighter.dying = fighter.anim.duration("death") + 0.4;
+  else fighter.sink = 0.001;
   fighter = null;
 }
 
@@ -193,12 +205,20 @@ export function updateFigures(dt, t) {
     } else if (f.faceTo) {
       f.outer.rotation.y = Math.atan2(tw(f.faceTo[0]) - f.outer.position.x, tw(f.faceTo[1]) - f.outer.position.z);
     }
+    if (f.anim) {
+      if (!f.dying && !f.sink) f.anim.loop(f.path.length ? "walk" : "idle");
+      f.anim.update(dt);
+    }
+    if (f.dying) {
+      f.dying -= dt;
+      if (f.dying <= 0) { f.dying = 0; f.sink = 0.001; }
+    }
     if (f.sink) {
       f.sink += dt;
       f.mid.position.y = -f.sink * 1.2;
       if (f.sink > 1.1) { remove(f); continue; }
-    } else if (!reduceMotion) {
-      f.mid.position.y = Math.sin(t * 3 + f.phase) * 0.025; // im Stand leicht wippen
+    } else if (!reduceMotion && !f.anim) {
+      f.mid.position.y = Math.sin(t * 3 + f.phase) * 0.025; // im Stand leicht wippen (Figuren ohne Animation)
     }
     if (f.twitch > 0) {
       f.twitch -= dt;

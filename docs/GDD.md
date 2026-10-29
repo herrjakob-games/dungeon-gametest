@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.10 · Oct 28, 2026 · @Christian
+Version 2.11 · Oct 29, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.11 | 29.10.2026 | Ratten, Küchenchef, Monsterratte und Kröte aus dem Easy Animated Enemy Pack (Quaternius) statt KI-Generator; Goblin aus Basic_Goblin (standout7) ohne Animationen, Bewegung per Code; Zubehör aus Grundformen an Knochen (`accessories`); Figuren der Monster spielen Laufen, Angriff und Sterben |
 | 2.10 | 28.10.2026 | Meilenstein 6b begonnen: Spielfiguren der drei Völker aus KayKit Adventurers mit Stand- und Laufanimation; Paketfiguren behalten ihre eigene Textur; Zubehör nach der Startwaffe; Licht nach Stilguide gedimmt |
 | 2.9 | 28.10.2026 | Meilenstein 6a umgesetzt: Zuordnung kennt zusätzlich `tint` (Einfärben eines Modells); Wandecken aus KayKit-Endstücken; Fackeln an vorderen Türen auf einem Pfosten |
 | 2.8 | 28.10.2026 | Stilguide „Knetkeller“ und Asset-Spezifikation aus dem Art-Direction-Projekt; Maßstab KayKit 0,5, Wände 2 Kacheln hoch; Zuordnung der Modelle über data/models.json; Wendeltreppen-Modelle 3×3; Zwerg aus KayKit Knight; Goblin aus Goblin Lowpoly Assets, Mimik aus der Truhe des KayKit Dungeon Pack |
@@ -401,15 +402,15 @@ Gilt für alle Modelle. Bei Paketteilen gilt sie für das Ergebnis im Spiel; Abw
 - **Höhen:** Mensch und Elf 1,0 bis 1,2 Kacheln, Zwerg etwa 0,8, Boss nach Größe in der Figurenliste. Hohe Wand 2 Kacheln, Sockel 0,25.
 - **Dreiecke:** höchstens etwa 3.000 pro Figur (KayKit-Figuren nach dem Abspecken bis 4.000), 1.500 pro Requisit.
 - **Material:** stilisiert, Schattierung wie KayKit, keine Normal Maps. Paketteile nutzen die gemeinsame Paletten-Textur des Themas (`assets/textures/keller/dungeon_texture.png`), KI-Modelle eine eigene Textur bis 512 px in den Palettenfarben. Ausnahme: KayKit-Figuren behalten die Textur ihres Pakets, weil ihre Texturkoordinaten nicht auf die Paletten-Textur passen.
-- **Animationen:** Idle, Walk, Attack, Hit, Death, Interact. Heißen sie im Paket anders, ordnet `data/models.json` sie zu.
+- **Animationen:** Idle, Walk, Attack, Hit, Death, Interact. Heißen sie im Paket anders, ordnet `data/models.json` sie zu. Fehlt eine Animation, gilt die Bewegung aus dem Code: Hit als kurzes Zucken, Death als Versinken im Boden, eine Figur ganz ohne Animationen gleitet und wippt wie die Platzhalter.
 - **Dateinamen:** id aus dem GDD; Varianten als `id_variante.glb`, etwa `fass_gruppe.glb`. Fehlt die Variante, gilt die Grunddatei. Eine Variante kann auch nur eine andere Animation sein (Skelett sitzend).
 - **Ordner:** `assets/tiles/` (Boden, Wand, Sockel, Ecken, Türrahmen), `assets/props/`, `assets/figures/`, `assets/textures/`. Rohdateien der Pakete in `assets/source/`.
 - **Bauteile:** `boden`, `wand`, `wand_ecke`, `sockel`, `sockel_ecke`, `tuerrahmen`, `fackel`, `schloss`. Der Türrahmen hinten deckt drei Kacheln (Tür mittig). Neben jeder Tür hängt eine Fackel; an den vorderen Türen steht sie auf einem Pfosten, weil der Sockel zu niedrig ist.
-- **Zuordnung:** `data/models.json` hält pro id Datei, Maßstab (Zahl oder [x, y, z]), Drehung, Versatz, Einfärbung (`tint`, Farbe, mit der die Paletten-Textur multipliziert wird, etwa Holzton für graue Kisten), Animationszuordnung und Lichtpunkte (Position relativ zum Ursprung, Farbe, Stärke, Reichweite).
-- **Build-Skript:** `tools/build-assets.mjs` setzt Teile aus Paketen zu einer GLB zusammen (Tafel, Regal, Türrahmen) und speckt Paketfiguren ab (nur benötigte Animationen und Zubehörteile, komprimiert).
+- **Zuordnung:** `data/models.json` hält pro id Datei, Maßstab (Zahl oder [x, y, z]), Drehung, Versatz, Einfärbung (`tint`, Farbe, mit der die Paletten-Textur multipliziert wird, etwa Holzton für graue Kisten), Animationszuordnung, Lichtpunkte (Position relativ zum Ursprung, Farbe, Stärke, Reichweite) und Zubehör (`accessories`: Teil aus Grundformen wie Kochmütze, Krone oder rote Augen, an einem Knochen der Figur, mit Versatz und Größe in Kacheln). Mehrere ids dürfen dieselbe Datei nutzen (Riesenratte, Küchenchef und Monsterratte).
+- **Build-Skript:** `tools/build-assets.mjs` setzt Teile aus Paketen zu einer GLB zusammen (Tafel, Regal, Türrahmen) und speckt Paketfiguren ab (nur benötigte Animationen und Zubehörteile, komprimiert). FBX-Dateien wandelt es vorher in GLB um; es kann Materialfarben auf die Palette setzen (matt, ohne Metallglanz), eine Waffe an einen Knochen hängen und Figuren auf höchstens 3.000 Dreiecke vereinfachen.
 - **Platzhalter:** Fehlt eine Datei oder lädt sie nicht, baut der Code das Teil wie bisher aus Grundformen.
 - **Zubehör der Spielfiguren:** Die Figur trägt das Teil des Pakets, das der Startwaffe am nächsten kommt: Zwerg Schwert (Langschwert), Elf Messer (Dolch), Mensch Zauberstab (das Paket hat keinen Knüppel). Schilde, Zweithand-Waffen und Bücher fallen weg.
-- **Quellen der Figuren im Keller:** Mensch KayKit `Mage`, Elf `Rogue_Hooded`, Zwerg `Knight`, Händler `Rogue` umgefärbt (KayKit Adventurers); Skelett KayKit Skeletons; Goblin aus Goblin Lowpoly Assets (standout7, itch.io); Mimik aus der Truhe des KayKit Dungeon Pack (itch.io); Ratten und Kröte über den KI-Generator.
+- **Quellen der Figuren im Keller:** Mensch KayKit `Mage`, Elf `Rogue_Hooded`, Zwerg `Knight`, Händler `Rogue` umgefärbt (KayKit Adventurers); Skelett KayKit Skeletons; Goblin aus Goblin Lowpoly Assets (standout7, itch.io); Mimik aus der Truhe des KayKit Dungeon Pack (itch.io); Riesenratte, Küchenchef und Monsterratte aus `Rat`, Kröte aus `Frog` (Easy Animated Enemy Pack, Quaternius). Goblin: `Basic_Goblin` mit `Rusty Shiv`; die kostenlose Fassung hat keine Animationen.
 - **Lizenzen:** Quelle und Lizenz jeder fremden Datei in `assets/CREDITS.md`.
 
 ### Einrichtung pro Raumtyp
@@ -579,3 +580,4 @@ Sieben Schritte, jeder endet mit etwas Spielbarem, das Christian im Browser test
 - [x] Zwerg aus KayKit Knight; Goblin aus Goblin Lowpoly Assets (standout7), Mimik aus der Truhe des KayKit Dungeon Pack
 - [x] Meilenstein 6a: Modelle über `data/models.json` mit Einfärbung `tint`; Fackeln an vorderen Türen auf einem Pfosten
 - [x] Meilenstein 6b, erster Teil: Spielfiguren aus KayKit Adventurers (Zwerg Knight, Elf Rogue_Hooded, Mensch Mage) mit eigener Textur und Zubehör nach der Startwaffe; Licht nach Stilguide gedimmt
+- [x] Ratten, Küchenchef, Monsterratte und Kröte aus dem Easy Animated Enemy Pack (Quaternius); Goblin aus `Basic_Goblin` ohne Animationen, bewegt per Code (Variante A); Ratte und Frosch auf höchstens 3.000 Dreiecke vereinfacht und auf die Palette umgefärbt (Ratte warmes Graubraun, Frosch Moos, rote Augen als Akzent)

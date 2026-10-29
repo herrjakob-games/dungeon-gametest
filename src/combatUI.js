@@ -11,7 +11,8 @@ import { monsterHpBonus } from "./world.js";
 import { updateStats } from "./hud.js";
 import { renderInventory } from "./inventory.js";
 import { rollHtml, maybeRescue, signShort } from "./checkUI.js";
-import { hitCombatFigure } from "./roomFigures.js";
+import { hitCombatFigure, attackCombatFigure } from "./roomFigures.js";
+import { playerAction } from "./player.js";
 
 let h = null; // { onWin(lines), onFlee(), onDeath(monster) }
 
@@ -52,6 +53,7 @@ function menu(text, lines, roll) {
 function attack() {
   const c = state.combat;
   const r = attackRoll(state.player, DATA.items, c, Math.random);
+  playerAction("attack");
   const against = "Rüstung " + c.monster.armor;
   maybeRescue(title(), r, against, () => {
     const lines = [];
@@ -115,6 +117,8 @@ function afterPlayer(lines, roll) {
   }
   const p = state.player;
   const t = monsterTurn(p, DATA.items, c, Math.random);
+  if (!t.frozen) attackCombatFigure();
+  if (t.hit) playerAction("hit");
   updateStats();
   const enemyRoll = t.frozen
     ? c.monster.name + " ist eingefroren und greift nicht an" + (t.left ? " (noch " + t.left + " Runde" + (t.left > 1 ? "n" : "") + ")" : "")
