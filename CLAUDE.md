@@ -28,6 +28,7 @@ ist umgesetzt; was noch kein Modell hat, bleibt Platzhalter. Meilenstein 6b (Fig
 Ratten, Küchenchef, Monsterratte und Kröte aus dem Easy Animated Enemy Pack (Quaternius), der Goblin aus Goblin Lowpoly
 Assets (ohne Animationen), die Skelette aus KayKit Skeletons 1.0. Die Mimik ist noch Grundform. Wie Event-Figuren im Raum
 stehen und sich bewegen, regelt die Inszenierung in `data/staging.json`.
+Meilenstein 6c (Sound) ist gebaut: `data/sounds.json`, Modul `src/sound.js`; die MP3s liefert Christian, bis dahin bleibt es still.
 Die Liste aller Meilensteine steht im GDD.
 
 ## Technik
@@ -40,6 +41,9 @@ Die Liste aller Meilensteine steht im GDD.
   das Spiel selbst braucht keinen Build-Schritt. Zuordnung in `data/models.json`. `tools/palette-texture.py` erzeugt
   die erste Fassung der Paletten-Textur, `tools/skeleton-texture.py` die Skelett-Textur.
   Die Spiellogik besteht aus ES-Modulen in `src/`, Einstieg ist `src/main.js`.
+- Sounds: MP3s in `assets/sounds/` (Ordner laut GDD), Zuordnung in `data/sounds.json`. Nach dem Hinzufügen oder Entfernen von
+  MP3s `npm run sounds` ausführen: Das schreibt `assets/sounds/files.json`, und das Spiel lädt nur Dateien aus dieser Liste.
+  `npm test` listet fehlende MP3s auf (kein Fehler).
 - Lokal starten: `npm start` und dann http://localhost:8000 öffnen (Module brauchen einen Server).
 - Testmodus, lokal und auf GitHub Pages: `?event=<id>` startet das Event im ersten passenden Raum, `?room=<raumtyp-id>` betritt
   den ersten passenden Raum (Bossraum mit `&sieg=1` nach dem Sieg), `?grid=1` zeigt die Kachelnamen x|y, `?fight=<monster-id>` einen Kampf
@@ -62,12 +66,15 @@ Die Liste aller Meilensteine steht im GDD.
 | `data/room-types.json` | Raumtypen: Name, Farben, Einrichtung als Daten (`decor`, `themeDecor`) oder altes Muster (`layout`), Bewertung, Lage- und Anzahlregeln, Event-Chance, Event-Tabelle; beim Bossraum Tabellen pro Thema (`themeEvents`) |
 | `data/events.json` | alle Events (auch die Truhe), Figuren beim Event-Start (`figures`) |
 | `data/staging.json` | Inszenierung der Event-Figuren: Standard, Anker an Requisiten, Modell-Varianten und `stays`, eigene Inszenierung pro Event |
-| `data/monsters.json` | Monster und Bosse mit Lebenspunkten, Rüstung, Angriff, Schaden, Satz zur Todesursache |
+| `data/monsters.json` | Monster und Bosse mit Lebenspunkten, Rüstung, Angriff, Schaden, Satz zur Todesursache, Angriffsklang (`sound`) |
+| `data/sounds.json` | Sounds: pro Sound-id Dateien unter `assets/sounds/`, Lautstärke, `loopStart`/`loopEnd` |
 | `data/characters.json` | Völker: Attribute, Lebenspunkte, LP je Stufe, Fähigkeit, Startausrüstung, Modell |
-| `data/items.json` | Gegenstände mit Rang 1–6, Preis (`preis`), Schaden/Rüstung/Nutzen, Mindestattribut und Volk (`req`); erzeugt aus `data/gegenstaende.csv` |
+| `data/items.json` | Gegenstände mit Rang 1–6, Preis (`preis`), Schaden/Rüstung/Nutzen, Mindestattribut und Volk (`req`), Klang (`sound`); erzeugt aus `data/gegenstaende.csv` |
 | `data/gegenstaende.csv` | Gegenstandsliste als Tabelle (Quelle für `items.json`) |
 | `data/texts.json` | Sätze zur Todesursache bei Events, eigene Sätze pro Event unter `death.events` |
 | `src/data.js` | lädt `data/*.json` und prüft die Daten |
+| `src/sound.js` | Sound über die Web Audio API: Kanäle, Raum-Stimmung mit Überblendung und Zufallsgeräuschen, Schritte, Dämpfen bei Events; fehlende Sounds bleiben still |
+| `src/soundLogic.js` | Sound-Regeln: Angriffsklang, Treffer und Tod, Raum-Sound (`themeSound` vor `sound`), Schritte, Datenprüfung; rein logisch |
 | `src/eventLogic.js` | Event-Regeln: Proben-Kategorien, Auswahl, Effekte, Beute, Bedingungen, Datenprüfung; rein logisch |
 | `src/character.js` | Figur: Volk, Inventar, Anlegen, Stufenaufstieg, Fähigkeit; rein logisch |
 | `src/combat.js` | Rundenkampf: Angriff, Gegnerzug, Verteidigen, Gegenstände, Flucht, Tiefe; rein logisch |

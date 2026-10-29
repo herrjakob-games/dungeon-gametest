@@ -4,6 +4,7 @@
 import { tw } from "./config.js";
 import { buildFigure } from "./figures.js";
 import { makeFigureModel } from "./models.js";
+import { step } from "./sound.js";
 import { scene } from "./scene.js";
 import { state } from "./state.js";
 const THREE = window.THREE;
@@ -24,10 +25,26 @@ export function setFigure(volk) {
 
 // Pro Frame: Laufen oder Stehen. true, wenn das Modell selbst animiert ist (dann kein Wippen der Grundformen)
 export function animateFigure(dt, moving) {
+  stepSound(dt, moving);
   if (!anim) return false;
   anim.loop(moving ? "walk" : "idle");
   anim.update(dt);
   return true;
+}
+
+// Schritte (GDD, Sound): im Takt der Laufanimation, zwei pro Durchlauf; ohne Laufanimation alle 0,35 Sekunden
+const STEP_EVERY = 0.35;
+let lastPhase = null, stepTimer = 0;
+function stepSound(dt, moving) {
+  if (!moving || !state.floorSound) { lastPhase = null; stepTimer = 0; return; }
+  const ph = anim ? anim.phase("walk") : null;
+  if (ph !== null) {
+    if (lastPhase !== null && ((lastPhase < 0.5 && ph >= 0.5) || ph < lastPhase)) step(state.floorSound);
+    lastPhase = ph;
+  } else {
+    stepTimer -= dt;
+    if (stepTimer <= 0) { step(state.floorSound); stepTimer = STEP_EVERY; }
+  }
 }
 
 player.add(figure);

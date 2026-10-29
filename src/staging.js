@@ -89,6 +89,7 @@ export function checkStaging(staging, data, props, err) {
   for (const [id, f] of Object.entries(staging.figures || {})) {
     if (!isFigure(id, data.monsters) && !props.includes(id)) err(w, "unbekannte Figur " + id);
     if (f.variants !== undefined && !Array.isArray(f.variants)) err(w, id + ": variants muss eine Liste sein");
+    if (f.steps !== undefined && typeof f.steps !== "string") err(w, id + ": steps muss ein Name sein (Sound schritt_<steps>)");
   }
   for (const [id, e] of Object.entries(staging.events || {})) {
     if (!data.events[id]) { err(w, "unbekanntes Event " + id); continue; }

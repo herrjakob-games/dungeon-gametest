@@ -6,6 +6,7 @@ import { merchantStock, buyPrice, sellPrice, buy, sell } from "./shop.js";
 import { showDialog, closeDialog } from "./dialog.js";
 import { updateStats } from "./hud.js";
 import { renderInventory, itemStats } from "./inventory.js";
+import { play } from "./sound.js";
 
 const TITLE = "Der Händler";
 
@@ -33,6 +34,7 @@ function buyMenu(msg) {
     const item = DATA.items[e.id];
     return { label: item.name + " · " + buyPrice(item) + " Gold", pick: () => {
       const err = buy(state.player, item, PACK_SIZE);
+      if (!err) play("gold_zahlen");
       if (!err && e.gearIndex !== undefined) s.gear.splice(e.gearIndex, 1); // Angebot gibt es nur einmal
       renderInventory();
       updateStats();
@@ -50,6 +52,7 @@ function sellMenu(msg) {
     const item = DATA.items[id];
     return { label: item.name + " · " + sellPrice(item) + " Gold", pick: () => {
       sell(p, item, i);
+      play("gold");
       renderInventory();
       updateStats();
       sellMenu(item.name + " verkauft.");

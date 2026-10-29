@@ -6,6 +6,7 @@ import { ATTR_NAMES, PACK_SIZE, meetsReq, reqText, equip, unequip, removeFromPac
 import { rollDice } from "./eventLogic.js";
 import { showDialog, closeDialog, isDialogModal } from "./dialog.js";
 import { updateStats } from "./hud.js";
+import { play } from "./sound.js";
 
 const el = document.getElementById("inv");
 
@@ -93,6 +94,7 @@ function openPack(i) {
         p.hp += n;
         msg = n ? item.name + ": +" + n + " LP." : "Du fühlst dich schon kerngesund. Der Trank war trotzdem lecker.";
       }
+      play(item.sound);
       removeFromPack(p, i);
       done(msg);
     } });

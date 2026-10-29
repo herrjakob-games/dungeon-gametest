@@ -13,6 +13,8 @@ import { renderInventory } from "./inventory.js";
 import { rollHtml, maybeRescue, signShort } from "./checkUI.js";
 import { hitCombatFigure, attackCombatFigure, focusCombatFigure } from "./roomFigures.js";
 import { playerAction } from "./player.js";
+import { play, playFirst } from "./sound.js";
+import { attackSound, monsterAttackSound, hitSounds } from "./soundLogic.js";
 
 let h = null; // { onWin(lines), onFlee(), onDeath(monster) }
 
@@ -58,8 +60,10 @@ function attack() {
   const against = "Rüstung " + c.monster.armor;
   maybeRescue(title(), r, against, () => {
     const lines = [];
+    play(attackSound(weaponOf(state.player, DATA.items).sound, r.ok)); // ohne Waffe faust
     if (r.ok) {
       const n = hitMonster(state.player, DATA.items, c, Math.random);
+      playFirst(hitSounds(c.monster.id));
       hitCombatFigure();
       lines.push('Treffer: <span class="good">−' + n + " LP</span> für " + c.monster.name);
     } else {
@@ -84,7 +88,8 @@ function useItem(e) {
   const p = state.player;
   p.pack.splice(e.index, 1);
   const res = useInCombat(p, e.item, state.combat, Math.random);
-  if (res.type === "damage") hitCombatFigure();
+  play(e.item.sound);
+  if (res.type === "damage") { playFirst(hitSounds(state.combat.monster.id)); hitCombatFigure(); }
   renderInventory();
   updateStats();
   const lines = [e.item.name + ": " + (
@@ -118,8 +123,8 @@ function afterPlayer(lines, roll) {
   }
   const p = state.player;
   const t = monsterTurn(p, DATA.items, c, Math.random);
-  if (!t.frozen) attackCombatFigure();
-  if (t.hit) playerAction("hit");
+  if (!t.frozen) { attackCombatFigure(); play(monsterAttackSound(DATA.monsters[c.monster.id], t.hit)); }
+  if (t.hit) { playerAction("hit"); playFirst(hitSounds(p.volk)); }
   updateStats();
   const enemyRoll = t.frozen
     ? c.monster.name + " ist eingefroren und greift nicht an" + (t.left ? " (noch " + t.left + " Runde" + (t.left > 1 ? "n" : "") + ")" : "")

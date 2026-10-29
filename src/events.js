@@ -14,6 +14,8 @@ import { renderInventory } from "./inventory.js";
 import { runCombat } from "./combatUI.js";
 import { rollHtml, maybeRescue, signShort } from "./checkUI.js";
 import { showEventFigures, endEventFigures, combatFigure, killCombatFigure } from "./roomFigures.js";
+import { play, playFirst } from "./sound.js";
+import { deathSounds } from "./soundLogic.js";
 
 const FIGURE_DELAY = 700; // ms zwischen dem Erscheinen der Figuren und dem Event-Fenster
 
@@ -71,7 +73,10 @@ export function runEvent(id, onOutcome) {
   // Figuren nach der Inszenierung (data/staging.json) stehen schon da, bevor das Fenster aufgeht
   const shown = showEventFigures(ev);
   const opts = visibleOptions(ev, state.run, state.player);
-  const open = () => showDialog(ev.title, ev.text, opts.map(o => ({ label: optionLabel(o), pick: () => choose(ev, o, onOutcome) })), { modal: true });
+  const open = () => {
+    if (ev.sound) play(ev.sound); // Event-Sound beim Öffnen des Textfensters (auch bei next und Boss-Events)
+    showDialog(ev.title, ev.text, opts.map(o => ({ label: optionLabel(o), pick: () => choose(ev, o, onOutcome) })), { modal: true });
+  };
   if (shown && !reduceMotion) setTimeout(open, FIGURE_DELAY); else open();
 }
 
@@ -89,6 +94,7 @@ function resolve(ev, outcome, roll, onOutcome) {
 
 // Ergebnis anzeigen und dann weiter: Kampf, Fundstücke, Folge-Event oder Ende
 function show(ev, outcome, res, roll, onOutcome, before) {
+  effectSounds(res.lines);
   refreshLocks();
   updateStats();
   if (onOutcome) onOutcome(outcome, res);
@@ -111,6 +117,14 @@ function show(ev, outcome, res, roll, onOutcome, before) {
   }
 }
 
+// Spielgeräusche zu Effekten: Gold, Goldverlust, Türriegel
+function effectSounds(lines) {
+  const types = new Set(lines.filter(l => l.amount !== 0).map(l => l.type));
+  if (types.has("loot")) play("gold");
+  if (types.has("loseGold")) play("gold_zahlen");
+  if (types.has("lockDoor") || types.has("unlockDoor")) play("tuer_riegel");
+}
+
 function fight(ev, outcome, combat, onOutcome) {
   // Kampf gegen den Boss der Ebene im Bossraum: Die Siegbeute vergibt der Code, nicht das Event
   const rs = state.roomState[state.current];
@@ -118,6 +132,7 @@ function fight(ev, outcome, combat, onOutcome) {
   combatFigure(combat.monster); // der Gegner steht neben der Spielfigur, im Bossraum in der Mitte
   runCombat(combat.monster, {
     onWin: (lines, roll) => {
+      playFirst(deathSounds(combat.monster)); // bei einer Gruppe einmal
       killCombatFigure();
       const res = applyEffects(isBoss ? combat.rest.concat(BOSS_REWARD) : combat.rest, effectCtx(), Math.random);
       let text = outcome.winText || "Der Kampf ist vorbei.";
@@ -178,6 +193,7 @@ function levelUps(done) {
     : [{ label: "Weiter", pick: () => apply(null) }];
   const text = "Du erreichst Stufe " + (p.level + 1) + ". Du bekommst +" + p.levelHp + " Lebenspunkte. " +
     (choices.length ? "Welches Attribut steigt um 1?" : "Alle Attribute sind schon auf +10.");
+  play("stufe");
   showDialog("Stufenaufstieg!", text, opts, { modal: true });
 }
 
@@ -190,6 +206,7 @@ function eventCause(ev) {
 }
 
 function die(cause) {
+  playFirst(deathSounds(state.player.volk));
   state.eventActive = false;
   closeDialog();
   hooks.onDeath(cause);
@@ -242,12 +259,13 @@ export function chestEvent() {
   const rs = state.roomState[state.current];
   if (rs.chestOpened) { runEvent("chest_empty"); return; }
   runEvent("chest", (outcome, res) => {
-    if (res.lines.some(l => l.type === "loot")) { rs.chestOpened = true; state.openLid = true; }
+    if (res.lines.some(l => l.type === "loot")) { rs.chestOpened = true; state.openLid = true; play("truhe"); }
   });
 }
 
 // Hinweis, wenn eine verschlossene Tür benutzt werden soll
 export function lockedDoorNote(d) {
+  play("tuer_verschlossen");
   showDialog("Verschlossen", "Die Tür nach " + DIR[d].name + " rührt sich nicht. Irgendwer hat hier etwas gegen Durchgangsverkehr.",
     [{ label: "Weiter", pick: closeDialog }]);
 }

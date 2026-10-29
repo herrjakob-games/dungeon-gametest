@@ -14,6 +14,8 @@ import { buildFigure } from "./figures.js";
 import * as P from "./props.js";
 import { PROPS, planDecor, decorFor, centerFeature, STAIRS_TILES, STAIRS_SIZE, STAIRS_CENTER } from "./decor.js";
 import { syncRoom } from "./roomFigures.js";
+import { setMood } from "./sound.js";
+import { roomSound } from "./soundLogic.js";
 const THREE = window.THREE;
 
 let roomGroup = null;
@@ -46,6 +48,10 @@ export function buildRoom(id) {
   // Wendeltreppen setzt der Code: nach oben in der Vorkammer, nach unten im Abstieg und im Bossraum nach dem Sieg
   const feature = centerFeature(room.type, !!state.roomState[id].bossDefeated);
   state.stairsFeature = feature; // für Figuren-Anker an der Wendeltreppe (roomFigures.js)
+  // Raum-Sound (GDD, Sound): Stimmung mit Überblendung, Boden für die Schritte; ohne Eintrag still
+  const snd = roomSound(type, state.theme ? state.theme.id : null);
+  setMood(snd ? snd.mood : null);
+  state.floorSound = snd ? snd.floor : null;
   const spec = decorFor(type, state.theme ? state.theme.id : null);
   // Licht nach Stilguide: Palette des Themas, für düstere Räume (Gruft, Brunnen) eine eigene; torchColor der Einrichtung gewinnt
   const pal = roomPalette(room.type);

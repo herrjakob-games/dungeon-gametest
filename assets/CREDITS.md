@@ -53,3 +53,10 @@ Quelle und Lizenz jeder fremden Datei (docs/GDD.md, Asset-Spezifikation).
 
 - Dateien: `vendor/three/GLTFLoader.js` und `vendor/three/SkeletonUtils.js` aus dem npm-Paket three@0.128.0
 - Lizenz: MIT, siehe `vendor/three/LICENSE`
+
+## Sounds
+
+Quelle und Lizenz jeder Sound-Datei unter `sounds/` (docs/GDD.md, Abschnitt Sound). Noch keine Dateien.
+
+| Datei | Quelle | Lizenz |
+| --- | --- | --- |
