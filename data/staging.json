@@ -1,0 +1,114 @@
+{
+  "_info": "VORSCHLAG (Schritt 1, noch nicht eingebaut, wird vom Spiel nicht gelesen). Inszenierung der Event-Figuren (docs/GDD.md, Grafik und Animation): wo Figuren stehen, wohin sie blicken, welche Animation sie zeigen. Spielregeln, Texte und Ergebnisse stehen weiter in data/events.json. Animationsnamen sind die Namen im Spiel; data/models.json ordnet sie pro Modell zu. Fehlt eine Animation, zeigt die Figur idle stehend neben dem Anker.",
+  "defaults": {
+    "place": "free",
+    "face": "player",
+    "animation": "idle",
+    "countUnknown": [1, 1],
+    "_countUnknown": "Kampf-Events ohne Feld figures: genau 1 Figur, weil jeder Kampf 1 gegen 1 ist (siehe Frage B)"
+  },
+  "anchors": {
+    "am_tisch_sitzend": {
+      "props": ["hocker", "stuhl", "tafel"],
+      "seat": true,
+      "offset": [0, 0, 0],
+      "face": "target",
+      "animation": "sit",
+      "_": "Sitzt auf einem freien Hocker oder Stuhl, Blick zum Tisch; an der Tafel ohne Stuhl am Kopfende"
+    },
+    "am_herd": {
+      "props": ["herd"],
+      "offset": [0, 0, 1],
+      "face": "player",
+      "animation": "idle",
+      "_": "Steht auf der Kachel vor dem Herd"
+    },
+    "am_sarkophag": {
+      "props": ["sarkophag"],
+      "offset": [1, 0, 0],
+      "face": "player",
+      "animation": "awaken",
+      "_": "Neben dem Sarkophag; Skelette stehen beim Event-Start mit awaken auf (Skeletons_Awaken_Floor)"
+    },
+    "am_lagerfeuer": {
+      "props": ["lagerfeuer"],
+      "offset": [1, 0, 0],
+      "face": "target",
+      "animation": "sit_floor"
+    },
+    "zwischen_knochen_liegend": {
+      "props": ["knochen"],
+      "offset": [0, 0, 0],
+      "face": "random",
+      "animation": "lie",
+      "blocks": false,
+      "_": "Liegt auf der Knochen-Kachel (Skeletons_Inactive_Floor_Pose), steht bei Kampfbeginn auf"
+    },
+    "auf_kaeseberg": {
+      "props": ["kaeseberg"],
+      "offset": [0, 0.9, 0.1],
+      "face": "player",
+      "animation": "idle",
+      "onProp": true
+    },
+    "auf_dem_hocker_schlafend": {
+      "props": ["hocker"],
+      "seat": true,
+      "offset": [0, 0, 0],
+      "face": "random",
+      "animation": "sit",
+      "_": "Schlafende Wache; ohne Sitzen (Goblin) stehend neben dem Hocker"
+    },
+    "im_mehlsack": {
+      "props": ["sack"],
+      "offset": [0, 0, 0.6],
+      "face": "player",
+      "animation": "idle"
+    },
+    "vor_der_treppe": {
+      "props": ["wendeltreppe_runter"],
+      "offset": [0, 0, 0],
+      "useFoot": true,
+      "face": "player",
+      "animation": "idle",
+      "_": "Türsteher auf der Kachel vor der Wendeltreppe"
+    },
+    "mitten_im_raum": {
+      "props": ["truhe"],
+      "offset": [0, 0, 0],
+      "face": "player",
+      "animation": "idle",
+      "_": "Mimik steht dort, wo sonst die Truhe steht"
+    },
+    "am_brunnen": {
+      "props": ["brunnen"],
+      "offset": [0, 0.55, 0],
+      "onProp": true,
+      "face": "player",
+      "animation": "idle",
+      "_": "Kröte sitzt auf dem Brunnenrand"
+    }
+  },
+  "figures": {
+    "skeleton": { "variants": ["minion", "warrior", "rogue", "mage"], "pick": "seed" },
+    "kroete": { "stays": true },
+    "haendlerfigur": { "stays": true }
+  },
+  "events": {
+    "gruft_sarkophag": { "figures": [{ "figure": "skeleton", "anchor": "am_sarkophag" }] },
+    "gruft_ruecken": { "figures": [{ "figure": "skeleton", "anchor": "am_sarkophag" }] },
+    "wache_goblin": { "figures": [{ "figure": "goblin", "anchor": "auf_dem_hocker_schlafend" }] },
+    "wache_kerze": { "figures": [{ "figure": "goblin", "anchor": "am_tisch_sitzend" }] },
+    "wache_wuerfel": { "figures": [{ "figure": "skeleton", "count": 2, "anchor": "am_tisch_sitzend" }] },
+    "vorrat_ratte": { "figures": [{ "figure": "rat", "anchor": "im_mehlsack" }] },
+    "schatz_mimik": { "figures": [{ "figure": "mimic", "anchor": "mitten_im_raum" }] },
+    "exit_tuersteher": { "figures": [{ "figure": "skeleton", "variant": "warrior", "anchor": "vor_der_treppe" }] },
+    "kueche_chef": { "figures": [{ "figure": "kuechenratte", "anchor": "am_herd" }] },
+    "speisesaal_gastgeber": { "figures": [{ "figure": "skeleton", "variant": "mage", "anchor": "am_tisch_sitzend" }] },
+    "speisesaal_gaeste": { "figures": [{ "figure": "rat", "count": 3, "anchor": "am_tisch_sitzend" }] },
+    "brunnen_kroete": { "figures": [{ "figure": "kroete", "anchor": "am_brunnen" }] },
+    "boss_monsterratte": { "figures": [{ "figure": "monsterratte", "anchor": "auf_kaeseberg" }] },
+    "boss_monsterratte_zurueck": { "figures": [{ "figure": "monsterratte", "anchor": "auf_kaeseberg" }] },
+    "friedhof_kampf": { "figures": [{ "figure": "skeleton", "anchor": "zwischen_knochen_liegend" }] }
+  }
+}
