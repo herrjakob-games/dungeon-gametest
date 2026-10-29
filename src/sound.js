@@ -21,7 +21,7 @@ const BG_LEVEL = 1, DUCK_LEVEL = 0.5, FADE = 1.0;
 // Beim Start: Zuordnung und Dateiliste laden. Fehler stoppen das Spiel nicht.
 export async function loadSounds() {
   try {
-    const res = await fetch("data/sounds.json");
+    const res = await fetch("data/sounds.json", { cache: "no-cache" });
     DEFS = await res.json();
     delete DEFS._info;
   } catch (e) {
@@ -29,7 +29,7 @@ export async function loadSounds() {
     DEFS = {};
   }
   try {
-    const res = await fetch(BASE + "files.json");
+    const res = await fetch(BASE + "files.json", { cache: "no-cache" }); // sonst fehlen nach einem Update neue Dateien
     if (res.ok) present = new Set(await res.json());
   } catch (e) { present = null; }
   const unlock = () => { start(); window.removeEventListener("pointerdown", unlock); window.removeEventListener("keydown", unlock); };

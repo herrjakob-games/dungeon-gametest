@@ -8,7 +8,7 @@ import { checkSounds } from "./soundLogic.js";
 export let DATA = null;
 
 async function load(name) {
-  const res = await fetch(new URL("../data/" + name, import.meta.url));
+  const res = await fetch(new URL("../data/" + name, import.meta.url), { cache: "no-cache" }); // nach einem Update nie veraltet
   if (!res.ok) throw new Error(name + " konnte nicht geladen werden (" + res.status + ")");
   return res.json();
 }
