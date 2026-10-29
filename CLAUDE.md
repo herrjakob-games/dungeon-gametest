@@ -28,7 +28,7 @@ ist umgesetzt; was noch kein Modell hat, bleibt Platzhalter. Meilenstein 6b (Fig
 Ratten, Küchenchef, Monsterratte und Kröte aus dem Easy Animated Enemy Pack (Quaternius), der Goblin aus Goblin Lowpoly
 Assets (ohne Animationen), die Skelette aus KayKit Skeletons 1.0. Die Mimik ist noch Grundform. Wie Event-Figuren im Raum
 stehen und sich bewegen, regelt die Inszenierung in `data/staging.json`.
-Meilenstein 6c (Sound) ist gebaut: `data/sounds.json`, Modul `src/sound.js`; die MP3s liefert Christian, bis dahin bleibt es still.
+Meilenstein 6c (Sound) ist gebaut: `data/sounds.json`, Modul `src/sound.js`; erste Sounds von Freepik sind eingebaut, was fehlt, bleibt still.
 Die Liste aller Meilensteine steht im GDD.
 
 ## Technik
@@ -43,7 +43,8 @@ Die Liste aller Meilensteine steht im GDD.
   Die Spiellogik besteht aus ES-Modulen in `src/`, Einstieg ist `src/main.js`.
 - Sounds: MP3s in `assets/sounds/` (Ordner laut GDD), Zuordnung in `data/sounds.json`. Nach dem Hinzufügen oder Entfernen von
   MP3s `npm run sounds` ausführen: Das schreibt `assets/sounds/files.json`, und das Spiel lädt nur Dateien aus dieser Liste.
-  `npm test` listet fehlende MP3s auf (kein Fehler).
+  `npm test` listet fehlende MP3s auf (kein Fehler). Gelieferte Rohdateien liegen in `assets/source/sounds-freepik/`;
+  `python3 tools/sound-prepare.py` (braucht ffmpeg) schneidet Stille ab und teilt Schritt-Aufnahmen in einzelne Schritte.
 - Lokal starten: `npm start` und dann http://localhost:8000 öffnen (Module brauchen einen Server).
 - Testmodus, lokal und auf GitHub Pages: `?event=<id>` startet das Event im ersten passenden Raum, `?room=<raumtyp-id>` betritt
   den ersten passenden Raum (Bossraum mit `&sieg=1` nach dem Sieg), `?grid=1` zeigt die Kachelnamen x|y, `?fight=<monster-id>` einen Kampf

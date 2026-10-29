@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.15 · Oct 29, 2026 · @Christian
+Version 2.16 · Oct 29, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.16 | 29.10.2026 | Neue Raum-Stimmung `kitchen` (Küche) und neuer Boden `stone` (trockener Stein) für alle Keller-Räume außer Gruft, Brunnenraum und Säulenhalle (`hall`); Event-Sound `klopfen_stein` beim Sarkophag; erste Sounds von Freepik |
 | 2.15 | 29.10.2026 | Sound-System (`data/sounds.json`, Meilenstein 6c): Angriffsklänge für Waffen (holz, schwert, axt, hammer, eigene für magische Waffen) und Monster (`sound` in `data/monsters.json`), Treffer und Fehlschlag getrennt; Klang pro Verbrauchsgegenstand; Raum-Stimmung (`mood`) und Boden (`floor`) mit Loop, Zufallsgeräuschen und Schritten; optionaler Event-Sound; Spielgeräusche für Türen, Truhe, Gold, Stufe, Treppe, Treffer und Tod; fehlende Sounds bleiben stumm; Lautstärke und Menü in Meilenstein 7 |
 | 2.14 | 29.10.2026 | Inszenierung: Gastgeber und schlafender Goblin bleiben nach dem Event (`stay` pro Event in `data/staging.json`); Goblin liegt flach neben dem Tisch (Anker mit `flat`, `front`); Würfelspiel-Skelette sind Warrior, Skelett mit Rücken ist Minion |
 | 2.13 | 29.10.2026 | Inszenierung der Figuren (`data/staging.json`): Anker an Requisiten, Ablauf bei Kampfbeginn, Blickrichtungen, Gruppen laufen gemeinsam an und sterben gemeinsam, Besiegte bleiben liegen, friedliche Figuren gehen zur Tür (ersetzt 2.12, außer `stay`); unbekannte Anzahl 1 bis 3; Skelette aus KayKit Skeletons 1.0 mit Paletten-Textur |
@@ -566,19 +567,22 @@ Verbrauchsgegenstände nennen im Feld `sound` eine Sound-id, die beim Benutzen s
 
 Jeder Raumtyp hat in `data/room-types.json` das Feld `sound` mit `mood` und `floor`. Für einzelne Themen ersetzt `themeSound` es, etwa `"themeSound": { "katakomben": { "mood": "spooky", "floor": "gravel" } }`. Raumtypen ohne beides bleiben still, auch ohne Schritte.
 
-- **`mood`:** `cozy`, `wet`, `spooky` oder `empty`. Gespielt werden der Loop `raum_<mood>_loop` und Zufallsgeräusche `raum_<mood>_zufall` im Abstand von 8 bis 20 Sekunden, mit leicht wechselnder Lautstärke und Richtung.
-- **`floor`:** `wood`, `hall`, `mud` oder `gravel`, bestimmt die Schritte.
+- **`mood`:** `cozy`, `wet`, `spooky`, `empty` oder `kitchen`. Gespielt werden der Loop `raum_<mood>_loop` und Zufallsgeräusche `raum_<mood>_zufall` im Abstand von 8 bis 20 Sekunden, mit leicht wechselnder Lautstärke und Richtung.
+- **`floor`:** `wood`, `hall`, `mud`, `gravel` oder `stone` (trockener Stein), bestimmt die Schritte.
 - **Raumwechsel:** Der Hintergrund blendet mit dem Bild über, etwa 1 Sekunde, auch bei der Schnellreise.
 - **Events und Kämpfe:** Der Hintergrund läuft mit halber Lautstärke weiter.
 
 | Raumtyp (Keller) | mood | floor |
 | --- | --- | --- |
-| Vorkammer, Rastplatz, Händler, Küche, Speisesaal | cozy | wood |
-| Vorratskammer | cozy | gravel |
-| Brunnenraum | wet | mud |
-| Gruft, Bossraum | spooky | hall |
-| Schatzkammer | spooky | gravel |
-| Säulenhalle, Wachstube, Abstieg | empty | hall |
+| Vorkammer, Rastplatz, Händler, Speisesaal, Vorratskammer | cozy | stone |
+| Küche | kitchen | stone |
+| Brunnenraum | wet | hall |
+| Gruft | spooky | hall |
+| Bossraum, Schatzkammer | spooky | stone |
+| Säulenhalle | empty | hall |
+| Wachstube, Abstieg | empty | stone |
+
+Im Keller (Ebene 1 bis 3) ist der Boden einheitlich `stone`, nur Gruft, Brunnenraum und Säulenhalle klingen mit Hall (`hall`).
 
 ### Schritte
 
@@ -714,3 +718,4 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Optionaler Event-Sound beim Öffnen des Textfensters
 - [x] Spielgeräusche für Türen, Truhe, Gold, Stufenaufstieg, Treppe, Treffer und Tod
 - [x] Sound als Meilenstein 6c; Lautstärkeregler und Menü bleiben in Meilenstein 7
+- [x] Neue Raum-Stimmung `kitchen` für die Küche; neuer Boden `stone` (trockener Stein) einheitlich im Keller, nur Gruft, Brunnenraum und Säulenhalle mit `hall`; Event-Sound `klopfen_stein` beim Sarkophag

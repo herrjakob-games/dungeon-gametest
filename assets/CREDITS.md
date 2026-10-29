@@ -56,7 +56,40 @@ Quelle und Lizenz jeder fremden Datei (docs/GDD.md, Asset-Spezifikation).
 
 ## Sounds
 
-Quelle und Lizenz jeder Sound-Datei unter `sounds/` (docs/GDD.md, Abschnitt Sound). Noch keine Dateien.
+Quelle und Lizenz jeder Sound-Datei unter `sounds/` (docs/GDD.md, Abschnitt Sound).
+Alle bisherigen Sounds hat Christian mit dem KI-Sound-Generator von Freepik („Pikaso AI“) mit einem bezahlten Konto erzeugt.
+Rohdateien in `source/sounds-freepik/`; geschnitten (Stille, einzelne Schritte) mit `tools/sound-prepare.py`.
 
 | Datei | Quelle | Lizenz |
 | --- | --- | --- |
+| `sounds/angriff/axt_fehl_1.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
+| `sounds/angriff/axt_treffer_1.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
+| `sounds/angriff/faust_fehl_1.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
+| `sounds/angriff/hammer_fehl_1.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
+| `sounds/angriff/hammer_treffer_1.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
+| `sounds/angriff/schwert_fehl_1.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
+| `sounds/angriff/schwert_fehl_2.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
+| `sounds/angriff/schwert_treffer_1.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
+| `sounds/angriff/schwert_treffer_2.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
+| `sounds/events/klopfen_stein.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
+| `sounds/raum/cozy_loop.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
+| `sounds/raum/cozy_zufall_1.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
+| `sounds/raum/cozy_zufall_2.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
+| `sounds/raum/kitchen_loop.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
+| `sounds/raum/spooky_loop.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
+| `sounds/raum/wet_loop.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
+| `sounds/schritte/gravel_1–3.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
+| `sounds/schritte/hall_1–3.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
+| `sounds/schritte/mud_1–3.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
+| `sounds/schritte/stone_1–3.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
+| `sounds/schritte/wood_1–3.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
+| `sounds/spiel/gold.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
+| `sounds/spiel/gold_zahlen.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
+| `sounds/spiel/tod.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
+| `sounds/spiel/truhe.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
+| `sounds/spiel/tuer.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
+| `sounds/spiel/tuer_riegel.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
+| `sounds/zauber/eis.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
+| `sounds/zauber/feuerball.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
+| `sounds/zauber/feuerpfeil.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
+| `sounds/zauber/schild.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
