@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.19 · Oct 29, 2026 · @Christian
+Version 2.20 · Oct 29, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.20 | 29.10.2026 | Händler auf den Kacheln 2\|2 bis 2\|8 oder 2\|2 bis 8\|2, schaut zur Raummitte; hinter ihm Wandregale mit Flaschen, vor ihm `table_medium_decorated_A` mit Kerze statt Tisch mit Gold |
 | 2.19 | 29.10.2026 | Neue Requisiten aus dem KayKit Dungeon Kit für Händler, Wachstube, Vorratskammer, Küche, Schatzkammer, Speisesaal, Säulenhalle und Gruft; Händler mit dem Rücken zur Nord- oder Westwand, davor sein Tisch mit Kerze; Händlerraum heller (`brightness` in `roomPalettes`) |
 | 2.18 | 29.10.2026 | Händler aus KayKit Rogue (ohne Kapuze, ohne Waffen) mit dunkelblauem statt grünem Outfit |
 | 2.17 | 29.10.2026 | Requisit Knochen aus Schädel, Kiefer und Armen der KayKit-Skelette (gleiche Textur wie die Skelett-Gegner) statt Grundformen |
@@ -494,7 +495,7 @@ Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kan
 | goldhaufen | Goldhaufen | Deko | nein | nein | nein | Schatzkammer |
 | truhe | Truhe | 1 | ja | ja | nein | Schatzkammer |
 | lagerfeuer | Lagerfeuer | 1 | ja | ja | ja | Rastplatz |
-| haendlerfigur | Händler mit Verkaufstisch und Kerze davor; steht mit dem Rücken zur Nord- oder Westwand und schaut in den Raum | 1×2, Wand | ja | ja | ja | Händler |
+| haendlerfigur | Händler mit Wandregal hinter sich und Verkaufstisch mit Kerze vor sich; steht auf 2\|2 bis 2\|8 oder 2\|2 bis 8\|2 und schaut zur Raummitte | 1×3, Wand | ja | ja | ja | Händler |
 | pult | Pult mit Gästebuch | 1 | ja | nein | nein | Vorkammer |
 | wegweiser | Wegweiser | 1 | ja | nein | nein | Vorkammer |
 | zettelbrett | Zettelbrett | Wand | nein | nein | nein | Vorkammer |
@@ -745,3 +746,4 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Händler aus KayKit Rogue ohne Kapuze, Outfit dunkelblau statt grün
 - [x] Händler mit dem Rücken zur Nord- oder Westwand, vor ihm `table_small_decorated_B` mit brennender Kerze; Händlerraum heller; in den Ecken `box_stacked` und `barrel_small_stack`; Flaschen auf und neben Kisten
 - [x] Neue Requisiten aus dem KayKit Dungeon Kit: Fahnen, Schlüsselbund und Strohlager (Wachstube), Zapffässer, Kistenberg und Kistenstapel (Vorratskammer, Küche), alle Wandregale in der Vorratskammer, Münzen (Schatzkammer), gedeckte Tische und Kerzen (Speisesaal), verzierte Säulen und dreifache Fahnen (Säulenhalle), Kerzenstummel und großes Geröll (Gruft)
+- [x] Händler auf den Kacheln 2|2 bis 2|8 oder 2|2 bis 8|2, Blick zur Raummitte, hinter ihm Wandregale mit Flaschen, vor ihm `table_medium_decorated_A` mit Kerze; kein Gold als Dekoration beim Händler

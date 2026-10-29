@@ -290,7 +290,7 @@
       "dir": "props",
       "pieces": [
         {
-          "file": "table_small_decorated_B.gltf.glb",
+          "file": "table_medium_decorated_A.gltf.glb",
           "position": [
             0,
             0,
@@ -300,9 +300,9 @@
         {
           "file": "candle_lit.gltf.glb",
           "position": [
-            0.28,
+            0.7,
             1.0,
-            0.28
+            0.7
           ],
           "scale": [
             0.8,
@@ -645,6 +645,105 @@
     "wandregal": {
       "dir": "props",
       "file": "wall_shelves.gltf.glb"
+    },
+    "haendlerregal": {
+      "dir": "props",
+      "pieces": [
+        {
+          "file": "shelf_large.gltf.glb",
+          "position": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "file": "bottle_A_labeled_brown.gltf.glb",
+          "position": [
+            -0.6,
+            0.1,
+            0.25
+          ],
+          "scale": [
+            0.5,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "file": "bottle_B_brown.gltf.glb",
+          "position": [
+            -0.2,
+            0.1,
+            0.25
+          ],
+          "scale": [
+            0.5,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "file": "bottle_C_green.gltf.glb",
+          "position": [
+            0.35,
+            0.1,
+            0.25
+          ],
+          "scale": [
+            0.5,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "file": "shelf_large.gltf.glb",
+          "position": [
+            0,
+            1.1,
+            0
+          ]
+        },
+        {
+          "file": "bottle_A_green.gltf.glb",
+          "position": [
+            -0.65,
+            1.2,
+            0.25
+          ],
+          "scale": [
+            0.5,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "file": "bottle_A_labeled_green.gltf.glb",
+          "position": [
+            -0.3,
+            1.2,
+            0.25
+          ],
+          "scale": [
+            0.5,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "file": "bottle_C_brown.gltf.glb",
+          "position": [
+            0.55,
+            1.2,
+            0.25
+          ],
+          "scale": [
+            0.5,
+            0.5,
+            0.5
+          ]
+        }
+      ]
     }
   },
   "figureSource": "assets/source/kaykit-adventurers/",

@@ -34,7 +34,8 @@ export const PROPS = {
   goldhaufen: { w: 1, d: 1, blocks: false },
   truhe: { w: 1, d: 1, blocks: true, click: true },
   lagerfeuer: { w: 1, d: 1, blocks: true, click: true, light: true },
-  haendlerfigur: { w: 1, d: 2, blocks: true, click: true, wall: true, light: true }, // Händler an der Wand, davor sein Tisch mit Kerze
+  // Händler: Regal an der Wand, davor der Händler, vor ihm sein Tisch mit Kerze; inset: nicht in der ersten oder letzten Reihe
+  haendlerfigur: { w: 1, d: 3, blocks: true, click: true, wall: true, light: true, inset: true },
   pult: { w: 1, d: 1, blocks: true },
   wegweiser: { w: 1, d: 1, blocks: true },
   zettelbrett: { w: 1, d: 1, blocks: false, wall: true, floor: false },
@@ -204,8 +205,10 @@ export function planDecor(spec, opts) {
     }
     if (place === "wall-back") {
       // Nordwand: Vorderseite zeigt nach Süden; Westwand: Vorderseite zeigt nach Osten
-      for (let x0 = 0; x0 < N; x0++) out.push({ tiles: shape(p, v, x0, 0, "h", 1, 1), rot: 0, wall: "N" });
-      for (let z0 = 0; z0 < N; z0++) out.push({ tiles: shape(p, v, 0, z0, "v", 1, 1), rot: Math.PI / 2, wall: "W" });
+      // inset: nicht direkt an der Querwand (etwa der Händler: Kacheln 2|2 bis 2|8 oder 2|2 bis 8|2)
+      const lo = PROPS[p].inset ? 1 : 0, hi = PROPS[p].inset ? N - 1 : N;
+      for (let x0 = lo; x0 < hi; x0++) out.push({ tiles: shape(p, v, x0, 0, "h", 1, 1), rot: 0, wall: "N" });
+      for (let z0 = lo; z0 < hi; z0++) out.push({ tiles: shape(p, v, 0, z0, "v", 1, 1), rot: Math.PI / 2, wall: "W" });
       return shuffle(out);
     }
     if (place === "corner") {

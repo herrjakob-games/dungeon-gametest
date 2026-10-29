@@ -318,7 +318,15 @@ function placeDecor(spec, room, feature, id) {
   for (const pl of plan.placements) {
     if (pl.prop === "truhe") { makeChest(pl.tiles[0], id, pl.rot); continue; }
     if (pl.prop === "lagerfeuer") { makeCampfire(pl.tiles[0], id); continue; }
-    if (pl.prop === "haendlerfigur") { makeMerchant(pl.tiles[0], pl.tiles[1] || null, pl.rot); continue; }
+    if (pl.prop === "haendlerfigur") {
+      // Kacheln von der Wand aus: Regal, Händler, Tisch
+      const [shelf, pos, front] = pl.tiles;
+      block(shelf[0], shelf[1]);
+      const reg = makeModel("haendlerregal");
+      if (reg) at(reg, shelf[0], shelf[1], pl.rot);
+      makeMerchant(pos, front, pl.rot);
+      continue;
+    }
     if (PROPS[pl.prop].blocks) pl.tiles.forEach(t => block(t[0], t[1]));
     at(propMesh(pl.prop, pl), pl.cx, pl.cz, pl.rot);
   }
@@ -490,8 +498,8 @@ export function douseCampfire() {
   if (fire) { fire.userData.flame.visible = false; fire.userData.light.intensity = 0; }
 }
 
-// Händler (GDD: Händler aus KayKit Rogue): steht mit dem Rücken zur Nord- oder Westwand und schaut in den Raum,
-// vor ihm sein Tisch mit brennender Kerze. pos: Kachel des Händlers, front: Kachel des Tisches (oder null), rot: Blickrichtung
+// Händler (GDD: Händler aus KayKit Rogue): steht mit dem Rücken zur Nord- oder Westwand und schaut zur Raummitte,
+// vor ihm sein Tisch mit brennender Kerze. pos: Kachel des Händlers, front: Kachel des Tisches (oder null), rot: Ausrichtung der Wand
 function makeMerchant(pos, front, rot) {
   if (!free(pos[0], pos[1])) return;
   block(pos[0], pos[1]);
@@ -508,7 +516,7 @@ function makeMerchant(pos, front, rot) {
     g.add(hat);
   }
   g.position.set(tw(pos[0]), 0, tw(pos[1]));
-  g.rotation.y = rot !== undefined ? rot : Math.atan2(tw(MID) - tw(pos[0]), tw(MID) - tw(pos[1]));
+  g.rotation.y = Math.atan2(tw(MID) - tw(pos[0]), tw(MID) - tw(pos[1])); // schaut zur Raummitte
   // Angesprochen wird er über den Tisch: die Spielfigur läuft auf eine Kachel neben dem Tisch
   g.userData = { kind: "merchant", tile: front || pos, hoverMats };
   add(g);
@@ -518,6 +526,6 @@ function makeMerchant(pos, front, rot) {
     const lights = [];
     const table = makeModel("verkaufstisch", null, { lights }) || box(0.5, 0.5, 0.5, mat(0x7a4a26), 0, 0.25, 0);
     lights.forEach(l => { l.castShadow = false; });
-    at(table, front[0], front[1], g.rotation.y);
+    at(table, front[0], front[1], rot !== undefined ? rot : g.rotation.y); // Tisch gerade vor der Wand
   }
 }
