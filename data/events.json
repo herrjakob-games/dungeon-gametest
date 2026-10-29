@@ -670,7 +670,7 @@
     "id": "schatz_mimik",
     "type": "combat",
     "title": "Die lächelnde Truhe",
-    "text": "Mitten im Raum steht eine Truhe. Sie hat Zähne. Und sie lächelt.",
+    "text": "Du greifst nach dem Deckel. Der Deckel greift zurück. Die Truhe hat Zähne. Und sie lächelt.",
     "options": [
       {
         "label": "Angreifen",
@@ -705,7 +705,7 @@
           ]
         },
         "failure": {
-          "text": "Dein Lächeln ist schief. Die Truhe beißt.",
+          "text": "Dein Lächeln ist schief. Die Truhe beißt und hüpft beleidigt davon.",
           "effects": [
             {
               "damage": "W6"
@@ -715,7 +715,7 @@
       },
       {
         "label": "Langsam rückwärts gehen",
-        "text": "Die Truhe winkt dir mit dem Deckel nach."
+        "text": "Du gehst langsam rückwärts. Die Truhe winkt dir mit dem Deckel nach und hüpft zur Tür hinaus."
       }
     ]
   },

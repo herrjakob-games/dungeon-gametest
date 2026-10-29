@@ -12,7 +12,7 @@ import { makeModel, hasModel, setModelTheme, findPart, makeFigureModel } from ".
 import { state } from "./state.js";
 import { buildFigure } from "./figures.js";
 import * as P from "./props.js";
-import { PROPS, planDecor, decorFor, centerFeature, STAIRS_TILES, STAIRS_SIZE, STAIRS_CENTER, torchSlots, pillarTorches } from "./decor.js";
+import { PROPS, planDecor, decorFor, centerFeature, STAIRS_TILES, STAIRS_SIZE, STAIRS_CENTER, torchSlots, pillarTorches, mimicChests } from "./decor.js";
 import { syncRoom } from "./roomFigures.js";
 import { setMood } from "./sound.js";
 import { roomSound } from "./soundLogic.js";
@@ -323,8 +323,11 @@ function propMesh(id, pl) {
 function placeDecor(spec, room, feature, id, torch) {
   const plan = planDecor(spec, { seed: room.seed, doors: room.doors, feature });
   state.decorPlan = plan; // für Figuren mit near:<prop>
+  // Truhen: eine echt, die übrigen Mimiken, wenn die Einrichtung es will (Schatzkammer)
+  const mimics = mimicChests(spec, plan.placements.filter(p => p.prop === "truhe").length, room.seed);
+  let chestNo = 0;
   for (const pl of plan.placements) {
-    if (pl.prop === "truhe") { makeChest(pl.tiles[0], id, pl.rot); continue; }
+    if (pl.prop === "truhe") { makeChest(pl.tiles[0], id, pl.rot, mimics[chestNo++]); continue; }
     if (pl.prop === "lagerfeuer") { makeCampfire(pl.tiles[0], id); continue; }
     if (pl.prop === "haendlerfigur") {
       // Kacheln von der Wand aus: Regal, Händler, Tisch
@@ -439,8 +442,13 @@ function stool(x, z) {
 }
 
 // ---------- Anklickbare Requisiten ----------
-function makeChest(pos, id, rot) {
+// Zustand jeder Truhe im Raum (roomState.chests, Schlüssel ist die Kachel): "open" geöffnet, "gone" Mimik ist erwacht
+export const chestState = (rs, tile) => ((rs && rs.chests) || {})[key(...tile)];
+
+function makeChest(pos, id, rot, mimic) {
   if (!free(pos[0], pos[1])) return;
+  const st = chestState(state.roomState[id], pos);
+  if (st === "gone") return; // die Mimik ist erwacht: tot liegt sie als Figur da oder ist davongehüpft
   block(pos[0], pos[1]);
   const model = makeModel("truhe", null, { unique: true });
   if (model) {
@@ -450,9 +458,8 @@ function makeChest(pos, id, rot) {
     const lid = findPart(model, "chest_lid");
     model.position.set(tw(pos[0]), 0, tw(pos[1]));
     model.rotation.y = (rot || 0) + (rnd() - 0.5) * 0.4;
-    model.userData = { kind: "chest", tile: pos, hoverMats };
-    if (lid && state.roomState[id].chestOpened) lid.rotation.x = -1.9;
-    state.lidPivot = lid;
+    model.userData = { kind: "chest", tile: pos, hoverMats, lid, mimic: !!mimic };
+    if (lid && st === "open") lid.rotation.x = -1.9;
     add(model);
     state.interactables.push(model);
     return;
@@ -469,11 +476,17 @@ function makeChest(pos, id, rot) {
   chest.add(box(0.12, 0.14, 0.04, mat(0xd8b56a), 0, 0.42, 0.29));
   chest.position.set(tw(pos[0]), 0, tw(pos[1]));
   chest.rotation.y = (rot || 0) + (rnd() - 0.5) * 0.4;
-  chest.userData = { kind: "chest", tile: pos, hoverMats: [bodyMat, lidMat] };
-  if (state.roomState[id].chestOpened) lidPivot.rotation.x = -1.9;
-  state.lidPivot = lidPivot;
+  chest.userData = { kind: "chest", tile: pos, hoverMats: [bodyMat, lidMat], lid: lidPivot, mimic: !!mimic };
+  if (st === "open") lidPivot.rotation.x = -1.9;
   add(chest);
   state.interactables.push(chest);
+}
+
+// Mimik erwacht: die Truhe verschwindet aus dem Raum, an ihrer Stelle steht die Figur (roomFigures.js)
+export function removeChest(obj) {
+  if (obj.parent) obj.parent.remove(obj);
+  state.interactables = state.interactables.filter(o => o !== obj);
+  state.blocked.delete(key(...obj.userData.tile));
 }
 
 // Rastplatz: Lagerfeuer, einmal benutzbar

@@ -245,12 +245,9 @@
     "rating": "hostile",
     "eventChance": 0.8,
     "max": 1,
+    "themeLevel": 2,
     "deadEnd": "only",
     "events": [
-      {
-        "id": "schatz_mimik",
-        "weight": 3
-      },
       {
         "id": "schatz_tuer",
         "weight": 3,
@@ -264,6 +261,7 @@
     ],
     "decor": {
       "torches": "saeulen",
+      "mimics": true,
       "layouts": [
         {
           "id": "A",
@@ -294,13 +292,36 @@
               "required": true
             },
             {
+              "prop": "truhe",
+              "place": "wall-back",
+              "count": [
+                1,
+                2
+              ],
+              "required": true
+            },
+            {
               "prop": "goldhaufen",
               "place": "around:truhe"
             },
             {
+              "prop": "muenzen",
+              "place": "around:truhe"
+            },
+            {
+              "prop": "muenzen",
+              "place": "around:truhe",
+              "variant": "klein"
+            },
+            {
+              "prop": "muenzen",
+              "place": "around:truhe",
+              "variant": "einzeln"
+            },
+            {
               "prop": "goldhaufen",
               "place": "free",
-              "count": 3
+              "count": 2
             },
             {
               "prop": "kerzen",
@@ -355,7 +376,11 @@
             {
               "prop": "truhe",
               "place": "wall-back",
-              "required": true
+              "required": true,
+              "count": [
+                2,
+                3
+              ]
             },
             {
               "prop": "goldhaufen",

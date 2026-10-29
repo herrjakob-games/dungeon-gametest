@@ -3,6 +3,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import {
+  mimicChests,
   PROPS, planDecor, decorFor, centerFeature, doorTiles, checkDecor, STAIRS_TILES, STAIRS_FOOT, torchSlots
 } from "../src/decor.js";
 import { N, DIR, DIRKEYS, key, inBounds, tileName } from "../src/config.js";
@@ -113,9 +114,9 @@ test("Einrichtung: alle Varianten mit allen 16 Türkombinationen; Liste der Korr
             assert.deepEqual(plan.missingRequired, [], where + ": Pflichtstück fehlt");
             l.props.filter(p => p.required).forEach(p => {
               const n = plan.placements.filter(x => x.prop === p.prop && x.variant === (p.variant || null)).length;
-              assert.ok(n >= (p.count || 1), where + ": " + p.prop + " nur " + n + "×");
+              assert.ok(n >= [].concat(p.count || 1)[0], where + ": " + p.prop + " nur " + n + "×");
             });
-            l.props.forEach(p => { row(name, l, p).wanted += p.prop === "saeule" && p.variant === "reihen" ? (p.count || 8) : (p.count || 1); });
+            l.props.forEach(p => { row(name, l, p).wanted += p.prop === "saeule" && p.variant === "reihen" ? (p.count || 8) : [].concat(p.count || 1)[0]; });
             plan.corrected.forEach(c => {
               const st = row(name, l, c); st.corrected++;
               st.how[c.from + " → " + c.to] = (st.how[c.from + " → " + c.to] || 0) + 1;
@@ -273,4 +274,21 @@ test("Münzstapel: derselbe Typ steht nie im Umkreis von zwei Kacheln", () => {
     }
   });
   assert.ok(Object.keys(counts).length >= 6, "Münzen fehlen: " + JSON.stringify(counts));
+});
+
+test("Schatzkammer: 2 bis 3 Truhen, genau eine echt, die übrigen Mimiken", () => {
+  const spec = decorFor(ROOM_TYPES.find(t => t.id === "schatz"), "keller");
+  const seen = new Set();
+  spec.layouts.forEach((layout, li) => {
+    for (let doors = 0; doors < 16; doors++) for (let s = 1; s <= 10; s++) {
+      const n = planDecor(spec, { seed: s * 7919, doors, layoutIndex: li }).placements.filter(p => p.prop === "truhe").length;
+      assert.ok(n >= 2 && n <= 3, "Variante " + layout.id + ", Türen " + doors + ": " + n + " Truhen");
+      seen.add(n);
+      const m = mimicChests(spec, n, s * 7919);
+      assert.equal(m.filter(x => !x).length, 1, "genau eine echte Truhe");
+    }
+  });
+  assert.deepEqual([...seen].sort(), [2, 3]);
+  // Andere Räume: eine Truhe ist nie eine Mimik
+  assert.deepEqual(mimicChests({ layouts: [] }, 1, 5), [false]);
 });

@@ -8,12 +8,12 @@ import { TYPES } from "./roomTypes.js";
 import { CATEGORY_NAMES, CATEGORIES, pickEvent, bossEventTable, doCheck, applyEffects, releaseIfTrapped, visibleOptions } from "./eventLogic.js";
 import { ATTR_NAMES, addItem, levelUp, raisableAttrs, pendingLevelUps } from "./character.js";
 import { showDialog, closeDialog } from "./dialog.js";
-import { refreshLocks } from "./roomBuilder.js";
+import { refreshLocks, chestState, removeChest } from "./roomBuilder.js";
 import { updateStats } from "./hud.js";
 import { renderInventory } from "./inventory.js";
 import { runCombat } from "./combatUI.js";
 import { rollHtml, maybeRescue, signShort } from "./checkUI.js";
-import { showEventFigures, endEventFigures, combatFigure, killCombatFigure } from "./roomFigures.js";
+import { showEventFigures, endEventFigures, combatFigure, killCombatFigure, spawnFigure } from "./roomFigures.js";
 import { play, playFirst } from "./sound.js";
 import { deathSounds } from "./soundLogic.js";
 
@@ -254,14 +254,25 @@ export function restEvent() {
     [{ label: "Weiter", pick: closeDialog }], { fx: [n ? '<span class="good">+' + n + " LP</span> · Lebenspunkte voll" : "Lebenspunkte waren schon voll"] });
 }
 
-// Die Truhe im Raum: ein Event aus den Daten. Sie gilt als geöffnet, sobald sie Beute gegeben hat.
-export function chestEvent() {
+// Eine Truhe im Raum (obj): ein Event aus den Daten. Sie gilt als geöffnet, sobald sie Beute gegeben hat.
+// Ist sie eine Mimik (Schatzkammer), erwacht sie: an ihrer Stelle steht die Figur, und das Mimik-Event beginnt.
+export function chestEvent(obj) {
   const rs = state.roomState[state.current];
-  if (rs.chestOpened) { runEvent("chest_empty"); return; }
+  const tile = obj.userData.tile, k = tile[0] + "," + tile[1];
+  rs.chests = rs.chests || {};
+  if (obj.userData.mimic) {
+    rs.chests[k] = "gone";
+    removeChest(obj);
+    spawnFigure("mimic", tile, MIMIC_EVENT);
+    runEvent(MIMIC_EVENT);
+    return;
+  }
+  if (chestState(rs, tile) === "open") { runEvent("chest_empty"); return; }
   runEvent("chest", (outcome, res) => {
-    if (res.lines.some(l => l.type === "loot")) { rs.chestOpened = true; state.openLid = true; play("truhe"); }
+    if (res.lines.some(l => l.type === "loot")) { rs.chests[k] = "open"; state.lidPivot = obj.userData.lid; state.openLid = true; play("truhe"); }
   });
 }
+const MIMIC_EVENT = "schatz_mimik";
 
 // Hinweis, wenn eine verschlossene Tür benutzt werden soll
 export function lockedDoorNote(d) {

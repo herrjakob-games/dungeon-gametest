@@ -85,6 +85,17 @@ export const pillarTorches = (spec) => !!spec && spec.torches === "saeulen";
 export const PLACES = ["center", "wall-back", "corner", "free"];
 // Wandschmuck links und rechts jeder hinteren Tür (Nord, West), eine Kachel Abstand zum Türrahmen, überall dieselbe Variante
 export const DOOR_SIDES = "door-sides";
+// Truhen mit "mimics": true in der Einrichtung: eine Truhe ist echt (nach Raum-Seed), alle anderen sind Mimiken.
+// Ergebnis: Liste mit true für jede Mimik, in der Reihenfolge der Truhen im Plan
+export function mimicChests(spec, n, seed) {
+  if (!spec || !spec.mimics || n < 2) return new Array(n).fill(false);
+  const real = (seed >>> 0) % n;
+  return Array.from({ length: n }, (_, i) => i !== real);
+}
+
+// Anzahl eines Requisits: Zahl oder Bereich [von, bis] (nach Seed)
+export const countRange = (c) => (Array.isArray(c) ? c : [c || 1, c || 1]);
+
 // Feste Kachel: "tile:x|y" wie im GDD (ab 1 gezählt), ohne Korrekturablauf
 export const TILE_PLACE = /^tile:(\d+)\|(\d+)$/;
 // Reihenfolge der Ersatz-Platzierungen beim Korrigieren (GDD: center → corner → wall-back → free)
@@ -348,7 +359,9 @@ export function planDecor(spec, opts) {
     const fixed = !PLACES.includes(item.place) || PROPS[item.prop].floor === false;
     const tries = fixed ? [item.place] : CHAIN.slice(Math.max(0, CHAIN.indexOf(item.place)));
     const used = new Set();
-    for (let i = 0; i < (item.count || 1); i++) {
+    const [lo, hi] = countRange(item.count);
+    const n = lo + Math.floor(R() * (hi - lo + 1));
+    for (let i = 0; i < n; i++) {
       let c = null, place = null;
       for (const pl of tries) {
         c = candidates(Object.assign({}, item, { place: pl }), used).find(cand => fits(item, cand));
@@ -366,6 +379,7 @@ export function planDecor(spec, opts) {
 // Datenprüfung der Einrichtung (für validateData)
 export function checkDecor(spec, where, err) {
   if (!spec || !Array.isArray(spec.layouts) || !spec.layouts.length) { err(where, "decor braucht mindestens eine Variante in layouts"); return; }
+  if (spec.mimics !== undefined && typeof spec.mimics !== "boolean") err(where, "mimics muss true oder false sein");
   if (spec.torches !== undefined && spec.torches !== "saeulen") err(where, "torches kennt nur \"saeulen\"");
   if (spec.torchColor !== undefined && !/^#[0-9a-fA-F]{6}$/.test(spec.torchColor)) err(where, "torchColor muss eine Farbe wie #ff8a30 sein");
   const ids = new Set();
@@ -384,7 +398,9 @@ export function checkDecor(spec, where, err) {
       if (!PLACES.includes(p.place) && !m && !ft && p.place !== DOOR_SIDES) err(w, p.prop + ": unbekannte Platzierung " + p.place);
       if (m && !before.has(m[2])) err(w, p.prop + ": " + m[2] + " muss vorher in der Liste stehen");
       if (m && m[1] === "above" && p.prop !== "kronleuchter") err(w, p.prop + ": above passt nur für hängende Requisiten");
-      if (p.count !== undefined && !(Number.isInteger(p.count) && p.count > 0)) err(w, p.prop + ": count muss eine positive Zahl sein");
+      const okCount = (c) => Number.isInteger(c) && c > 0;
+      if (p.count !== undefined && !(okCount(p.count) || (Array.isArray(p.count) && p.count.length === 2 && p.count.every(okCount) && p.count[0] <= p.count[1])))
+        err(w, p.prop + ": count muss eine positive Zahl oder ein Bereich [von, bis] sein");
       if (p.required !== undefined && typeof p.required !== "boolean") err(w, p.prop + ": required muss true oder false sein");
       if (p.required && m) err(w, p.prop + ": ein Pflichtstück braucht eine eigene Platzierung, nicht " + m[1] + ":");
       if (p.variant !== undefined && !(VARIANTS[p.prop] || []).includes(p.variant)) err(w, p.prop + ": unbekannte Variante " + p.variant);

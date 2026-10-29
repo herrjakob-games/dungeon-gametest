@@ -7,7 +7,7 @@ export const state = {
   dungeon: null,       // Ergebnis von generate()
   current: null,       // Schlüssel "x,z" des aktuellen Raums
   visited: new Set(),  // besuchte Räume
-  roomState: {},       // Zustand pro Raum, z. B. { chestOpened: true, locked: Set("N") }
+  roomState: {},       // Zustand pro Raum, z. B. { chests: { "4,4": "open" }, locked: Set("N") }
   run: newRun(),       // Flags und einmalige Events, gelten pro Dungeon
   backDoor: null,      // Tür, durch die der aktuelle Raum betreten wurde
 

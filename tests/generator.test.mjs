@@ -67,6 +67,7 @@ test("Händler genau einmal, Rastplatz auf geraden Ebenen, Schatzkammer höchste
     assert.equal(count(d, "haendler"), 1, `Seed ${s}/${depth}`);
     assert.equal(count(d, "rast"), depth % 2 === 0 ? 1 : 0, `Seed ${s}/${depth}`);
     assert.ok(count(d, "schatz") <= 1);
+    if ((depth - 1) % 3 !== 1) assert.equal(count(d, "schatz"), 0, `Schatzkammer nur auf der mittleren Ebene des Themas, Seed ${s}/${depth}`);
     for (const r of Object.values(d.rooms)) if (r.type === "schatz") assert.equal(doorCount(r.doors), 1);
   }
 });

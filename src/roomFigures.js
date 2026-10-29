@@ -138,6 +138,15 @@ export function showEventFigures(ev) {
   return plan.length;
 }
 
+/**
+ * Eine Figur an einer festen Kachel aufstellen, zur Spielfigur gedreht (die Mimik, wo eben die Truhe stand).
+ * eventId: das Event, zu dem sie gehört; showEventFigures stellt dann keine zweite auf.
+ */
+export function spawnFigure(figureId, tile, eventId) {
+  const rot = Math.atan2(state.pTile[0] - tile[0], state.pTile[1] - tile[1]);
+  make({ figure: figureId, tiles: [tile], cx: tile[0], cz: tile[1], rot, blocks: figureInfo(figureId).blocks }, eventId, false);
+}
+
 function saveStay(f) {
   if (f.saved) return;
   const rs = roomState();

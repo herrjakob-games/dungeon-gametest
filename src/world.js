@@ -3,6 +3,9 @@
 
 export const LEVELS_PER_THEME = 3;
 
+// Ebene innerhalb des Themas: 1, 2 oder 3 (im endlosen letzten Thema zählt es weiter in Dreiergruppen)
+export const levelInTheme = (depth) => ((depth - 1) % LEVELS_PER_THEME) + 1;
+
 // Thema einer Ebene aus der Liste in data/themes.json (in der Reihenfolge der Ebenen)
 export function themeFor(themes, depth) {
   const i = Math.min(themes.length - 1, Math.floor((depth - 1) / LEVELS_PER_THEME));
