@@ -51,6 +51,7 @@ export const PROPS = {
   fahne_dreifach: { w: 2, d: 1, blocks: false, wall: true, floor: false },
   schluesselbund: { w: 1, d: 1, blocks: false, wall: true, floor: false },
   strohlager: { w: 1, d: 2, blocks: true },
+  kerze_duenn: { w: 1, d: 1, blocks: false },
   zapffass: { w: 1, d: 1, blocks: true },
   zapffass_verziert: { w: 2, d: 1, blocks: true },
   kistenberg: { w: 1, d: 1, blocks: true },
@@ -66,7 +67,7 @@ export const PROPS = {
 // Abwandlungen, die es pro Requisit gibt
 export const VARIANTS = {
   tisch: ["kueche"], fass: ["gruppe", "gross"], stuhl: ["umgekippt"], kiste: ["angenagt", "flaschen"], saeule: ["reihen"],
-  flaschen: ["b"], fahne: ["blau", "gruen", "gelb", "wappen"], fahne_dreifach: ["blau", "gelb"], muenzen: ["klein", "einzeln"]
+  flaschen: ["b"], fahne: ["blau", "gruen", "gelb", "wappen"], fahne_dreifach: ["blau", "gelb"], muenzen: ["klein", "einzeln"], kerze_duenn: ["an"]
 };
 
 /**
@@ -303,9 +304,17 @@ export function planDecor(spec, opts) {
       pl.tiles.some(([x, z]) => tiles.some(([tx, tz]) => Math.max(Math.abs(x - tx), Math.abs(z - tz)) <= r)));
   }
 
+  // Abstand in Kacheln (auch schräg gezählt) zwischen zwei Kachellisten
+  const gap = (a, b) => Math.min(...a.map(([x, z]) => Math.min(...b.map(([u, v]) => Math.max(Math.abs(x - u), Math.abs(z - v))))));
+  const doorList = doorTiles(doors);
+  const clearZones = []; // Freiräume um Requisiten mit "clear" (etwa das Lagerfeuer): dort liegt nichts anderes
+
   function fits(item, c) {
     const def = PROPS[item.prop];
     if (!c.tiles.every(([x, z]) => inBounds(x, z))) return false;
+    if (def.floor !== false && c.tiles.length && clearZones.some(z => gap(c.tiles, z.tiles) <= z.r)) return false;
+    if (item.clear && c.tiles.length && placements.some(p => PROPS[p.prop].floor !== false && p.tiles.length && gap(c.tiles, p.tiles) <= item.clear)) return false;
+    if (item.doorGap && doorList.length && gap(c.tiles, doorList) <= item.doorGap) return false;
     if (def.wall && c.wall && c.tiles.some(t => torches.has(c.wall + key(...t)))) return false;
     if (def.spread && tooClose(item, c.tiles, def.spread)) return false;
     if (def.wallGap && !c.tiles.every(([x, z]) => x >= def.wallGap && z >= def.wallGap && x < N - def.wallGap && z < N - def.wallGap)) return false;
@@ -324,12 +333,13 @@ export function planDecor(spec, opts) {
 
   function put(item, c) {
     const def = PROPS[item.prop];
+    if (item.clear) clearZones.push({ tiles: c.tiles, r: item.clear });
     if (def.floor !== false) c.tiles.forEach(t => { occupied.add(key(...t)); if (def.blocks) blocked.add(key(...t)); });
     if (c.wall) c.tiles.forEach(t => wallSlots.add(c.wall + key(...t)));
     if (def.click) clickables.push(c.tiles);
     const [cx, cz] = c.at || centerOf(c.tiles);
     placements.push({ prop: item.prop, variant: item.variant || null, tiles: c.tiles, cx, cz, rot: c.rot, wall: c.wall || null,
-      target: c.target || null, place: item.place, face: c.face || null });
+      target: c.target || null, place: item.place, face: c.face || null, clear: item.clear || 0 });
   }
 
   // Säulen in zwei Reihen (Variante "reihen"): feste Plätze, wie in der bisherigen Säulenhalle
@@ -434,6 +444,7 @@ export function checkDecor(spec, where, err) {
       const okCount = (c) => Number.isInteger(c) && c > 0;
       if (p.count !== undefined && !(okCount(p.count) || (Array.isArray(p.count) && p.count.length === 2 && p.count.every(okCount) && p.count[0] <= p.count[1])))
         err(w, p.prop + ": count muss eine positive Zahl oder ein Bereich [von, bis] sein");
+      ["clear", "doorGap"].forEach(f => { if (p[f] !== undefined && !(Number.isInteger(p[f]) && p[f] > 0)) err(w, p.prop + ": " + f + " muss eine positive Zahl sein"); });
       if (p.required !== undefined && typeof p.required !== "boolean") err(w, p.prop + ": required muss true oder false sein");
       if (p.required && m) err(w, p.prop + ": ein Pflichtstück braucht eine eigene Platzierung, nicht " + m[1] + ":");
       if (p.variant !== undefined && !(VARIANTS[p.prop] || []).includes(p.variant)) err(w, p.prop + ": unbekannte Variante " + p.variant);

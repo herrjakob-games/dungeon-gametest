@@ -434,17 +434,43 @@
             {
               "prop": "lagerfeuer",
               "place": "center",
-              "required": true
+              "required": true,
+              "clear": 2
             },
             {
-              "prop": "sack",
-              "place": "around:lagerfeuer",
-              "count": 2
+              "prop": "strohlager",
+              "place": "free",
+              "count": [
+                2,
+                3
+              ],
+              "doorGap": 1
+            },
+            {
+              "prop": "kerze_duenn",
+              "place": "around:strohlager",
+              "count": 1
+            },
+            {
+              "prop": "kerze_duenn",
+              "place": "around:strohlager",
+              "variant": "an"
+            },
+            {
+              "prop": "flaschen",
+              "place": "free",
+              "count": [
+                2,
+                3
+              ]
             },
             {
               "prop": "fass",
-              "place": "corner",
-              "variant": "gruppe"
+              "place": "free",
+              "count": [
+                2,
+                3
+              ]
             }
           ]
         },
@@ -454,16 +480,43 @@
             {
               "prop": "lagerfeuer",
               "place": "free",
-              "required": true
+              "required": true,
+              "clear": 2
             },
             {
-              "prop": "sack",
+              "prop": "strohlager",
               "place": "free",
-              "count": 2
+              "count": [
+                2,
+                3
+              ],
+              "doorGap": 1
             },
             {
-              "prop": "kiste",
-              "place": "corner"
+              "prop": "kerze_duenn",
+              "place": "around:strohlager",
+              "count": 1
+            },
+            {
+              "prop": "kerze_duenn",
+              "place": "around:strohlager",
+              "variant": "an"
+            },
+            {
+              "prop": "flaschen",
+              "place": "free",
+              "count": [
+                2,
+                3
+              ]
+            },
+            {
+              "prop": "fass",
+              "place": "free",
+              "count": [
+                2,
+                3
+              ]
             }
           ]
         }

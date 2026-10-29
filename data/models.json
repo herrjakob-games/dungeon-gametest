@@ -843,5 +843,27 @@
       1.5
     ],
     "palette": true
+  },
+  "kerze_duenn": {
+    "file": "assets/props/kerze_duenn.glb",
+    "scale": 0.5,
+    "palette": true
+  },
+  "kerze_duenn_an": {
+    "file": "assets/props/kerze_duenn_an.glb",
+    "scale": 0.5,
+    "palette": true,
+    "lights": [
+      {
+        "offset": [
+          0,
+          0.45,
+          0
+        ],
+        "color": "#FFC27A",
+        "intensity": 0.4,
+        "distance": 2.5
+      }
+    ]
   }
 }

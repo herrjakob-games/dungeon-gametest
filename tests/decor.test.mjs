@@ -333,3 +333,21 @@ test("Vorkammer: keine Fackel hinter oder neben der Treppe (Wandkacheln 1 bis 4 
   // Andere Räume behalten beide Fackeln an Wänden ohne Tür
   assert.equal(torchSlots(0, null, 1, null).length, 4);
 });
+
+test("Rastplatz: zwei Kacheln frei um das Feuer, 2 bis 3 Schlaflager nie neben Türen, je 2 bis 3 Flaschen und Fässer, keine Säcke", () => {
+  const spec = decorFor(ROOM_TYPES.find(t => t.id === "rast"), "keller");
+  const gap = (a, b) => Math.min(...a.map(([x, z]) => Math.min(...b.map(([u, v]) => Math.max(Math.abs(x - u), Math.abs(z - v))))));
+  spec.layouts.forEach((layout, li) => {
+    for (let doors = 0; doors < 16; doors++) for (let s = 1; s <= 10; s++) {
+      const where = "Variante " + layout.id + ", Türen " + doors + ", Seed " + s;
+      const pl = planDecor(spec, { seed: s * 7919, doors, layoutIndex: li }).placements;
+      const fire = pl.find(p => p.prop === "lagerfeuer");
+      const count = (id) => pl.filter(p => p.prop === id).length;
+      assert.ok(fire, where + ": Lagerfeuer fehlt");
+      pl.filter(p => p !== fire).forEach(p => assert.ok(gap(p.tiles, fire.tiles) > 2, where + ": " + p.prop + " zu nah am Feuer"));
+      pl.filter(p => p.prop === "strohlager").forEach(p => assert.ok(!doors || gap(p.tiles, doorTiles(doors)) > 1, where + ": Schlaflager neben einer Tür"));
+      [["strohlager", 2, 3], ["flaschen", 2, 3], ["fass", 2, 3]].forEach(([id, lo, hi]) => assert.ok(count(id) >= lo && count(id) <= hi, where + ": " + count(id) + "× " + id));
+      assert.equal(count("sack"), 0);
+    }
+  });
+});
