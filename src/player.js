@@ -46,13 +46,29 @@ export function placePlayer(tile, facing) {
   state.pTile = tile.slice();
   player.position.set(tw(tile[0]), 0, tw(tile[1]));
   player.rotation.y = facing;
+  wantRot = null;
 }
 
 export function faceTile(tile) {
+  wantRot = null;
   player.rotation.y = Math.atan2(tw(tile[0]) - player.position.x, tw(tile[1]) - player.position.z);
 }
 
 // Einmalige Animation der Spielfigur: "attack" beim eigenen Angriff, "hit" bei einem Treffer des Gegners
 export function playerAction(name) {
   if (anim) anim.once(name);
+}
+
+// Weiche Drehung der Spielfigur (Stilguide: etwa 0,25 Sekunden, kürzerer Weg), etwa zum Gegner im Kampf.
+// Die Blickrichtung bleibt danach, bis der Spieler die Figur bewegt.
+let wantRot = null;
+export function turnToward(x, z) {
+  wantRot = Math.atan2(x - player.position.x, z - player.position.z);
+}
+export function updateTurn(dt, walking) {
+  if (walking) { wantRot = null; return; }
+  if (wantRot === null) return;
+  const d = Math.atan2(Math.sin(wantRot - player.rotation.y), Math.cos(wantRot - player.rotation.y));
+  player.rotation.y += d * Math.min(1, dt * 12);
+  if (Math.abs(d) < 0.002) wantRot = null;
 }

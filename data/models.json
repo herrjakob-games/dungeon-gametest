@@ -1,5 +1,5 @@
 {
-  "_info": "Zuordnung der Modelle (docs/GDD.md, Asset-Spezifikation). Pro id: file, scale (Zahl oder [x, y, z]), rotation (Grad [x, y, z]), offset ([x, y, z] in Kacheln, vor der Drehung), palette (true = Paletten-Textur des Themas), tint (Farbe, die das Modell einfärbt), lights (offset, color, intensity, distance), animations (Figuren: Name im Spiel → Name im Paket: idle, walk, attack, hit, death, interact), accessories (Zubehör aus Grundformen an einem Knochen: shape, bone, offset und size in Kacheln). Varianten heißen <id>_<variante>.",
+  "_info": "Zuordnung der Modelle (docs/GDD.md, Asset-Spezifikation). Pro id: file, scale (Zahl oder [x, y, z]), rotation (Grad [x, y, z]), offset ([x, y, z] in Kacheln, vor der Drehung), palette (true = Paletten-Textur des Themas), texture (eigene angepasste Textur einer Figur), tint (Farbe, die das Modell einfärbt), lights (offset, color, intensity, distance), animations (Figuren: Name im Spiel → Name im Paket: idle, walk, attack, hit, death, interact), accessories (Zubehör aus Grundformen an einem Knochen: shape, bone, offset und size in Kacheln). Varianten heißen <id>_<variante>.",
   "boden": {
     "file": "assets/tiles/boden.glb",
     "scale": 0.5,
@@ -402,10 +402,10 @@
         "bone": "Head",
         "offset": [
           0,
-          0.25,
+          0.15,
           0.03
         ],
-        "size": 0.38
+        "size": 0.28
       }
     ]
   },
@@ -435,6 +435,101 @@
   "goblin": {
     "file": "assets/figures/goblin.glb",
     "scale": 0.8,
-    "palette": false
+    "palette": false,
+    "offset": [
+      0,
+      -0.02,
+      0
+    ]
+  },
+  "skeleton_minion": {
+    "file": "assets/figures/skeleton_minion.glb",
+    "scale": 0.46,
+    "palette": false,
+    "texture": "assets/textures/figures/skeleton/skeleton_keller.png",
+    "animations": {
+      "idle": "Idle",
+      "walk": "Walking_A",
+      "attack": "1H_Melee_Attack_Chop",
+      "hit": "Hit_A",
+      "death": "Death_A",
+      "interact": "Interact",
+      "sit": "Sit_Chair_Idle",
+      "sit_floor": "Sit_Floor_Idle",
+      "lie": "Skeletons_Inactive_Floor_Pose",
+      "awaken": "Skeletons_Awaken_Floor"
+    }
+  },
+  "skeleton_warrior": {
+    "file": "assets/figures/skeleton_warrior.glb",
+    "scale": 0.46,
+    "palette": false,
+    "texture": "assets/textures/figures/skeleton/skeleton_keller.png",
+    "animations": {
+      "idle": "Idle",
+      "walk": "Walking_A",
+      "attack": "1H_Melee_Attack_Chop",
+      "hit": "Hit_A",
+      "death": "Death_A",
+      "interact": "Interact",
+      "sit": "Sit_Chair_Idle",
+      "sit_floor": "Sit_Floor_Idle",
+      "lie": "Skeletons_Inactive_Floor_Pose",
+      "awaken": "Skeletons_Awaken_Floor"
+    }
+  },
+  "skeleton_rogue": {
+    "file": "assets/figures/skeleton_rogue.glb",
+    "scale": 0.46,
+    "palette": false,
+    "texture": "assets/textures/figures/skeleton/skeleton_keller.png",
+    "animations": {
+      "idle": "Idle",
+      "walk": "Walking_A",
+      "attack": "1H_Melee_Attack_Chop",
+      "hit": "Hit_A",
+      "death": "Death_A",
+      "interact": "Interact",
+      "sit": "Sit_Chair_Idle",
+      "sit_floor": "Sit_Floor_Idle",
+      "lie": "Skeletons_Inactive_Floor_Pose",
+      "awaken": "Skeletons_Awaken_Floor"
+    }
+  },
+  "skeleton_mage": {
+    "file": "assets/figures/skeleton_mage.glb",
+    "scale": 0.46,
+    "palette": false,
+    "texture": "assets/textures/figures/skeleton/skeleton_keller.png",
+    "animations": {
+      "idle": "Idle",
+      "walk": "Walking_A",
+      "attack": "1H_Melee_Attack_Chop",
+      "hit": "Hit_A",
+      "death": "Death_A",
+      "interact": "Interact",
+      "sit": "Sit_Chair_Idle",
+      "sit_floor": "Sit_Floor_Idle",
+      "lie": "Skeletons_Inactive_Floor_Pose",
+      "awaken": "Skeletons_Awaken_Floor"
+    }
+  },
+  "skeleton": {
+    "file": "assets/figures/skeleton_minion.glb",
+    "scale": 0.46,
+    "palette": false,
+    "texture": "assets/textures/figures/skeleton/skeleton_keller.png",
+    "animations": {
+      "idle": "Idle",
+      "walk": "Walking_A",
+      "attack": "1H_Melee_Attack_Chop",
+      "hit": "Hit_A",
+      "death": "Death_A",
+      "interact": "Interact",
+      "sit": "Sit_Chair_Idle",
+      "sit_floor": "Sit_Floor_Idle",
+      "lie": "Skeletons_Inactive_Floor_Pose",
+      "awaken": "Skeletons_Awaken_Floor"
+    }
   }
 }

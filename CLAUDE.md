@@ -26,7 +26,8 @@ Events der neuen Raumtypen sind Platzhalter (`"placeholder": true` bzw. Text „
 Content-Projekt ersetzt. Meilenstein 6a (echte Modelle für Umgebung und Requisiten des Kellers, Licht nach Stilguide)
 ist umgesetzt; was noch kein Modell hat, bleibt Platzhalter. Meilenstein 6b (Figuren und Animationen) läuft: Die Spielfiguren der drei Völker kommen aus KayKit Adventurers,
 Ratten, Küchenchef, Monsterratte und Kröte aus dem Easy Animated Enemy Pack (Quaternius), der Goblin aus Goblin Lowpoly
-Assets (ohne Animationen). Skelett und Mimik sind noch Grundformen.
+Assets (ohne Animationen), die Skelette aus KayKit Skeletons 1.0. Die Mimik ist noch Grundform. Wie Event-Figuren im Raum
+stehen und sich bewegen, regelt die Inszenierung in `data/staging.json`.
 Die Liste aller Meilensteine steht im GDD.
 
 ## Technik
@@ -37,7 +38,7 @@ Die Liste aller Meilensteine steht im GDD.
 - Modelle: `assets/` (Rohdateien der Pakete in `assets/source/`, Quellen in `assets/CREDITS.md`). `npm run build:assets`
   baut aus `tools/asset-recipes.json` die Dateien in `assets/tiles/`, `assets/props/` und `assets/figures/` (braucht einmal `npm install`; FBX wandelt das npm-Paket `fbx2gltf` um, `meshoptimizer` vereinfacht);
   das Spiel selbst braucht keinen Build-Schritt. Zuordnung in `data/models.json`. `tools/palette-texture.py` erzeugt
-  die erste Fassung der Paletten-Textur.
+  die erste Fassung der Paletten-Textur, `tools/skeleton-texture.py` die Skelett-Textur.
   Die Spiellogik besteht aus ES-Modulen in `src/`, Einstieg ist `src/main.js`.
 - Lokal starten: `npm start` und dann http://localhost:8000 öffnen (Module brauchen einen Server).
 - Testmodus, lokal und auf GitHub Pages: `?event=<id>` startet das Event im ersten passenden Raum, `?room=<raumtyp-id>` betritt
@@ -60,6 +61,7 @@ Die Liste aller Meilensteine steht im GDD.
 | `data/themes.json` | Themen: Name, Stufe, Proben-Zuschlag, Raumtypen, Nachbar des Starts, Monster, Boss, Regel-Ausnahmen (`overrides`), Palette (`palette`, `roomPalettes`) |
 | `data/room-types.json` | Raumtypen: Name, Farben, Einrichtung als Daten (`decor`, `themeDecor`) oder altes Muster (`layout`), Bewertung, Lage- und Anzahlregeln, Event-Chance, Event-Tabelle; beim Bossraum Tabellen pro Thema (`themeEvents`) |
 | `data/events.json` | alle Events (auch die Truhe), Figuren beim Event-Start (`figures`) |
+| `data/staging.json` | Inszenierung der Event-Figuren: Standard, Anker an Requisiten, Modell-Varianten und `stays`, eigene Inszenierung pro Event |
 | `data/monsters.json` | Monster und Bosse mit Lebenspunkten, Rüstung, Angriff, Schaden, Satz zur Todesursache |
 | `data/characters.json` | Völker: Attribute, Lebenspunkte, LP je Stufe, Fähigkeit, Startausrüstung, Modell |
 | `data/items.json` | Gegenstände mit Rang 1–6, Preis (`preis`), Schaden/Rüstung/Nutzen, Mindestattribut und Volk (`req`); erzeugt aus `data/gegenstaende.csv` |
@@ -75,9 +77,10 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/models.js` | Modell-Lader: `data/models.json`, Paletten-Textur des Themas, Klone pro Instanz, Figuren mit Animationen (`makeFigureModel`), Rückfall auf Platzhalter |
 | `src/outline.js` | goldene Umrisslinie für anklickbare Objekte beim Überfahren mit der Maus |
 | `data/models.json` | Zuordnung der Modelle: Datei, Maßstab, Drehung, Versatz, Einfärbung (`tint`), Lichtpunkte, Animationen, Zubehör an Knochen (`accessories`) |
-| `src/figurePlan.js` | Figuren im Raum: Figurenliste (Größe, Varianten), Platzierung für `figures` (inkl. `near:`), Platz im Kampf, Datenprüfung; rein logisch |
+| `src/figurePlan.js` | Figuren im Raum: Figurenliste (Größe, Varianten), Platzierung für `figures` (inkl. `near:`) und Anker der Inszenierung, Platz im Kampf, Datenprüfung; rein logisch |
 | `src/monsterFigures.js` | Figuren der Monster und der Kröte aus Grundformen (Rückfall ohne Modell), Ersatzfigur für Monster ohne eigene Figur, Zubehör für Modelle (`ACCESSORIES`) |
-| `src/roomFigures.js` | Figuren im Raum: erscheinen, laufen, wippen, zucken, versinken, huschen davon; `stay`; Modelle spielen Laufen, Angriff und Sterben |
+| `src/staging.js` | Inszenierung: welche Figuren ein Event zeigt (Anzahl, Variante, Anker), Datenprüfung; rein logisch |
+| `src/roomFigures.js` | Figuren im Raum: erscheinen an Ankern, laufen im Kampf gemeinsam an, greifen reihum an, sterben und bleiben liegen, gehen nach dem Event zur Tür; `stay`; höchstens 6 animiert |
 | `src/roomBuilder.js` | baut einen Raum als 3D-Szene: Boden, Wände, Türen, Fackeln, Wendeltreppe, Einrichtung (aus `decor.js` oder altes Muster) |
 | `src/player.js` | Spielfigur, Platzierung; `setFigure(volk)` tauscht das Modell (KayKit-Figur oder Platzhalter), `animateFigure` wechselt Stehen und Laufen |
 | `src/figures.js` | Platzhalterfiguren der Völker aus Grundformen (Rückfall, wenn ein Modell fehlt) |

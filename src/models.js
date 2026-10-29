@@ -30,6 +30,26 @@ function paletteMaterial(theme, tint) {
   return materials.get(k);
 }
 
+// Material einer Figur mit eigener, angepasster Textur (entry.texture), einmal pro Ausgangsmaterial und Datei
+const textured = new Map();
+function textureMaterial(base, file) {
+  const k = base.uuid + file;
+  if (!textured.has(k)) {
+    if (!textures.has(file)) {
+      const tex = new THREE.TextureLoader().load(file);
+      tex.flipY = false; // glTF-Koordinaten
+      tex.encoding = THREE.sRGBEncoding; // wie Texturen aus dem GLTFLoader
+      textures.set(file, tex);
+    }
+    const m = base.clone();
+    m.map = textures.get(file);
+    m.color.set("#ffffff");
+    m.needsUpdate = true;
+    textured.set(k, m);
+  }
+  return textured.get(k);
+}
+
 // Beim Start: Zuordnung laden und alle Dateien vorladen. Fehler stoppen das Spiel nicht.
 export async function loadModels() {
   try {
@@ -61,6 +81,13 @@ export function modelEntry(id, variant) {
 }
 
 export const hasModel = (id, variant) => !!modelEntry(id, variant);
+
+// Hat das Modell einer Figur diese Animation (Name im Spiel, etwa "sit")? Ohne Modell: nein
+export function hasAnimation(id, variant, name) {
+  const v = variant && MODELS[id + "_" + variant] ? MODELS[id + "_" + variant] : MODELS[id];
+  if (!v || !scenes.has(v.file) || !(v.animations || {})[name]) return false;
+  return (clips.get(v.file) || []).some(c => c.name === v.animations[name]);
+}
 
 // Zubehör aus Grundformen an einen Knochen hängen (Kochmütze, Krone, Augen): offset und size in Kacheln, gemessen in
 // der Grundhaltung der Figur; der Knochen trägt es beim Animieren mit.
@@ -106,6 +133,7 @@ export function makeModel(id, variant, opts) {
   inner.traverse(n => {
     if (!n.isMesh) return;
     if (mat) n.material = opts.unique ? mat.clone() : mat;
+    else if (entry.texture) n.material = textureMaterial(n.material, entry.texture);
     else if (opts.unique) n.material = n.material.clone();
     n.castShadow = true;
     n.receiveShadow = true;

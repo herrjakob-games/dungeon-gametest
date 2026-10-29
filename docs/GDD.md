@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.11 · Oct 29, 2026 · @Christian
+Version 2.13 · Oct 29, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,8 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.13 | 29.10.2026 | Inszenierung der Figuren (`data/staging.json`): Anker an Requisiten, Ablauf bei Kampfbeginn, Blickrichtungen, Gruppen laufen gemeinsam an und sterben gemeinsam, Besiegte bleiben liegen, friedliche Figuren gehen zur Tür (ersetzt 2.12, außer `stay`); unbekannte Anzahl 1 bis 3; Skelette aus KayKit Skeletons 1.0 mit Paletten-Textur |
+| 2.12 | 29.10.2026 | Figuren, die nicht sterben und nicht kämpfen, bleiben nach dem Event an ihrem Platz; Gabelkrone der Monsterratte kleiner und am Kopf; Figuren ohne Animation stehen fest am Boden (atmen statt wippen) |
 | 2.11 | 29.10.2026 | Ratten, Küchenchef, Monsterratte und Kröte aus dem Easy Animated Enemy Pack (Quaternius) statt KI-Generator; Goblin aus Basic_Goblin (standout7) ohne Animationen, Bewegung per Code; Zubehör aus Grundformen an Knochen (`accessories`); Figuren der Monster spielen Laufen, Angriff und Sterben |
 | 2.10 | 28.10.2026 | Meilenstein 6b begonnen: Spielfiguren der drei Völker aus KayKit Adventurers mit Stand- und Laufanimation; Paketfiguren behalten ihre eigene Textur; Zubehör nach der Startwaffe; Licht nach Stilguide gedimmt |
 | 2.9 | 28.10.2026 | Meilenstein 6a umgesetzt: Zuordnung kennt zusätzlich `tint` (Einfärben eines Modells); Wandecken aus KayKit-Endstücken; Fackeln an vorderen Türen auf einem Pfosten |
@@ -121,7 +123,7 @@ Der Spieler wählt vor dem ersten Dungeon ein Volk. Das Volk legt Attribute, Leb
 - **Fliehen:** Probe Flucht gegen SG 12. Erfolg: Rückzug durch die Tür, durch die der Raum betreten wurde (im Startraum endet nur der Kampf). Das Event ist dann vorbei, ohne Beute und ohne Folge-Event. Fehlschlag: Der Gegner handelt normal.
 - **Fähigkeit im Kampf:** gilt für das tatsächlich gewürfelte Attribut. Der Elf kann also einen verfehlten Angriff mit leichter Waffe retten, der Zwerg einen mit schwerer Waffe, der Mensch einen mit magischer Waffe.
 - **Kampf in Events:** Der Effekt `combat` startet einen Rundenkampf. Die Effekte danach (etwa Beute) gelten erst nach einem Sieg.
-- **Gegner im Raum:** Startet ein Kampf, steht die Figur des Gegners auf einer freien Kachel neben der Spielfigur; zeigt das Event sie schon, läuft sie dorthin. Im Bossraum treffen sich beide in der Raummitte. Bei einem Treffer zuckt die Figur kurz, bei ihrem Tod sinkt sie in den Boden und verschwindet.
+- **Gegner im Raum:** Startet ein Kampf, laufen alle Figuren dieses Gegners auf freie Kacheln neben der Spielfigur; zeigt kein Event sie, erscheint der Gegner dort. Im Bossraum treffen sich beide in der Raummitte. Gekämpft wird nach den Regeln gegen einen Gegner; die Figuren der Gruppe greifen reihum an und sterben beim Sieg gemeinsam. Bei einem Treffer zuckt die Figur kurz, bei ihrem Tod spielt sie Death und bleibt liegen (Einzelheiten unter „Inszenierung der Figuren“).
 - **Gegner:** Lebenspunkte, Rüstungswert, Angriffsbonus, Schaden (z. B. W6) und ein witziger Satz für den Endbildschirm. Wie Gegner mit der Tiefe stärker werden, steht im Abschnitt Raumtypen und Ebenen.
 - **Fortschritt:** Erfahrung aus Events. Stufe 2 bei 10, Stufe 3 bei 25, Stufe 4 bei 45, Stufe 5 bei 70 Erfahrung, danach alle 30 Erfahrung eine weitere Stufe. Beim Stufenaufstieg wählt der Spieler ein Attribut für +1 (höchstens +10) und bekommt maximale Lebenspunkte je nach Volk (Zwerg +5, Elf +3, Mensch +4), die ihn auch um denselben Wert heilen. Sind alle Attribute auf +10, gibt es nur die Lebenspunkte.
 - **Beute:** Beutestufe `tier1` = 2W6 Gold und mit 1/3 Chance ein einfacher Gegenstand. `tier2` = 4W6 Gold und immer ein besserer Gegenstand. Welchen Rang ein Gegenstand hat, steht in `data/items.json`. Gibt es für einen Rang noch keine Gegenstände, gilt der höchste Rang darunter, der welche hat. Die Beutestufen verschieben sich mit dem Thema (siehe Raumtypen und Ebenen). Gold ist Zahlungsmittel beim Händler.
@@ -218,8 +220,8 @@ Jeder Raumtyp hat eine Event-Chance und eine gewichtete Event-Tabelle. Jedes Eve
 - **Volks-Bedingungen:** Ein ganzes Event kann an ein Volk gebunden sein, dann erscheint es nur für dieses Volk. Bei ausgewählten Events kann auch eine einzelne Option an ein Volk gebunden sein, andere Völker sehen sie nicht.
 - **Türen:** `lockDoor` und `unlockDoor` nennen eine Richtung (`N`, `E`, `S`, `W`) oder `back`, die Tür, durch die der Spieler kam. Eine verschlossene Tür zeigt ein Schloss und lässt sich nicht benutzen, bis `unlockDoor` sie öffnet. Sind am Ende eines Events alle Türen eines Raums zu, öffnet sich die Rück-Tür von selbst.
 - **Monster:** Name, Lebenspunkte, Rüstung, Angriffsbonus, Schaden (z. B. W6).
-- **Figuren in Events:** Ein Event kann im Feld `figures` Figuren nennen, die beim Start des Events im Raum erscheinen, etwa `"figures": [ { "figure": "kuechenratte", "place": "near:herd" } ]`. `figure` ist eine Monster-id oder eine Figur ohne Kampfwerte aus der Figurenliste. `place` nutzt die Platzierungen der Einrichtung und zusätzlich `near:<prop>` (eine freie Kachel direkt neben dem Requisit); fehlt das Requisit, steht die Figur auf einer freien Kachel. Optional: `count` (Anzahl), `variant` (etwa `sitzend`) und `stay` (true: die Figur bleibt nach dem Event stehen, solange der Spieler auf dieser Ebene ist).
-- **Figuren nach dem Event:** Nach einem Sieg verschwindet der Gegner. Nach einer Flucht verschwindet er, sobald der Spieler den Raum verlässt. Wird das Event friedlich gelöst, verschwinden die Figuren, außer bei `stay`. Stehen mehrere gleiche Figuren im Raum und der Kampf geht gegen eine, huschen die übrigen beim Kampfstart davon.
+- **Figuren in Events:** Ein Event kann im Feld `figures` Figuren nennen, die beim Start des Events im Raum erscheinen, etwa `"figures": [ { "figure": "kuechenratte", "place": "near:herd" } ]`. `figure` ist eine Monster-id oder eine Figur ohne Kampfwerte aus der Figurenliste. `place` nutzt die Platzierungen der Einrichtung und zusätzlich `near:<prop>` (eine freie Kachel direkt neben dem Requisit); fehlt das Requisit, steht die Figur auf einer freien Kachel. Optional: `count` (Anzahl), `variant` (etwa `sitzend`) und `stay` (true: die Figur bleibt nach dem Event stehen, solange der Spieler auf dieser Ebene ist). Wie die Figuren stehen und sich bewegen, regelt die Inszenierung (`data/staging.json`).
+- **Figuren nach dem Event:** Besiegte Gegner bleiben in der Sterbe-Haltung liegen, auch beim erneuten Betreten (solange der Spieler auf dieser Ebene ist). Nach einer Flucht verschwinden die Gegner, sobald der Spieler den Raum verlässt. Friedliche Figuren gehen nach dem Event zur nächsten Tür und verschwinden. Figuren mit `stay` (im Event oder in `data/staging.json`, heute Kröte und Händler) bleiben an ihrem Platz, solange der Spieler auf dieser Ebene ist.
 - **Regel:** Neue Effekt-Typen oder Bedingungen werden zuerst im Game Design festgelegt, dann programmiert, dann in Events genutzt.
 
 ## Raumtypen und Ebenen
@@ -326,6 +328,19 @@ Die Grafik besteht aus einem modularen Low-Poly-Baukasten auf dem Kachelraster, 
 - **Reihenfolge:** zuerst die Themenwelt Keller, dann die weiteren Themen. Meilenstein 6a bringt Umgebung und Requisiten, 6b Figuren und Animationen.
 - **Lizenzen:** Jede fremde Datei kommt mit Quelle und Lizenz in eine Credits-Liste im Repository.
 
+### Inszenierung der Figuren
+
+Figuren aus Events stehen sichtbar im Raum. Wo sie stehen, wohin sie blicken und welche Animation sie zeigen, steht in `data/staging.json`, getrennt von den Events; Spielregeln, Texte und Ergebnisse ändert die Inszenierung nicht.
+
+- **Standard:** freie Kachel, Blick zur Spielfigur, Idle. Welche Figuren ein Event zeigt: zuerst eine eigene Inszenierung (`events`), sonst das Feld `figures` des Events, sonst der Gegner aus dem Kampf. Nennt das Event keine Anzahl, sind es 1 bis 3 Figuren nach Raum-Seed.
+- **Anker an Requisiten (`anchors`):** Requisiten-ids (`props`), Versatz in Kacheln (gedreht wie das Requisit, `world`: ungedreht), Blickrichtung (`player`, `target` = der Tisch zum Sitz, `prop`, `random`), Animation (`idle`, `sit`, `sit_floor`, `lie`, `awaken`). `seat`: die Figur sitzt auf dem Hocker oder Stuhl, `onProp`: sie steht auf dem Requisit (Monsterratte auf dem Käseberg, Kröte auf dem Brunnenrand). Anker heute: am Tisch sitzend, auf dem Hocker schlafend, am Herd, am Sarkophag (Skelett steht auf), am Lagerfeuer, zwischen Knochen liegend, auf dem Käseberg, im Mehlsack, vor der Treppe, mitten im Raum, am Brunnen.
+- **Rückfall:** Fehlt die Requisite im Raum, steht die Figur auf einer freien Kachel, nie in Wänden, Türen oder auf Requisiten. Hat das Modell die Animation nicht (etwa der Goblin kein Sitzen), steht die Figur mit Idle neben dem Anker.
+- **Figuren (`figures`):** Modell-Varianten (Skelett: Minion, Warrior, Rogue, Mage, nach Raum-Seed; ein Event kann eine festlegen) und `stays` (bleibt nach dem Event stehen).
+- **Ablauf:** Die Figuren stehen schon da, bevor das Event-Fenster aufgeht. Beim Kampfbeginn laufen alle Figuren des Gegners mit Walk auf freie Nachbarkacheln der Spielfigur, ohne durch Wände, Türen oder Requisiten zu gehen; die Spielfigur bleibt stehen und dreht sich zum nächsten laufenden Gegner. Im Kampf blickt die Spielfigur zum Gegner, der gerade dran ist; bei mehreren wechselt er reihum mit jedem Zug. Gegner blicken immer zur Spielfigur. Attack beim eigenen Zug, Hit bei einem Treffer, Death beim Sieg. Nach dem Kampf behält die Spielfigur ihre Blickrichtung, bis der Spieler sie bewegt.
+- **Drehungen:** weich über etwa 0,25 Sekunden, immer auf dem kürzeren Weg.
+- **Lesbarkeit:** Gegner mit rotem Akzent und im Kampf mit rotem Bodenring.
+- **Leistung:** höchstens 6 animierte Figuren pro Raum, weitere stehen still.
+
 ### Stilguide „Knetkeller“
 
 Ein Dungeon wie aus warmem Ton geknetet: weiche, blockige Formen, gedeckte Erdtöne und Räume voller liebevoll schiefer Alltagsdinge. Farbe entsteht vor allem durch Licht; die Fackeln schneiden warme Inseln aus violettgrauen Schatten, und nur Gold, Gefahr und der Themenakzent leuchten heraus. Der Humor sitzt in Proportionen und Requisiten, nicht in grellen Farben.
@@ -410,7 +425,7 @@ Gilt für alle Modelle. Bei Paketteilen gilt sie für das Ergebnis im Spiel; Abw
 - **Build-Skript:** `tools/build-assets.mjs` setzt Teile aus Paketen zu einer GLB zusammen (Tafel, Regal, Türrahmen) und speckt Paketfiguren ab (nur benötigte Animationen und Zubehörteile, komprimiert). FBX-Dateien wandelt es vorher in GLB um; es kann Materialfarben auf die Palette setzen (matt, ohne Metallglanz), eine Waffe an einen Knochen hängen und Figuren auf höchstens 3.000 Dreiecke vereinfachen.
 - **Platzhalter:** Fehlt eine Datei oder lädt sie nicht, baut der Code das Teil wie bisher aus Grundformen.
 - **Zubehör der Spielfiguren:** Die Figur trägt das Teil des Pakets, das der Startwaffe am nächsten kommt: Zwerg Schwert (Langschwert), Elf Messer (Dolch), Mensch Zauberstab (das Paket hat keinen Knüppel). Schilde, Zweithand-Waffen und Bücher fallen weg.
-- **Quellen der Figuren im Keller:** Mensch KayKit `Mage`, Elf `Rogue_Hooded`, Zwerg `Knight`, Händler `Rogue` umgefärbt (KayKit Adventurers); Skelett KayKit Skeletons; Goblin aus Goblin Lowpoly Assets (standout7, itch.io); Mimik aus der Truhe des KayKit Dungeon Pack (itch.io); Riesenratte, Küchenchef und Monsterratte aus `Rat`, Kröte aus `Frog` (Easy Animated Enemy Pack, Quaternius). Goblin: `Basic_Goblin` mit `Rusty Shiv`; die kostenlose Fassung hat keine Animationen.
+- **Quellen der Figuren im Keller:** Mensch KayKit `Mage`, Elf `Rogue_Hooded`, Zwerg `Knight`, Händler `Rogue` umgefärbt (KayKit Adventurers); Skelett aus KayKit Skeletons 1.0 (Minion, Warrior, Rogue, Mage; die Fassung 1.1 FREE hat kein Sitzen, Liegen und Angreifen, Textur gleich) mit der auf die Palette umgefärbten Textur `assets/textures/figures/skeleton/skeleton_keller.png`; Goblin aus Goblin Lowpoly Assets (standout7, itch.io); Mimik aus der Truhe des KayKit Dungeon Pack (itch.io); Riesenratte, Küchenchef und Monsterratte aus `Rat`, Kröte aus `Frog` (Easy Animated Enemy Pack, Quaternius). Goblin: `Basic_Goblin` mit `Rusty Shiv`; die kostenlose Fassung hat keine Animationen.
 - **Lizenzen:** Quelle und Lizenz jeder fremden Datei in `assets/CREDITS.md`.
 
 ### Einrichtung pro Raumtyp
@@ -492,7 +507,7 @@ Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kan
 | monsterratte | Die Monsterratte, ponygroß mit Gabelkrone | Boss Keller | 2×2 | – |
 | kroete | Die Kröte, mit Krone | Figur ohne Kampfwerte | Deko | – |
 
-Jede Monster-id hat eine Figur mit derselben id. Bis Meilenstein 6 baut der Code die Figuren aus Grundformen und lässt sie im Stand leicht wippen.
+Jede Monster-id hat eine Figur mit derselben id. Figuren ohne Modell baut der Code aus Grundformen. Figuren ohne Animation atmen im Stand leicht, die Füße bleiben dabei am Boden.
 
 ## Meilensteine
 
@@ -581,3 +596,8 @@ Sieben Schritte, jeder endet mit etwas Spielbarem, das Christian im Browser test
 - [x] Meilenstein 6a: Modelle über `data/models.json` mit Einfärbung `tint`; Fackeln an vorderen Türen auf einem Pfosten
 - [x] Meilenstein 6b, erster Teil: Spielfiguren aus KayKit Adventurers (Zwerg Knight, Elf Rogue_Hooded, Mensch Mage) mit eigener Textur und Zubehör nach der Startwaffe; Licht nach Stilguide gedimmt
 - [x] Ratten, Küchenchef, Monsterratte und Kröte aus dem Easy Animated Enemy Pack (Quaternius); Goblin aus `Basic_Goblin` ohne Animationen, bewegt per Code (Variante A); Ratte und Frosch auf höchstens 3.000 Dreiecke vereinfacht und auf die Palette umgefärbt (Ratte warmes Graubraun, Frosch Moos, rote Augen als Akzent)
+- [x] Figuren, die nicht sterben und nicht kämpfen, bleiben nach dem Event an ihrem Platz, solange der Spieler auf der Ebene ist
+- [x] Inszenierung der Event-Figuren in `data/staging.json` mit Ankern an Requisiten; Figuren stehen vor dem Event-Fenster im Raum
+- [x] Kampf weiter gegen einen Gegner, aber alle Figuren des Gegners laufen zum Spieler, greifen reihum an und sterben gemeinsam; unbekannte Anzahl 1 bis 3 nach Raum-Seed
+- [x] Besiegte bleiben liegen; friedliche Figuren gehen zur Tür und verschwinden, Kröte und Händler bleiben stehen (ersetzt die Entscheidung aus 2.12)
+- [x] Goblin ohne Sitzen: steht neben dem Hocker; Skelette aus KayKit Skeletons 1.0, auf höchstens 4.000 Dreiecke vereinfacht

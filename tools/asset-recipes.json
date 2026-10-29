@@ -288,7 +288,7 @@
     }
   },
   "figureSource": "assets/source/kaykit-adventurers/",
-  "figureNotes": "Figuren: Paketdatei mit eigener Textur. remove nennt Zubehörteile, die wegfallen (Waffen und Schilde, die das Volk nicht trägt); animations die Animationen, die bleiben. source: anderer Paketordner; FBX wird umgewandelt; colors: Material → Palettenfarbe; attach: Datei an Knochen (Position, Drehung in Grad, Maßstab); simplify: Anteil der Dreiecke, der bleibt.",
+  "figureNotes": "Figuren: Paketdatei mit eigener Textur. remove nennt Zubehörteile, die wegfallen (Waffen und Schilde, die das Volk nicht trägt); animations die Animationen, die bleiben. source: anderer Paketordner; FBX wird umgewandelt; colors: Material → Palettenfarbe; attach: Datei an Knochen (Position, Drehung in Grad, Maßstab); simplify: Anteil der Dreiecke, der bleibt. flat: Normalen vor dem Vereinfachen entfernen (flach schattierte Pakete); stripTexture: eigene Textur entfernen, data/models.json setzt eine angepasste (texture); maxTris: Grenze für die Warnung.",
   "figures": {
     "zwerg": {
       "file": "Knight.glb",
@@ -358,7 +358,8 @@
         "Grey": "#7A6552",
         "Pink": "#B07A6E"
       },
-      "simplify": 0.7
+      "simplify": 0.7,
+      "flat": true
     },
     "kroete": {
       "source": "assets/source/quaternius-easy-enemies/",
@@ -375,7 +376,8 @@
         "Red": "#C8432F",
         "Black": "#2A2230"
       },
-      "simplify": 0.6
+      "simplify": 0.6,
+      "flat": true
     },
     "goblin": {
       "source": "assets/source/goblin-lowpoly/",
@@ -387,6 +389,82 @@
           "bone": "hand.R"
         }
       ]
+    },
+    "skeleton_minion": {
+      "source": "assets/source/kaykit-skeletons/",
+      "file": "Skeleton_Minion.glb",
+      "animations": [
+        "Idle",
+        "Walking_A",
+        "1H_Melee_Attack_Chop",
+        "Hit_A",
+        "Death_A",
+        "Interact",
+        "Sit_Chair_Idle",
+        "Sit_Floor_Idle",
+        "Skeletons_Inactive_Floor_Pose",
+        "Skeletons_Awaken_Floor"
+      ],
+      "stripTexture": true,
+      "simplify": 0.7,
+      "maxTris": 4000
+    },
+    "skeleton_warrior": {
+      "source": "assets/source/kaykit-skeletons/",
+      "file": "Skeleton_Warrior.glb",
+      "animations": [
+        "Idle",
+        "Walking_A",
+        "1H_Melee_Attack_Chop",
+        "Hit_A",
+        "Death_A",
+        "Interact",
+        "Sit_Chair_Idle",
+        "Sit_Floor_Idle",
+        "Skeletons_Inactive_Floor_Pose",
+        "Skeletons_Awaken_Floor"
+      ],
+      "stripTexture": true,
+      "simplify": 0.62,
+      "maxTris": 4000
+    },
+    "skeleton_rogue": {
+      "source": "assets/source/kaykit-skeletons/",
+      "file": "Skeleton_Rogue.glb",
+      "animations": [
+        "Idle",
+        "Walking_A",
+        "1H_Melee_Attack_Chop",
+        "Hit_A",
+        "Death_A",
+        "Interact",
+        "Sit_Chair_Idle",
+        "Sit_Floor_Idle",
+        "Skeletons_Inactive_Floor_Pose",
+        "Skeletons_Awaken_Floor"
+      ],
+      "stripTexture": true,
+      "simplify": 0.7,
+      "maxTris": 4000
+    },
+    "skeleton_mage": {
+      "source": "assets/source/kaykit-skeletons/",
+      "file": "Skeleton_Mage.glb",
+      "animations": [
+        "Idle",
+        "Walking_A",
+        "1H_Melee_Attack_Chop",
+        "Hit_A",
+        "Death_A",
+        "Interact",
+        "Sit_Chair_Idle",
+        "Sit_Floor_Idle",
+        "Skeletons_Inactive_Floor_Pose",
+        "Skeletons_Awaken_Floor"
+      ],
+      "stripTexture": true,
+      "simplify": 0.7,
+      "maxTris": 4000
     }
   }
 }
