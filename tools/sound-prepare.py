@@ -22,14 +22,26 @@ EFFECTS = {
     "events/knocking_stone.mp3": "events/klopfen_stein.mp3",
     "raum/cozy_zufall_1.mp3": "raum/cozy_zufall_1.mp3", "raum/cozy_zufall_2.mp3": "raum/cozy_zufall_2.mp3",
     "spiel/gold.mp3": "spiel/gold.mp3", "spiel/gold_zahlen.mp3": "spiel/gold_zahlen.mp3", "spiel/tod.mp3": "spiel/tod.mp3",
-    "spiel/truhe.mp3": "spiel/truhe.mp3", "spiel/tuer.mp3": "spiel/tuer.mp3", "spiel/tuer_riegel.mp3": "spiel/tuer_riegel.mp3",
+    "spiel/truhe.mp3": "spiel/truhe.mp3", "spiel/tuer_riegel.mp3": "spiel/tuer_riegel.mp3",
+    "spiel/tuer_1.mp3": "spiel/tuer_1.mp3", "spiel/tuer_2.mp3": "spiel/tuer_2.mp3", "spiel/tuer_3.mp3": "spiel/tuer_3.mp3",
+    "spiel/treppe.mp3": "spiel/treppe.mp3",
+    "angriff/faust_treffer_1.mp3": "angriff/faust_treffer_1.mp3", "angriff/faust_treffer_2.mp3": "angriff/faust_treffer_2.mp3",
+    "angriff/faust_treffer_3.mp3": "angriff/faust_treffer_3.mp3",
+    "raum/empty_zufall_1.mp3": "raum/empty_zufall_1.mp3", "raum/empty_zufall_2.mp3": "raum/empty_zufall_2.mp3",
+    "raum/empty_zufall_3.mp3": "raum/empty_zufall_3.mp3",
+    "raum/spooky_zufall_1.mp3": "raum/spooky_zufall_1.mp3", "raum/spooky_zufall_2.mp3": "raum/spooky_zufall_2.mp3",
+    "raum/spooky_zufall_3.mp3": "raum/spooky_zufall_3.mp3", "raum/spooky_zufall_4.mp3": "raum/spooky_zufall_4.mp3",
+    "raum/spooky_zufall_5.mp3": "raum/spooky_zufall_5.mp3", "raum/spooky_zufall_6.mp3": "raum/spooky_zufall_6.mp3",
     "zauber/eis.mp3": "zauber/eis.mp3", "zauber/feuerball.mp3": "zauber/feuerball.mp3",
     "zauber/feuerpfeil.mp3": "zauber/feuerpfeil.mp3", "zauber/schild.mp3": "zauber/schild.mp3",
 }
 # Zu leise Aufnahmen: Verstärkung in dB
-GAIN = {"spiel/tuer.mp3": 20, "raum/cozy_zufall_2.mp3": 12}
+GAIN = {"spiel/tuer_1.mp3": 20, "spiel/tuer_3.mp3": 6, "spiel/treppe.mp3": 4, "raum/cozy_zufall_2.mp3": 12,
+        "raum/spooky_zufall_5.mp3": 18, "raum/spooky_zufall_6.mp3": 6}
 STEPS = ["wood", "hall", "mud", "gravel", "stone"]
-LOOPS = ["raum/cozy_loop.mp3", "raum/kitchen_loop.mp3", "raum/spooky_loop.mp3", "raum/wet_loop.mp3"]
+LOOPS = ["raum/cozy_loop.mp3", "raum/kitchen_loop.mp3", "raum/spooky_loop.mp3", "raum/wet_loop.mp3", "raum/empty_loop.mp3"]
+# Zu leise Loops: Verstärkung in dB (sonst unverändert übernommen)
+LOOP_GAIN = {"raum/empty_loop.mp3": 12}
 
 
 def ffmpeg(args, capture=False):
@@ -87,5 +99,8 @@ for f in STEPS:
 
 for s in LOOPS:
     (OUT / s).parent.mkdir(parents=True, exist_ok=True)
-    ffmpeg(["-loglevel", "error", "-y", "-i", str(SRC / s), "-c", "copy", str(OUT / s)])
+    if s in LOOP_GAIN:
+        ffmpeg(["-loglevel", "error", "-y", "-i", str(SRC / s), "-af", "volume=%ddB" % LOOP_GAIN[s], "-b:a", "128k", str(OUT / s)])
+    else:
+        ffmpeg(["-loglevel", "error", "-y", "-i", str(SRC / s), "-c", "copy", str(OUT / s)])
     print("%-34s Loop übernommen" % s)
