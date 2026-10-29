@@ -286,6 +286,21 @@
               "prop": "saeule",
               "place": "corner",
               "count": 2
+            },
+            {
+              "prop": "muenzen",
+              "place": "free"
+            },
+            {
+              "prop": "muenzen",
+              "place": "free",
+              "variant": "klein"
+            },
+            {
+              "prop": "muenzen",
+              "place": "free",
+              "variant": "einzeln",
+              "count": 2
             }
           ]
         },
@@ -311,6 +326,21 @@
               "prop": "saeule",
               "place": "free",
               "count": 2
+            },
+            {
+              "prop": "muenzen",
+              "place": "free",
+              "count": 2
+            },
+            {
+              "prop": "muenzen",
+              "place": "free",
+              "variant": "klein"
+            },
+            {
+              "prop": "muenzen",
+              "place": "around:truhe",
+              "variant": "einzeln"
             }
           ]
         }
@@ -400,22 +430,38 @@
           "props": [
             {
               "prop": "haendlerfigur",
-              "place": "free",
+              "place": "wall-back",
               "required": true
             },
             {
+              "prop": "kistenstapel",
+              "place": "corner"
+            },
+            {
+              "prop": "fassstapel",
+              "place": "corner"
+            },
+            {
               "prop": "kiste",
-              "place": "around:haendlerfigur",
-              "count": 2
+              "place": "corner",
+              "variant": "flaschen"
+            },
+            {
+              "prop": "flaschen",
+              "place": "around:kiste"
+            },
+            {
+              "prop": "flaschen",
+              "place": "around:kistenstapel",
+              "variant": "b"
             },
             {
               "prop": "regal",
               "place": "wall-back"
             },
             {
-              "prop": "fass",
-              "place": "corner",
-              "variant": "gruppe"
+              "prop": "sack",
+              "place": "free"
             }
           ]
         },
@@ -424,17 +470,31 @@
           "props": [
             {
               "prop": "haendlerfigur",
-              "place": "center",
+              "place": "wall-back",
               "required": true
             },
             {
-              "prop": "regal",
-              "place": "wall-back"
+              "prop": "kistenstapel",
+              "place": "corner"
+            },
+            {
+              "prop": "fassstapel",
+              "place": "corner"
             },
             {
               "prop": "kiste",
-              "place": "corner",
+              "place": "free",
+              "variant": "flaschen",
               "count": 2
+            },
+            {
+              "prop": "flaschen",
+              "place": "around:kiste",
+              "variant": "b"
+            },
+            {
+              "prop": "flaschen",
+              "place": "around:fassstapel"
             },
             {
               "prop": "sack",
@@ -503,6 +563,20 @@
               "prop": "fass",
               "place": "corner",
               "variant": "gruppe"
+            },
+            {
+              "prop": "fahne",
+              "place": "wall-back",
+              "count": 2
+            },
+            {
+              "prop": "schluesselbund",
+              "place": "wall-back"
+            },
+            {
+              "prop": "strohlager",
+              "place": "wall-back",
+              "count": 2
             }
           ]
         },
@@ -531,6 +605,25 @@
             {
               "prop": "fass",
               "place": "corner"
+            },
+            {
+              "prop": "fahne",
+              "place": "wall-back",
+              "variant": "wappen"
+            },
+            {
+              "prop": "fahne",
+              "place": "wall-back",
+              "variant": "blau"
+            },
+            {
+              "prop": "schluesselbund",
+              "place": "wall-back"
+            },
+            {
+              "prop": "strohlager",
+              "place": "wall-back",
+              "count": 2
             }
           ]
         }
@@ -598,6 +691,15 @@
               "prop": "saeule",
               "place": "corner",
               "count": 2
+            },
+            {
+              "prop": "kerzenstummel",
+              "place": "free",
+              "count": 2
+            },
+            {
+              "prop": "geroell_gross",
+              "place": "free"
             }
           ]
         },
@@ -624,6 +726,15 @@
               "prop": "knochen",
               "place": "free",
               "count": 2
+            },
+            {
+              "prop": "kerzenstummel",
+              "place": "free",
+              "count": 2
+            },
+            {
+              "prop": "geroell_gross",
+              "place": "corner"
             }
           ]
         }
@@ -694,6 +805,20 @@
               "prop": "fass",
               "place": "corner",
               "variant": "gruppe"
+            },
+            {
+              "prop": "saeule_verziert",
+              "place": "corner",
+              "count": 2
+            },
+            {
+              "prop": "fahne_dreifach",
+              "place": "wall-back"
+            },
+            {
+              "prop": "fahne_dreifach",
+              "place": "wall-back",
+              "variant": "blau"
             }
           ]
         },
@@ -714,6 +839,16 @@
               "prop": "moos",
               "place": "free",
               "count": 3
+            },
+            {
+              "prop": "saeule_verziert",
+              "place": "corner",
+              "count": 2
+            },
+            {
+              "prop": "fahne_dreifach",
+              "place": "wall-back",
+              "variant": "gelb"
             }
           ]
         }
@@ -792,6 +927,34 @@
               "prop": "sack",
               "place": "free",
               "count": 2
+            },
+            {
+              "prop": "wandregal",
+              "place": "wall-back"
+            },
+            {
+              "prop": "regal_gross",
+              "place": "wall-back"
+            },
+            {
+              "prop": "regal_klein",
+              "place": "wall-back"
+            },
+            {
+              "prop": "regal_kerzen",
+              "place": "wall-back"
+            },
+            {
+              "prop": "zapffass",
+              "place": "corner"
+            },
+            {
+              "prop": "kistenberg",
+              "place": "free"
+            },
+            {
+              "prop": "kistenstapel",
+              "place": "corner"
             }
           ]
         },
@@ -819,6 +982,34 @@
               "prop": "sack",
               "place": "corner",
               "count": 2
+            },
+            {
+              "prop": "wandregal",
+              "place": "wall-back"
+            },
+            {
+              "prop": "regal_gross",
+              "place": "wall-back"
+            },
+            {
+              "prop": "regal_klein",
+              "place": "wall-back"
+            },
+            {
+              "prop": "regal_kerzen",
+              "place": "wall-back"
+            },
+            {
+              "prop": "zapffass_verziert",
+              "place": "wall-back"
+            },
+            {
+              "prop": "kistenberg",
+              "place": "corner"
+            },
+            {
+              "prop": "kistenstapel",
+              "place": "free"
             }
           ]
         }
@@ -901,6 +1092,18 @@
               "prop": "sack",
               "place": "corner",
               "count": 2
+            },
+            {
+              "prop": "zapffass",
+              "place": "corner"
+            },
+            {
+              "prop": "kistenberg",
+              "place": "corner"
+            },
+            {
+              "prop": "kistenstapel",
+              "place": "corner"
             }
           ]
         },
@@ -928,6 +1131,14 @@
             },
             {
               "prop": "sack",
+              "place": "free"
+            },
+            {
+              "prop": "zapffass_verziert",
+              "place": "wall-back"
+            },
+            {
+              "prop": "kistenberg",
               "place": "free"
             }
           ]
@@ -1017,6 +1228,15 @@
             {
               "prop": "kerzen",
               "place": "corner"
+            },
+            {
+              "prop": "tisch_gedeckt",
+              "place": "free",
+              "count": 2
+            },
+            {
+              "prop": "kerzen",
+              "place": "free"
             }
           ]
         },
@@ -1049,6 +1269,15 @@
             {
               "prop": "fass",
               "place": "corner"
+            },
+            {
+              "prop": "tisch_gedeckt",
+              "place": "free"
+            },
+            {
+              "prop": "kerzen",
+              "place": "corner",
+              "count": 2
             }
           ]
         }

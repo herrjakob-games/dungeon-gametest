@@ -11,7 +11,12 @@ Quelle und Lizenz jeder fremden Datei (docs/GDD.md, Asset-Spezifikation).
   barrel_large, barrel_small_stack, bottle_A_brown, bottle_B_green, box_large, candle_triple, chair, chest,
   coin_stack_large, floor_tile_small, floor_tile_small_broken_A, floor_tile_small_broken_B, floor_tile_small_decorated,
   pillar, plate_food_A, plate_food_B, plate_stack, rubble_half, shelves, stool, sword_shield, table_long,
-  table_long_tablecloth, torch_mounted, trunk_large_A, wall_corner, wall_doorway, wall_endcap, wall_half
+  table_long_tablecloth, torch_mounted, trunk_large_A, wall_corner, wall_doorway, wall_endcap, wall_half,
+  sowie (für die Requisiten aus GDD 2.19) banner_red, banner_blue, banner_green, banner_yellow, banner_shield_red, banner_triple_red,
+  banner_triple_blue, banner_triple_yellow, barrel_small_stack, bed_floor, bottle_A_green, bottle_A_labeled_brown, bottle_A_labeled_green,
+  bottle_B_brown, bottle_C_brown, bottle_C_green, box_stacked, candle_lit, candle_melted, coin, coin_stack_medium, coin_stack_small,
+  crates_stacked, keg, keg_decorated, keyring_hanging, pillar_decorated, rubble_large, shelf_large, shelf_small, shelf_small_candles,
+  table_medium_tablecloth_decorated_B, table_small_decorated_B, wall_shelves
 - Daraus gebaut (`npm run build:assets`): alle Dateien in `tiles/` und `props/`.
 - `textures/keller/dungeon_texture.png` ist eine umgefärbte Fassung der Paletten-Textur (`tools/palette-texture.py`).
 

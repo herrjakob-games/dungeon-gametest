@@ -31,7 +31,8 @@ resize();
 
 // Feste Beleuchtung (Fackeln kommen pro Raum dazu)
 // Grundlicht nach Stilguide: Halbkugellicht, oben warmes Grau, unten das Grundlicht des Themas (setAmbient)
-const hemi = new THREE.HemisphereLight(0x9c8c80, 0x3a3048, 0.32);
+const HEMI = 0.32;
+const hemi = new THREE.HemisphereLight(0x9c8c80, 0x3a3048, HEMI);
 scene.add(hemi);
 // Schwaches Licht von oben: der einzige Schattenwerfer neben höchstens einem weiteren (Stilguide: höchstens zwei)
 const sun = new THREE.DirectionalLight(0xffe0bc, 0.12);
@@ -47,6 +48,8 @@ export function zoomBy(deltaY) {
 }
 
 // Grundlicht des Themas oder Raums (Farbe als "#rrggbb")
-export function setAmbient(ground) {
+// brightness: Faktor für hellere Räume (roomPalettes, etwa der Händler), Standard 1
+export function setAmbient(ground, brightness) {
   hemi.groundColor.set(ground || "#3a3048");
+  hemi.intensity = HEMI * (brightness || 1);
 }

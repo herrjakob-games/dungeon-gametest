@@ -285,6 +285,366 @@
     "souvenirkiste": {
       "dir": "props",
       "file": "trunk_large_A.gltf.glb"
+    },
+    "verkaufstisch": {
+      "dir": "props",
+      "pieces": [
+        {
+          "file": "table_small_decorated_B.gltf.glb",
+          "position": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "file": "candle_lit.gltf.glb",
+          "position": [
+            0.28,
+            1.0,
+            0.28
+          ],
+          "scale": [
+            0.8,
+            0.8,
+            0.8
+          ]
+        }
+      ]
+    },
+    "kistenstapel": {
+      "dir": "props",
+      "file": "box_stacked.gltf.glb"
+    },
+    "fassstapel": {
+      "dir": "props",
+      "file": "barrel_small_stack.gltf.glb"
+    },
+    "kiste_flaschen": {
+      "dir": "props",
+      "pieces": [
+        {
+          "file": "box_large.gltf.glb",
+          "position": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "file": "bottle_A_green.gltf.glb",
+          "position": [
+            -0.3,
+            1.5,
+            -0.2
+          ],
+          "scale": [
+            0.6,
+            0.6,
+            0.6
+          ]
+        },
+        {
+          "file": "bottle_C_brown.gltf.glb",
+          "position": [
+            0.3,
+            1.5,
+            0.25
+          ],
+          "scale": [
+            0.6,
+            0.6,
+            0.6
+          ]
+        },
+        {
+          "file": "bottle_A_labeled_brown.gltf.glb",
+          "position": [
+            0.35,
+            1.5,
+            -0.35
+          ],
+          "scale": [
+            0.6,
+            0.6,
+            0.6
+          ]
+        }
+      ]
+    },
+    "flaschen": {
+      "dir": "props",
+      "pieces": [
+        {
+          "file": "bottle_A_labeled_brown.gltf.glb",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.6,
+            0.6,
+            0.6
+          ]
+        },
+        {
+          "file": "bottle_B_brown.gltf.glb",
+          "position": [
+            0.45,
+            0,
+            0.25
+          ],
+          "scale": [
+            0.6,
+            0.6,
+            0.6
+          ]
+        },
+        {
+          "file": "bottle_C_green.gltf.glb",
+          "position": [
+            -0.4,
+            0,
+            0.35
+          ],
+          "scale": [
+            0.6,
+            0.6,
+            0.6
+          ]
+        }
+      ]
+    },
+    "flaschen_b": {
+      "dir": "props",
+      "pieces": [
+        {
+          "file": "bottle_A_green.gltf.glb",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.6,
+            0.6,
+            0.6
+          ]
+        },
+        {
+          "file": "bottle_A_labeled_green.gltf.glb",
+          "position": [
+            0.4,
+            0,
+            -0.3
+          ],
+          "scale": [
+            0.6,
+            0.6,
+            0.6
+          ]
+        },
+        {
+          "file": "bottle_C_brown.gltf.glb",
+          "position": [
+            -0.35,
+            0,
+            0.3
+          ],
+          "scale": [
+            0.6,
+            0.6,
+            0.6
+          ]
+        }
+      ]
+    },
+    "fahne": {
+      "dir": "props",
+      "file": "banner_red.gltf.glb"
+    },
+    "fahne_blau": {
+      "dir": "props",
+      "file": "banner_blue.gltf.glb"
+    },
+    "fahne_gruen": {
+      "dir": "props",
+      "file": "banner_green.gltf.glb"
+    },
+    "fahne_gelb": {
+      "dir": "props",
+      "file": "banner_yellow.gltf.glb"
+    },
+    "fahne_wappen": {
+      "dir": "props",
+      "file": "banner_shield_red.gltf.glb"
+    },
+    "fahne_dreifach": {
+      "dir": "props",
+      "file": "banner_triple_red.gltf.glb"
+    },
+    "fahne_dreifach_blau": {
+      "dir": "props",
+      "file": "banner_triple_blue.gltf.glb"
+    },
+    "fahne_dreifach_gelb": {
+      "dir": "props",
+      "file": "banner_triple_yellow.gltf.glb"
+    },
+    "schluesselbund": {
+      "dir": "props",
+      "file": "keyring_hanging.gltf.glb"
+    },
+    "strohlager": {
+      "dir": "props",
+      "file": "bed_floor.gltf.glb"
+    },
+    "zapffass": {
+      "dir": "props",
+      "file": "keg.gltf.glb"
+    },
+    "zapffass_verziert": {
+      "dir": "props",
+      "file": "keg_decorated.gltf.glb"
+    },
+    "kistenberg": {
+      "dir": "props",
+      "file": "crates_stacked.gltf.glb"
+    },
+    "muenzen": {
+      "dir": "props",
+      "file": "coin_stack_medium.gltf.glb"
+    },
+    "muenzen_klein": {
+      "dir": "props",
+      "file": "coin_stack_small.gltf.glb"
+    },
+    "muenzen_einzeln": {
+      "dir": "props",
+      "pieces": [
+        {
+          "file": "coin.gltf.glb",
+          "position": [
+            0,
+            0.06,
+            0
+          ]
+        },
+        {
+          "file": "coin.gltf.glb",
+          "position": [
+            0.45,
+            0.06,
+            0.2
+          ]
+        },
+        {
+          "file": "coin.gltf.glb",
+          "position": [
+            -0.3,
+            0.06,
+            0.4
+          ]
+        },
+        {
+          "file": "coin.gltf.glb",
+          "position": [
+            0.2,
+            0.06,
+            -0.45
+          ]
+        }
+      ]
+    },
+    "tisch_gedeckt": {
+      "dir": "props",
+      "pieces": [
+        {
+          "file": "table_medium_tablecloth_decorated_B.gltf.glb",
+          "position": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "file": "candle_lit.gltf.glb",
+          "position": [
+            0.6,
+            1.0,
+            -0.6
+          ],
+          "scale": [
+            0.8,
+            0.8,
+            0.8
+          ]
+        }
+      ]
+    },
+    "saeule_verziert": {
+      "dir": "props",
+      "file": "pillar_decorated.gltf.glb"
+    },
+    "kerzenstummel": {
+      "dir": "props",
+      "pieces": [
+        {
+          "file": "candle_melted.gltf.glb",
+          "position": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "file": "candle_melted.gltf.glb",
+          "position": [
+            0.35,
+            0,
+            0.2
+          ],
+          "scale": [
+            0.8,
+            0.7,
+            0.8
+          ]
+        },
+        {
+          "file": "candle_melted.gltf.glb",
+          "position": [
+            -0.25,
+            0,
+            0.3
+          ],
+          "scale": [
+            0.9,
+            0.5,
+            0.9
+          ]
+        }
+      ]
+    },
+    "geroell_gross": {
+      "dir": "props",
+      "file": "rubble_large.gltf.glb"
+    },
+    "regal_gross": {
+      "dir": "props",
+      "file": "shelf_large.gltf.glb"
+    },
+    "regal_klein": {
+      "dir": "props",
+      "file": "shelf_small.gltf.glb"
+    },
+    "regal_kerzen": {
+      "dir": "props",
+      "file": "shelf_small_candles.gltf.glb"
+    },
+    "wandregal": {
+      "dir": "props",
+      "file": "wall_shelves.gltf.glb"
     }
   },
   "figureSource": "assets/source/kaykit-adventurers/",

@@ -57,7 +57,7 @@ export function buildRoom(id) {
   // Licht nach Stilguide: Palette des Themas, für düstere Räume (Gruft, Brunnen) eine eigene; torchColor der Einrichtung gewinnt
   const pal = roomPalette(room.type);
   const torch = spec && spec.torchColor ? spec.torchColor : (pal && pal.torch) || "#" + type.torch.toString(16).padStart(6, "0");
-  setAmbient(pal && pal.ambient);
+  setAmbient(pal && pal.ambient, pal && pal.brightness);
   setModelTheme(state.theme ? state.theme.id : null);
 
   buildFloor(type);
@@ -303,7 +303,12 @@ function propMesh(id, pl) {
     });
     return g;
   }
-  return makeModel(id, pl.variant) || P[id](pl, lightCtx());
+  const model = makeModel(id, pl.variant);
+  if (model) return model;
+  if (P[id]) return P[id](pl, lightCtx());
+  // Requisit ohne Platzhalter (nur als Modell gedacht): einfache Kiste in Holzfarbe, damit nichts fehlt
+  const d = PROPS[id] || { w: 1, d: 1 };
+  return box(Math.max(0.3, d.w * 0.8), 0.5, Math.max(0.3, d.d * 0.8), mat(0x7a5a3a), 0, 0.25, 0);
 }
 
 // ---------- Einrichtung aus den Daten ----------
@@ -313,7 +318,7 @@ function placeDecor(spec, room, feature, id) {
   for (const pl of plan.placements) {
     if (pl.prop === "truhe") { makeChest(pl.tiles[0], id, pl.rot); continue; }
     if (pl.prop === "lagerfeuer") { makeCampfire(pl.tiles[0], id); continue; }
-    if (pl.prop === "haendlerfigur") { makeMerchant(pl.tiles[0]); continue; }
+    if (pl.prop === "haendlerfigur") { makeMerchant(pl.tiles[0], pl.tiles[1] || null, pl.rot); continue; }
     if (PROPS[pl.prop].blocks) pl.tiles.forEach(t => block(t[0], t[1]));
     at(propMesh(pl.prop, pl), pl.cx, pl.cz, pl.rot);
   }
@@ -485,12 +490,12 @@ export function douseCampfire() {
   if (fire) { fire.userData.flame.visible = false; fire.userData.light.intensity = 0; }
 }
 
-// Händler: Figur aus Grundformen, schaut zur Raummitte
-function makeMerchant(pos) {
+// Händler (GDD: Händler aus KayKit Rogue): steht mit dem Rücken zur Nord- oder Westwand und schaut in den Raum,
+// vor ihm sein Tisch mit brennender Kerze. pos: Kachel des Händlers, front: Kachel des Tisches (oder null), rot: Blickrichtung
+function makeMerchant(pos, front, rot) {
   if (!free(pos[0], pos[1])) return;
   block(pos[0], pos[1]);
   const g = new THREE.Group();
-  // Händler: KayKit Rogue mit dunkelblauem Outfit (data/models.json, haendlerfigur), sonst der alte Platzhalter
   const anim = makeFigureModel("haendlerfigur");
   const fig = anim ? anim.object : buildFigure("mensch");
   state.merchantAnim = anim && anim.animated ? anim : null;
@@ -503,8 +508,16 @@ function makeMerchant(pos) {
     g.add(hat);
   }
   g.position.set(tw(pos[0]), 0, tw(pos[1]));
-  g.rotation.y = Math.atan2(tw(MID) - tw(pos[0]), tw(MID) - tw(pos[1]));
-  g.userData = { kind: "merchant", tile: pos, hoverMats };
+  g.rotation.y = rot !== undefined ? rot : Math.atan2(tw(MID) - tw(pos[0]), tw(MID) - tw(pos[1]));
+  // Angesprochen wird er über den Tisch: die Spielfigur läuft auf eine Kachel neben dem Tisch
+  g.userData = { kind: "merchant", tile: front || pos, hoverMats };
   add(g);
   state.interactables.push(g);
+  if (front && free(front[0], front[1])) {
+    block(front[0], front[1]);
+    const lights = [];
+    const table = makeModel("verkaufstisch", null, { lights }) || box(0.5, 0.5, 0.5, mat(0x7a4a26), 0, 0.25, 0);
+    lights.forEach(l => { l.castShadow = false; });
+    at(table, front[0], front[1], g.rotation.y);
+  }
 }

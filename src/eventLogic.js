@@ -267,7 +267,10 @@ export function validateData(data) {
     if (!th.palette || !["floor", "wall", "accent", "torch", "ambient"].every(k => hex(th.palette[k]))) err(w, "palette braucht floor, wall, accent, torch und ambient als Farbe");
     Object.entries(th.roomPalettes || {}).forEach(([t, pal]) => {
       if (!data.roomTypes[t]) err(w, "roomPalettes für unbekannten Raumtyp " + t);
-      Object.values(pal).forEach(v => { if (!hex(v)) err(w, "roomPalettes " + t + ": " + v + " ist keine Farbe"); });
+      Object.entries(pal).forEach(([k, v]) => {
+        if (k === "brightness") { if (!(v > 0 && v <= 3)) err(w, "roomPalettes " + t + ": brightness muss zwischen 0 und 3 liegen"); }
+        else if (!hex(v)) err(w, "roomPalettes " + t + ": " + v + " ist keine Farbe");
+      });
     });
     [th.startNeighbor].concat(th.roomTypes || []).forEach(t => { if (!data.roomTypes[t]) err(w, "unbekannter Raumtyp " + t); });
     [th.boss].concat(th.endlessBosses || []).concat(th.monsters || []).forEach(m => { if (!data.monsters[m]) err(w, "unbekanntes Monster " + m); });
