@@ -1,5 +1,5 @@
 {
-  "_info": "Zuordnung der Modelle (docs/GDD.md, Asset-Spezifikation). Pro id: file, scale (Zahl oder [x, y, z]), rotation (Grad [x, y, z]), offset ([x, y, z] in Kacheln, vor der Drehung), palette (true = Paletten-Textur des Themas), tint (Farbe, die das Modell einfärbt), lights (offset, color, intensity, distance), animations (Figuren: Name im Spiel → Name im Paket: idle, walk, attack, hit, death, interact). Varianten heißen <id>_<variante>.",
+  "_info": "Zuordnung der Modelle (docs/GDD.md, Asset-Spezifikation). Pro id: file, scale (Zahl oder [x, y, z]), rotation (Grad [x, y, z]), offset ([x, y, z] in Kacheln, vor der Drehung), palette (true = Paletten-Textur des Themas), tint (Farbe, die das Modell einfärbt), lights (offset, color, intensity, distance), animations (Figuren: Name im Spiel → Name im Paket: idle, walk, attack, hit, death, interact), accessories (Zubehör aus Grundformen an einem Knochen: shape, bone, offset und size in Kacheln). Varianten heißen <id>_<variante>.",
   "boden": {
     "file": "assets/tiles/boden.glb",
     "scale": 0.5,
@@ -306,5 +306,135 @@
       "death": "Death_A",
       "interact": "Interact"
     }
+  },
+  "rat": {
+    "file": "assets/figures/rat.glb",
+    "scale": 0.18,
+    "palette": false,
+    "animations": {
+      "idle": "Armature|Rat_Idle",
+      "walk": "Armature|Rat_Walk",
+      "attack": "Armature|Rat_Attack",
+      "death": "Armature|Rat_Death"
+    },
+    "accessories": [
+      {
+        "shape": "augen",
+        "bone": "Head",
+        "offset": [
+          0,
+          0.03,
+          0.07
+        ],
+        "size": 0.025,
+        "spread": 0.07
+      }
+    ]
+  },
+  "kuechenratte": {
+    "file": "assets/figures/rat.glb",
+    "scale": 0.18,
+    "palette": false,
+    "animations": {
+      "idle": "Armature|Rat_Idle",
+      "walk": "Armature|Rat_Walk",
+      "attack": "Armature|Rat_Attack",
+      "death": "Armature|Rat_Death"
+    },
+    "accessories": [
+      {
+        "shape": "augen",
+        "bone": "Head",
+        "offset": [
+          0,
+          0.03,
+          0.07
+        ],
+        "size": 0.025,
+        "spread": 0.07
+      },
+      {
+        "shape": "kochmuetze",
+        "bone": "Head",
+        "offset": [
+          0,
+          0.12,
+          0.02
+        ],
+        "size": 0.13
+      },
+      {
+        "shape": "beil",
+        "bone": "FrontLowLeg.R",
+        "offset": [
+          0,
+          0,
+          0.05
+        ],
+        "size": 0.18
+      }
+    ]
+  },
+  "monsterratte": {
+    "file": "assets/figures/rat.glb",
+    "scale": 0.36,
+    "palette": false,
+    "animations": {
+      "idle": "Armature|Rat_Idle",
+      "walk": "Armature|Rat_Walk",
+      "attack": "Armature|Rat_Attack",
+      "death": "Armature|Rat_Death"
+    },
+    "accessories": [
+      {
+        "shape": "augen",
+        "bone": "Head",
+        "offset": [
+          0,
+          0.06,
+          0.14
+        ],
+        "size": 0.05,
+        "spread": 0.14
+      },
+      {
+        "shape": "gabelkrone",
+        "bone": "Head",
+        "offset": [
+          0,
+          0.25,
+          0.03
+        ],
+        "size": 0.38
+      }
+    ]
+  },
+  "kroete": {
+    "file": "assets/figures/kroete.glb",
+    "scale": 0.2,
+    "palette": false,
+    "animations": {
+      "idle": "Armature|Frog_Idle",
+      "walk": "Armature|Frog_Jump",
+      "attack": "Armature|Frog_Attack",
+      "death": "Armature|Frog_Death"
+    },
+    "accessories": [
+      {
+        "shape": "krone",
+        "bone": "Head",
+        "offset": [
+          0,
+          0.13,
+          0
+        ],
+        "size": 0.15
+      }
+    ]
+  },
+  "goblin": {
+    "file": "assets/figures/goblin.glb",
+    "scale": 0.8,
+    "palette": false
   }
 }

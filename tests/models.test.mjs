@@ -7,6 +7,8 @@ import { FakeThree } from "./fakeThree.mjs";
 globalThis.window = { THREE: FakeThree };
 const P = await import("../src/props.js");
 const { PROPS } = await import("../src/decor.js");
+const { FIGURE_INFO } = await import("../src/figurePlan.js");
+const { ACCESSORIES } = await import("../src/monsterFigures.js");
 
 const root = new URL("../", import.meta.url);
 const read = (f) => JSON.parse(readFileSync(new URL(f, root), "utf8"));
@@ -14,7 +16,7 @@ const MODELS = read("data/models.json");
 delete MODELS._info;
 const ROOM_TYPES = read("data/room-types.json");
 const RECIPES = read("tools/asset-recipes.json");
-const MAX_PROP_TRIS = 1500, MAX_FIGURE_TRIS = 4000, MAX_BYTES = 1024 * 1024;
+const MAX_PROP_TRIS = 1500, MAX_BYTES = 1024 * 1024;
 const FIGURE_ANIMS = ["idle", "walk", "attack", "hit", "death", "interact"];
 
 // Dreiecke einer GLB-Datei aus dem JSON-Teil zählen (ohne Abhängigkeiten); mehrfach benutzte Meshes zählen mehrfach
@@ -78,6 +80,29 @@ test("Jedes Volk hat eine Figur mit allen Animationen", () => {
   Object.keys(RECIPES.figures || {}).forEach(id => assert.ok(MODELS[id], id + ": gebaut, aber nicht in data/models.json"));
 });
 
+// Figuren ohne Modell (bleiben vorerst Grundformen): Skelett aus KayKit Skeletons, Mimik aus dem KayKit Dungeon Pack
+const FIGURES_PENDING = ["skeleton", "mimic"];
+
+test("Jede Figuren-id hat ein Modell, das lädt", (t) => {
+  for (const id of Object.keys(FIGURE_INFO)) {
+    if (FIGURES_PENDING.includes(id)) continue;
+    const m = MODELS[id];
+    assert.ok(m, id + ": fehlt in data/models.json");
+    assert.ok(m.file.startsWith("assets/figures/"), id + ": Figur gehört nach assets/figures/");
+    const g = glbTriangles(new URL(m.file, root)); // liest die GLB, wirft bei kaputter Datei
+    assert.ok(g.tris > 0, id + ": Datei ohne Dreiecke");
+    Object.entries(m.animations || {}).forEach(([name, clip]) => {
+      assert.ok(FIGURE_ANIMS.includes(name), id + ": unbekannte Animation " + name);
+      assert.ok(g.animations.includes(clip), id + ": Animation " + clip + " fehlt in " + m.file);
+    });
+    (m.accessories || []).forEach(a => {
+      assert.ok(ACCESSORIES[a.shape], id + ": unbekanntes Zubehör " + a.shape);
+      assert.ok(typeof a.bone === "string" && a.size > 0, id + ": Zubehör braucht bone und size");
+    });
+  }
+  t.diagnostic("Noch ohne Modell: " + FIGURES_PENDING.join(", "));
+});
+
 test("Grenzen der Asset-Spezifikation (Warnungen)", (t) => {
   const warn = [];
   for (const [id, m] of Object.entries(MODELS)) {
@@ -85,7 +110,8 @@ test("Grenzen der Asset-Spezifikation (Warnungen)", (t) => {
     const bytes = statSync(path).size, { tris } = glbTriangles(path);
     if (bytes > MAX_BYTES) warn.push(id + ": " + Math.round(bytes / 1024) + " KB (über 1 MB)");
     if (m.file.includes("/props/") && tris > MAX_PROP_TRIS) warn.push(id + ": " + tris + " Dreiecke (über " + MAX_PROP_TRIS + ")");
-    if (m.file.includes("/figures/") && tris > MAX_FIGURE_TRIS) warn.push(id + ": " + tris + " Dreiecke (über " + MAX_FIGURE_TRIS + ")");
+    const figureMax = (RECIPES.figures[m.file.replace(/^.*\//, "").replace(".glb", "")] || {}).maxTris || 3000;
+    if (m.file.includes("/figures/") && tris > figureMax) warn.push(id + ": " + tris + " Dreiecke (über " + figureMax + ")");
   }
   t.diagnostic("Modelle über den Grenzen der Asset-Spezifikation: " + (warn.length ? "" : "keine"));
   warn.forEach(w => t.diagnostic("  " + w));

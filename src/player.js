@@ -25,7 +25,7 @@ export function setFigure(volk) {
 // Pro Frame: Laufen oder Stehen. true, wenn das Modell selbst animiert ist (dann kein Wippen der Grundformen)
 export function animateFigure(dt, moving) {
   if (!anim) return false;
-  anim.play(moving ? "walk" : "idle");
+  anim.loop(moving ? "walk" : "idle");
   anim.update(dt);
   return true;
 }
@@ -50,4 +50,9 @@ export function placePlayer(tile, facing) {
 
 export function faceTile(tile) {
   player.rotation.y = Math.atan2(tw(tile[0]) - player.position.x, tw(tile[1]) - player.position.z);
+}
+
+// Einmalige Animation der Spielfigur: "attack" beim eigenen Angriff, "hit" bei einem Treffer des Gegners
+export function playerAction(name) {
+  if (anim) anim.once(name);
 }

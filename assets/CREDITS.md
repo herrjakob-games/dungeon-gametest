@@ -23,6 +23,22 @@ Quelle und Lizenz jeder fremden Datei (docs/GDD.md, Asset-Spezifikation).
 - Übernommene Dateien (in `source/kaykit-adventurers/`, aus `Characters/gltf/`): Knight, Mage, Rogue_Hooded
 - Daraus gebaut (`npm run build:assets`): `figures/zwerg.glb`, `figures/elf.glb`, `figures/mensch.glb`
 
+## Easy Animated Enemy Pack (Jan 2019)
+
+- Autor: Quaternius
+- Lizenz: CC0 1.0 (laut Download-Seite: „FBX, OBJ and Blend formats and CC0 license.“; das Paket enthält keine Lizenzdatei), siehe `source/quaternius-easy-enemies/LICENSE.txt`
+- Quelle: https://quaternius.itch.io/animated-easy-enemies
+- Übernommene Dateien (in `source/quaternius-easy-enemies/`, aus `FBX/`): Rat.fbx, Frog.fbx
+- Daraus gebaut (`npm run build:assets`): `figures/rat.glb` (Riesenratte, Küchenchef, Monsterratte), `figures/kroete.glb`
+
+## Goblin Lowpoly Assets (GoblinPack_Free)
+
+- Autor: standout7
+- Lizenz: CC0 1.0 (laut Download-Seite: „Goblin Pack Asset license: Creative Commons Zero v1.0 Universal“; das Paket enthält keine Lizenzdatei), siehe `source/goblin-lowpoly/LICENSE.txt`
+- Quelle: https://standout7.itch.io/goblin-lowpoly-assets
+- Übernommene Dateien (in `source/goblin-lowpoly/`, aus `GLB/`): Basic_Goblin.glb, Goblin_Rusty_Shiv.glb
+- Daraus gebaut (`npm run build:assets`): `figures/goblin.glb`
+
 ## three.js GLTFLoader und SkeletonUtils (r128)
 
 - Dateien: `vendor/three/GLTFLoader.js` und `vendor/three/SkeletonUtils.js` aus dem npm-Paket three@0.128.0

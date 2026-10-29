@@ -288,7 +288,7 @@
     }
   },
   "figureSource": "assets/source/kaykit-adventurers/",
-  "figureNotes": "Figuren: Paketdatei mit eigener Textur. remove nennt Zubehörteile, die wegfallen (Waffen und Schilde, die das Volk nicht trägt); animations die Animationen, die bleiben.",
+  "figureNotes": "Figuren: Paketdatei mit eigener Textur. remove nennt Zubehörteile, die wegfallen (Waffen und Schilde, die das Volk nicht trägt); animations die Animationen, die bleiben. source: anderer Paketordner; FBX wird umgewandelt; colors: Material → Palettenfarbe; attach: Datei an Knochen (Position, Drehung in Grad, Maßstab); simplify: Anteil der Dreiecke, der bleibt.",
   "figures": {
     "zwerg": {
       "file": "Knight.glb",
@@ -307,7 +307,8 @@
         "Hit_A",
         "Death_A",
         "Interact"
-      ]
+      ],
+      "maxTris": 4000
     },
     "elf": {
       "file": "Rogue_Hooded.glb",
@@ -324,7 +325,8 @@
         "Hit_A",
         "Death_A",
         "Interact"
-      ]
+      ],
+      "maxTris": 4000
     },
     "mensch": {
       "file": "Mage.glb",
@@ -340,6 +342,50 @@
         "Hit_A",
         "Death_A",
         "Interact"
+      ],
+      "maxTris": 4000
+    },
+    "rat": {
+      "source": "assets/source/quaternius-easy-enemies/",
+      "file": "Rat.fbx",
+      "animations": [
+        "Armature|Rat_Idle",
+        "Armature|Rat_Walk",
+        "Armature|Rat_Attack",
+        "Armature|Rat_Death"
+      ],
+      "colors": {
+        "Grey": "#7A6552",
+        "Pink": "#B07A6E"
+      },
+      "simplify": 0.7
+    },
+    "kroete": {
+      "source": "assets/source/quaternius-easy-enemies/",
+      "file": "Frog.fbx",
+      "animations": [
+        "Armature|Frog_Idle",
+        "Armature|Frog_Jump",
+        "Armature|Frog_Attack",
+        "Armature|Frog_Death"
+      ],
+      "colors": {
+        "Green": "#6B7048",
+        "Yellow": "#A89A5C",
+        "Red": "#C8432F",
+        "Black": "#2A2230"
+      },
+      "simplify": 0.6
+    },
+    "goblin": {
+      "source": "assets/source/goblin-lowpoly/",
+      "file": "Basic_Goblin.glb",
+      "animations": [],
+      "attach": [
+        {
+          "file": "Goblin_Rusty_Shiv.glb",
+          "bone": "hand.R"
+        }
       ]
     }
   }
