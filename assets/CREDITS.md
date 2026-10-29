@@ -11,7 +11,12 @@ Quelle und Lizenz jeder fremden Datei (docs/GDD.md, Asset-Spezifikation).
   barrel_large, barrel_small_stack, bottle_A_brown, bottle_B_green, box_large, candle_triple, chair, chest,
   coin_stack_large, floor_tile_small, floor_tile_small_broken_A, floor_tile_small_broken_B, floor_tile_small_decorated,
   pillar, plate_food_A, plate_food_B, plate_stack, rubble_half, shelves, stool, sword_shield, table_long,
-  table_long_tablecloth, torch_mounted, trunk_large_A, wall_corner, wall_doorway, wall_endcap, wall_half
+  table_long_tablecloth, torch_mounted, trunk_large_A, wall_corner, wall_doorway, wall_endcap, wall_half,
+  sowie (für die Requisiten aus GDD 2.19) banner_red, banner_blue, banner_green, banner_yellow, banner_shield_red, banner_triple_red,
+  banner_triple_blue, banner_triple_yellow, barrel_small_stack, bed_floor, bottle_A_green, bottle_A_labeled_brown, bottle_A_labeled_green,
+  bottle_B_brown, bottle_C_brown, bottle_C_green, box_stacked, candle_lit, candle_melted, coin, coin_stack_medium, coin_stack_small,
+  crates_stacked, keg, keg_decorated, keyring_hanging, pillar_decorated, rubble_large, shelf_large, shelf_small, shelf_small_candles,
+  table_medium_tablecloth_decorated_B, table_small_decorated_B, wall_shelves
 - Daraus gebaut (`npm run build:assets`): alle Dateien in `tiles/` und `props/`.
 - `textures/keller/dungeon_texture.png` ist eine umgefärbte Fassung der Paletten-Textur (`tools/palette-texture.py`).
 
@@ -20,8 +25,9 @@ Quelle und Lizenz jeder fremden Datei (docs/GDD.md, Asset-Spezifikation).
 - Autor: Kay Lousberg (www.kaylousberg.com)
 - Lizenz: CC0 1.0 (Creative Commons Zero), siehe `source/kaykit-adventurers/LICENSE.txt`
 - Quelle: https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0, Commit `672074b73ba276876a19e8816ecdc5241817ab47`
-- Übernommene Dateien (in `source/kaykit-adventurers/`, aus `Characters/gltf/`): Knight, Mage, Rogue_Hooded
-- Daraus gebaut (`npm run build:assets`): `figures/zwerg.glb`, `figures/elf.glb`, `figures/mensch.glb`
+- Übernommene Dateien (in `source/kaykit-adventurers/`, aus `Characters/gltf/`): Knight, Mage, Rogue_Hooded, Rogue, rogue_texture.png
+- Daraus gebaut (`npm run build:assets`): `figures/zwerg.glb`, `figures/elf.glb`, `figures/mensch.glb`, `figures/haendlerfigur.glb` (Händler)
+- `textures/figures/haendler/haendler_texture.png` ist die Rogue-Textur mit dunkelblauem statt grünem Outfit (`tools/merchant-texture.py`)
 
 ## KayKit Character Pack: Skeletons 1.0 (und 1.1 FREE)
 
@@ -30,7 +36,7 @@ Quelle und Lizenz jeder fremden Datei (docs/GDD.md, Asset-Spezifikation).
 - Quelle: https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0, Commit `15b62b9bad122f72926c10fb14d622c73819fa54`;
   Fassung 1.1 FREE von der itch.io-Seite von Kay Lousberg (hochgeladen von Christian; Textur Pixel für Pixel gleich)
 - Übernommene Dateien (in `source/kaykit-skeletons/`): Skeleton_Minion.glb, Skeleton_Warrior.glb, Skeleton_Rogue.glb, Skeleton_Mage.glb (1.0, mit Animationen), skeleton_texture.png (1.1)
-- Daraus gebaut (`npm run build:assets`): `figures/skeleton_minion.glb`, `figures/skeleton_warrior.glb`, `figures/skeleton_rogue.glb`, `figures/skeleton_mage.glb`
+- Daraus gebaut (`npm run build:assets`): `figures/skeleton_minion.glb`, `figures/skeleton_warrior.glb`, `figures/skeleton_rogue.glb`, `figures/skeleton_mage.glb`; aus Schädel, Kiefer und Armen des Skeleton_Minion das Requisit `props/knochen.glb`
 - `textures/figures/skeleton/skeleton_keller.png` ist eine umgefärbte Fassung der Textur (`tools/skeleton-texture.py`)
 
 ## Easy Animated Enemy Pack (Jan 2019)

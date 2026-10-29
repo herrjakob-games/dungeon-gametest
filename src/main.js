@@ -369,6 +369,8 @@ function loop() {
   updateFigures(dt, t);
   setDuck(state.eventActive || !!state.combat); // Hintergrund halb so laut während Events und Kämpfen
 
+  if (state.merchantAnim) state.merchantAnim.update(dt); // Händler steht mit Idle-Animation
+
   if (state.openLid && state.lidPivot) {
     if (state.lidPivot.rotation.x > -1.9) state.lidPivot.rotation.x -= dt * 4;
     else state.openLid = false;

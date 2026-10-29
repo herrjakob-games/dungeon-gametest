@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.16 · Oct 29, 2026 · @Christian
+Version 2.19 · Oct 29, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,9 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.19 | 29.10.2026 | Neue Requisiten aus dem KayKit Dungeon Kit für Händler, Wachstube, Vorratskammer, Küche, Schatzkammer, Speisesaal, Säulenhalle und Gruft; Händler mit dem Rücken zur Nord- oder Westwand, davor sein Tisch mit Kerze; Händlerraum heller (`brightness` in `roomPalettes`) |
+| 2.18 | 29.10.2026 | Händler aus KayKit Rogue (ohne Kapuze, ohne Waffen) mit dunkelblauem statt grünem Outfit |
+| 2.17 | 29.10.2026 | Requisit Knochen aus Schädel, Kiefer und Armen der KayKit-Skelette (gleiche Textur wie die Skelett-Gegner) statt Grundformen |
 | 2.16 | 29.10.2026 | Neue Raum-Stimmung `kitchen` (Küche) und neuer Boden `stone` (trockener Stein) für alle Keller-Räume außer Gruft, Brunnenraum und Säulenhalle (`hall`); Event-Sound `klopfen_stein` beim Sarkophag; erste Sounds von Freepik |
 | 2.15 | 29.10.2026 | Sound-System (`data/sounds.json`, Meilenstein 6c): Angriffsklänge für Waffen (holz, schwert, axt, hammer, eigene für magische Waffen) und Monster (`sound` in `data/monsters.json`), Treffer und Fehlschlag getrennt; Klang pro Verbrauchsgegenstand; Raum-Stimmung (`mood`) und Boden (`floor`) mit Loop, Zufallsgeräuschen und Schritten; optionaler Event-Sound; Spielgeräusche für Türen, Truhe, Gold, Stufe, Treppe, Treffer und Tod; fehlende Sounds bleiben stumm; Lautstärke und Menü in Meilenstein 7 |
 | 2.14 | 29.10.2026 | Inszenierung: Gastgeber und schlafender Goblin bleiben nach dem Event (`stay` pro Event in `data/staging.json`); Goblin liegt flach neben dem Tisch (Anker mit `flat`, `front`); Würfelspiel-Skelette sind Warrior, Skelett mit Rücken ist Minion |
@@ -404,6 +407,7 @@ Gruft und Brunnen sind im Keller die düsteren Räume: kälteres Grundlicht, Ker
 - Fackeln als warme Punktlichter mit 5 bis 6 Kacheln Reichweite und leichtem Flackern. Höchstens zwei schattenwerfende Lichter pro Raum.
 - Requisiten mit eigenem Licht (Herd, Kerzen, Kronleuchter, Lagerfeuer) leuchten ohne Schatten.
 - Die Spielfigur trägt einen kleinen, schwachen Lichtschein.
+- Einzelne Raumtypen dürfen heller sein: `brightness` in `roomPalettes` (`data/themes.json`) verstärkt das Grundlicht, im Keller der Händlerraum (1,8).
 
 **Lesbarkeit**
 
@@ -427,10 +431,10 @@ Gilt für alle Modelle. Bei Paketteilen gilt sie für das Ergebnis im Spiel; Abw
 - **Ordner:** `assets/tiles/` (Boden, Wand, Sockel, Ecken, Türrahmen), `assets/props/`, `assets/figures/`, `assets/textures/`, `assets/sounds/`. Rohdateien der Pakete in `assets/source/`.
 - **Bauteile:** `boden`, `wand`, `wand_ecke`, `sockel`, `sockel_ecke`, `tuerrahmen`, `fackel`, `schloss`. Der Türrahmen hinten deckt drei Kacheln (Tür mittig). Neben jeder Tür hängt eine Fackel; an den vorderen Türen steht sie auf einem Pfosten, weil der Sockel zu niedrig ist.
 - **Zuordnung:** `data/models.json` hält pro id Datei, Maßstab (Zahl oder [x, y, z]), Drehung, Versatz, Einfärbung (`tint`, Farbe, mit der die Paletten-Textur multipliziert wird, etwa Holzton für graue Kisten), Animationszuordnung, Lichtpunkte (Position relativ zum Ursprung, Farbe, Stärke, Reichweite) und Zubehör (`accessories`: Teil aus Grundformen wie Kochmütze, Krone oder rote Augen, an einem Knochen der Figur, mit Versatz und Größe in Kacheln). Mehrere ids dürfen dieselbe Datei nutzen (Riesenratte, Küchenchef und Monsterratte).
-- **Build-Skript:** `tools/build-assets.mjs` setzt Teile aus Paketen zu einer GLB zusammen (Tafel, Regal, Türrahmen) und speckt Paketfiguren ab (nur benötigte Animationen und Zubehörteile, komprimiert). FBX-Dateien wandelt es vorher in GLB um; es kann Materialfarben auf die Palette setzen (matt, ohne Metallglanz), eine Waffe an einen Knochen hängen und Figuren auf höchstens 3.000 Dreiecke vereinfachen.
+- **Build-Skript:** `tools/build-assets.mjs` setzt Teile aus Paketen zu einer GLB zusammen (Tafel, Regal, Türrahmen) und speckt Paketfiguren ab (nur benötigte Animationen und Zubehörteile, komprimiert). FBX-Dateien wandelt es vorher in GLB um; es kann Materialfarben auf die Palette setzen (matt, ohne Metallglanz), eine Waffe an einen Knochen hängen und Figuren auf höchstens 3.000 Dreiecke vereinfachen. Requisiten kann es aus Teilen einer Paketfigur zusammensetzen (`extracts`), etwa die Knochen aus Schädel, Kiefer und Armen der Skelette.
 - **Platzhalter:** Fehlt eine Datei oder lädt sie nicht, baut der Code das Teil wie bisher aus Grundformen.
 - **Zubehör der Spielfiguren:** Die Figur trägt das Teil des Pakets, das der Startwaffe am nächsten kommt: Zwerg Schwert (Langschwert), Elf Messer (Dolch), Mensch Zauberstab (das Paket hat keinen Knüppel). Schilde, Zweithand-Waffen und Bücher fallen weg.
-- **Quellen der Figuren im Keller:** Mensch KayKit `Mage`, Elf `Rogue_Hooded`, Zwerg `Knight`, Händler `Rogue` umgefärbt (KayKit Adventurers); Skelett aus KayKit Skeletons 1.0 (Minion, Warrior, Rogue, Mage; die Fassung 1.1 FREE hat kein Sitzen, Liegen und Angreifen, Textur gleich) mit der auf die Palette umgefärbten Textur `assets/textures/figures/skeleton/skeleton_keller.png`; Goblin aus Goblin Lowpoly Assets (standout7, itch.io); Mimik aus der Truhe des KayKit Dungeon Pack (itch.io); Riesenratte, Küchenchef und Monsterratte aus `Rat`, Kröte aus `Frog` (Easy Animated Enemy Pack, Quaternius). Goblin: `Basic_Goblin` mit `Rusty Shiv`; die kostenlose Fassung hat keine Animationen.
+- **Quellen der Figuren im Keller:** Mensch KayKit `Mage`, Elf `Rogue_Hooded`, Zwerg `Knight`, Händler `Rogue` ohne Kapuze und Waffen, Outfit dunkelblau statt grün (KayKit Adventurers); Skelett aus KayKit Skeletons 1.0 (Minion, Warrior, Rogue, Mage; die Fassung 1.1 FREE hat kein Sitzen, Liegen und Angreifen, Textur gleich) mit der auf die Palette umgefärbten Textur `assets/textures/figures/skeleton/skeleton_keller.png`; Goblin aus Goblin Lowpoly Assets (standout7, itch.io); Mimik aus der Truhe des KayKit Dungeon Pack (itch.io); Riesenratte, Küchenchef und Monsterratte aus `Rat`, Kröte aus `Frog` (Easy Animated Enemy Pack, Quaternius). Goblin: `Basic_Goblin` mit `Rusty Shiv`; die kostenlose Fassung hat keine Animationen.
 - **Lizenzen:** Quelle und Lizenz jeder fremden Datei in `assets/CREDITS.md`.
 
 ### Einrichtung pro Raumtyp
@@ -490,13 +494,31 @@ Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kan
 | goldhaufen | Goldhaufen | Deko | nein | nein | nein | Schatzkammer |
 | truhe | Truhe | 1 | ja | ja | nein | Schatzkammer |
 | lagerfeuer | Lagerfeuer | 1 | ja | ja | ja | Rastplatz |
-| haendlerfigur | Händler | 1 | ja | ja | nein | Händler |
+| haendlerfigur | Händler mit Verkaufstisch und Kerze davor; steht mit dem Rücken zur Nord- oder Westwand und schaut in den Raum | 1×2, Wand | ja | ja | ja | Händler |
 | pult | Pult mit Gästebuch | 1 | ja | nein | nein | Vorkammer |
 | wegweiser | Wegweiser | 1 | ja | nein | nein | Vorkammer |
 | zettelbrett | Zettelbrett | Wand | nein | nein | nein | Vorkammer |
 | bank | Bank | 2×1 | ja | nein | nein | Abstieg |
 | souvenirkiste | Souvenirkiste | 1 | ja | nein | nein | Abstieg |
 | kaeseberg | Käseberg mit Thron | 2×2, Wand | ja | nein | ja | Bossraum (Keller) |
+| kistenstapel | Gestapelte Kisten | 2×2 | ja | nein | nein | Händler, Vorratskammer, Küche |
+| fassstapel | Kleine Fässer, gestapelt | 1 | ja | nein | nein | Händler |
+| flaschen | Flaschen auf dem Boden (Variante `b`: andere Flaschen) | 1 | nein | nein | nein | Händler |
+| fahne | Fahne an der Wand (Varianten `blau`, `gruen`, `gelb`, `wappen`) | 1, Wand | nein | nein | nein | Wachstube |
+| fahne_dreifach | Drei Fahnen nebeneinander (Varianten `blau`, `gelb`) | 2, Wand | nein | nein | nein | Säulenhalle |
+| schluesselbund | Schlüsselbund am Haken | 1, Wand | nein | nein | nein | Wachstube |
+| strohlager | Strohlager auf dem Boden | 1×2 | ja | nein | nein | Wachstube |
+| zapffass | Zapffass | 1 | ja | nein | nein | Vorratskammer, Küche |
+| zapffass_verziert | Zapffass mit Gestell | 2×1 | ja | nein | nein | Vorratskammer, Küche |
+| kistenberg | Kistenberg | 1 | ja | nein | nein | Vorratskammer, Küche |
+| muenzen | Münzstapel (Varianten `klein`, `einzeln`) | 1 | nein | nein | nein | Schatzkammer |
+| tisch_gedeckt | Gedeckter Tisch mit Kerze | 1 | ja | nein | ja | Speisesaal |
+| saeule_verziert | Verzierte Säule | 1 | ja | nein | nein | Säulenhalle |
+| kerzenstummel | Heruntergebrannte Kerzen | 1 | nein | nein | nein | Gruft |
+| geroell_gross | Großer Geröllhaufen | 2×1 | ja | nein | nein | Gruft |
+| regal_gross, regal_klein | Wandbrett, groß und klein | 1, Wand | nein | nein | nein | Vorratskammer |
+| regal_kerzen | Wandbrett mit Kerzen | 1, Wand | nein | nein | nein | Vorratskammer |
+| wandregal | Hohes Wandregal | 2×1, Wand | ja | nein | nein | Vorratskammer |
 | wendeltreppe_hoch | Wendeltreppe nach oben | 3×3, Nordwest-Ecke | ja | nein | ja | Vorkammer, vom Code gesetzt |
 | wendeltreppe_runter | Wendeltreppe nach unten | 3×3, Nordwest-Ecke | ja | ja | ja | Abstieg und Bossraum, vom Code gesetzt |
 
@@ -719,3 +741,7 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Spielgeräusche für Türen, Truhe, Gold, Stufenaufstieg, Treppe, Treffer und Tod
 - [x] Sound als Meilenstein 6c; Lautstärkeregler und Menü bleiben in Meilenstein 7
 - [x] Neue Raum-Stimmung `kitchen` für die Küche; neuer Boden `stone` (trockener Stein) einheitlich im Keller, nur Gruft, Brunnenraum und Säulenhalle mit `hall`; Event-Sound `klopfen_stein` beim Sarkophag
+- [x] Knochen-Requisit aus Teilen der KayKit-Skelette (Schädel, Kiefer, zwei Arme) mit der Skelett-Textur
+- [x] Händler aus KayKit Rogue ohne Kapuze, Outfit dunkelblau statt grün
+- [x] Händler mit dem Rücken zur Nord- oder Westwand, vor ihm `table_small_decorated_B` mit brennender Kerze; Händlerraum heller; in den Ecken `box_stacked` und `barrel_small_stack`; Flaschen auf und neben Kisten
+- [x] Neue Requisiten aus dem KayKit Dungeon Kit: Fahnen, Schlüsselbund und Strohlager (Wachstube), Zapffässer, Kistenberg und Kistenstapel (Vorratskammer, Küche), alle Wandregale in der Vorratskammer, Münzen (Schatzkammer), gedeckte Tische und Kerzen (Speisesaal), verzierte Säulen und dreifache Fahnen (Säulenhalle), Kerzenstummel und großes Geröll (Gruft)

@@ -164,5 +164,54 @@ async function buildFigure(id, recipe) {
     (warn.length ? "  WARNUNG: " + warn.join(", ") : ""));
 }
 
+// Requisit aus Teilen einer Paketfigur (etwa Knochen und Schädel der Skelette): Skelett-Bindung entfernen, jedes Teil mit
+// seiner Unterseite auf den Ursprung setzen und mit Position, Drehung (Grad [x, y, z]) und Höhe neu anordnen.
+async function buildExtract(id, recipe) {
+  const doc = await io.read(ROOT + recipe.source + recipe.file);
+  doc.setLogger(new Logger(Logger.Verbosity.WARN));
+  const root = doc.getRoot();
+  const scene = root.getDefaultScene() || root.listScenes()[0];
+  const keep = new Set();
+  for (const piece of recipe.pieces) {
+    const src = root.listNodes().find(n => n.getName() === piece.node);
+    if (!src || !src.getMesh()) throw new Error(id + ": Teil " + piece.node + " fehlt in " + recipe.file);
+    const mesh = src.getMesh().clone();
+    mesh.listPrimitives().forEach(p => ["JOINTS_0", "WEIGHTS_0"].forEach(a => p.setAttribute(a, null)));
+    const pos = mesh.listPrimitives()[0].getAttribute("POSITION");
+    const min = pos.getMin([]), max = pos.getMax([]);
+    const inner = doc.createNode(piece.node).setMesh(mesh).setTranslation([-(min[0] + max[0]) / 2, -min[1], -(min[2] + max[2]) / 2]);
+    const r = (piece.rotation || [0, 0, 0]).map(d => d * Math.PI / 360);
+    const [cx, cy, cz, sx, sy, sz] = [...r.map(Math.cos), ...r.map(Math.sin)];
+    const outer = doc.createNode(piece.node + "_lage").setTranslation(piece.position || [0, 0, 0])
+      .setRotation([sx * cy * cz - cx * sy * sz, cx * sy * cz + sx * cy * sz, cx * cy * sz - sx * sy * cz, cx * cy * cz + sx * sy * sz]);
+    outer.addChild(inner);
+    keep.add(outer);
+  }
+  // Alles andere (Rig, Skelett-Bindung, Animationen, eigene Textur) fällt weg
+  const mine = new Set([...keep].flatMap(n => [n, ...n.listChildren()]));
+  root.listNodes().filter(n => !mine.has(n)).forEach(n => n.dispose());
+  keep.forEach(n => scene.addChild(n));
+  root.listAnimations().forEach(a => {
+    a.listSamplers().forEach(sm => [sm.getInput(), sm.getOutput()].forEach(x => { if (x && !x.isDisposed()) x.dispose(); }));
+    a.dispose();
+  });
+  root.listSkins().forEach(s => { const m = s.getInverseBindMatrices(); if (m) m.dispose(); s.dispose(); });
+  root.listMaterials().forEach(m => m.setBaseColorTexture(null));
+  root.listTextures().forEach(t => t.dispose());
+  await doc.transform(prune({ keepAttributes: true }), dedup());
+  if (recipe.simplify) {
+    await MeshoptSimplifier.ready;
+    await doc.transform(weld(), simplify({ simplifier: MeshoptSimplifier, ratio: recipe.simplify, error: 0.02 }));
+  }
+  const out = ROOT + "assets/" + recipe.dir + "/" + id + ".glb";
+  await io.write(out, doc);
+  let tris = 0;
+  root.listNodes().forEach(n => { const m = n.getMesh(); if (m) m.listPrimitives().forEach(p => { tris += p.getIndices().getCount() / 3; }); });
+  const bytes = statSync(out).size;
+  console.log((recipe.dir + "/" + id).padEnd(26) + String(tris).padStart(6) + " Dreiecke " + String(Math.round(bytes / 1024)).padStart(5) + " KB" +
+    (tris > MAX_TRIS ? "  WARNUNG: über " + MAX_TRIS + " Dreiecke" : ""));
+}
+
 for (const [id, recipe] of Object.entries(recipes.parts)) await build(id, recipe);
 for (const [id, recipe] of Object.entries(recipes.figures || {})) await buildFigure(id, recipe);
+for (const [id, recipe] of Object.entries(recipes.extracts || {})) await buildExtract(id, recipe);

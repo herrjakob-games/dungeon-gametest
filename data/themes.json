@@ -40,6 +40,9 @@
         "accent": "#FFD08A",
         "torch": "#FFC27A",
         "ambient": "#2C3448"
+      },
+      "haendler": {
+        "brightness": 1.8
       }
     }
   },

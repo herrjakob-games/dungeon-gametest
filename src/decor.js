@@ -34,18 +34,38 @@ export const PROPS = {
   goldhaufen: { w: 1, d: 1, blocks: false },
   truhe: { w: 1, d: 1, blocks: true, click: true },
   lagerfeuer: { w: 1, d: 1, blocks: true, click: true, light: true },
-  haendlerfigur: { w: 1, d: 1, blocks: true, click: true },
+  haendlerfigur: { w: 1, d: 2, blocks: true, click: true, wall: true, light: true }, // Händler an der Wand, davor sein Tisch mit Kerze
   pult: { w: 1, d: 1, blocks: true },
   wegweiser: { w: 1, d: 1, blocks: true },
   zettelbrett: { w: 1, d: 1, blocks: false, wall: true, floor: false },
   bank: { w: 2, d: 1, blocks: true },
   souvenirkiste: { w: 1, d: 1, blocks: true },
-  kaeseberg: { w: 2, d: 2, blocks: true, wall: true, light: true }
+  kaeseberg: { w: 2, d: 2, blocks: true, wall: true, light: true },
+  kistenstapel: { w: 2, d: 2, blocks: true },
+  fassstapel: { w: 1, d: 1, blocks: true },
+  flaschen: { w: 1, d: 1, blocks: false },
+  fahne: { w: 1, d: 1, blocks: false, wall: true, floor: false },
+  fahne_dreifach: { w: 2, d: 1, blocks: false, wall: true, floor: false },
+  schluesselbund: { w: 1, d: 1, blocks: false, wall: true, floor: false },
+  strohlager: { w: 1, d: 2, blocks: true },
+  zapffass: { w: 1, d: 1, blocks: true },
+  zapffass_verziert: { w: 2, d: 1, blocks: true },
+  kistenberg: { w: 1, d: 1, blocks: true },
+  muenzen: { w: 1, d: 1, blocks: false },
+  tisch_gedeckt: { w: 1, d: 1, blocks: true, light: true },
+  saeule_verziert: { w: 1, d: 1, blocks: true },
+  kerzenstummel: { w: 1, d: 1, blocks: false },
+  geroell_gross: { w: 2, d: 1, blocks: true },
+  regal_gross: { w: 1, d: 1, blocks: false, wall: true, floor: false },
+  regal_klein: { w: 1, d: 1, blocks: false, wall: true, floor: false },
+  regal_kerzen: { w: 1, d: 1, blocks: false, wall: true, floor: false },
+  wandregal: { w: 2, d: 1, blocks: true, wall: true }
 };
 
 // Abwandlungen, die es pro Requisit gibt
 export const VARIANTS = {
-  tisch: ["kueche"], fass: ["gruppe", "gross"], stuhl: ["umgekippt"], kiste: ["angenagt"], saeule: ["reihen"]
+  tisch: ["kueche"], fass: ["gruppe", "gross"], stuhl: ["umgekippt"], kiste: ["angenagt", "flaschen"], saeule: ["reihen"],
+  flaschen: ["b"], fahne: ["blau", "gruen", "gelb", "wappen"], fahne_dreifach: ["blau", "gelb"], muenzen: ["klein", "einzeln"]
 };
 
 export const PLACES = ["center", "wall-back", "corner", "free"];

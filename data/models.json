@@ -531,5 +531,267 @@
       "lie": "Skeletons_Inactive_Floor_Pose",
       "awaken": "Skeletons_Awaken_Floor"
     }
+  },
+  "knochen": {
+    "file": "assets/props/knochen.glb",
+    "scale": 0.4,
+    "palette": false,
+    "texture": "assets/textures/figures/skeleton/skeleton_keller.png"
+  },
+  "haendlerfigur": {
+    "file": "assets/figures/haendlerfigur.glb",
+    "scale": 0.48,
+    "palette": false,
+    "texture": "assets/textures/figures/haendler/haendler_texture.png",
+    "animations": {
+      "idle": "Idle",
+      "walk": "Walking_A",
+      "attack": "1H_Melee_Attack_Chop",
+      "hit": "Hit_A",
+      "death": "Death_A",
+      "interact": "Interact"
+    }
+  },
+  "verkaufstisch": {
+    "file": "assets/props/verkaufstisch.glb",
+    "scale": 0.5,
+    "lights": [
+      {
+        "offset": [
+          0.14,
+          0.85,
+          0.14
+        ],
+        "color": "#FFC27A",
+        "intensity": 0.9,
+        "distance": 3.5
+      }
+    ],
+    "palette": true
+  },
+  "kistenstapel": {
+    "file": "assets/props/kistenstapel.glb",
+    "scale": 0.5,
+    "tint": "#E8A66E",
+    "palette": true
+  },
+  "fassstapel": {
+    "file": "assets/props/fassstapel.glb",
+    "scale": 0.5,
+    "palette": true
+  },
+  "kiste_flaschen": {
+    "file": "assets/props/kiste_flaschen.glb",
+    "scale": 0.5,
+    "tint": "#E8A66E",
+    "palette": true
+  },
+  "flaschen": {
+    "file": "assets/props/flaschen.glb",
+    "scale": 0.5,
+    "palette": true
+  },
+  "flaschen_b": {
+    "file": "assets/props/flaschen_b.glb",
+    "scale": 0.5,
+    "palette": true
+  },
+  "fahne": {
+    "file": "assets/props/fahne.glb",
+    "scale": 0.5,
+    "offset": [
+      0,
+      0,
+      -0.5
+    ],
+    "palette": true
+  },
+  "fahne_blau": {
+    "file": "assets/props/fahne_blau.glb",
+    "scale": 0.5,
+    "offset": [
+      0,
+      0,
+      -0.5
+    ],
+    "palette": true
+  },
+  "fahne_gruen": {
+    "file": "assets/props/fahne_gruen.glb",
+    "scale": 0.5,
+    "offset": [
+      0,
+      0,
+      -0.5
+    ],
+    "palette": true
+  },
+  "fahne_gelb": {
+    "file": "assets/props/fahne_gelb.glb",
+    "scale": 0.5,
+    "offset": [
+      0,
+      0,
+      -0.5
+    ],
+    "palette": true
+  },
+  "fahne_wappen": {
+    "file": "assets/props/fahne_wappen.glb",
+    "scale": 0.5,
+    "offset": [
+      0,
+      0,
+      -0.5
+    ],
+    "palette": true
+  },
+  "fahne_dreifach": {
+    "file": "assets/props/fahne_dreifach.glb",
+    "scale": 0.5,
+    "offset": [
+      0,
+      0,
+      -0.5
+    ],
+    "palette": true
+  },
+  "fahne_dreifach_blau": {
+    "file": "assets/props/fahne_dreifach_blau.glb",
+    "scale": 0.5,
+    "offset": [
+      0,
+      0,
+      -0.5
+    ],
+    "palette": true
+  },
+  "fahne_dreifach_gelb": {
+    "file": "assets/props/fahne_dreifach_gelb.glb",
+    "scale": 0.5,
+    "offset": [
+      0,
+      0,
+      -0.5
+    ],
+    "palette": true
+  },
+  "schluesselbund": {
+    "file": "assets/props/schluesselbund.glb",
+    "scale": 0.5,
+    "offset": [
+      0,
+      1.5,
+      -0.42
+    ],
+    "palette": true
+  },
+  "strohlager": {
+    "file": "assets/props/strohlager.glb",
+    "scale": 0.5,
+    "palette": true
+  },
+  "zapffass": {
+    "file": "assets/props/zapffass.glb",
+    "scale": 0.5,
+    "palette": true
+  },
+  "zapffass_verziert": {
+    "file": "assets/props/zapffass_verziert.glb",
+    "scale": 0.5,
+    "palette": true
+  },
+  "kistenberg": {
+    "file": "assets/props/kistenberg.glb",
+    "scale": 0.45,
+    "tint": "#E8A66E",
+    "palette": true
+  },
+  "muenzen": {
+    "file": "assets/props/muenzen.glb",
+    "scale": 0.5,
+    "palette": true
+  },
+  "muenzen_klein": {
+    "file": "assets/props/muenzen_klein.glb",
+    "scale": 0.5,
+    "palette": true
+  },
+  "muenzen_einzeln": {
+    "file": "assets/props/muenzen_einzeln.glb",
+    "scale": 0.5,
+    "palette": true
+  },
+  "tisch_gedeckt": {
+    "file": "assets/props/tisch_gedeckt.glb",
+    "scale": 0.5,
+    "lights": [
+      {
+        "offset": [
+          0.3,
+          0.85,
+          -0.3
+        ],
+        "color": "#FFC27A",
+        "intensity": 0.9,
+        "distance": 3.5
+      }
+    ],
+    "palette": true
+  },
+  "saeule_verziert": {
+    "file": "assets/props/saeule_verziert.glb",
+    "scale": 0.5,
+    "palette": true
+  },
+  "kerzenstummel": {
+    "file": "assets/props/kerzenstummel.glb",
+    "scale": 0.5,
+    "palette": true
+  },
+  "geroell_gross": {
+    "file": "assets/props/geroell_gross.glb",
+    "scale": 0.25,
+    "palette": true
+  },
+  "regal_gross": {
+    "file": "assets/props/regal_gross.glb",
+    "scale": 0.5,
+    "offset": [
+      0,
+      1.0,
+      -0.5
+    ],
+    "palette": true
+  },
+  "regal_klein": {
+    "file": "assets/props/regal_klein.glb",
+    "scale": 0.5,
+    "offset": [
+      0,
+      0.9,
+      -0.5
+    ],
+    "palette": true
+  },
+  "regal_kerzen": {
+    "file": "assets/props/regal_kerzen.glb",
+    "scale": 0.5,
+    "offset": [
+      0,
+      1.05,
+      -0.5
+    ],
+    "palette": true
+  },
+  "wandregal": {
+    "file": "assets/props/wandregal.glb",
+    "scale": 0.5,
+    "offset": [
+      0,
+      0,
+      -0.25
+    ],
+    "palette": true
   }
 }

@@ -64,6 +64,7 @@ test("Jede Requisiten-id hat ein Modell oder einen Platzhalter", () => {
   }
   // Jedes Modell aus dem Build-Skript ist zugeordnet
   Object.keys(RECIPES.parts).forEach(id => assert.ok(MODELS[id], id + ": gebaut, aber nicht in data/models.json"));
+  Object.keys(RECIPES.extracts || {}).forEach(id => assert.ok(MODELS[id], id + ": gebaut, aber nicht in data/models.json"));
 });
 
 test("Jedes Volk hat eine Figur mit allen Animationen", () => {
