@@ -12,6 +12,7 @@ import { initEvents, startRoomEvent, chestEvent, lockedDoorNote, startBoss, rest
 import { updateFigures } from "./roomFigures.js";
 import { showGrid } from "./gridOverlay.js";
 import { loadModels } from "./models.js";
+import { loadSounds, play, setDuck } from "./sound.js";
 import { setOutline } from "./outline.js";
 import { STAIRS_FOOT } from "./decor.js";
 import { openShop } from "./shopUI.js";
@@ -75,6 +76,7 @@ function chooseCharacter() {
 
 // Abstieg über die Wendeltreppe: eine Ebene tiefer, Werte und Ausrüstung bleiben
 function descend() {
+  play("treppe");
   state.depth += 1;
   withFade(() => startDungeon(randomSeed()));
 }
@@ -103,6 +105,7 @@ function changeRoom(d, force) {
   if (!state.dungeon.rooms[target]) return;
   const locked = state.roomState[state.current].locked;
   if (!force && locked && locked.has(d)) { lockedDoorNote(d); return; }
+  play("tuer");
   withFade(() => {
     const first = !state.visited.has(target);
     if (first) state.stats.rooms += 1;
@@ -273,6 +276,7 @@ renderer.domElement.addEventListener("wheel", (ev) => { ev.preventDefault(); zoo
 try {
   await loadData();
   await loadModels(); // Modelle aus data/models.json; was fehlt, bleibt Platzhalter
+  await loadSounds(); // Sounds aus data/sounds.json; was fehlt, bleibt still
 } catch (e) {
   console.error(e);
   showDialog("Daten fehlen", "Die Spieldaten aus dem Ordner data/ konnten nicht geladen werden. Läuft das Spiel über einen Server (npm start)?", [], { modal: true });
@@ -363,6 +367,7 @@ function loop() {
 
   updateMovement(dt, t);
   updateFigures(dt, t);
+  setDuck(state.eventActive || !!state.combat); // Hintergrund halb so laut während Events und Kämpfen
 
   if (state.openLid && state.lidPivot) {
     if (state.lidPivot.rotation.x > -1.9) state.lidPivot.rotation.x -= dt * 4;

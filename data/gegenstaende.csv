@@ -1,27 +1,27 @@
-id;name;typ;rang;kaufpreis;verkaufspreis;schaden;trifft_mit;ruestung;nutzen_effekt;nutzen_wert;nur_im_kampf;req_attribut;req_wert;req_volk;text
-knueppel;Knüppel;weapon;1;20;10;W4;kraft;;;;;kraft;-1;;Ein Ast mit Ambitionen.
-dolch;Dolch;weapon;1;20;10;W4;geschick;;;;;geschick;-1;;Klein, spitz und unterschätzt, wie die meisten Probleme hier unten.
-kurzschwert;Kurzschwert;weapon;1;40;20;W6;geschick;;;;;geschick;1;;Kein Langschwert, aber auch schön spitz.
-langschwert;Langschwert;weapon;2;40;20;W8;kraft;;;;;kraft;2;;Es kann nur einen geben.
-eismesser;Eismesser;weapon;2;40;20;W6;verstand;;;;;verstand;2;;Wasser kann auch weh tun.
-rapier;Rapier;weapon;2;40;20;W6;geschick;;;;;geschick;1;;Für alle, die beim Zustechen gut aussehen wollen.
-streitaxt;Streitaxt;weapon;3;70;35;W8;kraft;;;;;kraft;2;;Löst Probleme, öffnet Türen.
-feuerbuch;Buch des Feuers;weapon;3;70;35;W10+2;verstand;;;;;verstand;5;;Brennt hier irgendetwas?
-elfenklinge;Elfenklinge;weapon;4;110;55;W10+2;geschick;;;;;geschick;5;elf;So scharf, dass sie beleidigt ist, wenn du sie Messer nennst.
-kriegshammer;Kriegshammer;weapon;4;110;55;W10+2;kraft;;;;;kraft;5;;Macht Kopfschmerzen. Starke Kopfschmerzen.
-kriegsaxt;Zwergische Kriegsaxt;weapon;5;190;95;W12+4;kraft;;;;;kraft;10;zwerg;Ein altes tödliches Familienerbstück.
-stoffweste;Stoffweste;armor;1;5;2;;;0;;;;verstand;-1;;Das ist kein Outfit für ein Dungeon.
-tunika;Stofftunika;armor;1;10;5;;;1;;;;geschick;0;;Luftig und elegant. Wer schön sein will muss leiden.
-lederwams;Lederwams;armor;1;20;10;;;2;;;;geschick;1;;Riecht nach Kuh und hält etwa so viel aus wie eine.
-kettenhemd;Kettenhemd;armor;2;40;20;;;3;;;;kraft;3;;Klirrt bei jedem Schritt. Heimlichkeit wird überschätzt.
-elfenmantel;Elfenmantel;armor;3;70;35;;;4;;;;geschick;3;elf;Leicht wie ein Gedanke, zäh wie ein schlechter Ruf.
-plattenpanzer;Plattenpanzer;armor;4;110;55;;;6;;;;kraft;5;;Du bist jetzt im Grunde ein Metallschrank mit Meinung.
-elfenruestung;Elfenrüstung;armor;4;110;55;;;6;;;;geschick;5;elf;Eleganz und Schutz in perfekter Harmonie.
-mithrilpanzer;Mithrilpanzer;armor;5;500;250;;;10;;;;kraft;10;;Der Stolz eines jeden Zwergenkriegers
-gelehrtenrobe;Gelehrtenrobe;armor;5;500;250;;;4;;;;verstand;5;;Sehr feiner Stoff mit großen Taschen für Schriftrollen.
-heiltrank;Kleiner Heiltrank;consumable;1;15;7;;;;heal;2W4+2;nein;verstand;-1;;Schmeckt fruchtig und belebend.
-feuerpfeil;Feuerpfeil-Schriftrolle;consumable;1;25;12;;;;damage;1W10+2;ja;verstand;2;;Wie ein normaler Pfeil nur heißer und schmerzhafter.
-schildrolle;Schild-Schriftrolle;consumable;1;25;12;;;;shield;3;ja;verstand;2;;Ein unsichtbarer Schild, der dich diesen Kampf beschützt.
-eisrolle;Eis-Schriftrolle;consumable;3;40;20;;;;freeze;2;ja;verstand;5;;Friert den Gegner für zwei Runden ein.
-feuerballrolle;Feuerball-Schriftrolle;consumable;3;40;20;;;;damage;4W6;ja;verstand;5;;Vorlesen, zielen, Abstand halten.
-heiltrankgross;Großer Heiltrank;consumable;4;110;55;;;;heal;4W4+4;nein;verstand;-1;;Schmeckt noch fruchtiger und belebender.
+id;name;typ;rang;kaufpreis;verkaufspreis;schaden;trifft_mit;ruestung;nutzen_effekt;nutzen_wert;nur_im_kampf;req_attribut;req_wert;req_volk;text;sound
+knueppel;Knüppel;weapon;1;20;10;W4;kraft;;;;;kraft;-1;;Ein Ast mit Ambitionen.;holz
+dolch;Dolch;weapon;1;20;10;W4;geschick;;;;;geschick;-1;;Klein, spitz und unterschätzt, wie die meisten Probleme hier unten.;schwert
+kurzschwert;Kurzschwert;weapon;1;40;20;W6;geschick;;;;;geschick;1;;Kein Langschwert, aber auch schön spitz.;schwert
+langschwert;Langschwert;weapon;2;40;20;W8;kraft;;;;;kraft;2;;Es kann nur einen geben.;schwert
+eismesser;Eismesser;weapon;2;40;20;W6;verstand;;;;;verstand;2;;Wasser kann auch weh tun.;eismesser
+rapier;Rapier;weapon;2;40;20;W6;geschick;;;;;geschick;1;;Für alle, die beim Zustechen gut aussehen wollen.;schwert
+streitaxt;Streitaxt;weapon;3;70;35;W8;kraft;;;;;kraft;2;;Löst Probleme, öffnet Türen.;axt
+feuerbuch;Buch des Feuers;weapon;3;70;35;W10+2;verstand;;;;;verstand;5;;Brennt hier irgendetwas?;feuerbuch
+elfenklinge;Elfenklinge;weapon;4;110;55;W10+2;geschick;;;;;geschick;5;elf;So scharf, dass sie beleidigt ist, wenn du sie Messer nennst.;schwert
+kriegshammer;Kriegshammer;weapon;4;110;55;W10+2;kraft;;;;;kraft;5;;Macht Kopfschmerzen. Starke Kopfschmerzen.;hammer
+kriegsaxt;Zwergische Kriegsaxt;weapon;5;190;95;W12+4;kraft;;;;;kraft;10;zwerg;Ein altes tödliches Familienerbstück.;axt
+stoffweste;Stoffweste;armor;1;5;2;;;0;;;;verstand;-1;;Das ist kein Outfit für ein Dungeon.;
+tunika;Stofftunika;armor;1;10;5;;;1;;;;geschick;0;;Luftig und elegant. Wer schön sein will muss leiden.;
+lederwams;Lederwams;armor;1;20;10;;;2;;;;geschick;1;;Riecht nach Kuh und hält etwa so viel aus wie eine.;
+kettenhemd;Kettenhemd;armor;2;40;20;;;3;;;;kraft;3;;Klirrt bei jedem Schritt. Heimlichkeit wird überschätzt.;
+elfenmantel;Elfenmantel;armor;3;70;35;;;4;;;;geschick;3;elf;Leicht wie ein Gedanke, zäh wie ein schlechter Ruf.;
+plattenpanzer;Plattenpanzer;armor;4;110;55;;;6;;;;kraft;5;;Du bist jetzt im Grunde ein Metallschrank mit Meinung.;
+elfenruestung;Elfenrüstung;armor;4;110;55;;;6;;;;geschick;5;elf;Eleganz und Schutz in perfekter Harmonie.;
+mithrilpanzer;Mithrilpanzer;armor;5;500;250;;;10;;;;kraft;10;;Der Stolz eines jeden Zwergenkriegers;
+gelehrtenrobe;Gelehrtenrobe;armor;5;500;250;;;4;;;;verstand;5;;Sehr feiner Stoff mit großen Taschen für Schriftrollen.;
+heiltrank;Kleiner Heiltrank;consumable;1;15;7;;;;heal;2W4+2;nein;verstand;-1;;Schmeckt fruchtig und belebend.;trank
+feuerpfeil;Feuerpfeil-Schriftrolle;consumable;1;25;12;;;;damage;1W10+2;ja;verstand;2;;Wie ein normaler Pfeil nur heißer und schmerzhafter.;zauber_feuerpfeil
+schildrolle;Schild-Schriftrolle;consumable;1;25;12;;;;shield;3;ja;verstand;2;;Ein unsichtbarer Schild, der dich diesen Kampf beschützt.;zauber_schild
+eisrolle;Eis-Schriftrolle;consumable;3;40;20;;;;freeze;2;ja;verstand;5;;Friert den Gegner für zwei Runden ein.;zauber_eis
+feuerballrolle;Feuerball-Schriftrolle;consumable;3;40;20;;;;damage;4W6;ja;verstand;5;;Vorlesen, zielen, Abstand halten.;zauber_feuerball
+heiltrankgross;Großer Heiltrank;consumable;4;110;55;;;;heal;4W4+4;nein;verstand;-1;;Schmeckt noch fruchtiger und belebender.;trank

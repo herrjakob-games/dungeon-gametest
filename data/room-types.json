@@ -77,6 +77,10 @@
           ]
         }
       ]
+    },
+    "sound": {
+      "mood": "cozy",
+      "floor": "wood"
     }
   },
   {
@@ -147,6 +151,10 @@
           ]
         }
       ]
+    },
+    "sound": {
+      "mood": "empty",
+      "floor": "hall"
     }
   },
   {
@@ -219,6 +227,10 @@
           }
         ]
       }
+    },
+    "sound": {
+      "mood": "spooky",
+      "floor": "hall"
     }
   },
   {
@@ -303,6 +315,10 @@
           ]
         }
       ]
+    },
+    "sound": {
+      "mood": "spooky",
+      "floor": "gravel"
     }
   },
   {
@@ -359,6 +375,10 @@
           ]
         }
       ]
+    },
+    "sound": {
+      "mood": "cozy",
+      "floor": "wood"
     }
   },
   {
@@ -423,6 +443,10 @@
           ]
         }
       ]
+    },
+    "sound": {
+      "mood": "cozy",
+      "floor": "wood"
     }
   },
   {
@@ -511,6 +535,10 @@
           ]
         }
       ]
+    },
+    "sound": {
+      "mood": "empty",
+      "floor": "hall"
     }
   },
   {
@@ -600,6 +628,10 @@
           ]
         }
       ]
+    },
+    "sound": {
+      "mood": "spooky",
+      "floor": "hall"
     }
   },
   {
@@ -686,6 +718,10 @@
           ]
         }
       ]
+    },
+    "sound": {
+      "mood": "empty",
+      "floor": "hall"
     }
   },
   {
@@ -787,6 +823,10 @@
           ]
         }
       ]
+    },
+    "sound": {
+      "mood": "cozy",
+      "floor": "gravel"
     }
   },
   {
@@ -893,6 +933,10 @@
           ]
         }
       ]
+    },
+    "sound": {
+      "mood": "cozy",
+      "floor": "wood"
     }
   },
   {
@@ -1009,6 +1053,10 @@
           ]
         }
       ]
+    },
+    "sound": {
+      "mood": "cozy",
+      "floor": "wood"
     }
   },
   {
@@ -1107,6 +1155,10 @@
           ]
         }
       ]
+    },
+    "sound": {
+      "mood": "wet",
+      "floor": "mud"
     }
   },
   {

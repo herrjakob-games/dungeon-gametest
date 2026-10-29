@@ -14,6 +14,8 @@ import { makeFigureModel, hasAnimation } from "./models.js";
 import { findPath } from "./pathfinding.js";
 import { moveTo } from "./movement.js";
 import { player, turnToward } from "./player.js";
+import { step } from "./sound.js";
+import { stepKind } from "./soundLogic.js";
 const THREE = window.THREE;
 
 const group = new THREE.Group(); // eigene Gruppe: Figuren überleben den Neuaufbau des Raums (etwa nach dem Bosssieg)
@@ -299,6 +301,21 @@ export function killCombatFigure() {
 export const roomFigureList = () => alive().map(f => ({ id: f.id, variant: f.variant, tiles: f.tiles, stay: f.stay, pose: f.pose }));
 export const deadFigureList = () => figs.filter(f => f.dead).map(f => ({ id: f.id, variant: f.variant }));
 
+// Schritte (GDD, Sound): im Takt der Laufanimation, sonst alle 0,35 Sekunden; leiser als die Spielfigur, 2×2 tiefer
+function figureSteps(f, dt) {
+  const kind = f.path.length && !f.sink ? stepKind(f.id, DATA.staging, state.floorSound) : null;
+  if (!kind) { f.lastPhase = null; f.stepTimer = 0; return; }
+  const opts = { enemy: true, big: figureInfo(f.id).size > 1 };
+  const ph = f.anim && !f.frozen ? f.anim.phase("walk") : null;
+  if (ph !== null) {
+    if (f.lastPhase !== null && f.lastPhase !== undefined && ((f.lastPhase < 0.5 && ph >= 0.5) || ph < f.lastPhase)) step(kind, opts);
+    f.lastPhase = ph;
+  } else {
+    f.stepTimer = (f.stepTimer || 0) - dt;
+    if (f.stepTimer <= 0) { step(kind, opts); f.stepTimer = 0.35; }
+  }
+}
+
 // Pro Frame aus der Spielschleife
 export function updateFigures(dt, t) {
   let nearest = null;
@@ -335,6 +352,7 @@ export function updateFigures(dt, t) {
       if (!f.dead && !f.sink) f.anim.loop(f.path.length ? "walk" : (f.pose || "idle"));
       f.anim.update(dt);
     }
+    figureSteps(f, dt);
     if (f.dying) {
       // Platzhalter ohne Death-Animation kippen um
       f.dying = Math.max(0, f.dying - dt);

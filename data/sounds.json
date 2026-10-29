@@ -1,0 +1,325 @@
+{
+  "_info": "Sounds (docs/GDD.md, Abschnitt Sound): pro Sound-id eine oder mehrere Dateien unter assets/sounds/ (bei mehreren wählt das Spiel zufällig), volume (0 bis 1, Startwert) und optional loopStart und loopEnd in Sekunden. Kanal nach Präfix: raum_ = Hintergrund, schritt_ = Schritte, sonst Effekte. Fehlt eine Datei, bleibt es still. assets/sounds/files.json listet die vorhandenen Dateien (npm run sounds).",
+  "angriff_holz_treffer": {
+    "files": [
+      "angriff/holz_treffer_1.mp3",
+      "angriff/holz_treffer_2.mp3",
+      "angriff/holz_treffer_3.mp3"
+    ],
+    "volume": 0.8
+  },
+  "angriff_holz_fehl": {
+    "files": [
+      "angriff/holz_fehl_1.mp3",
+      "angriff/holz_fehl_2.mp3",
+      "angriff/holz_fehl_3.mp3"
+    ],
+    "volume": 0.8
+  },
+  "angriff_schwert_treffer": {
+    "files": [
+      "angriff/schwert_treffer_1.mp3",
+      "angriff/schwert_treffer_2.mp3",
+      "angriff/schwert_treffer_3.mp3"
+    ],
+    "volume": 0.8
+  },
+  "angriff_schwert_fehl": {
+    "files": [
+      "angriff/schwert_fehl_1.mp3",
+      "angriff/schwert_fehl_2.mp3",
+      "angriff/schwert_fehl_3.mp3"
+    ],
+    "volume": 0.8
+  },
+  "angriff_axt_treffer": {
+    "files": [
+      "angriff/axt_treffer_1.mp3",
+      "angriff/axt_treffer_2.mp3",
+      "angriff/axt_treffer_3.mp3"
+    ],
+    "volume": 0.8
+  },
+  "angriff_axt_fehl": {
+    "files": [
+      "angriff/axt_fehl_1.mp3",
+      "angriff/axt_fehl_2.mp3",
+      "angriff/axt_fehl_3.mp3"
+    ],
+    "volume": 0.8
+  },
+  "angriff_hammer_treffer": {
+    "files": [
+      "angriff/hammer_treffer_1.mp3",
+      "angriff/hammer_treffer_2.mp3",
+      "angriff/hammer_treffer_3.mp3"
+    ],
+    "volume": 0.8
+  },
+  "angriff_hammer_fehl": {
+    "files": [
+      "angriff/hammer_fehl_1.mp3",
+      "angriff/hammer_fehl_2.mp3",
+      "angriff/hammer_fehl_3.mp3"
+    ],
+    "volume": 0.8
+  },
+  "angriff_faust_treffer": {
+    "files": [
+      "angriff/faust_treffer_1.mp3",
+      "angriff/faust_treffer_2.mp3",
+      "angriff/faust_treffer_3.mp3"
+    ],
+    "volume": 0.8
+  },
+  "angriff_faust_fehl": {
+    "files": [
+      "angriff/faust_fehl_1.mp3",
+      "angriff/faust_fehl_2.mp3",
+      "angriff/faust_fehl_3.mp3"
+    ],
+    "volume": 0.8
+  },
+  "angriff_biss_treffer": {
+    "files": [
+      "angriff/biss_treffer_1.mp3",
+      "angriff/biss_treffer_2.mp3",
+      "angriff/biss_treffer_3.mp3"
+    ],
+    "volume": 0.8
+  },
+  "angriff_biss_fehl": {
+    "files": [
+      "angriff/biss_fehl_1.mp3",
+      "angriff/biss_fehl_2.mp3",
+      "angriff/biss_fehl_3.mp3"
+    ],
+    "volume": 0.8
+  },
+  "angriff_kralle_treffer": {
+    "files": [
+      "angriff/kralle_treffer_1.mp3",
+      "angriff/kralle_treffer_2.mp3",
+      "angriff/kralle_treffer_3.mp3"
+    ],
+    "volume": 0.8
+  },
+  "angriff_kralle_fehl": {
+    "files": [
+      "angriff/kralle_fehl_1.mp3",
+      "angriff/kralle_fehl_2.mp3",
+      "angriff/kralle_fehl_3.mp3"
+    ],
+    "volume": 0.8
+  },
+  "angriff_eismesser_treffer": {
+    "files": [
+      "angriff/eismesser_treffer_1.mp3",
+      "angriff/eismesser_treffer_2.mp3",
+      "angriff/eismesser_treffer_3.mp3"
+    ],
+    "volume": 0.8
+  },
+  "angriff_eismesser_fehl": {
+    "files": [
+      "angriff/eismesser_fehl_1.mp3",
+      "angriff/eismesser_fehl_2.mp3",
+      "angriff/eismesser_fehl_3.mp3"
+    ],
+    "volume": 0.8
+  },
+  "angriff_feuerbuch_treffer": {
+    "files": [
+      "angriff/feuerbuch_treffer_1.mp3",
+      "angriff/feuerbuch_treffer_2.mp3",
+      "angriff/feuerbuch_treffer_3.mp3"
+    ],
+    "volume": 0.8
+  },
+  "angriff_feuerbuch_fehl": {
+    "files": [
+      "angriff/feuerbuch_fehl_1.mp3",
+      "angriff/feuerbuch_fehl_2.mp3",
+      "angriff/feuerbuch_fehl_3.mp3"
+    ],
+    "volume": 0.8
+  },
+  "trank": {
+    "files": [
+      "zauber/trank.mp3"
+    ],
+    "volume": 0.8
+  },
+  "zauber_feuerpfeil": {
+    "files": [
+      "zauber/feuerpfeil.mp3"
+    ],
+    "volume": 0.8
+  },
+  "zauber_schild": {
+    "files": [
+      "zauber/schild.mp3"
+    ],
+    "volume": 0.8
+  },
+  "zauber_eis": {
+    "files": [
+      "zauber/eis.mp3"
+    ],
+    "volume": 0.8
+  },
+  "zauber_feuerball": {
+    "files": [
+      "zauber/feuerball.mp3"
+    ],
+    "volume": 0.8
+  },
+  "tuer": {
+    "files": [
+      "spiel/tuer.mp3"
+    ],
+    "volume": 0.7
+  },
+  "tuer_verschlossen": {
+    "files": [
+      "spiel/tuer_verschlossen.mp3"
+    ],
+    "volume": 0.7
+  },
+  "tuer_riegel": {
+    "files": [
+      "spiel/tuer_riegel.mp3"
+    ],
+    "volume": 0.7
+  },
+  "truhe": {
+    "files": [
+      "spiel/truhe.mp3"
+    ],
+    "volume": 0.7
+  },
+  "gold": {
+    "files": [
+      "spiel/gold.mp3"
+    ],
+    "volume": 0.7
+  },
+  "gold_zahlen": {
+    "files": [
+      "spiel/gold_zahlen.mp3"
+    ],
+    "volume": 0.7
+  },
+  "stufe": {
+    "files": [
+      "spiel/stufe.mp3"
+    ],
+    "volume": 0.7
+  },
+  "treppe": {
+    "files": [
+      "spiel/treppe.mp3"
+    ],
+    "volume": 0.7
+  },
+  "treffer": {
+    "files": [
+      "spiel/treffer.mp3"
+    ],
+    "volume": 0.7
+  },
+  "tod": {
+    "files": [
+      "spiel/tod.mp3"
+    ],
+    "volume": 0.7
+  },
+  "raum_cozy_loop": {
+    "files": [
+      "raum/cozy_loop.mp3"
+    ],
+    "volume": 0.5
+  },
+  "raum_cozy_zufall": {
+    "files": [
+      "raum/cozy_zufall.mp3"
+    ],
+    "volume": 0.4
+  },
+  "raum_wet_loop": {
+    "files": [
+      "raum/wet_loop.mp3"
+    ],
+    "volume": 0.5
+  },
+  "raum_wet_zufall": {
+    "files": [
+      "raum/wet_zufall.mp3"
+    ],
+    "volume": 0.4
+  },
+  "raum_spooky_loop": {
+    "files": [
+      "raum/spooky_loop.mp3"
+    ],
+    "volume": 0.5
+  },
+  "raum_spooky_zufall": {
+    "files": [
+      "raum/spooky_zufall.mp3"
+    ],
+    "volume": 0.4
+  },
+  "raum_empty_loop": {
+    "files": [
+      "raum/empty_loop.mp3"
+    ],
+    "volume": 0.5
+  },
+  "raum_empty_zufall": {
+    "files": [
+      "raum/empty_zufall.mp3"
+    ],
+    "volume": 0.4
+  },
+  "schritt_wood": {
+    "files": [
+      "schritte/wood_1.mp3",
+      "schritte/wood_2.mp3",
+      "schritte/wood_3.mp3"
+    ],
+    "volume": 0.5
+  },
+  "schritt_hall": {
+    "files": [
+      "schritte/hall_1.mp3",
+      "schritte/hall_2.mp3",
+      "schritte/hall_3.mp3"
+    ],
+    "volume": 0.5
+  },
+  "schritt_mud": {
+    "files": [
+      "schritte/mud_1.mp3",
+      "schritte/mud_2.mp3",
+      "schritte/mud_3.mp3"
+    ],
+    "volume": 0.5
+  },
+  "schritt_gravel": {
+    "files": [
+      "schritte/gravel_1.mp3",
+      "schritte/gravel_2.mp3",
+      "schritte/gravel_3.mp3"
+    ],
+    "volume": 0.5
+  },
+  "schritt_trippeln": {
+    "files": [
+      "schritte/trippeln_1.mp3",
+      "schritte/trippeln_2.mp3",
+      "schritte/trippeln_3.mp3"
+    ],
+    "volume": 0.5
+  }
+}

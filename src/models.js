@@ -208,8 +208,10 @@ export function makeFigureModel(id, variant) {
     return true;
   }
   loop("idle");
+  // Stand der Dauerschleife von 0 bis 1 (für Schritte im Takt der Laufanimation), sonst null
+  const phase = (name) => (loopName === name && !busy && current ? (current.time % current.getClip().duration) / current.getClip().duration : null);
   return {
-    object, mixer, loop, once,
+    object, mixer, loop, once, phase,
     has: (name) => !!clipOf(name),
     duration: (name) => (clipOf(name) ? clipOf(name).duration : 0),
     animated: list.length > 0,
