@@ -45,6 +45,7 @@ export function buildRoom(id) {
 
   // Wendeltreppen setzt der Code: nach oben in der Vorkammer, nach unten im Abstieg und im Bossraum nach dem Sieg
   const feature = centerFeature(room.type, !!state.roomState[id].bossDefeated);
+  state.stairsFeature = feature; // für Figuren-Anker an der Wendeltreppe (roomFigures.js)
   const spec = decorFor(type, state.theme ? state.theme.id : null);
   // Licht nach Stilguide: Palette des Themas, für düstere Räume (Gruft, Brunnen) eine eigene; torchColor der Einrichtung gewinnt
   const pal = roomPalette(room.type);

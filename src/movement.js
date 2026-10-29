@@ -2,7 +2,7 @@
 import { tw } from "./config.js";
 import { findPath } from "./pathfinding.js";
 import { state, walkable } from "./state.js";
-import { player, figure, faceTile, animateFigure } from "./player.js";
+import { player, figure, faceTile, animateFigure, updateTurn } from "./player.js";
 import { drawDots, clearDots, removeDot } from "./markers.js";
 import { setSteps, updatePos } from "./hud.js";
 
@@ -57,6 +57,7 @@ function arrive() {
 
 // Pro Frame aufrufen
 export function updateMovement(dt, t) {
+  updateTurn(dt, state.path.length > 0);
   if (state.path.length) {
     const [nx, nz] = state.path[0];
     const tx = tw(nx), tz = tw(nz);

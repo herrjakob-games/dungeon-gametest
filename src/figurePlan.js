@@ -1,7 +1,7 @@
 // Figuren im Raum (docs/GDD.md: „Gegner im Raum“, „Figuren in Events“, Figurenliste). Reine Logik, testbar.
 // Hier steht, wo eine Figur stehen darf. Gebaut werden die Figuren in monsterFigures.js, bewegt in roomFigures.js.
 import { N, MID, key, inBounds } from "./config.js";
-import { PLACES, reachable, doorTiles } from "./decor.js";
+import { PLACES, reachable, doorTiles, STAIRS_FOOT } from "./decor.js";
 
 /**
  * Figurenliste aus dem GDD. size: Kacheln je Seite (2 = 2×2), blocks: steht im Weg, variants: erlaubte Varianten.
@@ -35,11 +35,14 @@ const N8 = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, 1], [1, -1], [-1, -1]
 
 /**
  * Plant Figuren eines Events.
- * list: Feld "figures" ({ figure, place, count, variant, stay })
+ * list: Feld "figures" ({ figure, place, count, variant, stay }) oder Inszenierung aus staging.js (zusätzlich anchor)
  * ctx: { placements (Einrichtung aus planDecor, sonst []), blocked (Set "x,z"), doors, player [x,z],
- *        occupied (Set "x,z" weiterer Figuren), rand }
- * Ergebnis: [{ figure, variant, tiles, cx, cz, y, rot, stay, blocks, onProp }]
- * Passt eine Figur nirgends hin, fehlt sie im Ergebnis.
+ *        occupied (Set "x,z" weiterer Figuren), rand,
+ *        anchors (Anker aus data/staging.json), canPose(figure, variant, anim) (hat das Modell die Animation?),
+ *        stairsDown (true, wenn im Raum eine Wendeltreppe nach unten steht) }
+ * Ergebnis: [{ figure, variant, tiles, cx, cz, y, rot, stay, blocks, onProp, anim, seat }]
+ * Passt eine Figur nirgends hin, fehlt sie im Ergebnis. Fehlt der Anker oder die Animation, steht die Figur
+ * mit idle auf einer freien Kachel daneben (nie in Wänden, Türen oder auf Requisiten).
  */
 export function planFigures(list, ctx) {
   const R = ctx.rand || Math.random;
@@ -90,14 +93,75 @@ export function planFigures(list, ctx) {
     return { tiles: shuffle(allTiles) };
   }
 
+  // Anker: Kandidaten an den passenden Requisiten (Sitz, Kachel mit Versatz, auf dem Requisit), sonst null
+  const seatsUsed = new Set();
+  function atAnchor(f, info) {
+    const a = (ctx.anchors || {})[f.anchor];
+    if (!a) return null;
+    const pose = a.animation || "idle";
+    const can = !ctx.canPose || ctx.canPose(f.figure, f.variant, pose);
+    const targets = shuffle(placements.filter(p => a.props.includes(p.prop)));
+    if (a.props.includes("wendeltreppe_runter") && ctx.stairsDown) targets.push({ prop: "wendeltreppe_runter", tiles: [STAIRS_FOOT], cx: STAIRS_FOOT[0], cz: STAIRS_FOOT[1], rot: 0, foot: true });
+    const off = a.offset || [0, 0, 0];
+    const lookAt = (t) => {
+      if (a.face === "random") return R() * Math.PI * 2;
+      let p = ctx.player || [MID, MID];
+      if (a.face === "prop") p = [t.cx, t.cz];
+      if (a.face === "target") { const tt = t.target && placements.find(q => q.prop === t.target); p = tt ? [tt.cx, tt.cz] : [t.cx, t.cz]; }
+      return p;
+    };
+    const result = (tiles, cx, cz, y, t, extra) => {
+      const look = lookAt(t);
+      const rot = typeof look === "number" ? look : Math.atan2(look[0] - cx, look[1] - cz);
+      return Object.assign({ figure: f.figure, variant: f.variant || null, tiles, cx, cz, y, rot, stay: !!f.stay,
+        blocks: info.blocks, onProp: false, anim: can ? pose : "idle", seat: false }, extra);
+    };
+    for (const t of targets) {
+      // world: Versatz ohne Drehung des Requisits (etwa der Brunnenrand auf der Seite zur Kamera)
+      const r = a.world ? 0 : (t.rot || 0), c = Math.cos(r), sn = Math.sin(r);
+      // Auf dem Requisit (Monsterratte auf dem Käseberg, Kröte auf dem Brunnenrand): belegt keine Bodenkachel
+      if (a.onProp) return result([], t.cx + off[0] * c + off[2] * sn, t.cz - off[0] * sn + off[2] * c, off[1], t, { blocks: false, onProp: true });
+      // Sitzen auf Hocker oder Stuhl: die Figur steht auf der Kachel des Sitzes, die das Requisit schon belegt
+      if (a.seat && can && info.size === 1 && t.tiles.length === 1) {
+        const k = key(...t.tiles[0]);
+        if (seatsUsed.has(k) || used.has(k)) continue;
+        seatsUsed.add(k);
+        used.add(k);
+        return result([t.tiles[0]], t.tiles[0][0], t.tiles[0][1], 0, t, { blocks: false, seat: true });
+      }
+      // Kachel mit Versatz, gedreht wie das Requisit; sonst eine freie Kachel direkt daneben
+      const first = t.foot ? t.tiles[0] : [Math.round(t.cx + off[0] * c + off[2] * sn), Math.round(t.cz - off[0] * sn + off[2] * c)];
+      const own = new Set(t.tiles.map(q => key(...q)));
+      const near = [first];
+      t.tiles.forEach(([x, z]) => N8.forEach(([dx, dz]) => { if (!own.has(key(x + dx, z + dz))) near.push([x + dx, z + dz]); }));
+      for (const [x, z] of near) {
+        const tiles = fits(x, z, info);
+        if (!tiles) continue;
+        const [cx, cz] = centerOf(tiles);
+        // Sitz ohne Sitz-Animation: stehend neben dem Anker
+        const extra = a.seat ? { anim: "idle" } : {};
+        return result(tiles, cx, cz, 0, t, extra);
+      }
+    }
+    return null;
+  }
+
   for (const f of list || []) {
     const info = figureInfo(f.figure);
     for (let i = 0; i < (f.count || 1); i++) {
+      if (f.anchor) {
+        const r = atAnchor(f, info);
+        if (r) {
+          r.tiles.forEach(t => { used.add(key(...t)); if (r.blocks) blocked.add(key(...t)); });
+          out.push(r);
+          continue;
+        }
+      }
       const s = spots(f.place);
       if (s.above) {
         // Auf einem Requisit (etwa die Monsterratte auf dem Käseberg): belegt keine Bodenkachel
         out.push({ figure: f.figure, variant: f.variant || null, tiles: [], cx: s.above.cx, cz: s.above.cz, y: 0.9,
-          rot: s.above.rot, stay: !!f.stay, blocks: false, onProp: true });
+          rot: s.above.rot, stay: !!f.stay, blocks: false, onProp: true, anim: "idle", seat: false });
         continue;
       }
       let tiles = null;
@@ -114,7 +178,7 @@ export function planFigures(list, ctx) {
       const [cx, cz] = centerOf(tiles);
       const look = s.face || ctx.player || [MID, MID];
       out.push({ figure: f.figure, variant: f.variant || null, tiles, cx, cz, y: 0,
-        rot: Math.atan2(look[0] - cx, look[1] - cz), stay: !!f.stay, blocks: info.blocks, onProp: false });
+        rot: Math.atan2(look[0] - cx, look[1] - cz), stay: !!f.stay, blocks: info.blocks, onProp: false, anim: "idle", seat: false });
     }
   }
   return out;

@@ -1,7 +1,7 @@
 // Event-Ablauf im Textfenster: Events aus data/events.json anzeigen, Proben würfeln, Effekte anwenden,
 // Kämpfe starten, Fundstücke einpacken, Stufenaufstiege anbieten.
 // Die Regeln selbst stehen in eventLogic.js, character.js und combat.js.
-import { DIR } from "./config.js";
+import { DIR, reduceMotion } from "./config.js";
 import { state } from "./state.js";
 import { DATA } from "./data.js";
 import { TYPES } from "./roomTypes.js";
@@ -14,6 +14,8 @@ import { renderInventory } from "./inventory.js";
 import { runCombat } from "./combatUI.js";
 import { rollHtml, maybeRescue, signShort } from "./checkUI.js";
 import { showEventFigures, endEventFigures, combatFigure, killCombatFigure } from "./roomFigures.js";
+
+const FIGURE_DELAY = 700; // ms zwischen dem Erscheinen der Figuren und dem Event-Fenster
 
 let hooks = { onDeath: () => {}, onRetreat: () => {}, onBossDefeated: () => {}, onRested: () => {} };
 export function initEvents(h) { hooks = h; }
@@ -66,9 +68,11 @@ export function startRoomEvent() {
 export function runEvent(id, onOutcome) {
   const ev = DATA.events[id];
   state.eventActive = true;
-  showEventFigures(ev); // Figuren aus dem Feld "figures" erscheinen im Raum
+  // Figuren nach der Inszenierung (data/staging.json) stehen schon da, bevor das Fenster aufgeht
+  const shown = showEventFigures(ev);
   const opts = visibleOptions(ev, state.run, state.player);
-  showDialog(ev.title, ev.text, opts.map(o => ({ label: optionLabel(o), pick: () => choose(ev, o, onOutcome) })), { modal: true });
+  const open = () => showDialog(ev.title, ev.text, opts.map(o => ({ label: optionLabel(o), pick: () => choose(ev, o, onOutcome) })), { modal: true });
+  if (shown && !reduceMotion) setTimeout(open, FIGURE_DELAY); else open();
 }
 
 function choose(ev, option, onOutcome) {

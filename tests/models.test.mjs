@@ -17,7 +17,8 @@ delete MODELS._info;
 const ROOM_TYPES = read("data/room-types.json");
 const RECIPES = read("tools/asset-recipes.json");
 const MAX_PROP_TRIS = 1500, MAX_BYTES = 1024 * 1024;
-const FIGURE_ANIMS = ["idle", "walk", "attack", "hit", "death", "interact"];
+const FIGURE_ANIMS = ["idle", "walk", "attack", "hit", "death", "interact", "sit", "sit_floor", "lie", "awaken"];
+const BASIC_ANIMS = ["idle", "walk", "attack", "hit", "death", "interact"];
 
 // Dreiecke einer GLB-Datei aus dem JSON-Teil zählen (ohne Abhängigkeiten); mehrfach benutzte Meshes zählen mehrfach
 function glbTriangles(path) {
@@ -37,6 +38,7 @@ test("Jede Datei in data/models.json existiert und ist eine gültige GLB", () =>
     assert.ok(m.file, id + ": file fehlt");
     assert.ok(existsSync(new URL(m.file, root)), id + ": Datei " + m.file + " fehlt");
     const g = glbTriangles(new URL(m.file, root));
+    if (m.texture) assert.ok(existsSync(new URL(m.texture, root)), id + ": Textur " + m.texture + " fehlt");
     if (m.palette !== false) {
       assert.ok(g.hasUV, id + ": Texturkoordinaten fehlen, die Paletten-Textur würde nicht passen");
       assert.equal(g.images, 0, id + ": eingebettete Textur (der Lader setzt die Paletten-Textur)");
@@ -72,7 +74,7 @@ test("Jedes Volk hat eine Figur mit allen Animationen", () => {
     assert.ok(m.file.startsWith("assets/figures/"), c.id + ": Figur gehört nach assets/figures/");
     assert.equal(m.palette, false, c.id + ": Figuren behalten ihre eigene Textur");
     const g = glbTriangles(new URL(m.file, root));
-    FIGURE_ANIMS.forEach(a => {
+    BASIC_ANIMS.forEach(a => {
       assert.ok(m.animations && m.animations[a], c.id + ": Zuordnung der Animation " + a + " fehlt");
       assert.ok(g.animations.includes(m.animations[a]), c.id + ": Animation " + m.animations[a] + " fehlt in " + m.file);
     });
@@ -80,8 +82,8 @@ test("Jedes Volk hat eine Figur mit allen Animationen", () => {
   Object.keys(RECIPES.figures || {}).forEach(id => assert.ok(MODELS[id], id + ": gebaut, aber nicht in data/models.json"));
 });
 
-// Figuren ohne Modell (bleiben vorerst Grundformen): Skelett aus KayKit Skeletons, Mimik aus dem KayKit Dungeon Pack
-const FIGURES_PENDING = ["skeleton", "mimic"];
+// Figuren ohne Modell (bleiben vorerst Grundformen): Mimik aus dem KayKit Dungeon Pack
+const FIGURES_PENDING = ["mimic"];
 
 test("Jede Figuren-id hat ein Modell, das lädt", (t) => {
   for (const id of Object.keys(FIGURE_INFO)) {

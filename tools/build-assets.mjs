@@ -137,12 +137,17 @@ async function buildFigure(id, recipe) {
     bone.addChild(holder);
     root.listScenes().filter(x => x !== root.listScenes()[0]).forEach(x => x.dispose());
   }
+  // Eigene Textur entfernen, wenn data/models.json eine angepasste Textur setzt (texture)
+  if (recipe.stripTexture) {
+    root.listMaterials().forEach(m => m.setBaseColorTexture(null));
+    root.listTextures().forEach(t => t.dispose());
+  }
   await doc.transform(unpartition(), dedup(), prune({ keepAttributes: true }));
   if (recipe.simplify) {
     await MeshoptSimplifier.ready;
-    // Flach schattierte Pakete haben pro Fläche eigene Ecken; ohne Normalen lassen sie sich verschmelzen und
+    // flat: Flach schattierte Pakete haben pro Fläche eigene Ecken; ohne Normalen lassen sie sich verschmelzen und
     // vereinfachen. Der GLTFLoader schattiert Meshes ohne Normalen wieder flach.
-    root.listMeshes().forEach(m => m.listPrimitives().forEach(p => { const n = p.getAttribute("NORMAL"); if (n) { p.setAttribute("NORMAL", null); n.dispose(); } }));
+    if (recipe.flat) root.listMeshes().forEach(m => m.listPrimitives().forEach(p => { const n = p.getAttribute("NORMAL"); if (n) { p.setAttribute("NORMAL", null); n.dispose(); } }));
     await doc.transform(weld(), simplify({ simplifier: MeshoptSimplifier, ratio: recipe.simplify, error: 0.02 }), unpartition());
   }
   const out = ROOT + "assets/figures/" + id + ".glb";

@@ -11,7 +11,7 @@ import { monsterHpBonus } from "./world.js";
 import { updateStats } from "./hud.js";
 import { renderInventory } from "./inventory.js";
 import { rollHtml, maybeRescue, signShort } from "./checkUI.js";
-import { hitCombatFigure, attackCombatFigure } from "./roomFigures.js";
+import { hitCombatFigure, attackCombatFigure, focusCombatFigure } from "./roomFigures.js";
 import { playerAction } from "./player.js";
 
 let h = null; // { onWin(lines), onFlee(), onDeath(monster) }
@@ -53,6 +53,7 @@ function menu(text, lines, roll) {
 function attack() {
   const c = state.combat;
   const r = attackRoll(state.player, DATA.items, c, Math.random);
+  focusCombatFigure();
   playerAction("attack");
   const against = "Rüstung " + c.monster.armor;
   maybeRescue(title(), r, against, () => {
