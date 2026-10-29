@@ -238,11 +238,14 @@
     "files": [
       "raum/cozy_loop.mp3"
     ],
-    "volume": 0.5
+    "volume": 0.5,
+    "loopStart": 0.03,
+    "loopEnd": 5.01
   },
   "raum_cozy_zufall": {
     "files": [
-      "raum/cozy_zufall.mp3"
+      "raum/cozy_zufall_1.mp3",
+      "raum/cozy_zufall_2.mp3"
     ],
     "volume": 0.4
   },
@@ -250,7 +253,9 @@
     "files": [
       "raum/wet_loop.mp3"
     ],
-    "volume": 0.5
+    "volume": 0.5,
+    "loopStart": 0.03,
+    "loopEnd": 15.02
   },
   "raum_wet_zufall": {
     "files": [
@@ -262,7 +267,9 @@
     "files": [
       "raum/spooky_loop.mp3"
     ],
-    "volume": 0.5
+    "volume": 0.5,
+    "loopStart": 0.03,
+    "loopEnd": 15.02
   },
   "raum_spooky_zufall": {
     "files": [
@@ -279,6 +286,20 @@
   "raum_empty_zufall": {
     "files": [
       "raum/empty_zufall.mp3"
+    ],
+    "volume": 0.4
+  },
+  "raum_kitchen_loop": {
+    "files": [
+      "raum/kitchen_loop.mp3"
+    ],
+    "volume": 0.5,
+    "loopStart": 0.03,
+    "loopEnd": 10.0
+  },
+  "raum_kitchen_zufall": {
+    "files": [
+      "raum/kitchen_zufall.mp3"
     ],
     "volume": 0.4
   },
@@ -314,6 +335,14 @@
     ],
     "volume": 0.5
   },
+  "schritt_stone": {
+    "files": [
+      "schritte/stone_1.mp3",
+      "schritte/stone_2.mp3",
+      "schritte/stone_3.mp3"
+    ],
+    "volume": 0.5
+  },
   "schritt_trippeln": {
     "files": [
       "schritte/trippeln_1.mp3",
@@ -321,5 +350,11 @@
       "schritte/trippeln_3.mp3"
     ],
     "volume": 0.5
+  },
+  "klopfen_stein": {
+    "files": [
+      "events/klopfen_stein.mp3"
+    ],
+    "volume": 0.8
   }
 }

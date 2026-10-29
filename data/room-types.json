@@ -80,7 +80,7 @@
     },
     "sound": {
       "mood": "cozy",
-      "floor": "wood"
+      "floor": "stone"
     }
   },
   {
@@ -154,7 +154,7 @@
     },
     "sound": {
       "mood": "empty",
-      "floor": "hall"
+      "floor": "stone"
     }
   },
   {
@@ -230,7 +230,7 @@
     },
     "sound": {
       "mood": "spooky",
-      "floor": "hall"
+      "floor": "stone"
     }
   },
   {
@@ -318,7 +318,7 @@
     },
     "sound": {
       "mood": "spooky",
-      "floor": "gravel"
+      "floor": "stone"
     }
   },
   {
@@ -378,7 +378,7 @@
     },
     "sound": {
       "mood": "cozy",
-      "floor": "wood"
+      "floor": "stone"
     }
   },
   {
@@ -446,7 +446,7 @@
     },
     "sound": {
       "mood": "cozy",
-      "floor": "wood"
+      "floor": "stone"
     }
   },
   {
@@ -538,7 +538,7 @@
     },
     "sound": {
       "mood": "empty",
-      "floor": "hall"
+      "floor": "stone"
     }
   },
   {
@@ -826,7 +826,7 @@
     },
     "sound": {
       "mood": "cozy",
-      "floor": "gravel"
+      "floor": "stone"
     }
   },
   {
@@ -935,8 +935,8 @@
       ]
     },
     "sound": {
-      "mood": "cozy",
-      "floor": "wood"
+      "mood": "kitchen",
+      "floor": "stone"
     }
   },
   {
@@ -1056,7 +1056,7 @@
     },
     "sound": {
       "mood": "cozy",
-      "floor": "wood"
+      "floor": "stone"
     }
   },
   {
@@ -1158,7 +1158,7 @@
     },
     "sound": {
       "mood": "wet",
-      "floor": "mud"
+      "floor": "hall"
     }
   },
   {

@@ -272,6 +272,7 @@
     "id": "gruft_sarkophag",
     "type": "choice",
     "title": "Der Sarkophag",
+    "sound": "klopfen_stein",
     "text": "Ein steinerner Sarkophag. Der Deckel ist einen Spalt verschoben. Von innen klopft es. Höflich.",
     "options": [
       {
