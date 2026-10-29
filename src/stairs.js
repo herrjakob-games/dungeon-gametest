@@ -1,6 +1,6 @@
 // Treppen in der Nordwest-Ecke (docs/GDD.md, Raumtypen und Ebenen, „Treppen“): gerade Steintreppe aus KayKit `stairs`
 // (data/models.json: treppe_hoch, treppe_runter), 3×3 Kacheln, läuft zur Nordwand. Nach oben (Vorkammer) steigt sie bis
-// zur Wandoberkante und läuft oben in die Schattenfarbe aus. Nach unten (Abstieg, Bossraum nach dem Sieg) führt sie in ein
+// zur Wandoberkante und wird oben dunkler (ohne Farbstich, kein Lichtschein von oben). Nach unten (Abstieg, Bossraum nach dem Sieg) führt sie in ein
 // Loch im Boden mit Steinkante, dunklen Innenwänden und kühlem Schimmer von unten. Im Bossraum liegt bis zum Sieg ein
 // Metallgitter über dem Loch. Fehlt das Modell, entsteht die Treppe aus Grundformen.
 import { mat, box, stone } from "./materials.js";
@@ -16,8 +16,9 @@ const HOVER = 0xe9a640;          // Aufhellen beim Überfahren (wie Truhe und T�
 /**
  * Material, das je nach Höhe in der Welt in die Schattenfarbe übergeht: bei y = from noch unverändert, bei y = to ganz
  * Schattenfarbe (from > to: nach unten dunkler, from < to: nach oben dunkler).
+ * darken: nur abdunkeln, ohne Farbstich (Treppe nach oben: sonst wirkt die Schattenfarbe wie ein bläulicher Schein von oben)
  */
-function fadeToShadow(m, from, to) {
+function fadeToShadow(m, from, to, darken) {
   m.onBeforeCompile = (sh) => {
     sh.uniforms.uShadow = { value: new THREE.Color(SHADOW) };
     sh.uniforms.uFade = { value: new THREE.Vector2(from, to) };
@@ -28,9 +29,9 @@ function fadeToShadow(m, from, to) {
       .replace("#include <common>", "#include <common>\nvarying float vWorldY;\nuniform vec3 uShadow;\nuniform vec2 uFade;")
       .replace("#include <dithering_fragment>", "#include <dithering_fragment>\n" +
         "float fadeF = smoothstep(0.0, 1.0, (vWorldY - uFade.x) / (uFade.y - uFade.x));\n" +
-        "gl_FragColor.rgb = mix(gl_FragColor.rgb, uShadow, fadeF);");
+        (darken ? "gl_FragColor.rgb *= mix(1.0, 0.12, fadeF);" : "gl_FragColor.rgb = mix(gl_FragColor.rgb, uShadow, fadeF);"));
   };
-  m.customProgramCacheKey = () => "fadeToShadow";
+  m.customProgramCacheKey = () => "fadeToShadow" + (darken ? "Dark" : "");
   return m;
 }
 
@@ -52,7 +53,7 @@ function stairsMesh(id, down, fade) {
   const mats = [];
   g.traverse(n => {
     if (!n.isMesh) return;
-    n.material = fadeToShadow(n.material.clone(), fade[0], fade[1]);
+    n.material = fadeToShadow(n.material.clone(), fade[0], fade[1], !down);
     n.material.emissive = new THREE.Color(HOVER);
     n.material.emissiveIntensity = 0;
     mats.push(n.material);
