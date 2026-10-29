@@ -53,7 +53,7 @@ function textureMaterial(base, file) {
 // Beim Start: Zuordnung laden und alle Dateien vorladen. Fehler stoppen das Spiel nicht.
 export async function loadModels() {
   try {
-    const res = await fetch("data/models.json");
+    const res = await fetch("data/models.json", { cache: "no-cache" });
     MODELS = await res.json();
     delete MODELS._info;
   } catch (e) {
