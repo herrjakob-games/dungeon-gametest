@@ -1,5 +1,6 @@
 # Textur der Geister (docs/GDD.md, Quellen der Figuren in den Katakomben: Geist und Poltergeist aus KayKit Rogue):
-# das grüne Outfit wird hellblau, die Haut weiß (Feld 1|1 der Textur), die Haare grau (Feld 2|1), alles andere bleibt. Helligkeitsverlauf bleibt, damit die Schattierung von KayKit erhalten ist.
+# das grüne Outfit wird hellblau, die Haut weiß (Feld 1|1 der Textur), die Haare grau (Feld 2|1), die Handschuhe
+# (Feld 6|3, nur an den Armen) werden zu Händen in Hautfarbe, alles andere bleibt. Helligkeitsverlauf bleibt, damit die Schattierung von KayKit erhalten ist.
 # Aufruf: python3 tools/ghost-texture.py   (braucht Pillow)
 import colorsys
 from pathlib import Path
@@ -18,7 +19,7 @@ for y in range(im.height):
         r, g, b, a = px[x, y]
         h, l, s = colorsys.rgb_to_hls(r / 255, g / 255, b / 255)
         cell = (x // CELL_W, y // CELL_H)
-        if cell == (0, 0):  # Haut: weiß, Schattierung bleibt
+        if cell in ((0, 0), (5, 2)):  # Haut und Handschuhe: weiß, Schattierung bleibt
             v = round(255 * (0.82 + l * 0.18))
             px[x, y] = (v, v, v, a)
         elif cell == (1, 0):  # Haare: grau

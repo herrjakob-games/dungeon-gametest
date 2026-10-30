@@ -594,7 +594,7 @@
     "scale": 0.48,
     "palette": false,
     "texture": "assets/textures/figures/geist/geist_texture.png",
-    "opacity": 0.7,
+    "opacity": 0.6,
     "animations": {
       "idle": "Idle",
       "walk": "Walking_A",
@@ -621,7 +621,7 @@
     "scale": 0.48,
     "palette": false,
     "texture": "assets/textures/figures/geist/geist_texture.png",
-    "opacity": 0.7,
+    "opacity": 0.6,
     "animations": {
       "idle": "Idle",
       "walk": "Walking_A",
