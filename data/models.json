@@ -30,16 +30,6 @@
     ],
     "palette": true
   },
-  "boden_deko": {
-    "file": "assets/tiles/boden_deko.glb",
-    "scale": 0.5,
-    "offset": [
-      0,
-      -0.025,
-      0
-    ],
-    "palette": true
-  },
   "wand": {
     "file": "assets/tiles/wand.glb",
     "scale": 0.5,
