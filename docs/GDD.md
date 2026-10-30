@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.40 · Oct 30, 2026 · @Christian
+Version 2.41 · Oct 30, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.41 | 30.10.2026 | Geister mit weißer Haut und grauen Haaren, zu 70 % deckend (durchscheinend) |
 | 2.40 | 30.10.2026 | Skelette ohne festgelegte Variante als Minion statt nach Raum-Seed; Skelettkrieger als Warrior; Geister aus KayKit Rogue in Hellblau mit kaltem blauen Leuchten |
 | 2.39 | 30.10.2026 | Gruft und Brunnenraum: gesprungene Platten 70 %, Platten mit Unkraut 30 %; die verzierte Platte `boden_deko` ist entfernt |
 | 2.38 | 30.10.2026 | Bodenplatten: Keller `boden`, `boden_bruch_a`, `boden_bruch_b`; Gruft und Brunnenraum `boden_unkraut_a`, `boden_unkraut_b`; Katakomben `boden_bruch_a`, `boden_bruch_b`, `boden_unkraut_a`, `boden_unkraut_b` |
@@ -510,7 +511,7 @@ Gilt für alle Modelle. Bei Paketteilen gilt sie für das Ergebnis im Spiel; Abw
 - **Bart des Zwergs:** Zubehör `bart` aus Grundformen, Farbe `#4A3020`, matt und weich, in zwei Teilen: Kinnansatz mit Schnurrbart-Wulst am Kopfknochen (`part: "kinn"`, Knochen `head`) und ein breiter Keil bis zum Bauch, unten leicht gegabelt, am Brustknochen (`part: "keil"`, Knochen `chest`); beide überlappen leicht. Am Kinn etwa 0,27 Kacheln breit, der Keil oben 0,24 (schmaler als geplant, damit die Schwerthand beim Angriff frei bleibt), nach unten schmaler; gesamt etwa 0,34 Kacheln lang, weil der Kopf der Figur groß ist und 0,45 bis zu den Füßen reichen würde. Der Bart schneidet bei Stehen, Laufen und Angriff nicht ins Schwert.
 - **Zubehör der Spielfiguren:** Die Figur trägt das Teil des Pakets, das der Startwaffe am nächsten kommt: Zwerg Schwert (Langschwert), Elf Messer (Dolch), Mensch Zauberstab (das Paket hat keinen Knüppel). Schilde, Zweithand-Waffen und Bücher fallen weg.
 - **Quellen der Figuren im Keller:** Mensch KayKit `Mage`, Elf `Rogue_Hooded`, Zwerg `Knight` ohne Helm, Haare und Augenbrauen in der Bartfarbe (Textur `assets/textures/figures/zwerg/zwerg_texture.png`), ungleich skaliert (Maßstab `[0,429, 0,2805, 0,429]`: breiter und kleiner), mit Bart, Händler `Rogue` ohne Kapuze und Waffen, Outfit dunkelblau statt grün (KayKit Adventurers); Skelett aus KayKit Skeletons 1.0 (Minion, Warrior, Rogue, Mage; die Fassung 1.1 FREE hat kein Sitzen, Liegen und Angreifen, Textur gleich) mit der auf die Palette umgefärbten Textur `assets/textures/figures/skeleton/skeleton_keller.png`; Goblin aus Goblin Lowpoly Assets (standout7, itch.io); Mimik aus der Truhe des KayKit Dungeon Pack (itch.io); Riesenratte, Küchenchef und Monsterratte aus `Rat`, Kröte aus `Frog` (Easy Animated Enemy Pack, Quaternius). Goblin: `Basic_Goblin` mit `Rusty Shiv`; die kostenlose Fassung hat keine Animationen.
-- **Quellen der Figuren in den Katakomben:** Skelettkrieger aus KayKit Skeletons `Warrior` mit der Skelett-Textur; Geister (Geist, Poltergeist) aus KayKit Adventurers `Rogue` ohne Kapuze und Waffen, Outfit hellblau, mit kaltem blauem Licht an der Figur (Lichtpunkt ohne Schatten).
+- **Quellen der Figuren in den Katakomben:** Skelettkrieger aus KayKit Skeletons `Warrior` mit der Skelett-Textur; Geister (Geist, Poltergeist) aus KayKit Adventurers `Rogue` ohne Kapuze und Waffen, Outfit hellblau, Haut weiß, Haare grau, mit kaltem blauem Licht an der Figur (Lichtpunkt ohne Schatten). Geister sind als ganze Figur durchscheinend (Deckkraft 0,7, `opacity` in `data/models.json`); innere Teile bleiben dabei verborgen.
 - **Lizenzen:** Quelle und Lizenz jeder fremden Datei in `assets/CREDITS.md`.
 
 ### Einrichtung pro Raumtyp
@@ -853,3 +854,4 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Bodenplatten: Keller `boden`, `boden_bruch_a`, `boden_bruch_b`; Gruft und Brunnenraum `boden_unkraut_a`, `boden_unkraut_b`; Katakomben `boden_bruch_a`, `boden_bruch_b`, `boden_unkraut_a`, `boden_unkraut_b`
 - [x] Gruft und Brunnenraum: gesprungene Platten 70 %, Platten mit Unkraut 30 %; keine verzierte Bodenplatte (`boden_deko`) in irgendeinem Raum
 - [x] Skelette ohne festgelegte Variante immer als Minion; Skelettkrieger als Warrior; Geister aus KayKit Rogue, hellblau mit kaltem blauen Leuchten
+- [x] Geister mit weißer Haut und grauen Haaren, als ganze Figur durchscheinend (Deckkraft 0,7)

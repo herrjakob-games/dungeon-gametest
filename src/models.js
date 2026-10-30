@@ -139,6 +139,7 @@ export function makeModel(id, variant, opts) {
     n.receiveShadow = true;
     if (n.isSkinnedMesh) n.frustumCulled = false; // Grenzen stammen aus der Grundhaltung, beim Laufen sonst Flackern
   });
+  if (entry.opacity !== undefined && entry.opacity < 1) seeThrough(inner, entry.opacity);
   const g = new THREE.Group();
   g.add(inner);
   if (entry.accessories) attachAccessories(g, inner, entry.accessories);
@@ -149,6 +150,38 @@ export function makeModel(id, variant, opts) {
     if (opts.lights) opts.lights.push(light);
   });
   return g;
+}
+
+/**
+ * Ganze Figur durchscheinend (entry.opacity, etwa Geister): Jedes Teil bekommt einen unsichtbaren Zwilling, der vorher nur die
+ * Tiefe schreibt. So zeichnet sich nur die vorderste Fläche und innere Teile (Arm im Körper, Rückseite des Umhangs) bleiben verborgen.
+ */
+const glassy = new Map();
+function seeThrough(root, opacity) {
+  const meshes = [];
+  root.traverse(n => { if (n.isMesh) meshes.push(n); });
+  meshes.forEach(n => {
+    const k = n.material.uuid + ":" + opacity;
+    if (!glassy.has(k)) {
+      const m = n.material.clone();
+      m.transparent = true;
+      m.opacity = opacity;
+      const depth = new THREE.MeshBasicMaterial({ colorWrite: false, transparent: true, side: m.side, skinning: n.isSkinnedMesh });
+      glassy.set(k, { m, depth });
+    }
+    const { m, depth } = glassy.get(k);
+    n.material = m;
+    n.renderOrder = 2;
+    const twin = n.isSkinnedMesh ? new THREE.SkinnedMesh(n.geometry, depth) : new THREE.Mesh(n.geometry, depth);
+    if (n.isSkinnedMesh) twin.bind(n.skeleton, n.bindMatrix);
+    twin.position.copy(n.position);
+    twin.quaternion.copy(n.quaternion);
+    twin.scale.copy(n.scale);
+    twin.renderOrder = 1;
+    twin.frustumCulled = n.frustumCulled;
+    twin.userData.noOutline = true;
+    n.parent.add(twin);
+  });
 }
 
 // Teilknoten eines Modells finden (etwa den Deckel der Truhe)
