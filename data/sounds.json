@@ -391,7 +391,19 @@
     ],
     "volume": 0.7
   },
+  "treffer_poltergeist": {
+    "files": [
+      "spiel/treffer_geist.mp3"
+    ],
+    "volume": 0.7
+  },
   "tod_geist": {
+    "files": [
+      "spiel/tod_geist.mp3"
+    ],
+    "volume": 0.7
+  },
+  "tod_poltergeist": {
     "files": [
       "spiel/tod_geist.mp3"
     ],

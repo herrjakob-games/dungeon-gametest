@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.43 · Oct 30, 2026 · @Christian
+Version 2.44 · Oct 30, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.44 | 30.10.2026 | Poltergeist mit denselben Tönen wie der Geist |
 | 2.43 | 30.10.2026 | Töne des Geists: Angriffsklang `geist`, `treffer_geist`, `tod_geist`; Bewegung mit `schweben` statt Schritten |
 | 2.42 | 30.10.2026 | Geister zu 60 % deckend und ohne Handschuhe (Hände in Hautfarbe) |
 | 2.41 | 30.10.2026 | Geister mit weißer Haut und grauen Haaren, zu 70 % deckend (durchscheinend) |
@@ -720,6 +721,7 @@ Feste Sound-ids, die der Code an diesen Stellen spielt:
 Für die Spielfigur gilt als Figur-id das Volk (`zwerg`, `elf`, `mensch`).
 
 Geist: Angriffsklang `geist` (`angriff_geist_treffer`, `angriff_geist_fehl`), `treffer_geist`, `tod_geist`, Bewegung `schritt_schweben`.
+Poltergeist: dieselben Töne wie der Geist. `treffer_poltergeist` und `tod_poltergeist` nutzen in `data/sounds.json` dieselben Dateien; sobald der Poltergeist in `data/monsters.json` steht, bekommt er `"sound": "geist"` und in `data/staging.json` `"steps": "schweben"`.
 
 ## Meilensteine
 
@@ -861,3 +863,4 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Geister mit weißer Haut und grauen Haaren, als ganze Figur durchscheinend (Deckkraft 0,7)
 - [x] Geister zu 60 % deckend (Deckkraft 0,6) und ohne Handschuhe
 - [x] Töne des Geists: Angriffsklang `geist`, eigener Treffer- und Tod-Ton, beim Bewegen ein Schwebe-Ton (`schweben`) statt Schritten
+- [x] Poltergeist mit denselben Tönen wie der Geist
