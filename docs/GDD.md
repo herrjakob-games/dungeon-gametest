@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.42 · Oct 30, 2026 · @Christian
+Version 2.43 · Oct 30, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.43 | 30.10.2026 | Töne des Geists: Angriffsklang `geist`, `treffer_geist`, `tod_geist`; Bewegung mit `schweben` statt Schritten |
 | 2.42 | 30.10.2026 | Geister zu 60 % deckend und ohne Handschuhe (Hände in Hautfarbe) |
 | 2.41 | 30.10.2026 | Geister mit weißer Haut und grauen Haaren, zu 70 % deckend (durchscheinend) |
 | 2.40 | 30.10.2026 | Skelette ohne festgelegte Variante als Minion statt nach Raum-Seed; Skelettkrieger als Warrior; Geister aus KayKit Rogue in Hellblau mit kaltem blauen Leuchten |
@@ -688,7 +689,7 @@ Im Keller (Ebene 1 bis 3) ist der Boden einheitlich `stone`, nur Gruft, Brunnenr
 ### Schritte
 
 - Läuft eine Figur, spielt `schritt_<floor>` des aktuellen Raums, für Spielfigur, Gegner und friedliche Figuren.
-- Eine Figur kann in `data/staging.json` unter `figures` einen eigenen Schritt nennen (`steps`), dann spielt `schritt_<steps>`. Heute: Riesenratte, Küchenchef und Monsterratte mit `trippeln`.
+- Eine Figur kann in `data/staging.json` unter `figures` einen eigenen Schritt nennen (`steps`), dann spielt `schritt_<steps>`. Heute: Riesenratte, Küchenchef und Monsterratte mit `trippeln`, der Geist mit `schweben` (er läuft nicht, er schwebt).
 - **Takt:** Schritte folgen der Laufanimation. Figuren ohne Laufanimation (Goblin, Platzhalter) machen alle 0,35 Sekunden einen Schritt.
 - **Variation:** Jeder Schritt bekommt eine um bis zu 5 % andere Tonhöhe.
 - **Lautstärke:** Gegner leiser als die Spielfigur, Figuren der Größe 2×2 tiefer. Höchstens zwei Gegner-Schritte gleichzeitig.
@@ -717,6 +718,8 @@ Feste Sound-ids, die der Code an diesen Stellen spielt:
 | tod_<volk>, sonst tod_spieler, sonst tod | Spielfigur stirbt (im Kampf oder durch ein Event) |
 
 Für die Spielfigur gilt als Figur-id das Volk (`zwerg`, `elf`, `mensch`).
+
+Geist: Angriffsklang `geist` (`angriff_geist_treffer`, `angriff_geist_fehl`), `treffer_geist`, `tod_geist`, Bewegung `schritt_schweben`.
 
 ## Meilensteine
 
@@ -857,3 +860,4 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Skelette ohne festgelegte Variante immer als Minion; Skelettkrieger als Warrior; Geister aus KayKit Rogue, hellblau mit kaltem blauen Leuchten
 - [x] Geister mit weißer Haut und grauen Haaren, als ganze Figur durchscheinend (Deckkraft 0,7)
 - [x] Geister zu 60 % deckend (Deckkraft 0,6) und ohne Handschuhe
+- [x] Töne des Geists: Angriffsklang `geist`, eigener Treffer- und Tod-Ton, beim Bewegen ein Schwebe-Ton (`schweben`) statt Schritten

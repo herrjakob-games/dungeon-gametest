@@ -197,6 +197,9 @@
     },
     "monsterratte": {
       "steps": "trippeln"
+    },
+    "geist": {
+      "steps": "schweben"
     }
   },
   "events": {

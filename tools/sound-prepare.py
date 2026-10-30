@@ -42,13 +42,17 @@ EFFECTS = {
     "raum/spooky_zufall_5.mp3": "raum/spooky_zufall_5.mp3", "raum/spooky_zufall_6.mp3": "raum/spooky_zufall_6.mp3",
     "zauber/eis.mp3": "zauber/eis.mp3", "zauber/feuerball.mp3": "zauber/feuerball.mp3",
     "zauber/feuerpfeil.mp3": "zauber/feuerpfeil.mp3", "zauber/schild.mp3": "zauber/schild.mp3",
+    # Geist: Angriff, Treffer, Tod und Schweben (Bewegung statt Schritten, gekürzt mit MAXLEN)
+    "angriff/geist_treffer_1.mp3": "angriff/geist_treffer_1.mp3", "spiel/treffer_geist.mp3": "spiel/treffer_geist.mp3",
+    "spiel/tod_geist.mp3": "spiel/tod_geist.mp3", "schritte/schweben_1.mp3": "schritte/schweben_1.mp3",
 }
 # Zu leise Aufnahmen: Verstärkung in dB
 GAIN = {"spiel/tuer_1.mp3": 20, "spiel/tuer_3.mp3": 6, "spiel/treppe.mp3": 4, "raum/cozy_zufall_2.mp3": 12,
         "raum/spooky_zufall_5.mp3": 18, "raum/spooky_zufall_6.mp3": 6, "spiel/tuer_verschlossen.mp3": 6,
         "schritte/trippeln_1.mp3": 20, "schritte/trippeln_2.mp3": 6, "schritte/trippeln_3.mp3": 14}
 # Höchstlänge in Sekunden nach dem Abschneiden der Stille (ein Schritt soll kurz sein)
-MAXLEN = {"schritte/trippeln_1.mp3": 0.6, "schritte/trippeln_2.mp3": 0.6, "schritte/trippeln_3.mp3": 0.6}
+MAXLEN = {"schritte/trippeln_1.mp3": 0.6, "schritte/trippeln_2.mp3": 0.6, "schritte/trippeln_3.mp3": 0.6,
+          "schritte/schweben_1.mp3": 1.2}
 STEPS = ["wood", "hall", "mud", "gravel", "stone"]
 LOOPS = ["raum/cozy_loop.mp3", "raum/kitchen_loop.mp3", "raum/spooky_loop.mp3", "raum/wet_loop.mp3", "raum/empty_loop.mp3"]
 # Zu leise Loops: Verstärkung in dB (sonst unverändert übernommen)
@@ -77,7 +81,7 @@ def parts(path, below_peak):
                 out.append((t, v))
         else:
             t = v
-    if (not marks or marks[-1][0] == "end") and duration(path) - t > 0.03:
+    if (not marks or marks[-1][0] == "end") and duration(path) - t > 0.05:  # ein Rest unter 0,05 s am Dateiende ist kein Ton
         out.append((t, duration(path)))
     return out
 
