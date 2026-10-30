@@ -15,7 +15,7 @@ import { runCombat } from "./combatUI.js";
 import { rollHtml, maybeRescue, signShort } from "./checkUI.js";
 import { showEventFigures, endEventFigures, combatFigure, killCombatFigure, spawnFigure } from "./roomFigures.js";
 import { play, playFirst } from "./sound.js";
-import { deathSounds } from "./soundLogic.js";
+import { deathSounds, playerDeathSounds } from "./soundLogic.js";
 
 const FIGURE_DELAY = 700; // ms zwischen dem Erscheinen der Figuren und dem Event-Fenster
 
@@ -206,7 +206,7 @@ function eventCause(ev) {
 }
 
 function die(cause) {
-  playFirst(deathSounds(state.player.volk));
+  playFirst(playerDeathSounds(state.player.volk));
   state.eventActive = false;
   closeDialog();
   hooks.onDeath(cause);

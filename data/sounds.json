@@ -236,6 +236,12 @@
     ],
     "volume": 0.7
   },
+  "tod_spieler": {
+    "files": [
+      "spiel/tod_spieler.mp3"
+    ],
+    "volume": 0.8
+  },
   "raum_cozy_loop": {
     "files": [
       "raum/cozy_loop.mp3"
@@ -261,7 +267,7 @@
   },
   "raum_wet_zufall": {
     "files": [
-      "raum/wet_zufall.mp3"
+      "raum/wet_zufall_1.mp3"
     ],
     "volume": 0.4
   },
@@ -308,7 +314,8 @@
   },
   "raum_kitchen_zufall": {
     "files": [
-      "raum/kitchen_zufall.mp3"
+      "raum/kitchen_zufall_1.mp3",
+      "raum/kitchen_zufall_2.mp3"
     ],
     "volume": 0.4
   },

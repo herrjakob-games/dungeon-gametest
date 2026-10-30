@@ -24,7 +24,15 @@ EFFECTS = {
     "spiel/gold.mp3": "spiel/gold.mp3", "spiel/gold_zahlen.mp3": "spiel/gold_zahlen.mp3", "spiel/tod.mp3": "spiel/tod.mp3",
     "spiel/truhe.mp3": "spiel/truhe.mp3", "spiel/tuer_riegel.mp3": "spiel/tuer_riegel.mp3",
     "spiel/tuer_1.mp3": "spiel/tuer_1.mp3", "spiel/tuer_2.mp3": "spiel/tuer_2.mp3", "spiel/tuer_3.mp3": "spiel/tuer_3.mp3",
-    "spiel/treppe.mp3": "spiel/treppe.mp3",
+    "spiel/treppe.mp3": "spiel/treppe.mp3", "spiel/tuer_verschlossen.mp3": "spiel/tuer_verschlossen.mp3",
+    "spiel/tod_spieler.mp3": "spiel/tod_spieler.mp3", "zauber/trank.mp3": "zauber/trank.mp3",
+    "angriff/holz_fehl_1.mp3": "angriff/holz_fehl_1.mp3", "angriff/holz_treffer_1.mp3": "angriff/holz_treffer_1.mp3",
+    "angriff/holz_treffer_2.mp3": "angriff/holz_treffer_2.mp3",
+    "raum/kitchen_zufall_1.mp3": "raum/kitchen_zufall_1.mp3", "raum/kitchen_zufall_2.mp3": "raum/kitchen_zufall_2.mp3",
+    "raum/wet_zufall_1.mp3": "raum/wet_zufall_1.mp3",
+    # Trippeln (Schritte der Ratten): je eine Aufnahme mit vielen Tapsern, gekürzt (MAXLEN)
+    "schritte/trippeln_1.mp3": "schritte/trippeln_1.mp3", "schritte/trippeln_2.mp3": "schritte/trippeln_2.mp3",
+    "schritte/trippeln_3.mp3": "schritte/trippeln_3.mp3",
     "angriff/faust_treffer_1.mp3": "angriff/faust_treffer_1.mp3", "angriff/faust_treffer_2.mp3": "angriff/faust_treffer_2.mp3",
     "angriff/faust_treffer_3.mp3": "angriff/faust_treffer_3.mp3",
     "raum/empty_zufall_1.mp3": "raum/empty_zufall_1.mp3", "raum/empty_zufall_2.mp3": "raum/empty_zufall_2.mp3",
@@ -37,7 +45,10 @@ EFFECTS = {
 }
 # Zu leise Aufnahmen: Verstärkung in dB
 GAIN = {"spiel/tuer_1.mp3": 20, "spiel/tuer_3.mp3": 6, "spiel/treppe.mp3": 4, "raum/cozy_zufall_2.mp3": 12,
-        "raum/spooky_zufall_5.mp3": 18, "raum/spooky_zufall_6.mp3": 6}
+        "raum/spooky_zufall_5.mp3": 18, "raum/spooky_zufall_6.mp3": 6, "spiel/tuer_verschlossen.mp3": 6,
+        "schritte/trippeln_1.mp3": 20, "schritte/trippeln_2.mp3": 6, "schritte/trippeln_3.mp3": 14}
+# Höchstlänge in Sekunden nach dem Abschneiden der Stille (ein Schritt soll kurz sein)
+MAXLEN = {"schritte/trippeln_1.mp3": 0.6, "schritte/trippeln_2.mp3": 0.6, "schritte/trippeln_3.mp3": 0.6}
 STEPS = ["wood", "hall", "mud", "gravel", "stone"]
 LOOPS = ["raum/cozy_loop.mp3", "raum/kitchen_loop.mp3", "raum/spooky_loop.mp3", "raum/wet_loop.mp3", "raum/empty_loop.mp3"]
 # Zu leise Loops: Verstärkung in dB (sonst unverändert übernommen)
@@ -83,6 +94,8 @@ def cut(src, dst, a, b, gain=0):
 for s, d in EFFECTS.items():
     p = parts(SRC / s, 40)
     a, b = max(0, p[0][0] - 0.01), p[-1][1] + 0.05
+    if s in MAXLEN:
+        b = min(b, a + MAXLEN[s])
     cut(SRC / s, OUT / d, a, min(b, duration(SRC / s)), GAIN.get(s, 0))
     print("%-34s %.2f bis %.2f s" % (d, a, b))
 

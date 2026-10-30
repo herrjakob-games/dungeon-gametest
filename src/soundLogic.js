@@ -3,7 +3,7 @@
 export const ATTACK_SOUNDS = ["holz", "schwert", "axt", "hammer", "faust", "biss", "kralle"];
 export const MOODS = ["cozy", "wet", "spooky", "empty", "kitchen"];
 export const FLOORS = ["wood", "hall", "mud", "gravel", "stone"];
-export const GAME_SOUNDS = ["tuer", "tuer_verschlossen", "tuer_riegel", "truhe", "gold", "gold_zahlen", "stufe", "treppe", "treffer", "tod"];
+export const GAME_SOUNDS = ["tuer", "tuer_verschlossen", "tuer_riegel", "truhe", "gold", "gold_zahlen", "stufe", "treppe", "treffer", "tod", "tod_spieler"];
 
 // Angriff: angriff_<klang>_treffer oder _fehl; ohne Waffe (oder Waffe ohne Klang) faust
 export const attackSound = (klang, hit) => "angriff_" + (klang || "faust") + "_" + (hit ? "treffer" : "fehl");
@@ -12,6 +12,8 @@ export const monsterAttackSound = (monster, hit) => (monster && monster.sound ? 
 // Treffer und Tod einer Figur: eigene Sound-id, sonst die allgemeine
 export const hitSounds = (figureId) => ["treffer_" + figureId, "treffer"];
 export const deathSounds = (figureId) => ["tod_" + figureId, "tod"];
+// Tod der Spielfigur: eigener Sound pro Volk, sonst tod_spieler, sonst der allgemeine
+export const playerDeathSounds = (volk) => ["tod_" + volk, "tod_spieler", "tod"];
 
 // Raum-Sound: themeSound des Themas vor sound; ohne beides null (still, auch ohne Schritte)
 export function roomSound(roomType, themeId) {
