@@ -636,26 +636,29 @@
     "layout": "wache",
     "rating": "hostile",
     "eventChance": 0.7,
-    "events": [
-      {
-        "id": "wache_goblin",
-        "weight": 4
-      },
-      {
-        "id": "wache_karten",
-        "weight": 3
-      },
-      {
-        "id": "wache_kerze",
-        "weight": 6,
-        "once": true,
-        "condition": "flag:grabkerze"
-      },
-      {
-        "id": "wache_wuerfel",
-        "weight": 3
-      }
-    ],
+    "events": [],
+    "themeEvents": {
+      "keller": [
+        {
+          "id": "wache_goblin",
+          "weight": 4
+        },
+        {
+          "id": "wache_karten",
+          "weight": 3
+        },
+        {
+          "id": "wache_kerze",
+          "weight": 6,
+          "once": true,
+          "condition": "flag:grabkerze"
+        },
+        {
+          "id": "wache_wuerfel",
+          "weight": 3
+        }
+      ]
+    },
     "decor": {
       "layouts": [
         {
@@ -762,26 +765,29 @@
     "rating": "hostile",
     "eventChance": 0.7,
     "nextToStart": "never",
-    "events": [
-      {
-        "id": "gruft_sarkophag",
-        "weight": 5
-      },
-      {
-        "id": "gruft_stimme",
-        "weight": 3
-      },
-      {
-        "id": "gruft_kerze",
-        "weight": 3,
-        "once": true,
-        "condition": "notFlag:grabkerze"
-      },
-      {
-        "id": "gruft_ruecken",
-        "weight": 3
-      }
-    ],
+    "events": [],
+    "themeEvents": {
+      "keller": [
+        {
+          "id": "gruft_sarkophag",
+          "weight": 5
+        },
+        {
+          "id": "gruft_stimme",
+          "weight": 3
+        },
+        {
+          "id": "gruft_kerze",
+          "weight": 3,
+          "once": true,
+          "condition": "notFlag:grabkerze"
+        },
+        {
+          "id": "gruft_ruecken",
+          "weight": 3
+        }
+      ]
+    },
     "decor": {
       "torchCount": 2,
       "torchColor": "#5d86e0",
@@ -874,32 +880,35 @@
     "max": 3,
     "deadEnd": "never",
     "crossroads": "prefer",
-    "events": [
-      {
-        "id": "halle_saeule",
-        "weight": 3,
-        "hostile": false,
-        "rating": "neutral"
-      },
-      {
-        "id": "halle_echo",
-        "weight": 3,
-        "hostile": false,
-        "rating": "neutral"
-      },
-      {
-        "id": "halle_fliese",
-        "weight": 2,
-        "hostile": true,
-        "rating": "hostile"
-      },
-      {
-        "id": "halle_fledermaeuse",
-        "weight": 2,
-        "hostile": true,
-        "rating": "hostile"
-      }
-    ],
+    "events": [],
+    "themeEvents": {
+      "keller": [
+        {
+          "id": "halle_saeule",
+          "weight": 3,
+          "hostile": false,
+          "rating": "neutral"
+        },
+        {
+          "id": "halle_echo",
+          "weight": 3,
+          "hostile": false,
+          "rating": "neutral"
+        },
+        {
+          "id": "halle_fliese",
+          "weight": 2,
+          "hostile": true,
+          "rating": "hostile"
+        },
+        {
+          "id": "halle_fledermaeuse",
+          "weight": 2,
+          "hostile": true,
+          "rating": "hostile"
+        }
+      ]
+    },
     "decor": {
       "torches": "saeulen",
       "torchCount": [
@@ -997,33 +1006,36 @@
     "near": [
       "kueche"
     ],
-    "events": [
-      {
-        "id": "vorrat_kaese",
-        "weight": 2,
-        "hostile": false,
-        "once": true,
-        "rating": "neutral"
-      },
-      {
-        "id": "vorrat_ratte",
-        "weight": 4,
-        "hostile": true,
-        "rating": "hostile"
-      },
-      {
-        "id": "vorrat_brot",
-        "weight": 3,
-        "hostile": true,
-        "rating": "hostile"
-      },
-      {
-        "id": "vorrat_weinfass",
-        "weight": 3,
-        "hostile": false,
-        "rating": "neutral"
-      }
-    ],
+    "events": [],
+    "themeEvents": {
+      "keller": [
+        {
+          "id": "vorrat_kaese",
+          "weight": 2,
+          "hostile": false,
+          "once": true,
+          "rating": "neutral"
+        },
+        {
+          "id": "vorrat_ratte",
+          "weight": 4,
+          "hostile": true,
+          "rating": "hostile"
+        },
+        {
+          "id": "vorrat_brot",
+          "weight": 3,
+          "hostile": true,
+          "rating": "hostile"
+        },
+        {
+          "id": "vorrat_weinfass",
+          "weight": 3,
+          "hostile": false,
+          "rating": "neutral"
+        }
+      ]
+    },
     "decor": {
       "layouts": [
         {
@@ -1157,39 +1169,42 @@
     "near": [
       "speisesaal"
     ],
-    "events": [
-      {
-        "id": "kueche_eintopf",
-        "weight": 3,
-        "hostile": false,
-        "rating": "neutral"
-      },
-      {
-        "id": "kueche_messerblock",
-        "weight": 3,
-        "hostile": false,
-        "rating": "neutral"
-      },
-      {
-        "id": "kueche_kochbuch",
-        "weight": 2,
-        "once": true,
-        "hostile": false,
-        "rating": "neutral"
-      },
-      {
-        "id": "kueche_fettbrand",
-        "weight": 2,
-        "hostile": true,
-        "rating": "hostile"
-      },
-      {
-        "id": "kueche_chef",
-        "weight": 2,
-        "hostile": true,
-        "rating": "hostile"
-      }
-    ],
+    "events": [],
+    "themeEvents": {
+      "keller": [
+        {
+          "id": "kueche_eintopf",
+          "weight": 3,
+          "hostile": false,
+          "rating": "neutral"
+        },
+        {
+          "id": "kueche_messerblock",
+          "weight": 3,
+          "hostile": false,
+          "rating": "neutral"
+        },
+        {
+          "id": "kueche_kochbuch",
+          "weight": 2,
+          "once": true,
+          "hostile": false,
+          "rating": "neutral"
+        },
+        {
+          "id": "kueche_fettbrand",
+          "weight": 2,
+          "hostile": true,
+          "rating": "hostile"
+        },
+        {
+          "id": "kueche_chef",
+          "weight": 2,
+          "hostile": true,
+          "rating": "hostile"
+        }
+      ]
+    },
     "decor": {
       "torchColor": "#ff8a30",
       "layouts": [
@@ -1285,45 +1300,48 @@
     "eventChance": 0.4,
     "max": 1,
     "deadEnd": "never",
-    "events": [
-      {
-        "id": "speisesaal_platzkarte",
-        "weight": 3,
-        "hostile": false,
-        "rating": "neutral"
-      },
-      {
-        "id": "speisesaal_gastgeber",
-        "weight": 2,
-        "once": true,
-        "hostile": false,
-        "rating": "neutral"
-      },
-      {
-        "id": "speisesaal_tischtuch",
-        "weight": 3,
-        "hostile": false,
-        "rating": "neutral"
-      },
-      {
-        "id": "speisesaal_buffet",
-        "weight": 3,
-        "hostile": false,
-        "rating": "neutral"
-      },
-      {
-        "id": "speisesaal_kronleuchter",
-        "weight": 3,
-        "hostile": true,
-        "rating": "hostile"
-      },
-      {
-        "id": "speisesaal_gaeste",
-        "weight": 2,
-        "hostile": true,
-        "rating": "hostile"
-      }
-    ],
+    "events": [],
+    "themeEvents": {
+      "keller": [
+        {
+          "id": "speisesaal_platzkarte",
+          "weight": 3,
+          "hostile": false,
+          "rating": "neutral"
+        },
+        {
+          "id": "speisesaal_gastgeber",
+          "weight": 2,
+          "once": true,
+          "hostile": false,
+          "rating": "neutral"
+        },
+        {
+          "id": "speisesaal_tischtuch",
+          "weight": 3,
+          "hostile": false,
+          "rating": "neutral"
+        },
+        {
+          "id": "speisesaal_buffet",
+          "weight": 3,
+          "hostile": false,
+          "rating": "neutral"
+        },
+        {
+          "id": "speisesaal_kronleuchter",
+          "weight": 3,
+          "hostile": true,
+          "rating": "hostile"
+        },
+        {
+          "id": "speisesaal_gaeste",
+          "weight": 2,
+          "hostile": true,
+          "rating": "hostile"
+        }
+      ]
+    },
     "decor": {
       "layouts": [
         {
@@ -1447,39 +1465,42 @@
     "rating": "mixed",
     "eventChance": 0.4,
     "max": 1,
-    "events": [
-      {
-        "id": "brunnen_muenzen",
-        "weight": 3,
-        "hostile": false,
-        "rating": "neutral"
-      },
-      {
-        "id": "brunnen_eimer",
-        "weight": 3,
-        "hostile": false,
-        "rating": "neutral"
-      },
-      {
-        "id": "brunnen_kroete",
-        "weight": 2,
-        "once": true,
-        "hostile": false,
-        "rating": "neutral"
-      },
-      {
-        "id": "brunnen_echo",
-        "weight": 2,
-        "hostile": false,
-        "rating": "neutral"
-      },
-      {
-        "id": "brunnen_rand",
-        "weight": 4,
-        "hostile": true,
-        "rating": "hostile"
-      }
-    ],
+    "events": [],
+    "themeEvents": {
+      "keller": [
+        {
+          "id": "brunnen_muenzen",
+          "weight": 3,
+          "hostile": false,
+          "rating": "neutral"
+        },
+        {
+          "id": "brunnen_eimer",
+          "weight": 3,
+          "hostile": false,
+          "rating": "neutral"
+        },
+        {
+          "id": "brunnen_kroete",
+          "weight": 2,
+          "once": true,
+          "hostile": false,
+          "rating": "neutral"
+        },
+        {
+          "id": "brunnen_echo",
+          "weight": 2,
+          "hostile": false,
+          "rating": "neutral"
+        },
+        {
+          "id": "brunnen_rand",
+          "weight": 4,
+          "hostile": true,
+          "rating": "hostile"
+        }
+      ]
+    },
     "decor": {
       "layouts": [
         {
@@ -1553,12 +1574,14 @@
       {
         "id": "schrein_ruhe",
         "weight": 7,
-        "rating": "neutral"
+        "rating": "neutral",
+        "hostile": false
       },
       {
         "id": "schrein_kampf",
         "weight": 3,
-        "rating": "hostile"
+        "rating": "hostile",
+        "hostile": true
       }
     ]
   },
@@ -1606,12 +1629,14 @@
       {
         "id": "bibliothek_ruhe",
         "weight": 7,
-        "rating": "neutral"
+        "rating": "neutral",
+        "hostile": false
       },
       {
         "id": "bibliothek_kampf",
         "weight": 3,
-        "rating": "hostile"
+        "rating": "hostile",
+        "hostile": true
       }
     ]
   },
@@ -1634,12 +1659,14 @@
       {
         "id": "schmiede_ruhe",
         "weight": 7,
-        "rating": "neutral"
+        "rating": "neutral",
+        "hostile": false
       },
       {
         "id": "schmiede_kampf",
         "weight": 3,
-        "rating": "hostile"
+        "rating": "hostile",
+        "hostile": true
       }
     ]
   },
@@ -1712,12 +1739,14 @@
       {
         "id": "vorratshoehle_ruhe",
         "weight": 7,
-        "rating": "neutral"
+        "rating": "neutral",
+        "hostile": false
       },
       {
         "id": "vorratshoehle_kampf",
         "weight": 3,
-        "rating": "hostile"
+        "rating": "hostile",
+        "hostile": true
       }
     ]
   },
@@ -1741,12 +1770,14 @@
       {
         "id": "pilzzucht_ruhe",
         "weight": 7,
-        "rating": "neutral"
+        "rating": "neutral",
+        "hostile": false
       },
       {
         "id": "pilzzucht_kampf",
         "weight": 3,
-        "rating": "hostile"
+        "rating": "hostile",
+        "hostile": true
       }
     ]
   },
@@ -1815,12 +1846,14 @@
       {
         "id": "friedhof_ruhe",
         "weight": 7,
-        "rating": "neutral"
+        "rating": "neutral",
+        "hostile": false
       },
       {
         "id": "friedhof_kampf",
         "weight": 3,
-        "rating": "hostile"
+        "rating": "hostile",
+        "hostile": true
       }
     ]
   },

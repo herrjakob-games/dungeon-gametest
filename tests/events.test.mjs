@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import {
   indexData, validateData, newRun, rollDice, doCheck, checkCondition,
-  pickEvent, applyEffects, releaseIfTrapped, rollLoot, visibleOptions, bossEventTable
+  pickEvent, applyEffects, releaseIfTrapped, rollLoot, visibleOptions, bossEventTable, inTheme, ratingFor, eventTable, pickEncounter
 } from "../src/eventLogic.js";
 import { newCharacter } from "../src/character.js";
 import { generate } from "../src/generator.js";
@@ -37,12 +37,16 @@ test("Jeder Raumtyp kommt im Generator vor und hat Events (außer Boss, Rast, H�
   for (const rt of Object.values(DATA.roomTypes)) {
     if (rt.id === "boss") assert.ok(rt.themeEvents.keller.length >= 2, "Bossraum: Events nur über themeEvents");
     else if (["rast", "haendler"].includes(rt.id)) assert.equal(rt.eventChance, 0);
-    else assert.ok(rt.events.length >= 2, rt.id + ": nur " + rt.events.length + " Events");
+    else {
+      // Events in events oder in einer Tabelle pro Thema (themeEvents)
+      const most = Math.max(rt.events.length, ...Object.values(rt.themeEvents || {}).map(l => l.length));
+      assert.ok(most >= 2, rt.id + ": nur " + most + " Events");
+    }
   }
 });
 
 test("Gemischte Raumtypen: etwa 30 % feindliche Events", () => {
-  const rt = DATA.roomTypes.kueche;
+  const rt = inTheme(DATA.roomTypes.kueche, "keller");
   let hostile = 0, n = 0;
   for (let i = 0; i < 4000; i++) {
     const id = pickEvent(rt, newRun(), Math.random, newPlayer());
@@ -243,4 +247,61 @@ test("Bossraum: Event-Tabelle pro Thema, bei jedem Betreten neu gewürfelt, bis 
   assert.equal(pickEvent(bossEventTable(boss, "katakomben"), newRun(), Math.random, z), null);
   // Eigene Todessätze für die Boss-Events
   assert.ok(DATA.texts.death.events.boss_monsterratte && DATA.texts.death.events.boss_monsterratte_zurueck);
+});
+
+test("Tabellen und Bewertung pro Thema: themeEvents ersetzt events, themeRating ändert die Bewertung", () => {
+  const gruft = DATA.roomTypes.gruft;
+  assert.deepEqual(gruft.events, [], "Keller-Events liegen in themeEvents.keller");
+  assert.ok(eventTable(gruft, "keller").length >= 2);
+  assert.deepEqual(eventTable(gruft, "katakomben"), [], "ohne Tabelle im Thema gilt events");
+  assert.deepEqual(eventTable(DATA.roomTypes.start, "orklager"), DATA.roomTypes.start.events);
+  const rt = { id: "x", rating: "hostile", themeRating: { katakomben: "mixed" } };
+  assert.equal(ratingFor(rt, "keller"), "hostile");
+  assert.equal(ratingFor(rt, "katakomben"), "mixed");
+  // Boss nutzt denselben Weg: Keller mit Tabelle, Katakomben ohne (dann intro und direkt Kampf)
+  assert.ok(bossEventTable(DATA.roomTypes.boss, "keller").events.length >= 2);
+  assert.equal(bossEventTable(DATA.roomTypes.boss, "katakomben").eventChance, 0);
+});
+
+test("Markierungspflicht pro Thema: gemischt im Thema heißt hostile und rating an jedem Eintrag", () => {
+  const data = structuredClone({ roomTypes: DATA.roomTypes, monsters: DATA.monsters, events: DATA.events, items: DATA.items,
+    characters: DATA.characters, texts: DATA.texts, themes: DATA.themes });
+  // Feindlicher Raumtyp, in den Katakomben gemischt: seine Tabelle dort braucht beide Markierungen
+  const kerker = data.roomTypes.kerker;
+  kerker.themeRating = { katakomben: "mixed" };
+  kerker.themeEvents = { katakomben: [{ id: kerker.events[0].id, weight: 3 }, { id: kerker.events[1].id, weight: 2, rating: "neutral" }] };
+  let errs = validateData(data);
+  assert.ok(errs.some(e => e.includes("kerker (katakomben)") && e.includes("rating")), errs.join("\n"));
+  assert.ok(errs.some(e => e.includes("kerker (katakomben)") && e.includes("hostile true oder false")));
+  // Ohne eigene Tabelle gilt events auch im gemischten Thema und braucht dann die Markierung
+  delete kerker.themeEvents;
+  errs = validateData(data);
+  assert.ok(errs.some(e => e.includes("kerker (katakomben)")), "events im gemischten Thema ohne Markierung");
+  // Feste Bewertungen bleiben: Vorkammer neutral, Bossraum feindlich
+  data.roomTypes.start.themeRating = { katakomben: "hostile" };
+  assert.ok(validateData(data).some(e => e.includes("start") && e.includes("in jedem Thema neutral")));
+});
+
+test("Begegnungen: Monster existieren, nur feindliche und gemischte Räume, gleicher Seed gleiche Begegnung", () => {
+  DATA.themes.filter(t => t.encounters).forEach(t => t.encounters.monsters.forEach(m => assert.ok(DATA.monsters[m.monster], t.id + ": " + m.monster)));
+  assert.ok(!DATA.themes.find(t => t.id === "keller").encounters, "im Keller gibt es keine Begegnungen");
+  const theme = { id: "katakomben", encounters: { chance: 0.5, monsters: [{ monster: "skeleton", weight: 3 }, { monster: "rat", weight: 1 }], reward: [{ loot: "tier1" }, { gainXp: 3 }] } };
+  ["start", "exit", "rast", "haendler", "schatz", "boss"].forEach(id => {
+    for (let s = 1; s < 200; s++) assert.equal(pickEncounter(theme, DATA.roomTypes[id], s), null, id);
+  });
+  for (let s = 1; s < 200; s++) assert.equal(pickEncounter(theme, { id: "x", rating: "neutral" }, s), null);
+  let hits = 0;
+  for (let s = 1; s <= 2000; s++) {
+    const m = pickEncounter(theme, DATA.roomTypes.kerker, s);
+    assert.equal(m, pickEncounter(theme, DATA.roomTypes.kerker, s), "gleicher Seed, gleiche Begegnung");
+    if (m) hits++;
+  }
+  assert.ok(Math.abs(hits / 2000 - 0.5) < 0.05, "Chance " + hits / 2000);
+  // Ein im Thema neutraler Raumtyp hat keine Begegnung
+  for (let s = 1; s < 200; s++) assert.equal(pickEncounter(theme, { id: "kerker", rating: "hostile", themeRating: { katakomben: "neutral" } }, s), null);
+  // Datenprüfung: unbekanntes Monster in encounters
+  const data = structuredClone({ roomTypes: DATA.roomTypes, monsters: DATA.monsters, events: DATA.events, items: DATA.items,
+    characters: DATA.characters, texts: DATA.texts, themes: DATA.themes });
+  data.themes.find(t => t.id === "katakomben").encounters = { chance: 0.15, monsters: [{ monster: "geist_gibts_nicht", weight: 2 }], reward: [{ loot: "tier1" }] };
+  assert.ok(validateData(data).some(e => e.includes("encounters: unbekanntes Monster geist_gibts_nicht")));
 });

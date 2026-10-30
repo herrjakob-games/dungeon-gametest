@@ -1,6 +1,7 @@
 // Dungeon-Generator. Reine Logik ohne Grafik, damit er in tests/ geprüft werden kann.
 import { GRID, DIR, DIRKEYS, key } from "./config.js";
 import { mulberry32 } from "./rng.js";
+import { ratingFor } from "./eventLogic.js";
 import { themeFor, levelInTheme, levelSize, hostileShare, isBossLevel, isRestLevel, bossFor } from "./world.js";
 
 export const doorCount = (m) => (m & 1) + ((m >> 1) & 1) + ((m >> 2) & 1) + ((m >> 3) & 1);
@@ -116,9 +117,10 @@ export function generate(dSeed, depth, world) {
     return cands[cands.length - 1];
   };
 
-  // Anteil feindlicher Räume; gemischte Räume zählen nicht als feindlich
+  // Anteil feindlicher Räume; gemischte Räume zählen nicht als feindlich. Bewertung im Thema (themeRating)
+  const isHostile = (t) => ratingFor(types[t], theme.id) === "hostile";
   const hostileTarget = Math.round(hostileShare(depth) * list.length);
-  let hostile = list.filter(k => rooms[k].type && types[rooms[k].type].rating === "hostile").length;
+  let hostile = list.filter(k => rooms[k].type && isHostile(rooms[k].type)).length;
   // Sackgassen zuerst, damit Raumtypen mit Vorliebe für Sackgassen dort landen
   const rest = free();
   const order = rest.filter(isDead).concat(rest.filter(k => !isDead(k)));
@@ -126,8 +128,9 @@ export function generate(dSeed, depth, world) {
     const left = order.length - i;
     const want = R() < (hostileTarget - hostile) / left ? "hostile" : "mixed";
     const other = want === "hostile" ? "mixed" : "hostile";
-    let cands = theme.roomTypes.filter(t => types[t].rating === want && allowed(k, t));
-    if (!cands.length) cands = theme.roomTypes.filter(t => types[t].rating === other && allowed(k, t));
+    const kind = (t) => (isHostile(t) ? "hostile" : "mixed"); // neutral im Thema zählt wie gemischt: nicht feindlich
+    let cands = theme.roomTypes.filter(t => kind(t) === want && allowed(k, t));
+    if (!cands.length) cands = theme.roomTypes.filter(t => kind(t) === other && allowed(k, t));
     let t;
     if (cands.length) t = weighted(k, cands);
     else {
@@ -136,7 +139,7 @@ export function generate(dSeed, depth, world) {
       t = theme.roomTypes.filter(x => hardOk(k, x)).sort((x, y) => fill(x) - fill(y))[0];
     }
     set(k, t);
-    if (types[t].rating === "hostile") hostile++;
+    if (isHostile(t)) hostile++;
   });
 
   list.forEach(k => {

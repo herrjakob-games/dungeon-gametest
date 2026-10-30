@@ -122,3 +122,16 @@ test("Grenzen der Asset-Spezifikation (Warnungen)", (t) => {
   t.diagnostic("Modelle über den Grenzen der Asset-Spezifikation: " + (warn.length ? "" : "keine"));
   warn.forEach(w => t.diagnostic("  " + w));
 });
+
+test("Jede Bodenvariante in floorTiles steht in data/models.json", async () => {
+  const { DEFAULT_FLOOR } = await import("../src/decor.js");
+  const THEMES = read("data/themes.json");
+  const lists = [["Standard", DEFAULT_FLOOR]];
+  ROOM_TYPES.forEach(rt => [["decor", rt.decor]].concat(Object.entries(rt.themeDecor || {})).forEach(([k, d]) => {
+    if (d && d.floorTiles) lists.push([rt.id + " " + k, d.floorTiles]);
+  }));
+  THEMES.forEach(t => { if (t.floorTiles) lists.push(["Thema " + t.id, t.floorTiles]); });
+  lists.forEach(([where, l]) => l.forEach(t => assert.ok(MODELS[t.tile], where + ": " + t.tile + " fehlt in data/models.json")));
+  // Alle Bodenvarianten decken genau eine Kachel (Maßstab 0,5 auf Paketplatten von 2 Einheiten)
+  Object.keys(MODELS).filter(k => k === "boden" || k.startsWith("boden_")).forEach(k => assert.equal(MODELS[k].scale, 0.5, k));
+});

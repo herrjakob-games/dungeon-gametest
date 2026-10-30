@@ -769,6 +769,46 @@
     "kerze_duenn_an": {
       "dir": "props",
       "file": "candle_thin_lit.gltf.glb"
+    },
+    "boden_unkraut_a": {
+      "dir": "tiles",
+      "file": "floor_tile_small_weeds_A.gltf.glb"
+    },
+    "boden_unkraut_b": {
+      "dir": "tiles",
+      "file": "floor_tile_small_weeds_B.gltf.glb"
+    },
+    "boden_erde_a": {
+      "dir": "tiles",
+      "file": "floor_dirt_small_A.gltf.glb"
+    },
+    "boden_erde_b": {
+      "dir": "tiles",
+      "file": "floor_dirt_small_B.gltf.glb"
+    },
+    "boden_erde_c": {
+      "dir": "tiles",
+      "file": "floor_dirt_small_C.gltf.glb"
+    },
+    "boden_erde_d": {
+      "dir": "tiles",
+      "file": "floor_dirt_small_D.gltf.glb"
+    },
+    "boden_erde_ecke": {
+      "dir": "tiles",
+      "file": "floor_dirt_small_corner.gltf.glb"
+    },
+    "boden_erde_unkraut": {
+      "dir": "tiles",
+      "file": "floor_dirt_small_weeds.gltf.glb"
+    },
+    "boden_holz": {
+      "dir": "tiles",
+      "file": "floor_wood_small.gltf.glb"
+    },
+    "boden_holz_dunkel": {
+      "dir": "tiles",
+      "file": "floor_wood_small_dark.gltf.glb"
     }
   },
   "figureSource": "assets/source/kaykit-adventurers/",

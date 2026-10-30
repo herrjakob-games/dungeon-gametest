@@ -124,3 +124,14 @@ test("Datenprüfung des Felds figures", () => {
   assert.equal(errs.length, 5, errs.join("\n"));
   assert.ok(isFigure("kroete", DATA.monsters) && isFigure("wolf", DATA.monsters) && !isFigure("drache", DATA.monsters));
 });
+
+test("Begegnung: Figuren stehen mindestens drei Kacheln von der Eingangstür entfernt", () => {
+  for (let s = 1; s <= 30; s++) {
+    let r = s;
+    const rand = () => ((r = (r * 16807) % 2147483647) / 2147483647);
+    const door = [0, 4];
+    const plan = planFigures([{ figure: "skeleton", count: 3 }], { blocked: new Set(), doors: 8, player: door, rand, awayFrom: door, awayDist: 3 });
+    assert.equal(plan.length, 3);
+    plan.forEach(p => p.tiles.forEach(([x, z]) => assert.ok(Math.max(Math.abs(x - door[0]), Math.abs(z - door[1])) >= 3, "zu nah an der Tür: " + x + "," + z)));
+  }
+});

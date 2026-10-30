@@ -12,7 +12,7 @@ import { makeModel, hasModel, setModelTheme, findPart, makeFigureModel } from ".
 import { state } from "./state.js";
 import { buildFigure } from "./figures.js";
 import * as P from "./props.js";
-import { PROPS, planDecor, decorFor, centerFeature, STAIRS_TILES, STAIRS_SIZE, STAIRS_CENTER, torchSlots, pillarTorches, frontTorchLights, mimicChests } from "./decor.js";
+import { PROPS, planDecor, decorFor, centerFeature, STAIRS_TILES, STAIRS_SIZE, STAIRS_CENTER, torchSlots, pillarTorches, frontTorchLights, mimicChests, floorTilesFor, pickFloorTile } from "./decor.js";
 import { syncRoom } from "./roomFigures.js";
 import { buildStairs, hasHole } from "./stairs.js";
 import { setMood } from "./sound.js";
@@ -61,7 +61,7 @@ export function buildRoom(id) {
   setAmbient(pal && pal.ambient, pal && pal.brightness);
   setModelTheme(state.theme ? state.theme.id : null);
 
-  buildFloor(type, hasHole(feature));
+  buildFloor(type, hasHole(feature), floorTilesFor(spec, state.theme));
   buildWalls(room);
   DIRKEYS.forEach(d => { if (room.doors & DIR[d].bit) makeDoor(d); });
   placeTorches(room, torch, spec, feature);
@@ -104,8 +104,8 @@ function placeAt(g, x, z, rotY, y) {
   return add(g);
 }
 
-// hole: auf der Fläche der Treppe nach unten (1|1 bis 3|3) fehlt der Boden
-function buildFloor(type, hole) {
+// hole: auf der Fläche der Treppe nach unten (1|1 bis 3|3) fehlt der Boden; tiles: Bodenvarianten mit Gewicht (floorTiles)
+function buildFloor(type, hole, tiles) {
   const inHole = (x, z) => hole && x < STAIRS_SIZE && z < STAIRS_SIZE;
   if (!hole) add(box(N + 1, 0.4, N + 1, mat(0x1e1814), 0, -0.25, 0));
   else {
@@ -115,12 +115,12 @@ function buildFloor(type, hole) {
     add(box(rest, 0.4, N + 1 - rest, mat(0x1e1814), edge + rest / 2, -0.25, -H + (N + 1 - rest) / 2));
   }
   if (hasModel("boden")) {
-    // Bodenplatten, zur Abwechslung mit Rissen und selten mit Dekor (über den Raum-Seed)
+    // Bodenplatten: Varianten gewichtet nach Raum-Seed (floorTiles); fehlt ein Modell, die glatte Platte
     for (let z = 0; z < N; z++) for (let x = 0; x < N; x++) {
       const r = rnd();
       if (inHole(x, z)) continue;
-      const variant = r < 0.07 ? "bruch_a" : r < 0.14 ? "bruch_b" : r < 0.17 ? "deko" : null;
-      placeAt(makeModel("boden", variant), tw(x), tw(z), Math.floor(rnd() * 4) * Math.PI / 2);
+      const tile = pickFloorTile(tiles, r);
+      placeAt(makeModel(hasModel(tile) ? tile : "boden"), tw(x), tw(z), Math.floor(rnd() * 4) * Math.PI / 2);
     }
     return;
   }

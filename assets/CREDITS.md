@@ -19,6 +19,8 @@ Quelle und Lizenz jeder fremden Datei (docs/GDD.md, Asset-Spezifikation).
   table_medium_tablecloth_decorated_B, wall_shelves, table_medium
   sowie (für die Treppen aus GDD 2.30) stairs
   sowie (für den Rastplatz aus GDD 2.35) candle_thin, candle_thin_lit
+  sowie (Bodenvarianten aus GDD 2.37) floor_dirt_small_A, floor_dirt_small_B, floor_dirt_small_C, floor_dirt_small_D,
+  floor_dirt_small_corner, floor_dirt_small_weeds, floor_tile_small_weeds_A, floor_tile_small_weeds_B, floor_wood_small, floor_wood_small_dark
 - Daraus gebaut (`npm run build:assets`): alle Dateien in `tiles/` und `props/`.
 - `textures/keller/dungeon_texture.png` ist eine umgefärbte Fassung der Paletten-Textur (`tools/palette-texture.py`).
 

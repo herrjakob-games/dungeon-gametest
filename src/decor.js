@@ -136,6 +136,27 @@ export function centerFeature(typeId, bossDefeated) {
   return null;
 }
 
+// Bodenplatten (docs/GDD.md, Stilguide, Böden): Varianten mit Gewicht, nach Raum-Seed gemischt. Ohne Angabe gilt der
+// bisherige Boden: meist glatte Platten, wenige gesprungene, selten eine verzierte (so bleibt der Keller unverändert).
+export const DEFAULT_FLOOR = [{ tile: "boden_bruch_a", weight: 7 }, { tile: "boden_bruch_b", weight: 7 }, { tile: "boden_deko", weight: 3 }, { tile: "boden", weight: 83 }];
+// Reihenfolge: floorTiles der Einrichtung des Raumtyps (themeDecor vor decor), sonst des Themas, sonst DEFAULT_FLOOR
+export const floorTilesFor = (spec, theme) => (spec && spec.floorTiles) || (theme && theme.floorTiles) || DEFAULT_FLOOR;
+// Variante für eine Zufallszahl r (0 bis 1)
+export function pickFloorTile(list, r) {
+  const total = list.reduce((s, t) => s + t.weight, 0);
+  let acc = 0;
+  for (const t of list) { acc += t.weight; if (r * total < acc) return t.tile; }
+  return list[list.length - 1].tile;
+}
+// Datenprüfung von floorTiles (Raumtyp oder Thema)
+export function checkFloorTiles(list, where, err) {
+  if (!Array.isArray(list) || !list.length) { err(where, "floorTiles muss eine Liste sein"); return; }
+  list.forEach(t => {
+    if (typeof t.tile !== "string" || !/^boden(_\w+)?$/.test(t.tile)) err(where, "floorTiles: " + t.tile + " ist keine Bodenvariante (boden oder boden_<name>)");
+    if (!(t.weight > 0)) err(where, "floorTiles: Gewicht von " + t.tile + " muss größer als 0 sein");
+  });
+}
+
 // Einrichtung eines Raumtyps im Thema: themeDecor ersetzt decor; ohne beides null (altes Muster aus dem Code)
 export const decorFor = (roomType, themeId) => ((roomType.themeDecor || {})[themeId]) || roomType.decor || null;
 
@@ -423,6 +444,7 @@ export function checkDecor(spec, where, err) {
   const okN = (c) => Number.isInteger(c) && c >= 0;
   if (spec.torchCount !== undefined && !(okN(spec.torchCount) || (Array.isArray(spec.torchCount) && spec.torchCount.length === 2 && spec.torchCount.every(okN))))
     err(where, "torchCount muss eine Zahl oder ein Bereich [von, bis] sein");
+  if (spec.floorTiles !== undefined) checkFloorTiles(spec.floorTiles, where, err);
   if (spec.torches !== undefined && spec.torches !== "saeulen") err(where, "torches kennt nur \"saeulen\"");
   if (spec.torchColor !== undefined && !/^#[0-9a-fA-F]{6}$/.test(spec.torchColor)) err(where, "torchColor muss eine Farbe wie #ff8a30 sein");
   const ids = new Set();
