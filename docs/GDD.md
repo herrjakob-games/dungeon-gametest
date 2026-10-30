@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.46 · Oct 30, 2026 · @Christian
+Version 2.47 · Oct 30, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.47 | 30.10.2026 | Gruft darf in den Katakomben direkt neben dem Start stehen |
 | 2.46 | 30.10.2026 | Kerker in den Katakomben mit zwei Varianten: vier Eckzellen (3×3) oder eine große Zelle (5×5); Zellwände aus KayKit-Gittern, Torbögen und Steinpfeilern auf Kachelkanten; Wegfindung sperrt Kanten; in jeder Zelle entweder ein Strohlager oder Knochen; Rückwände in allen Räumen der Katakomben zu etwa 30 % gesprungen (`wand_riss`); Innenwände und Säulen werden um verdeckte Figuren herum durchsichtig (Durchblick) |
 | 2.45 | 30.10.2026 | Katakomben Paket 1 und 2: Monster Skelettkrieger, Geist, Poltergeist, Skelett-König; Begegnungen; Events für Kerker und Schrein; Skelett-König als Warrior 1,3-fach mit goldener Krone; Kerker auch in den Katakomben höchstens 2 |
 | 2.44 | 30.10.2026 | Poltergeist mit denselben Tönen wie der Geist |
@@ -303,7 +304,7 @@ Der Dungeon führt durch Themen, die alle drei Ebenen wechseln. Das Thema bestim
 | Rastplatz | neutral | etwa auf halber Strecke zwischen Start und Abstieg, in jedem Thema | 1 auf jeder zweiten Ebene |
 | Händler | neutral | beliebig, in jedem Thema | genau 1 |
 | Wachstube | feindlich | immer direkt neben dem Start (Keller, Zwergenminen) | – |
-| Gruft | feindlich | nie direkt neben dem Start | – |
+| Gruft | feindlich | nie direkt neben dem Start (außer in den Katakomben) | – |
 | Küche | gemischt | neben einem Speisesaal | höchstens 1 |
 | Speisesaal | gemischt | nie in Sackgassen | höchstens 1 |
 | Vorratskammer | gemischt | bevorzugt in Sackgassen, neben einer Küche | höchstens 2 |
@@ -889,3 +890,4 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] In jeder Zelle entweder ein Strohlager oder Knochen, außerhalb der Zellen keine Deko
 - [x] Risswand `wand_riss` (KayKit `wall_cracked`) in allen Räumen der Katakomben zu etwa 30 % der Wandkacheln, nicht auf Fackelkacheln und nicht hinter der Treppe
 - [x] Durchblick statt Ausblenden: Innenwände und Säulen werden nur im Kreis um eine verdeckte Spielfigur oder einen verdeckten Gegner durchsichtig (Startwert Deckkraft 0,4, im Spiel testen)
+- [x] Gruft darf in den Katakomben direkt neben dem Start stehen (Ausnahme `overrides` in `data/themes.json`)
