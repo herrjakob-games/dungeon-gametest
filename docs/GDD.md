@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.45 · Oct 30, 2026 · @Christian
+Version 2.46 · Oct 30, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.46 | 30.10.2026 | Kerker in den Katakomben mit zwei Varianten: vier Eckzellen (3×3) oder eine große Zelle (5×5); Zellwände aus KayKit-Gittern, Torbögen und Steinpfeilern auf Kachelkanten; Wegfindung sperrt Kanten; in jeder Zelle entweder ein Strohlager oder Knochen; Rückwände in allen Räumen der Katakomben zu etwa 30 % gesprungen (`wand_riss`); Innenwände und Säulen werden um verdeckte Figuren herum durchsichtig (Durchblick) |
 | 2.45 | 30.10.2026 | Katakomben Paket 1 und 2: Monster Skelettkrieger, Geist, Poltergeist, Skelett-König; Begegnungen; Events für Kerker und Schrein; Skelett-König als Warrior 1,3-fach mit goldener Krone; Kerker auch in den Katakomben höchstens 2 |
 | 2.44 | 30.10.2026 | Poltergeist mit denselben Tönen wie der Geist |
 | 2.43 | 30.10.2026 | Töne des Geists: Angriffsklang `geist`, `treffer_geist`, `tod_geist`; Bewegung mit `schweben` statt Schritten |
@@ -403,6 +404,7 @@ Die Grafik besteht aus einem modularen Low-Poly-Baukasten auf dem Kachelraster, 
 - **Quellen:** eine Mischung aus fertigen CC0-Paketen (etwa KayKit, Quaternius, Kenney) für Boden, Wände und Requisiten und einem KI-3D-Generator für Figuren, die es nicht fertig gibt. Was noch fehlt, bleibt Platzhalter aus Grundformen.
 - **Reihenfolge:** zuerst die Themenwelt Keller, dann die weiteren Themen. Meilenstein 6a bringt Umgebung und Requisiten, 6b Figuren und Animationen.
 - **Lizenzen:** Jede fremde Datei kommt mit Quelle und Lizenz in eine Credits-Liste im Repository.
+- **Durchblick:** Stehen Innenwände (Zellwände) oder Säulen zwischen Kamera und Spielfigur oder einem Gegner, werden sie nur an dieser Stelle durchsichtig: ein Kreis um die Figur auf dem Bildschirm, etwa 0,7 Kacheln Radius, mit weichem Rand. Darin hat das Objekt die Deckkraft `seeThroughOpacity` aus `data/themes.json` (Startwert 0,4), außerhalb bleibt es voll deckend. Der Übergang dauert etwa 0,2 Sekunden. Gilt nur, wenn das Objekt die Figur wirklich verdeckt; Gitter, Requisiten, Raumwände an Nord und West und friedliche Figuren lösen keinen Durchblick aus.
 
 ### Inszenierung der Figuren
 
@@ -473,6 +475,12 @@ Gruft und Brunnen sind im Keller die düsteren Räume: kälteres Grundlicht, Ker
 - Die Farbe bleibt Sache der Paletten-Textur des Themas, die Variante bestimmt nur die Form. Der Boden bleibt ruhig: Er ist Bühne, nicht Requisit.
 - Der Schrittklang bleibt ein eigenes Feld (`floor` unter `sound`) und soll zur Variante passen, etwa Holzdielen mit `wood`, Erde mit `mud` oder `gravel`.
 
+**Wände**
+
+- Pro Thema kann ein Teil der Wandkacheln an Nord- und Westwand gesprungen sein: Feld `wandRiss` in `data/themes.json` (Anteil der Wandkacheln). Eine Risswand (`wand_riss`, KayKit `wall_cracked`, mit Rissen und Moos am Fuß) ist 2 Kacheln breit und ersetzt zwei normale Wandkacheln.
+- Erlaubt nur auf den Abschnitten 1–2 und 8–9 von Nord- und Westwand, nie auf einer Fackelkachel und nie hinter der Treppe (in Vorkammer, Abstieg und Bossraum also nur 8–9). Der Raum-Seed wählt die Abschnitte, bis etwa der Anteil erreicht ist.
+- Heute: Katakomben `"wandRiss": 0.3` in allen Räumen, die übrigen Themen ohne Risswand.
+
 **Formensprache**
 
 - Figuren etwa 1:3 (Kopf ein Drittel der Höhe), große Hände und Füße, Augen als einfache Formen.
@@ -508,7 +516,7 @@ Gilt für alle Modelle. Bei Paketteilen gilt sie für das Ergebnis im Spiel; Abw
 - **Animationen:** Idle, Walk, Attack, Hit, Death, Interact. Heißen sie im Paket anders, ordnet `data/models.json` sie zu. Fehlt eine Animation, gilt die Bewegung aus dem Code: Hit als kurzes Zucken, Death als Versinken im Boden, eine Figur ganz ohne Animationen gleitet und wippt wie die Platzhalter.
 - **Dateinamen:** id aus dem GDD; Varianten als `id_variante.glb`, etwa `fass_gruppe.glb`. Fehlt die Variante, gilt die Grunddatei. Eine Variante kann auch nur eine andere Animation sein (Skelett sitzend).
 - **Ordner:** `assets/tiles/` (Boden, Wand, Sockel, Ecken, Türrahmen), `assets/props/`, `assets/figures/`, `assets/textures/`, `assets/sounds/`. Rohdateien der Pakete in `assets/source/`.
-- **Bauteile:** `boden`, Bodenvarianten `boden_<name>` (siehe Stilguide, Böden), `wand`, `wand_ecke`, `sockel`, `sockel_ecke`, `tuerrahmen`, `fackel`, `schloss`. Der Türrahmen hinten deckt drei Kacheln (Tür mittig). Neben jeder Tür hängt eine Fackel. In der Vorkammer hängt keine Fackel hinter oder neben der Treppe, also nicht auf den Kacheln 1 bis 4 von Nord- und Westwand; die Fackel dort fällt weg. An den vorderen Türen (Süd, Ost) ist sie wie die vorderen Wände ausgeblendet: kein Modell und kein Pfosten, nur ihr Licht bleibt, damit der Raum gleich hell bleibt.
+- **Bauteile:** `boden`, Bodenvarianten `boden_<name>` (siehe Stilguide, Böden), `wand`, `wand_riss` (2 Kacheln breit, siehe Stilguide, Wände), `wand_ecke`, `sockel`, `sockel_ecke`, `tuerrahmen`, `fackel`, `schloss`. Der Türrahmen hinten deckt drei Kacheln (Tür mittig). Neben jeder Tür hängt eine Fackel. In der Vorkammer hängt keine Fackel hinter oder neben der Treppe, also nicht auf den Kacheln 1 bis 4 von Nord- und Westwand; die Fackel dort fällt weg. An den vorderen Türen (Süd, Ost) ist sie wie die vorderen Wände ausgeblendet: kein Modell und kein Pfosten, nur ihr Licht bleibt, damit der Raum gleich hell bleibt.
 - **Zuordnung:** `data/models.json` hält pro id Datei, Maßstab (Zahl oder [x, y, z]), Drehung, Versatz, Einfärbung (`tint`, Farbe, mit der die Paletten-Textur multipliziert wird, etwa Holzton für graue Kisten), Animationszuordnung, Lichtpunkte (Position relativ zum Ursprung, Farbe, Stärke, Reichweite) und Zubehör (`accessories`: Teil aus Grundformen wie Kochmütze, Krone oder rote Augen, an einem Knochen der Figur, mit Versatz und Größe in Kacheln). Mehrere ids dürfen dieselbe Datei nutzen (Riesenratte, Küchenchef und Monsterratte).
 - **Build-Skript:** `tools/build-assets.mjs` setzt Teile aus Paketen zu einer GLB zusammen (Tafel, Regal, Türrahmen) und speckt Paketfiguren ab (nur benötigte Animationen und Zubehörteile, komprimiert). FBX-Dateien wandelt es vorher in GLB um; es kann Materialfarben auf die Palette setzen (matt, ohne Metallglanz), eine Waffe an einen Knochen hängen und Figuren auf höchstens 3.000 Dreiecke vereinfachen. Requisiten kann es aus Teilen einer Paketfigur zusammensetzen (`extracts`), etwa die Knochen aus Schädel, Kiefer und Armen der Skelette.
 - **Platzhalter:** Fehlt eine Datei oder lädt sie nicht, baut der Code das Teil wie bisher aus Grundformen.
@@ -542,6 +550,12 @@ Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kan
 - **Platzierung (`place`):** `center` (Raummitte), `wall-back` (an der Nord- oder Westwand, weil die vorderen Wände nur Sockel sind), `corner` (in einer Ecke, bei `count` über 1 in verschiedenen Ecken), `free` (beliebige freie Kachel), `around:<prop>` (um ein anderes Requisit herum, etwa Stühle um die Tafel), `above:<prop>` (über einem anderen Requisit, etwa der Kronleuchter über der Tafel), `tile:x|y` (genau diese Kachel, etwa die Säulen der Schatzkammer; ohne Korrektur, passt sie nicht, fällt das Requisit weg), `door-sides` (Wandschmuck links und rechts jeder Tür in Nord- und Westwand, eine Kachel Abstand zum Türrahmen, an der Nordwand also 3|1 und 7|1; alle in derselben Variante; an Süd- und Osttüren nicht, weil die vorderen Wände nur Sockel sind).
 - **Fackeln an Säulen (`torches`):** Mit `"torches": "saeulen"` in der Einrichtung hängen keine Fackeln an den Wänden, und die Lichter der vorderen Fackeln fallen weg. Stattdessen trägt jede Säule eine leuchtende Fackel auf der Seite zur Raummitte; Säulen in Reihen (Säulengang) tragen sie auf der Seite zum Gang. Heute so in der Schatzkammer (alle Säulen) und in der Säulenhalle (3 bis 4 zufällige Säulen).
 - **Anzahl der Fackeln (`torchCount`):** Zahl oder Bereich `[von, bis]`. Mit `torches: "saeulen"` zählt es die Säulen mit Fackel, sonst die Wandfackeln an Nord- und Westwand (Auswahl nach Raum-Seed); dann fallen auch die Lichter der vorderen Fackeln weg. `torchFlame` (Farbe) legt eine eigene Flamme über die des Modells. Heute: Gruft mit zwei Fackeln, Licht `#5d86e0`, Flamme `#8fb4ff`.
+- **Zellen (`cells`):** Im Kerker der Katakomben (`themeDecor.katakomben`) baut der Code Zellen aus Wandteilen auf Kachelkanten. Die Zellen stehen nicht in `layouts`, der Raum-Seed wählt eine von zwei Varianten:
+  - **A, vier Eckzellen:** je 3×3 Kacheln (1|1–3|3, 7|1–9|3, 1|7–3|9, 7|7–9|9). Jede Zelle hat zwei Innenseiten: eine Gitterwand (`zellgitter`) und einen offenen Torbogen (`zelltor`), beide mittig auf der Seite; die Lücken an den Enden schließen Endstücke (`wand_ecke`), die Innenecke `zellecke`. Der Durchgang liegt auf der mittleren Kachel der Seite. Torbogen: Nordwest Südseite, Nordost Südseite, Südwest Ostseite, Südost Westseite; die übrigen Innenseiten sind Gitter.
+  - **B, große Zelle:** 5×5 Kacheln (3|3–7|7). Jede Seite besteht aus zwei Gitterwänden mit einem Steinpfeiler (`wand`, 1 Kachel) dazwischen, an den Ecken `zellgitter_ecke`. Auf einer Seite, nach Raum-Seed, fehlt der Pfeiler: Die mittlere Kachel ist die Öffnung (5|3, 7|5, 5|7 oder 3|5).
+  - Die Gänge zwischen und um die Zellen lassen alle Türkacheln und die Kacheln davor frei.
+- **Kantensperre:** Zellwände stehen auf der Kante zwischen zwei Kacheln. Die Wegfindung darf diese Kanten nicht kreuzen; nur Torbogen und Öffnung lassen durch. `npm test` prüft die Erreichbarkeit mit Kantensperren.
+- **Zelleinrichtung:** Jede Zelle bekommt nach Raum-Seed entweder ein Strohlager (`strohlager`) oder Knochen (`knochen`, in den Eckzellen eine Gruppe, in der großen Zelle 2 bis 3), nie beides. Das Strohlager hält eine Kachel Abstand zum Durchgang. Außerhalb der Zellen steht im Kerker keine Deko.
 - **Weitere Felder:** `count` (Anzahl, Standard 1, oder ein Bereich wie `[2, 3]`, aus dem der Raum-Seed wählt), `mimics` (bei der Einrichtung: `true` heißt, von mehreren Truhen ist eine echt, die übrigen sind Mimiken), `variant` (Abwandlung eines Requisits, etwa der Tisch mit Töpfen statt Würfeln), `clear` (Freiraum: im Umkreis von so vielen Kacheln um dieses Requisit liegt nichts anderes, auch schräg gezählt; Lagerfeuer 2), `doorGap` (so viele Kacheln Abstand zu Türkachel und Kachel davor; Schlaflager im Rastplatz 1). `floorTiles` (Bodenvarianten mit Gewicht für diesen Raumtyp, siehe Stilguide, Böden).
 - **Feste Regeln:** Türkacheln und die Kachel davor bleiben frei. Wandrequisiten (Regale, Fahnen, Schlüsselbund, Herd, Anrichte und alle anderen an der Wand) verdecken oder überlagern keine Fackel: Die Wandkachel einer Fackel bleibt für sie frei. Abgebrannte Kerzen (Kerzenstummel) stehen nicht als Deko auf dem Boden. Münzstapel (`goldhaufen`, `muenzen` mit allen Varianten) haben einen Mindestabstand (`spread: 2`): Derselbe Typ, also gleiches Requisit und gleiche Variante, steht nicht noch einmal im Umkreis von zwei Kacheln, auch schräg gezählt. Verschiedene Typen dürfen nebeneinander liegen, etwa mittlerer neben kleinem Stapel, aber nicht kleiner neben kleinem. Sarkophage halten eine Kachel Abstand zur Wand (`wallGap: 1`) und zum nächsten Sarkophag (`spread: 1`). Passt ein Stapel nirgends, gilt der Korrekturablauf. Jede Tür und jedes anklickbare Objekt bleibt erreichbar, `npm test` prüft das für alle Varianten. In Vorkammer, Abstieg und Bossraum bleibt die Nordwest-Ecke (1|1 bis 3|3) für die Treppe frei; `corner` meint dort nur die drei übrigen Ecken, `wall-back` nur die freien Abschnitte von Nord- und Westwand.
 - **Pflichtstücke:** Ein Requisit mit `"required": true` macht den Raumtyp erkennbar (Herd in der Küche, Tafel im Speisesaal, Brunnen im Brunnenraum). Es wird immer zuerst platziert und nie weggelassen. Passt es in einer Variante bei einer Türkombination nicht, ist das ein Fehler in den Daten, und `npm test` schlägt fehl.
@@ -603,6 +617,10 @@ Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kan
 | wandregal | Hohes Wandregal | 2×1, Wand | ja | nein | nein | Vorratskammer |
 | treppe_hoch | Steintreppe nach oben (KayKit `stairs`), steigt zur Nordwand | 3×3, Nordwest-Ecke | ja | nein | nein | Vorkammer, vom Code gesetzt |
 | treppe_runter | Steintreppe nach unten in ein Loch im Boden (KayKit `stairs`), kühler Schimmer von unten | 3×3, Nordwest-Ecke | ja | ja | ja | Abstieg und Bossraum, vom Code gesetzt |
+| zellgitter | Gitterwand (KayKit `wall_gated`) | 2, Kante | ja | nein | nein | Kerker |
+| zellgitter_ecke | Gitterecke (KayKit `wall_corner_gated`) | Ecke | ja | nein | nein | Kerker |
+| zelltor | Offener Torbogen (KayKit `wall_doorway` ohne Türblatt `wall_doorway_door`) | 2, Kante, Durchgang 1 | ja | nein | nein | Kerker |
+| zellecke | Schmale Ecke (KayKit `wall_corner_small`) | Ecke | ja | nein | nein | Kerker |
 
 **Figuren**
 
@@ -866,3 +884,8 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Töne des Geists: Angriffsklang `geist`, eigener Treffer- und Tod-Ton, beim Bewegen ein Schwebe-Ton (`schweben`) statt Schritten
 - [x] Poltergeist mit denselben Tönen wie der Geist
 - [x] Katakomben Paket 1 und 2: Monster, Begegnungen, Events und Todessätze für Kerker und Schrein; Schrein mit Event-Chance 0,4 wie die Säulenhalle, Kerker 0,7 wie die Gruft; Kerker auch in den Katakomben höchstens 2; Skelett-König als Warrior 1,3-fach mit goldener Krone
+- [x] Kerker in den Katakomben in zwei Varianten nach Raum-Seed: vier Eckzellen 3×3 mit Gitterwand und offenem Torbogen, oder eine große Zelle 5×5 aus Gittern mit Steinpfeilern und einer offenen Mittelkachel
+- [x] Zellwände auf Kachelkanten; die Wegfindung sperrt Kanten
+- [x] In jeder Zelle entweder ein Strohlager oder Knochen, außerhalb der Zellen keine Deko
+- [x] Risswand `wand_riss` (KayKit `wall_cracked`) in allen Räumen der Katakomben zu etwa 30 % der Wandkacheln, nicht auf Fackelkacheln und nicht hinter der Treppe
+- [x] Durchblick statt Ausblenden: Innenwände und Säulen werden nur im Kreis um eine verdeckte Spielfigur oder einen verdeckten Gegner durchsichtig (Startwert Deckkraft 0,4, im Spiel testen)
