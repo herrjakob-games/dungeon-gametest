@@ -3,7 +3,7 @@
   {"id": "rat", "name": "Riesenratte", "hp": 4, "armor": 9, "attack": 0, "damage": "W4", "deathText": "Von einer Ratte besiegt. Die Ratte erzählt es heute noch auf jeder Party.", "sound": "biss"},
   {"id": "goblin", "name": "Goblin-Wache", "hp": 6, "armor": 11, "attack": 1, "damage": "W4+1", "deathText": "Von einer Goblin-Wache erledigt, kurz vor ihrer Mittagspause. Sie macht jetzt Überstunden für den Papierkram.", "sound": "schwert"},
   {"id": "mimic", "name": "Mimik", "hp": 10, "armor": 12, "attack": 2, "damage": "W6", "deathText": "Von einer Truhe gefressen. Die Truhe war hinterher sehr zufrieden und ein bisschen voller.", "sound": "biss"},
-  {"id": "geist", "name": "Geist", "hp": 9, "armor": 12, "attack": 2, "damage": "W6+1", "placeholder": true, "deathText": "[Platzhalter] Von einem Geist zu Tode erschreckt. Wörtlich."},
+  {"id": "geist", "name": "Geist", "hp": 9, "armor": 12, "attack": 2, "damage": "W6+1", "placeholder": true, "deathText": "[Platzhalter] Von einem Geist zu Tode erschreckt. Wörtlich.", "sound": "geist"},
   {"id": "hoehlenspinne", "name": "Höhlenspinne", "hp": 12, "armor": 13, "attack": 3, "damage": "W8", "placeholder": true, "deathText": "[Platzhalter] In einer Höhlenspinne eingewickelt. Für später."},
   {"id": "steingolem", "name": "Steingolem", "hp": 12, "armor": 13, "attack": 3, "damage": "W8", "placeholder": true, "deathText": "[Platzhalter] Von einem Steingolem plattgemacht. Er hat es nicht einmal bemerkt."},
   {"id": "eisengolem", "name": "Eisengolem", "hp": 12, "armor": 13, "attack": 3, "damage": "W8", "placeholder": true, "deathText": "[Platzhalter] Ein Eisengolem hat dich erwischt. Er rostet jetzt vor Freude."},

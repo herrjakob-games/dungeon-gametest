@@ -372,5 +372,47 @@
       "events/klopfen_stein.mp3"
     ],
     "volume": 0.8
+  },
+  "angriff_geist_treffer": {
+    "files": [
+      "angriff/geist_treffer_1.mp3"
+    ],
+    "volume": 0.8
+  },
+  "angriff_geist_fehl": {
+    "files": [
+      "angriff/geist_fehl_1.mp3"
+    ],
+    "volume": 0.8
+  },
+  "treffer_geist": {
+    "files": [
+      "spiel/treffer_geist.mp3"
+    ],
+    "volume": 0.7
+  },
+  "treffer_poltergeist": {
+    "files": [
+      "spiel/treffer_geist.mp3"
+    ],
+    "volume": 0.7
+  },
+  "tod_geist": {
+    "files": [
+      "spiel/tod_geist.mp3"
+    ],
+    "volume": 0.7
+  },
+  "tod_poltergeist": {
+    "files": [
+      "spiel/tod_geist.mp3"
+    ],
+    "volume": 0.7
+  },
+  "schritt_schweben": {
+    "files": [
+      "schritte/schweben_1.mp3"
+    ],
+    "volume": 0.5
   }
 }

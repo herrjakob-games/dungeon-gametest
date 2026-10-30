@@ -55,7 +55,7 @@ test("Jedes Figuren-Event hat eine gültige Inszenierung oder fällt auf den Sta
   }
   // Kröte und Händler bleiben stehen, Skelette bekommen eine Modell-Variante
   assert.equal(eventFigures(DATA.events.brunnen_kroete, STAGING, 1)[0].stay, true);
-  assert.ok(["minion", "warrior", "rogue", "mage"].includes(eventFigures(DATA.events.gruft_sarkophag, STAGING, 1)[0].variant));
+  for (let seed = 1; seed <= 8; seed++) assert.equal(eventFigures(DATA.events.gruft_sarkophag, STAGING, seed)[0].variant, "minion");
   assert.equal(eventFigures(DATA.events.exit_tuersteher, STAGING, 1)[0].variant, "warrior");
   assert.deepEqual(eventFigures(DATA.events.wache_wuerfel, STAGING, 7).map(f => f.variant), ["warrior"]);
   assert.equal(eventFigures(DATA.events.gruft_ruecken, STAGING, 7)[0].variant, "minion");

@@ -181,7 +181,7 @@
         "rogue",
         "mage"
       ],
-      "pick": "seed"
+      "default": "minion"
     },
     "kroete": {
       "stays": true
@@ -197,6 +197,9 @@
     },
     "monsterratte": {
       "steps": "trippeln"
+    },
+    "geist": {
+      "steps": "schweben"
     }
   },
   "events": {
