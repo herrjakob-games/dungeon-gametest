@@ -40,7 +40,7 @@ Die Liste aller Meilensteine steht im GDD.
   baut aus `tools/asset-recipes.json` die Dateien in `assets/tiles/`, `assets/props/` und `assets/figures/` (braucht einmal `npm install`; FBX wandelt das npm-Paket `fbx2gltf` um, `meshoptimizer` vereinfacht);
   das Spiel selbst braucht keinen Build-Schritt. Zuordnung in `data/models.json`. `tools/palette-texture.py` erzeugt
   die erste Fassung der Paletten-Textur, `tools/skeleton-texture.py` die Skelett-Textur,
-  `tools/merchant-texture.py` die Textur des Händlers, `tools/dwarf-texture.py` die des Zwergs (Haare in Bartfarbe).
+  `tools/merchant-texture.py` die Textur des Händlers, `tools/ghost-texture.py` die der Geister (Händler-Modell in Hellblau), `tools/dwarf-texture.py` die des Zwergs (Haare in Bartfarbe).
   Die Spiellogik besteht aus ES-Modulen in `src/`, Einstieg ist `src/main.js`.
 - Sounds: MP3s in `assets/sounds/` (Ordner laut GDD), Zuordnung in `data/sounds.json`. Nach dem Hinzufügen oder Entfernen von
   MP3s `npm run sounds` ausführen: Das schreibt `assets/sounds/files.json`, und das Spiel lädt nur Dateien aus dieser Liste.

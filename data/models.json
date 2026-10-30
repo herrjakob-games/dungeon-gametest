@@ -533,6 +533,24 @@
       "awaken": "Skeletons_Awaken_Floor"
     }
   },
+  "skelett_krieger": {
+    "file": "assets/figures/skeleton_warrior.glb",
+    "scale": 0.46,
+    "palette": false,
+    "texture": "assets/textures/figures/skeleton/skeleton_keller.png",
+    "animations": {
+      "idle": "Idle",
+      "walk": "Walking_A",
+      "attack": "1H_Melee_Attack_Chop",
+      "hit": "Hit_A",
+      "death": "Death_A",
+      "interact": "Interact",
+      "sit": "Sit_Chair_Idle",
+      "sit_floor": "Sit_Floor_Idle",
+      "lie": "Skeletons_Inactive_Floor_Pose",
+      "awaken": "Skeletons_Awaken_Floor"
+    }
+  },
   "skeleton": {
     "file": "assets/figures/skeleton_minion.glb",
     "scale": 0.46,
@@ -570,6 +588,58 @@
       "death": "Death_A",
       "interact": "Interact"
     }
+  },
+  "geist": {
+    "file": "assets/figures/haendlerfigur.glb",
+    "scale": 0.48,
+    "palette": false,
+    "texture": "assets/textures/figures/geist/geist_texture.png",
+    "animations": {
+      "idle": "Idle",
+      "walk": "Walking_A",
+      "attack": "1H_Melee_Attack_Chop",
+      "hit": "Hit_A",
+      "death": "Death_A",
+      "interact": "Interact"
+    },
+    "lights": [
+      {
+        "offset": [
+          0,
+          0.7,
+          0
+        ],
+        "color": "#8FC4FF",
+        "intensity": 1.8,
+        "distance": 3
+      }
+    ]
+  },
+  "poltergeist": {
+    "file": "assets/figures/haendlerfigur.glb",
+    "scale": 0.48,
+    "palette": false,
+    "texture": "assets/textures/figures/geist/geist_texture.png",
+    "animations": {
+      "idle": "Idle",
+      "walk": "Walking_A",
+      "attack": "1H_Melee_Attack_Chop",
+      "hit": "Hit_A",
+      "death": "Death_A",
+      "interact": "Interact"
+    },
+    "lights": [
+      {
+        "offset": [
+          0,
+          0.7,
+          0
+        ],
+        "color": "#8FC4FF",
+        "intensity": 1.8,
+        "distance": 3
+      }
+    ]
   },
   "verkaufstisch": {
     "file": "assets/props/verkaufstisch.glb",

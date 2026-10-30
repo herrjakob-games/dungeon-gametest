@@ -181,7 +181,7 @@
         "rogue",
         "mage"
       ],
-      "pick": "seed"
+      "default": "minion"
     },
     "kroete": {
       "stays": true

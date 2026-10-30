@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.39 · Oct 30, 2026 · @Christian
+Version 2.40 · Oct 30, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.40 | 30.10.2026 | Skelette ohne festgelegte Variante als Minion statt nach Raum-Seed; Skelettkrieger als Warrior; Geister aus KayKit Rogue in Hellblau mit kaltem blauen Leuchten |
 | 2.39 | 30.10.2026 | Gruft und Brunnenraum: gesprungene Platten 70 %, Platten mit Unkraut 30 %; die verzierte Platte `boden_deko` ist entfernt |
 | 2.38 | 30.10.2026 | Bodenplatten: Keller `boden`, `boden_bruch_a`, `boden_bruch_b`; Gruft und Brunnenraum `boden_unkraut_a`, `boden_unkraut_b`; Katakomben `boden_bruch_a`, `boden_bruch_b`, `boden_unkraut_a`, `boden_unkraut_b` |
 | 2.37 | 30.10.2026 | Event-Tabellen (`themeEvents`) und Bewertung (`themeRating`) pro Thema für alle Raumtypen; Begegnungen ab den Katakomben: Monster stehen per Zufall im Raum, der Kampf beginnt ohne Event (`encounters` in `data/themes.json`); Bodenplatten pro Thema und Raumtyp aus KayKit-Varianten (`floorTiles`) |
@@ -406,7 +407,7 @@ Figuren aus Events stehen sichtbar im Raum. Wo sie stehen, wohin sie blicken und
 - **Anker an Requisiten (`anchors`):** Requisiten-ids (`props`), Versatz in Kacheln (gedreht wie das Requisit, `world`: ungedreht), Blickrichtung (`player`, `target` = der Tisch zum Sitz, `prop`, `random`), Animation (`idle`, `sit`, `sit_floor`, `lie`, `awaken`). `seat`: die Figur sitzt auf dem Hocker oder Stuhl, `onProp`: sie steht auf dem Requisit (Monsterratte auf dem Käseberg, Kröte auf dem Brunnenrand). Anker heute: am Tisch sitzend, auf dem Hocker schlafend, am Herd, am Sarkophag (Skelett steht auf), am Lagerfeuer, zwischen Knochen liegend, auf dem Käseberg, im Mehlsack, vor der Treppe, mitten im Raum, am Brunnen.
 - **Rückfall:** Fehlt die Requisite im Raum, steht die Figur auf einer freien Kachel, nie in Wänden, Türen oder auf Requisiten. Hat das Modell die Animation nicht (etwa der Goblin kein Sitzen), steht die Figur mit Idle neben dem Anker.
 - **Liegen ohne Animation:** Ein Anker mit `flat` legt eine Figur ohne Liege-Animation starr auf den Rücken, statt sie stehen zu lassen (der schlafende Goblin). `front` wählt zuerst die Kachel auf der Seite zur Kamera, damit das Requisit die Figur nicht verdeckt.
-- **Figuren (`figures`):** Modell-Varianten (Skelett: Minion, Warrior, Rogue, Mage, nach Raum-Seed; ein Event kann eine festlegen) und `stays` (bleibt nach dem Event stehen). Eine Event-Inszenierung kann `stay` auch für einzelne Figuren setzen.
+- **Figuren (`figures`):** Modell-Varianten (Skelett: Minion, Warrior, Rogue, Mage; ohne Festlegung immer Minion; ein Event kann eine festlegen) und `stays` (bleibt nach dem Event stehen). Eine Event-Inszenierung kann `stay` auch für einzelne Figuren setzen. Eigene Skelett-Monster haben ihre eigene Figur, etwa der Skelettkrieger als Warrior.
 - **Ablauf:** Die Figuren stehen schon da, bevor das Event-Fenster aufgeht. Beim Kampfbeginn laufen alle Figuren des Gegners mit Walk auf freie Nachbarkacheln der Spielfigur, ohne durch Wände, Türen oder Requisiten zu gehen; die Spielfigur bleibt stehen und dreht sich zum nächsten laufenden Gegner. Im Kampf blickt die Spielfigur zum Gegner, der gerade dran ist; bei mehreren wechselt er reihum mit jedem Zug. Gegner blicken immer zur Spielfigur. Attack beim eigenen Zug, Hit bei einem Treffer, Death beim Sieg. Nach dem Kampf behält die Spielfigur ihre Blickrichtung, bis der Spieler sie bewegt.
 - **Drehungen:** weich über etwa 0,25 Sekunden, immer auf dem kürzeren Weg.
 - **Lesbarkeit:** Gegner mit rotem Akzent und im Kampf mit rotem Bodenring.
@@ -509,6 +510,7 @@ Gilt für alle Modelle. Bei Paketteilen gilt sie für das Ergebnis im Spiel; Abw
 - **Bart des Zwergs:** Zubehör `bart` aus Grundformen, Farbe `#4A3020`, matt und weich, in zwei Teilen: Kinnansatz mit Schnurrbart-Wulst am Kopfknochen (`part: "kinn"`, Knochen `head`) und ein breiter Keil bis zum Bauch, unten leicht gegabelt, am Brustknochen (`part: "keil"`, Knochen `chest`); beide überlappen leicht. Am Kinn etwa 0,27 Kacheln breit, der Keil oben 0,24 (schmaler als geplant, damit die Schwerthand beim Angriff frei bleibt), nach unten schmaler; gesamt etwa 0,34 Kacheln lang, weil der Kopf der Figur groß ist und 0,45 bis zu den Füßen reichen würde. Der Bart schneidet bei Stehen, Laufen und Angriff nicht ins Schwert.
 - **Zubehör der Spielfiguren:** Die Figur trägt das Teil des Pakets, das der Startwaffe am nächsten kommt: Zwerg Schwert (Langschwert), Elf Messer (Dolch), Mensch Zauberstab (das Paket hat keinen Knüppel). Schilde, Zweithand-Waffen und Bücher fallen weg.
 - **Quellen der Figuren im Keller:** Mensch KayKit `Mage`, Elf `Rogue_Hooded`, Zwerg `Knight` ohne Helm, Haare und Augenbrauen in der Bartfarbe (Textur `assets/textures/figures/zwerg/zwerg_texture.png`), ungleich skaliert (Maßstab `[0,429, 0,2805, 0,429]`: breiter und kleiner), mit Bart, Händler `Rogue` ohne Kapuze und Waffen, Outfit dunkelblau statt grün (KayKit Adventurers); Skelett aus KayKit Skeletons 1.0 (Minion, Warrior, Rogue, Mage; die Fassung 1.1 FREE hat kein Sitzen, Liegen und Angreifen, Textur gleich) mit der auf die Palette umgefärbten Textur `assets/textures/figures/skeleton/skeleton_keller.png`; Goblin aus Goblin Lowpoly Assets (standout7, itch.io); Mimik aus der Truhe des KayKit Dungeon Pack (itch.io); Riesenratte, Küchenchef und Monsterratte aus `Rat`, Kröte aus `Frog` (Easy Animated Enemy Pack, Quaternius). Goblin: `Basic_Goblin` mit `Rusty Shiv`; die kostenlose Fassung hat keine Animationen.
+- **Quellen der Figuren in den Katakomben:** Skelettkrieger aus KayKit Skeletons `Warrior` mit der Skelett-Textur; Geister (Geist, Poltergeist) aus KayKit Adventurers `Rogue` ohne Kapuze und Waffen, Outfit hellblau, mit kaltem blauem Licht an der Figur (Lichtpunkt ohne Schatten).
 - **Lizenzen:** Quelle und Lizenz jeder fremden Datei in `assets/CREDITS.md`.
 
 ### Einrichtung pro Raumtyp
@@ -850,3 +852,4 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Bodenplatten pro Thema und Raumtyp aus KayKit-Varianten (`floorTiles`), nur 1×1, ohne Gitter, Löcher und Stacheln
 - [x] Bodenplatten: Keller `boden`, `boden_bruch_a`, `boden_bruch_b`; Gruft und Brunnenraum `boden_unkraut_a`, `boden_unkraut_b`; Katakomben `boden_bruch_a`, `boden_bruch_b`, `boden_unkraut_a`, `boden_unkraut_b`
 - [x] Gruft und Brunnenraum: gesprungene Platten 70 %, Platten mit Unkraut 30 %; keine verzierte Bodenplatte (`boden_deko`) in irgendeinem Raum
+- [x] Skelette ohne festgelegte Variante immer als Minion; Skelettkrieger als Warrior; Geister aus KayKit Rogue, hellblau mit kaltem blauen Leuchten

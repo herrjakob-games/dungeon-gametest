@@ -47,11 +47,12 @@ export function eventFigures(ev, staging, seed) {
     const [lo, hi] = (st.defaults && st.defaults.countUnknown) || UNKNOWN_COUNT;
     list = [{ figure: m, count: lo + hash(seed, ev.id) % (hi - lo + 1) }];
   }
-  // Mehrere gleiche Figuren ohne feste Variante bekommen je eine eigene Variante (etwa verschiedene Skelette)
+  // Mehrere gleiche Figuren ohne feste Variante bekommen je eine eigene Variante, außer die Figur hat eine Standard-Variante
+  // (Skelett: immer Minion)
   const out = [];
   list.forEach((f, i) => {
-    const vs = ((st.figures || {})[f.figure] || {}).variants;
-    if (!f.variant && vs && vs.length && (f.count || 1) > 1) {
+    const d = (st.figures || {})[f.figure] || {};
+    if (!f.variant && !d.default && d.variants && d.variants.length && (f.count || 1) > 1) {
       for (let k = 0; k < f.count; k++) out.push(withFigureDefaults(Object.assign({}, f, { count: 1 }), st, hash(seed, ev.id + i + ":" + k)));
     } else out.push(withFigureDefaults(f, st, hash(seed, ev.id + i)));
   });
@@ -66,7 +67,8 @@ export function fightFigures(monsterId, staging, seed) {
 function withFigureDefaults(f, st, h) {
   const d = (st.figures || {})[f.figure] || {};
   const out = Object.assign({}, f);
-  if (!out.variant && d.variants && d.variants.length) out.variant = d.variants[h % d.variants.length];
+  if (!out.variant && d.default) out.variant = d.default;
+  else if (!out.variant && d.variants && d.variants.length) out.variant = d.variants[h % d.variants.length];
   if (out.stay === undefined) out.stay = !!d.stays;
   return out;
 }
@@ -89,6 +91,7 @@ export function checkStaging(staging, data, props, err) {
   for (const [id, f] of Object.entries(staging.figures || {})) {
     if (!isFigure(id, data.monsters) && !props.includes(id)) err(w, "unbekannte Figur " + id);
     if (f.variants !== undefined && !Array.isArray(f.variants)) err(w, id + ": variants muss eine Liste sein");
+    if (f.default !== undefined && !(f.variants || []).includes(f.default)) err(w, id + ": Standard-Variante " + f.default + " fehlt in variants");
     if (f.steps !== undefined && typeof f.steps !== "string") err(w, id + ": steps muss ein Name sein (Sound schritt_<steps>)");
   }
   for (const [id, e] of Object.entries(staging.events || {})) {
