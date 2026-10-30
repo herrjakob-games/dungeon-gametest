@@ -1,5 +1,5 @@
 {
-  "_info": "Zuordnung der Modelle (docs/GDD.md, Asset-Spezifikation). Pro id: file, scale (Zahl oder [x, y, z]), rotation (Grad [x, y, z]), offset ([x, y, z] in Kacheln, vor der Drehung), palette (true = Paletten-Textur des Themas), texture (eigene angepasste Textur einer Figur), tint (Farbe, die das Modell einfärbt), lights (offset, color, intensity, distance), animations (Figuren: Name im Spiel → Name im Paket: idle, walk, attack, hit, death, interact), accessories (Zubehör aus Grundformen an einem Knochen: shape, bone, offset und size in Kacheln). Varianten heißen <id>_<variante>.",
+  "_info": "Zuordnung der Modelle (docs/GDD.md, Asset-Spezifikation). Pro id: file, scale (Zahl oder [x, y, z]), rotation (Grad [x, y, z]), offset ([x, y, z] in Kacheln, vor der Drehung), palette (true = Paletten-Textur des Themas), texture (eigene angepasste Textur einer Figur), tint (Farbe, die das Modell einfärbt), color (eine Farbe statt Textur, etwa der Knochenthron), lights (offset, color, intensity, distance), animations (Figuren: Name im Spiel → Name im Paket: idle, walk, attack, hit, death, interact), accessories (Zubehör aus Grundformen an einem Knochen: shape, bone, offset und size in Kacheln). Varianten heißen <id>_<variante>.",
   "boden": {
     "file": "assets/tiles/boden.glb",
     "scale": 0.5,
@@ -1082,5 +1082,15 @@
     "file": "assets/props/zellecke.glb",
     "scale": 0.5,
     "palette": true
+  },
+  "knochenthron": {
+    "file": "assets/props/knochenthron.glb",
+    "scale": 0.5,
+    "rotation": [
+      0,
+      90,
+      0
+    ],
+    "color": "#d9ccb0"
   }
 }

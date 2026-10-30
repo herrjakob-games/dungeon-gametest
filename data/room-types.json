@@ -231,6 +231,65 @@
             ]
           }
         ]
+      },
+      "katakomben": {
+        "layouts": [
+          {
+            "id": "A",
+            "props": [
+              {
+                "prop": "knochenthron",
+                "place": "wall-back",
+                "required": true
+              },
+              {
+                "prop": "kerzen",
+                "place": "around:knochenthron",
+                "count": 2
+              },
+              {
+                "prop": "knochen",
+                "place": "free",
+                "count": 5
+              },
+              {
+                "prop": "saeule",
+                "place": "corner",
+                "count": 2
+              }
+            ]
+          },
+          {
+            "id": "B",
+            "props": [
+              {
+                "prop": "knochenthron",
+                "place": "wall-back",
+                "required": true
+              },
+              {
+                "prop": "kerzen",
+                "place": "around:knochenthron",
+                "count": 2
+              },
+              {
+                "prop": "knochen",
+                "place": "around:knochenthron",
+                "count": 2
+              },
+              {
+                "prop": "knochen",
+                "place": "free",
+                "count": 3
+              },
+              {
+                "prop": "saeule",
+                "place": "corner",
+                "count": 2
+              }
+            ]
+          }
+        ]
       }
     },
     "sound": {

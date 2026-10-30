@@ -30,6 +30,13 @@ function paletteMaterial(theme, tint) {
   return materials.get(k);
 }
 
+// Einfarbiges Material (entry.color), einmal pro Farbe
+const solids = new Map();
+function solidMaterial(color) {
+  if (!solids.has(color)) solids.set(color, new THREE.MeshStandardMaterial({ color: new THREE.Color(color), roughness: 0.85, metalness: 0 }));
+  return solids.get(color);
+}
+
 // Material einer Figur mit eigener, angepasster Textur (entry.texture), einmal pro Ausgangsmaterial und Datei
 const textured = new Map();
 function textureMaterial(base, file) {
@@ -129,7 +136,8 @@ export function makeModel(id, variant, opts) {
   inner.scale.set(s[0], s[1], s[2]);
   inner.rotation.set(r[0] * Math.PI / 180, r[1] * Math.PI / 180, r[2] * Math.PI / 180);
   inner.position.set(o[0], o[1], o[2]);
-  const mat = entry.palette !== false ? paletteMaterial(themeId, entry.tint) : null;
+  // color: eine Farbe ohne Textur (etwa der Knochenthron), sonst Paletten-Textur des Themas
+  const mat = entry.color ? solidMaterial(entry.color) : entry.palette !== false ? paletteMaterial(themeId, entry.tint) : null;
   inner.traverse(n => {
     if (!n.isMesh) return;
     if (mat) n.material = opts.unique ? mat.clone() : mat;

@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.48 · Oct 30, 2026 · @Christian
+Version 2.49 · Oct 30, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.49 | 30.10.2026 | Prozession: Geister ziehen als Reihe durch die Säulenhalle (`procession`); Knochenthron im Bossraum der Katakomben, der Skelett-König sitzt darauf |
 | 2.48 | 30.10.2026 | Katakomben Paket 3: Events für Gruft, Säulenhalle und Bossraum (Skelett-König mit Audienz und Rückkehr); Flags gelten weiter nur pro Ebene |
 | 2.47 | 30.10.2026 | Gruft darf in den Katakomben direkt neben dem Start stehen; große Zelle im Kerker mit schmalen Eckpfeilern (`zellecke`) statt Gitterecken |
 | 2.46 | 30.10.2026 | Kerker in den Katakomben mit zwei Varianten: vier Eckzellen (3×3) oder eine große Zelle (5×5); Zellwände aus KayKit-Gittern, Torbögen und Steinpfeilern auf Kachelkanten; Wegfindung sperrt Kanten; in jeder Zelle entweder ein Strohlager oder Knochen; Rückwände in allen Räumen der Katakomben zu etwa 30 % gesprungen (`wand_riss`); Innenwände und Säulen werden um verdeckte Figuren herum durchsichtig (Durchblick) |
@@ -413,11 +414,12 @@ Die Grafik besteht aus einem modularen Low-Poly-Baukasten auf dem Kachelraster, 
 Figuren aus Events stehen sichtbar im Raum. Wo sie stehen, wohin sie blicken und welche Animation sie zeigen, steht in `data/staging.json`, getrennt von den Events; Spielregeln, Texte und Ergebnisse ändert die Inszenierung nicht.
 
 - **Standard:** freie Kachel, Blick zur Spielfigur, Idle. Welche Figuren ein Event zeigt: zuerst eine eigene Inszenierung (`events`), sonst das Feld `figures` des Events, sonst der Gegner aus dem Kampf. Nennt das Event keine Anzahl, sind es 1 bis 3 Figuren nach Raum-Seed.
-- **Anker an Requisiten (`anchors`):** Requisiten-ids (`props`), Versatz in Kacheln (gedreht wie das Requisit, `world`: ungedreht), Blickrichtung (`player`, `target` = der Tisch zum Sitz, `prop`, `random`), Animation (`idle`, `sit`, `sit_floor`, `lie`, `awaken`). `seat`: die Figur sitzt auf dem Hocker oder Stuhl, `onProp`: sie steht auf dem Requisit (Monsterratte auf dem Käseberg, Kröte auf dem Brunnenrand). Anker heute: am Tisch sitzend, auf dem Hocker schlafend, am Herd, am Sarkophag (Skelett steht auf), am Lagerfeuer, zwischen Knochen liegend, auf dem Käseberg, im Mehlsack, vor der Treppe, mitten im Raum, am Brunnen.
+- **Anker an Requisiten (`anchors`):** Requisiten-ids (`props`), Versatz in Kacheln (gedreht wie das Requisit, `world`: ungedreht), Blickrichtung (`player`, `target` = der Tisch zum Sitz, `prop`, `random`, `forward` = wie das Requisit, etwa vom Thron in den Raum), Animation (`idle`, `sit`, `sit_floor`, `lie`, `awaken`). `seat`: die Figur sitzt auf dem Hocker oder Stuhl, `onProp`: sie steht auf dem Requisit (Monsterratte auf dem Käseberg, Kröte auf dem Brunnenrand). Anker heute: am Tisch sitzend, auf dem Hocker schlafend, am Herd, am Sarkophag (Skelett steht auf), am Lagerfeuer, zwischen Knochen liegend, auf dem Käseberg, im Mehlsack, vor der Treppe, mitten im Raum, am Brunnen.
 - **Rückfall:** Fehlt die Requisite im Raum, steht die Figur auf einer freien Kachel, nie in Wänden, Türen oder auf Requisiten. Hat das Modell die Animation nicht (etwa der Goblin kein Sitzen), steht die Figur mit Idle neben dem Anker.
 - **Liegen ohne Animation:** Ein Anker mit `flat` legt eine Figur ohne Liege-Animation starr auf den Rücken, statt sie stehen zu lassen (der schlafende Goblin). `front` wählt zuerst die Kachel auf der Seite zur Kamera, damit das Requisit die Figur nicht verdeckt.
 - **Figuren (`figures`):** Modell-Varianten (Skelett: Minion, Warrior, Rogue, Mage; ohne Festlegung immer Minion; ein Event kann eine festlegen) und `stays` (bleibt nach dem Event stehen). Eine Event-Inszenierung kann `stay` auch für einzelne Figuren setzen. Eigene Skelett-Monster haben ihre eigene Figur, etwa der Skelettkrieger als Warrior.
 - **Ablauf:** Die Figuren stehen schon da, bevor das Event-Fenster aufgeht. Beim Kampfbeginn laufen alle Figuren des Gegners mit Walk auf freie Nachbarkacheln der Spielfigur, ohne durch Wände, Türen oder Requisiten zu gehen; die Spielfigur bleibt stehen und dreht sich zum nächsten laufenden Gegner. Im Kampf blickt die Spielfigur zum Gegner, der gerade dran ist; bei mehreren wechselt er reihum mit jedem Zug. Gegner blicken immer zur Spielfigur. Attack beim eigenen Zug, Hit bei einem Treffer, Death beim Sieg. Nach dem Kampf behält die Spielfigur ihre Blickrichtung, bis der Spieler sie bewegt.
+- **Prozession (`procession`):** Eine Event-Inszenierung mit `"procession": true` lässt ihre Figuren hintereinander auf einem Rundweg eine Kachel vor den Wänden (2|2, 8|2, 8|8, 2|8) durch den Raum ziehen, um Hindernisse herum, langsam und mit zwei Kacheln Abstand, bis das Event endet. Sie blockieren dabei keine Kachel und gehen auch durch die Spielfigur hindurch. Heute: „Die Prozession“ in der Säulenhalle der Katakomben (drei Geister).
 - **Drehungen:** weich über etwa 0,25 Sekunden, immer auf dem kürzeren Weg.
 - **Lesbarkeit:** Gegner mit rotem Akzent und im Kampf mit rotem Bodenring.
 - **Leistung:** höchstens 6 animierte Figuren pro Raum, weitere stehen still.
@@ -600,6 +602,7 @@ Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kan
 | bank | Bank | 2×1 | ja | nein | nein | Abstieg |
 | souvenirkiste | Souvenirkiste | 1 | ja | nein | nein | Abstieg |
 | kaeseberg | Käseberg mit Thron | 2×2, Wand | ja | nein | ja | Bossraum (Keller) |
+| knochenthron | Thron aus Knochen (KayKit `chair`, 1,6-fach, einfarbig in Knochenfarbe), Lehne zur Wand; der Skelett-König sitzt darauf (Anker `auf_knochenthron`) | 1, Wand | ja | nein | nein | Bossraum (Katakomben), daneben Kerzen und Knochen |
 | kistenstapel | Gestapelte Kisten | 2×2 | ja | nein | nein | Händler, Vorratskammer, Küche |
 | fassstapel | Kleine Fässer, gestapelt | 1 | ja | nein | nein | Händler |
 | flaschen | Flaschen auf dem Boden (Variante `b`: andere Flaschen) | 1 | nein | nein | nein | Händler, Rastplatz |
@@ -895,3 +898,5 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Große Zelle im Kerker: an den Ecken schmale Eckpfeiler (`zellecke`) statt Gitterecken
 - [x] Katakomben Paket 3: Event-Tabellen der Katakomben für Gruft (feindlich), Säulenhalle (gemischt) und Bossraum (Skelett-König); Totenwache steht am Sarkophag auf
 - [x] Flags gelten weiter nur pro Ebene; die Kerze der Ewigen Flamme wirkt beim Skelett-König nur, wenn der Schrein auf der Bossebene steht
+- [x] Prozession: die Geister ziehen als Reihe durch die Säulenhalle
+- [x] Bossraum der Katakomben mit Knochenthron (Pflichtstück an der Wand, Kerzen und Knochen), der Skelett-König sitzt darauf und blickt in den Raum

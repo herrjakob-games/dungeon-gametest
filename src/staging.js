@@ -86,13 +86,16 @@ export function checkStaging(staging, data, props, err) {
     if (a.animation !== undefined && !POSES.includes(a.animation)) err(w, "Anker " + id + ": unbekannte Animation " + a.animation);
     if (a.offset !== undefined && !(Array.isArray(a.offset) && a.offset.length === 3 && a.offset.every(Number.isFinite))) err(w, "Anker " + id + ": offset muss [x, y, z] sein");
     if (a.flat !== undefined && typeof a.flat !== "boolean") err(w, "Anker " + id + ": flat muss true oder false sein");
-    if (a.face !== undefined && !["player", "target", "prop", "random"].includes(a.face)) err(w, "Anker " + id + ": unbekannte Blickrichtung " + a.face);
+    if (a.face !== undefined && !["player", "target", "prop", "random", "forward"].includes(a.face)) err(w, "Anker " + id + ": unbekannte Blickrichtung " + a.face);
   }
   for (const [id, f] of Object.entries(staging.figures || {})) {
     if (!isFigure(id, data.monsters) && !props.includes(id)) err(w, "unbekannte Figur " + id);
     if (f.variants !== undefined && !Array.isArray(f.variants)) err(w, id + ": variants muss eine Liste sein");
     if (f.default !== undefined && !(f.variants || []).includes(f.default)) err(w, id + ": Standard-Variante " + f.default + " fehlt in variants");
     if (f.steps !== undefined && typeof f.steps !== "string") err(w, id + ": steps muss ein Name sein (Sound schritt_<steps>)");
+  }
+  for (const [id, e] of Object.entries(staging.events || {})) {
+    if (e.procession !== undefined && typeof e.procession !== "boolean") err(w, id + ": procession muss true oder false sein");
   }
   for (const [id, e] of Object.entries(staging.events || {})) {
     if (!data.events[id]) { err(w, "unbekanntes Event " + id); continue; }

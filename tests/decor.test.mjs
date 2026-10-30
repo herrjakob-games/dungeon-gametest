@@ -233,7 +233,8 @@ test("Raumtypen ohne Einrichtung behalten das bisherige Muster", () => {
   assert.equal(decorFor(kerker, "keller"), null);
   const boss = ROOM_TYPES.find(r => r.id === "boss");
   assert.ok(decorFor(boss, "keller"), "Bossraum im Keller mit Käseberg");
-  assert.equal(decorFor(boss, "katakomben"), null);
+  assert.ok(decorFor(boss, "katakomben").layouts.every(l => l.props.some(p => p.prop === "knochenthron" && p.required)), "Katakomben mit Knochenthron");
+  assert.equal(decorFor(boss, "zwergenminen"), null);
   assert.ok(decorFor(boss, "keller").layouts.every(l => l.props.some(p => p.prop === "kaeseberg")));
   assert.equal(N, 9);
 });

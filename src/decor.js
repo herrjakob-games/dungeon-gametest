@@ -44,6 +44,7 @@ export const PROPS = {
   bank: { w: 2, d: 1, blocks: true },
   souvenirkiste: { w: 1, d: 1, blocks: true },
   kaeseberg: { w: 2, d: 2, blocks: true, wall: true, light: true },
+  knochenthron: { w: 1, d: 1, blocks: true, wall: true },
   kistenstapel: { w: 2, d: 2, blocks: true },
   fassstapel: { w: 1, d: 1, blocks: true },
   flaschen: { w: 1, d: 1, blocks: false },

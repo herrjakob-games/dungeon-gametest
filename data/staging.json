@@ -171,6 +171,20 @@
       "flat": true,
       "_": "Liegt flach neben dem Tisch, Füße zum Tisch; ohne Liege-Animation (Goblin) liegt die Figur starr auf dem Rücken",
       "front": true
+    },
+    "auf_knochenthron": {
+      "props": [
+        "knochenthron"
+      ],
+      "offset": [
+        0,
+        0,
+        0
+      ],
+      "face": "forward",
+      "animation": "sit",
+      "onProp": true,
+      "_": "Der Skelett-König sitzt auf seinem Thron und blickt in den Raum"
     }
   },
   "figures": {
@@ -339,6 +353,31 @@
         {
           "figure": "skelett_krieger",
           "anchor": "am_sarkophag"
+        }
+      ]
+    },
+    "halle_prozession": {
+      "figures": [
+        {
+          "figure": "geist",
+          "count": 3
+        }
+      ],
+      "procession": true
+    },
+    "boss_skelettkoenig": {
+      "figures": [
+        {
+          "figure": "skelettkoenig",
+          "anchor": "auf_knochenthron"
+        }
+      ]
+    },
+    "boss_skelettkoenig_zurueck": {
+      "figures": [
+        {
+          "figure": "skelettkoenig",
+          "anchor": "auf_knochenthron"
         }
       ]
     }

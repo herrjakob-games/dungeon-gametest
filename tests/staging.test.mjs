@@ -121,3 +121,18 @@ test("Sitz-Anker: mit Sitz-Animation auf dem Hocker, ohne daneben stehend", () =
   const free = planFigures([{ figure: "skeleton", anchor: "am_herd" }], Object.assign({ canPose: () => true }, ctx))[0];
   assert.ok(free && !blocked.has(key(...free.tiles[0])));
 });
+
+test("Prozession: Rundweg vor den Wänden, um Säulen herum, ohne gesperrte Kachel", async () => {
+  const { processionRoute } = await import("../src/figurePlan.js");
+  const free = processionRoute(new Set(), new Set());
+  assert.ok(free && free.length >= 20, "Rundweg im leeren Raum");
+  const pillars = new Set(["1,1", "3,1", "7,7", "4,7"]);
+  const route = processionRoute(pillars, new Set());
+  assert.ok(route, "Rundweg um Säulen herum");
+  route.forEach(t => assert.ok(!pillars.has(t.join()), "Rundweg über eine Säule"));
+  for (let i = 0; i < route.length; i++) {
+    const [a, b] = [route[i], route[(i + 1) % route.length]];
+    assert.ok(Math.max(Math.abs(a[0] - b[0]), Math.abs(a[1] - b[1])) === 1, "Schritte von Kachel zu Kachel");
+  }
+  assert.equal(STAGING.events.halle_prozession.procession, true);
+});
