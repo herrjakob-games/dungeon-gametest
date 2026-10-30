@@ -1,11 +1,14 @@
 // A*-Wegfindung auf dem Kachelraster: 8 Richtungen, Ecken werden nicht geschnitten.
+// Gesperrte Kanten (Zellwände zwischen zwei Kacheln, decor.js) dürfen nicht gekreuzt werden.
 import { key } from "./config.js";
+import { stepOpen } from "./decor.js";
 
 /**
  * @param {(x:number,z:number)=>boolean} walkable
+ * @param {Set<string>} [edges] gesperrte Kanten (edgeKey aus decor.js)
  * @returns {Array<[number,number]>|null} Weg inklusive Start und Ziel, oder null
  */
-export function findPath(sx, sz, tx, tz, walkable) {
+export function findPath(sx, sz, tx, tz, walkable, edges) {
   if (!walkable(tx, tz)) return null;
   const open = [{ x: sx, z: sz, g: 0, f: 0 }];
   const came = {}, gScore = { [key(sx, sz)]: 0 };
@@ -31,6 +34,7 @@ export function findPath(sx, sz, tx, tz, walkable) {
       const nx = cur.x + dx, nz = cur.z + dz;
       if (!walkable(nx, nz)) continue;
       if (dx && dz && (!walkable(cur.x + dx, cur.z) || !walkable(cur.x, cur.z + dz))) continue;
+      if (edges && edges.size && !stepOpen(edges, cur.x, cur.z, nx, nz)) continue;
       const nk = key(nx, nz);
       const g = cur.g + (dx && dz ? 1.414 : 1);
       if (gScore[nk] === undefined || g < gScore[nk]) {

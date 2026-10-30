@@ -12,11 +12,12 @@ import { makeModel, hasModel, setModelTheme, findPart, makeFigureModel } from ".
 import { state } from "./state.js";
 import { buildFigure } from "./figures.js";
 import * as P from "./props.js";
-import { PROPS, planDecor, decorFor, centerFeature, STAIRS_TILES, STAIRS_SIZE, STAIRS_CENTER, torchSlots, pillarTorches, frontTorchLights, mimicChests, floorTilesFor, pickFloorTile } from "./decor.js";
+import { PROPS, planDecor, decorFor, centerFeature, STAIRS_TILES, STAIRS_SIZE, STAIRS_CENTER, torchSlots, pillarTorches, frontTorchLights, mimicChests, floorTilesFor, pickFloorTile, crackedWalls } from "./decor.js";
 import { syncRoom } from "./roomFigures.js";
 import { buildStairs, hasHole } from "./stairs.js";
 import { setMood } from "./sound.js";
 import { roomSound } from "./soundLogic.js";
+import { addOccluder, resetOccluders } from "./seeThrough.js";
 const THREE = window.THREE;
 
 let roomGroup = null;
@@ -37,6 +38,8 @@ export function buildRoom(id) {
   add = (o) => { roomGroup.add(o); return o; };
 
   state.blocked = new Set();
+  state.edges = new Set();
+  resetOccluders(state.theme && state.theme.seeThroughOpacity); // Durchblick durch Innenwände und Säulen
   state.interactables = [];
   state.torches = [];
   state.lidPivot = null;
@@ -62,7 +65,7 @@ export function buildRoom(id) {
   setModelTheme(state.theme ? state.theme.id : null);
 
   buildFloor(type, hasHole(feature), floorTilesFor(spec, state.theme));
-  buildWalls(room);
+  buildWalls(room, crackedWalls(room.doors, spec, room.seed, feature, state.theme && state.theme.wandRiss));
   DIRKEYS.forEach(d => { if (room.doors & DIR[d].bit) makeDoor(d); });
   placeTorches(room, torch, spec, feature);
   if (feature) makeStairs(feature);
@@ -142,11 +145,14 @@ function buildFloor(type, hole, tiles) {
 }
 
 // Hinten (Norden, Westen) hohe Wände, vorne (Süden, Osten) nur Sockel. Türen hinten bekommen einen Türrahmen
-// über drei Kacheln (Tür mittig), vorne bleibt die Türkachel offen.
-function buildWalls(room) {
+// über drei Kacheln (Tür mittig), vorne bleibt die Türkachel offen. cracked: Risswände (decor.js crackedWalls), je zwei Kacheln.
+function buildWalls(room, cracked) {
   const has = (d) => (room.doors & DIR[d].bit) !== 0;
   const frame = hasModel("tuerrahmen");
-  const skipBack = (d, t) => has(d) && (frame ? Math.abs(t - MID) <= 1 : t === MID);
+  const riss = hasModel("wand_riss") ? cracked : [];
+  const inCrack = (d, t) => riss.some(c => c.wall === d && (t === c.t || t === c.t + 1));
+  const skipBack = (d, t) => (has(d) && (frame ? Math.abs(t - MID) <= 1 : t === MID)) || inCrack(d, t);
+  riss.forEach(c => (c.wall === "N" ? placeAt(makeModel("wand_riss"), tw(c.t + 0.5), -E, 0) : placeAt(makeModel("wand_riss"), -E, tw(c.t + 0.5), Math.PI / 2)));
   if (hasModel("wand") && hasModel("sockel")) {
     for (let t = 0; t < N; t++) {
       if (!skipBack("N", t)) placeAt(makeModel("wand"), tw(t), -E, 0);
@@ -296,12 +302,15 @@ function makeTorch(x, z, rot, color, flameColor) {
 // und nicht im Freiraum um Requisiten mit "clear" (etwa zwei Kacheln um das Lagerfeuer)
 function scatterRubble(skipCenter) {
   const clear = state.decorPlan ? state.decorPlan.placements.filter(p => p.clear) : [];
+  // Kerker mit Zellen: außerhalb der Zellen keine Deko
+  const cells = state.decorPlan && state.decorPlan.cells ? state.decorPlan.cells.cells : null;
+  const outsideCells = (x, z) => cells && !cells.some(c => c.tiles.some(t => t[0] === x && t[1] === z));
   const nearClear = (x, z) => clear.some(p => p.tiles.some(([u, v]) => Math.max(Math.abs(x - u), Math.abs(z - v)) <= p.clear));
   for (let k = 0; k < 9; k++) {
     const r = new THREE.Mesh(new THREE.DodecahedronGeometry(0.06 + rnd() * 0.08), stone());
     const x = Math.floor(rnd() * N), z = Math.floor(rnd() * N);
     if (skipCenter && x < STAIRS_SIZE && z < STAIRS_SIZE) continue;
-    if (nearClear(x, z)) continue;
+    if (nearClear(x, z) || outsideCells(x, z)) continue;
     r.position.set(tw(x) + (rnd() - 0.5) * 0.7, 0.04, tw(z) + (rnd() - 0.5) * 0.7);
     r.castShadow = true;
     add(r);
@@ -357,6 +366,16 @@ function propMesh(id, pl) {
 function placeDecor(spec, room, feature, id, torch) {
   const plan = planDecor(spec, { seed: room.seed, doors: room.doors, feature });
   state.decorPlan = plan; // für Figuren mit near:<prop>
+  state.edges = plan.edges; // Zellwände sperren Kanten für die Wegfindung
+  // Zellwände (Kerker der Katakomben): Teile auf Kachelkanten, Lage in Kachelkoordinaten
+  // Durchblick: Torbögen, Pfeiler und Ecken werden um verdeckte Figuren durchsichtig, Gitter nicht
+  if (plan.cells) plan.cells.pieces.forEach(pc => {
+    const m = makeModel(pc.prop);
+    const o = m ? placeAt(m, tw(pc.x), tw(pc.z), pc.rot)
+      : add(box(pc.prop === "zellecke" ? 0.3 : 1, WALL_H, 0.3, stone(), tw(pc.x), WALL_H / 2, tw(pc.z)));
+    if (!m) o.rotation.y = pc.rot;
+    if (pc.prop !== "zellgitter") addOccluder(o);
+  });
   plan.torchSpots.forEach(s => makePillarTorch(s, torch));
   // Truhen: eine echt, die übrigen Mimiken, wenn die Einrichtung es will (Schatzkammer)
   const mimics = mimicChests(spec, plan.placements.filter(p => p.prop === "truhe").length, room.seed);
@@ -374,7 +393,8 @@ function placeDecor(spec, room, feature, id, torch) {
       continue;
     }
     if (PROPS[pl.prop].blocks) pl.tiles.forEach(t => block(t[0], t[1]));
-    at(propMesh(pl.prop, pl), pl.cx, pl.cz, pl.rot);
+    const o = at(propMesh(pl.prop, pl), pl.cx, pl.cz, pl.rot);
+    if (SEE_THROUGH.includes(pl.prop)) addOccluder(o); // Säulen: Durchblick
 
   }
 }
@@ -439,8 +459,11 @@ function furnish(t, id) {
 function pillar(x, z) {
   if (!free(x, z)) return;
   block(x, z);
-  at(propMesh("saeule"), x, z);
+  addOccluder(at(propMesh("saeule"), x, z));
 }
+
+// Requisiten, die um verdeckte Figuren durchsichtig werden (Durchblick): Säulen
+const SEE_THROUGH = ["saeule", "saeule_verziert"];
 
 function barrel(x, z) {
   if (!free(x, z)) return;

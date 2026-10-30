@@ -4,8 +4,10 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import {
   mimicChests,
-  PROPS, planDecor, decorFor, centerFeature, doorTiles, checkDecor, STAIRS_TILES, STAIRS_FOOT, torchSlots
+  PROPS, planDecor, decorFor, centerFeature, doorTiles, checkDecor, STAIRS_TILES, STAIRS_FOOT, torchSlots, layoutsOf, planCells, crackedWalls
 } from "../src/decor.js";
+import { findPath } from "../src/pathfinding.js";
+import { mulberry32 } from "../src/rng.js";
 import { N, MID, DIR, DIRKEYS, key, inBounds, tileName } from "../src/config.js";
 
 const ROOM_TYPES = JSON.parse(readFileSync(new URL("../data/room-types.json", import.meta.url), "utf8"));
@@ -18,8 +20,14 @@ for (const rt of ROOM_TYPES) {
   Object.entries(rt.themeDecor || {}).forEach(([th, d]) => SPECS.push([rt.id + "/" + th, rt, d]));
 }
 
-// Eigene Prüfung der Erreichbarkeit (unabhängig von decor.js): Breitensuche über freie Kacheln
-function reach(blocked, start) {
+// Eigene Prüfung der Erreichbarkeit (unabhängig von decor.js): Breitensuche über freie Kacheln;
+// edges: gesperrte Kanten "x,z|x,z" (kleinere Kachel zuerst), die der Weg nicht kreuzen darf
+const wall = (edges, a, b) => {
+  if (!edges) return false;
+  const [p, q] = a[0] < b[0] || (a[0] === b[0] && a[1] < b[1]) ? [a, b] : [b, a];
+  return edges.has(key(...p) + "|" + key(...q));
+};
+function reach(blocked, start, edges) {
   const free = (x, z) => inBounds(x, z) && !blocked.has(key(x, z));
   const seen = new Set([key(...start)]);
   const q = [start];
@@ -27,7 +35,7 @@ function reach(blocked, start) {
     const [x, z] = q.shift();
     for (const [dx, dz] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
       const nx = x + dx, nz = z + dz;
-      if (free(nx, nz) && !seen.has(key(nx, nz))) { seen.add(key(nx, nz)); q.push([nx, nz]); }
+      if (free(nx, nz) && !seen.has(key(nx, nz)) && !wall(edges, [x, z], [nx, nz])) { seen.add(key(nx, nz)); q.push([nx, nz]); }
     }
   }
   return seen;
@@ -71,8 +79,10 @@ function checkPlan(plan, doors, feature, where) {
     assert.ok(start, where + ": anklickbares Objekt ist eingemauert");
     targets.push(start);
   }
-  const seen = reach(blocked, targets[0]);
+  const seen = reach(blocked, targets[0], plan.edges);
   targets.forEach(t => assert.ok(seen.has(key(...t)), where + ": Tür oder Startkachel " + t + " nicht erreichbar"));
+  // Zellen: jede Zelle ist durch ihren Durchgang betretbar
+  if (plan.cells) plan.cells.cells.forEach(c => assert.ok(c.inside && seen.has(key(...c.inside)), where + ": Zelle bei " + c.tiles[0] + " nicht betretbar"));
   clickables.forEach(c => assert.ok(touches(seen, c), where + ": anklickbares Objekt bei " + c[0] + " nicht erreichbar"));
 }
 
@@ -102,8 +112,8 @@ test("Einrichtung: alle Varianten mit allen 16 Türkombinationen; Liste der Korr
     return stats[k] || (stats[k] = { wanted: 0, corrected: 0, dropped: 0, how: {} });
   };
   for (const [name, rt, spec] of SPECS) {
-    for (let li = 0; li < spec.layouts.length; li++) {
-      const l = spec.layouts[li];
+    for (let li = 0; li < layoutsOf(spec).length; li++) {
+      const l = layoutsOf(spec)[li];
       for (let doors = 0; doors < 16; doors++) {
         for (const bossDefeated of rt.id === "boss" ? [false, true] : [false]) {
           const feature = centerFeature(rt.id, bossDefeated);
@@ -231,7 +241,7 @@ test("Raumtypen ohne Einrichtung behalten das bisherige Muster", () => {
 test("Wandrequisiten (Regale, Fahnen, Herd …) verdecken oder überlagern keine Fackel", () => {
   for (const rt of ROOM_TYPES) {
     const specs = [rt.decor].concat(Object.values(rt.themeDecor || {})).filter(Boolean);
-    for (const spec of specs) spec.layouts.forEach((layout, li) => {
+    for (const spec of specs) layoutsOf(spec).forEach((layout, li) => {
       for (let doors = 0; doors < 16; doors++) for (let s = 1; s <= 10; s++) {
         const plan = planDecor(spec, { seed: s * 7919, doors, feature: centerFeature(rt.id, false), layoutIndex: li });
         const torches = new Set(torchSlots(doors, spec, s * 7919).map(f => f.wall + (f.wall === "N" ? key(f.t, 0) : key(0, f.t))));
@@ -350,4 +360,72 @@ test("Rastplatz: zwei Kacheln frei um das Feuer, 2 bis 3 Schlaflager nie neben T
       assert.equal(count("sack"), 0);
     }
   });
+});
+
+test("Kerker mit Zellen: Varianten A und B, Kantensperre, Einrichtung nur in den Zellen", () => {
+  const kerker = ROOM_TYPES.find(r => r.id === "kerker");
+  const spec = decorFor(kerker, "katakomben");
+  assert.ok(spec && spec.cells, "Kerker der Katakomben hat Zellen");
+  const seen = new Set();
+  for (let s = 1; s <= 60; s++) for (const doors of [0, 5, 10, 15]) {
+    const plan = planDecor(spec, { seed: s * 7919, doors, feature: null });
+    const v = plan.cells.variant;
+    seen.add(v);
+    const inCell = (t) => plan.cells.cells.some(c => c.tiles.some(u => u[0] === t[0] && u[1] === t[1]));
+    // Einrichtung nur in den Zellen, je Zelle Strohlager oder Knochen, nie beides
+    plan.placements.forEach(p => p.tiles.forEach(t => assert.ok(inCell(t), "Seed " + s + ": " + p.prop + " außerhalb der Zellen")));
+    plan.cells.cells.forEach(c => {
+      const own = plan.placements.filter(p => p.tiles.every(t => c.tiles.some(u => u[0] === t[0] && u[1] === t[1])));
+      const kinds = new Set(own.map(p => p.prop));
+      assert.ok(kinds.size <= 1, "Seed " + s + ": Strohlager und Knochen in einer Zelle");
+      own.filter(p => p.prop === "strohlager").forEach(p => assert.ok(p.tiles.every(t => Math.max(Math.abs(t[0] - c.inside[0]), Math.abs(t[1] - c.inside[1])) >= 2), "Seed " + s + ": Strohlager zu nah am Durchgang"));
+    });
+    // Kantensperre: Gesperrte Kanten
+    assert.equal(plan.edges.size, v === "A" ? 20 : 19, "Seed " + s + " Variante " + v);
+    // Wegfindung kreuzt keine Zellwand: von außen in jede Zelle nur durch den Durchgang
+    const free = (x, z) => inBounds(x, z) && !plan.blocked.has(key(x, z));
+    plan.cells.cells.forEach(c => {
+      const target = c.tiles.find(t => free(...t) && (t[0] !== c.inside[0] || t[1] !== c.inside[1])) || c.inside;
+      const path = findPath(MID, MID, target[0], target[1], free, plan.edges) || findPath(1, MID, target[0], target[1], free, plan.edges);
+      assert.ok(path, "Seed " + s + ": kein Weg in die Zelle");
+      for (let i = 1; i < path.length; i++) {
+        const [a, b] = [path[i - 1], path[i]];
+        if (a[0] !== b[0] && a[1] !== b[1]) continue; // schräge Schritte prüft stepOpen über die vier Kanten
+        assert.ok(!wall(plan.edges, a, b), "Seed " + s + ": Weg kreuzt eine Zellwand");
+      }
+      const entries = path.filter((t, i) => i && inCell(t) && !inCell(path[i - 1]));
+      entries.forEach(t => assert.ok(t[0] === c.inside[0] && t[1] === c.inside[1] || !c.tiles.some(u => u[0] === t[0] && u[1] === t[1]), "Seed " + s + ": Zelle nicht durch den Durchgang betreten"));
+    });
+  }
+  assert.deepEqual([...seen].sort(), ["A", "B"], "beide Varianten kommen vor");
+  // Variante A: Torbögen laut GDD (Nordwest Süd, Nordost Süd, Südwest Ost, Südost West), Durchgang mittig
+  let A = null, B = null;
+  for (let s = 1; (!A || !B) && s < 200; s++) { const c = planCells(mulberry32(s)); if (c.variant === "A") A = A || c; else B = B || c; }
+  assert.deepEqual(A.cells.map(c => tileName(...c.inside)), ["2|3", "8|3", "3|8", "7|8"]);
+  assert.ok(["5|3", "7|5", "5|7", "3|5"].includes(tileName(...B.cells[0].inside)));
+  assert.equal(B.cells[0].tiles.length, 25);
+  assert.equal(A.pieces.filter(p => p.prop === "zelltor").length, 4);
+  assert.equal(A.pieces.filter(p => p.prop === "zellgitter").length, 4);
+  assert.equal(B.pieces.filter(p => p.prop === "zellgitter").length, 8);
+  assert.equal(B.pieces.filter(p => p.prop === "wand").length, 3);
+});
+
+test("Risswände: nur auf 1–2 und 8–9 von Nord- und Westwand, nie auf Fackeln, nie hinter der Treppe", () => {
+  const THEMES = JSON.parse(readFileSync(new URL("../data/themes.json", import.meta.url), "utf8"));
+  assert.equal(THEMES.find(t => t.id === "katakomben").wandRiss, 0.3);
+  THEMES.filter(t => t.id !== "katakomben").forEach(t => assert.ok(!t.wandRiss, t.id + " ohne Risswand"));
+  let total = 0, rooms = 0;
+  for (const feature of [null, "up", "down", "arena"]) for (let doors = 0; doors < 16; doors++) for (let s = 1; s <= 20; s++) {
+    const list = crackedWalls(doors, null, s * 7919, feature, 0.3);
+    const torches = new Set(torchSlots(doors, null, s * 7919, feature).map(f => f.wall + f.t));
+    list.forEach(c => {
+      assert.ok([0, N - 2].includes(c.t), "Abschnitt " + (c.t + 1) + "–" + (c.t + 2));
+      if (feature) assert.equal(c.t, N - 2, "mit Treppe nur 8–9");
+      assert.ok(!torches.has(c.wall + c.t) && !torches.has(c.wall + (c.t + 1)), "Risswand auf einer Fackelkachel");
+    });
+    if (!feature) { total += list.length * 2; rooms++; }
+  }
+  const share = total / (rooms * 2 * N);
+  assert.ok(Math.abs(share - 0.3) < 0.1, "Anteil " + share.toFixed(2));
+  assert.deepEqual(crackedWalls(15, null, 5, null, 0), []);
 });

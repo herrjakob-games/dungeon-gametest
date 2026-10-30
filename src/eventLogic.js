@@ -320,6 +320,8 @@ export function validateData(data) {
     [th.startNeighbor].concat(th.roomTypes || []).forEach(t => { if (!data.roomTypes[t]) err(w, "unbekannter Raumtyp " + t); });
     [th.boss].concat(th.endlessBosses || []).concat(th.monsters || []).forEach(m => { if (!data.monsters[m]) err(w, "unbekanntes Monster " + m); });
     if (th.floorTiles !== undefined) checkFloorTiles(th.floorTiles, w, err);
+    if (th.seeThroughOpacity !== undefined && !(typeof th.seeThroughOpacity === "number" && th.seeThroughOpacity >= 0 && th.seeThroughOpacity <= 1)) err(w, "seeThroughOpacity muss zwischen 0 und 1 liegen");
+    if (th.wandRiss !== undefined && !(typeof th.wandRiss === "number" && th.wandRiss >= 0 && th.wandRiss <= 1)) err(w, "wandRiss muss ein Anteil zwischen 0 und 1 sein");
     if (th.encounters !== undefined) {
       const enc = th.encounters;
       if (!(enc.chance > 0 && enc.chance <= 1)) err(w, "encounters: chance muss zwischen 0 und 1 liegen");

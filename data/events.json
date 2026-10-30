@@ -3479,5 +3479,874 @@
         }
       }
     ]
+  },
+  {
+    "id": "kerker_mitgefangener",
+    "type": "choice",
+    "title": "Der Mitgefangene",
+    "text": "Ein Skelett hängt in Ketten an der Wand und räuspert sich. Es bittet höflich um Befreiung, es sitze hier nur wegen eines Missverständnisses. Seit 200 Jahren.",
+    "figures": [
+      {
+        "figure": "skelett_krieger",
+        "place": "wall-back"
+      }
+    ],
+    "options": [
+      {
+        "label": "Das Schloss knacken",
+        "check": {
+          "category": "fingerfertigkeit",
+          "dc": 12
+        },
+        "success": {
+          "text": "Die Kette fällt. Das Skelett bedankt sich und drückt dir sein Erspartes in die Hand.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Der Dietrich bricht ab. Das Skelett findet, das hättest du auch gleich sagen können.",
+          "effects": [
+            {
+              "combat": "skelett_krieger"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      },
+      {
+        "label": "Die Kette aus der Wand reißen",
+        "check": {
+          "category": "kraftakt",
+          "dc": 12
+        },
+        "success": {
+          "text": "Die Kette reißt, und der Arm gleich mit. Das Skelett nimmt es sportlich und zeigt dir sein Versteck.",
+          "effects": [
+            {
+              "gold": "2W6"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Die Wand hält, das Skelett nicht. Es reißt sich selbst los und ist schlecht gelaunt.",
+          "effects": [
+            {
+              "combat": "skelett_krieger"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      },
+      {
+        "label": "Weitergehen",
+        "text": "Das Skelett ruft dir Beleidigungen hinterher. Einige davon sind erstaunlich treffend.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "kerker_fallgitter",
+    "type": "trap",
+    "title": "Das Fallgitter",
+    "text": "Eine Zelle steht offen, in der Ecke glänzt etwas. Über dem Eingang hängt ein rostiges Gitter an einem sehr dünnen Seil.",
+    "options": [
+      {
+        "label": "Schnell rein und wieder raus",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Das Gitter kracht hinter dir herunter. Du stehst schon wieder draußen, mit der Beute.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Das Gitter erwischt dich an der Schulter. Die Beute bleibt drinnen und glänzt jetzt ein bisschen hämisch.",
+          "effects": [
+            {
+              "damage": "W4"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Das Seil zuerst sichern",
+        "check": {
+          "category": "fingerfertigkeit",
+          "dc": 12
+        },
+        "success": {
+          "text": "Ein Knoten, ein Keil, fertig. Das Gitter darf jetzt nur noch zuschauen.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Das Seil reißt in deiner Hand. Das Gitter landet auf deinen Zehen.",
+          "effects": [
+            {
+              "damage": "W4"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Weitergehen",
+        "text": "Was glänzt, ist meistens eine Falle. Manchmal auch Gold. Heute erfährst du es nicht.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "kerker_schluesselgeist",
+    "type": "combat",
+    "title": "Der Schlüsselgeist",
+    "text": "Ein Wärtergeist dreht seine Runden und klimpert mit einem Schlüsselbund. Seine Schicht hätte vor 300 Jahren enden sollen.",
+    "figures": [
+      {
+        "figure": "geist",
+        "place": "free"
+      }
+    ],
+    "options": [
+      {
+        "label": "Den Schlüsselbund stibitzen",
+        "check": {
+          "category": "fingerfertigkeit",
+          "dc": 12
+        },
+        "success": {
+          "text": "Er merkt nichts. Am Bund hängt ein Schlüssel zu einer Kiste mit Inhalt.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Es klimpert. Er dreht sich um und ist sehr wach für einen Toten.",
+          "effects": [
+            {
+              "combat": "geist"
+            },
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      },
+      {
+        "label": "Ihn zum Feierabend überreden",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Er stempelt aus, wirft dir den Bund zu und schwebt in den Ruhestand.",
+          "effects": [
+            {
+              "gold": "2W6"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Er hält Überstunden für eine Frage der Ehre. Und dich für einen Ausbrecher.",
+          "effects": [
+            {
+              "combat": "geist"
+            },
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      },
+      {
+        "label": "Angreifen",
+        "effects": [
+          {
+            "combat": "geist"
+          },
+          {
+            "loot": "tier1"
+          },
+          {
+            "gainXp": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "kerker_strichliste",
+    "type": "trap",
+    "title": "Die Strichliste",
+    "text": "Jemand hat an der Wand Tage gezählt, viele Tage. Darunter steht eine Botschaft, und ein Stein daneben sitzt verdächtig locker.",
+    "options": [
+      {
+        "label": "Die Botschaft entziffern",
+        "check": {
+          "category": "wissen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Sie beschreibt ein Versteck unter der Pritsche. Der Häftling ist nie dazu gekommen, es zu leeren.",
+          "effects": [
+            {
+              "gold": "2W6"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Du liest sie dreimal. Beim vierten Mal lehnst du dich nachdenklich an den lockeren Stein.",
+          "effects": [
+            {
+              "damage": "W4"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Den lockeren Stein herausziehen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Aus der Wand schießt ein Pfeil, knapp an deinem Ohr vorbei. Dahinter liegt etwas Brauchbares.",
+          "effects": [
+            {
+              "item": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Der Pfeil ist schneller als du. Die Botschaft lautete übrigens: Nicht den Stein ziehen.",
+          "effects": [
+            {
+              "damage": "W4"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Weitergehen",
+        "text": "Du machst selbst einen Strich an die Wand. Irgendwer muss die Tradition ja fortführen.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "kerker_zellentuer",
+    "type": "combat",
+    "title": "Die Zellentür",
+    "text": "Eine Zellentür ist verschlossen. Von innen klopft es, gleichmäßig und geduldig.",
+    "sound": "klopfen_stein",
+    "options": [
+      {
+        "label": "Die Tür aufbrechen",
+        "check": {
+          "category": "kraftakt",
+          "dc": 12
+        },
+        "success": {
+          "text": "Die Tür fliegt auf. Drinnen klopft nur ein loser Stein im Luftzug, und daneben liegt das Gepäck des Vormieters.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Die Tür hält. Was drinnen klopft, verliert die Geduld und öffnet von innen.",
+          "effects": [
+            {
+              "combat": "skelett_krieger"
+            },
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      },
+      {
+        "label": "Dem Klopfen lauschen",
+        "check": {
+          "category": "wahrnehmung",
+          "dc": 12
+        },
+        "success": {
+          "text": "Es ist ein Code. Er führt zu einem Versteck unter der Schwelle, und die Tür bleibt besser zu.",
+          "effects": [
+            {
+              "gold": "2W6"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Du klopfst freundlich zurück. Von innen wird es still, dann splittert die Tür.",
+          "effects": [
+            {
+              "combat": "skelett_krieger"
+            },
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      },
+      {
+        "label": "Weitergehen",
+        "text": "Hinter dir klopft es weiter. Es klingt ein bisschen beleidigt.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "schrein_opferschale",
+    "type": "choice",
+    "title": "Die Opferschale",
+    "text": "Vor einem Altar steht eine Opferschale mit ein paar Münzen. Ein Schild verspricht Segen gegen Spende.",
+    "options": [
+      {
+        "label": "Ein paar Münzen opfern",
+        "text": "Es klimpert. Irgendwo nickt jemand zufrieden, und dir geht es besser.",
+        "effects": [
+          {
+            "loseGold": 3
+          },
+          {
+            "heal": "W6"
+          }
+        ]
+      },
+      {
+        "label": "Eine Münze herausnehmen",
+        "check": {
+          "category": "fingerfertigkeit",
+          "dc": 12
+        },
+        "success": {
+          "text": "Die Götter waren gerade beschäftigt.",
+          "effects": [
+            {
+              "gold": "2W6"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Die Münze ist festgeklebt. Vor Scham opferst du eine eigene.",
+          "effects": [
+            {
+              "loseGold": 1
+            }
+          ]
+        }
+      },
+      {
+        "label": "Weitergehen",
+        "text": "Segen gibt es sicher auch im Angebot. Irgendwann.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "schrein_beichtgeist",
+    "type": "npc",
+    "title": "Der Beichtgeist",
+    "text": "Ein Geist sitzt in einem morschen Beichtstuhl und winkt dich heran. Er hat seit Jahrhunderten keine gute Sünde mehr gehört.",
+    "figures": [
+      {
+        "figure": "geist",
+        "place": "wall-back"
+      }
+    ],
+    "options": [
+      {
+        "label": "Ehrlich beichten",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Er ist begeistert und erteilt dir großzügig Absolution. Du fühlst dich leichter.",
+          "effects": [
+            {
+              "heal": "W6"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Er gähnt. Zur Buße hörst du sein Klagelied, alle 40 Strophen.",
+          "effects": []
+        }
+      },
+      {
+        "label": "Eine Sünde erfinden",
+        "check": {
+          "category": "wissen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Die Geschichte mit dem Drachen und der Erbtante überwältigt ihn. Er schiebt dir die Kollekte zu.",
+          "effects": [
+            {
+              "gold": "2W6"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Er erkennt den Drachen aus einem Kinderbuch. Er ist nicht wütend, nur enttäuscht.",
+          "effects": []
+        }
+      },
+      {
+        "label": "Gestehen, einmal Bier verschüttet zu haben",
+        "condition": "volk:zwerg",
+        "text": "Der Geist muss sich setzen. So etwas hat er noch nie gehört.",
+        "effects": [
+          {
+            "gainXp": 3
+          }
+        ]
+      },
+      {
+        "label": "Weitergehen",
+        "text": "Er ruft dir nach, du dürftest auch gern Sünden von Bekannten erzählen.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "schrein_statue",
+    "type": "choice",
+    "title": "Die offene Hand",
+    "text": "Eine Statue streckt dir die leere Hand entgegen. Auf dem Sockel steht ein Rätsel, halb abgeschliffen.",
+    "options": [
+      {
+        "label": "Das Rätsel lösen",
+        "check": {
+          "category": "wissen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Die Hand schließt sich und öffnet sich wieder. Diesmal liegt etwas darin.",
+          "effects": [
+            {
+              "item": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Die Hand bleibt offen. Sie wirkt ein bisschen enttäuscht von dir.",
+          "effects": []
+        }
+      },
+      {
+        "label": "Eine Münze hineinlegen",
+        "text": "Die Statue zwinkert. Glaubst du jedenfalls, und das ist auch was wert.",
+        "effects": [
+          {
+            "loseGold": 1
+          },
+          {
+            "gainXp": 2
+          }
+        ]
+      },
+      {
+        "label": "Die Hand schütteln",
+        "check": {
+          "category": "wahrnehmung",
+          "dc": 12
+        },
+        "success": {
+          "text": "Beim Händedruck klickt es im Sockel. Eine Schublade springt auf.",
+          "effects": [
+            {
+              "gold": "2W6"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Ein fester Händedruck. Es bleibt der einzige an diesem Tag.",
+          "effects": []
+        }
+      },
+      {
+        "label": "Weitergehen",
+        "text": "Wer die Hand aufhält, muss warten können.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "schrein_flamme",
+    "type": "choice",
+    "title": "Die Ewige Flamme",
+    "text": "Auf dem Altar brennt eine Flamme ohne Docht und ohne Öl. Sie brennt seit Jahrhunderten und sieht nicht müde aus.",
+    "options": [
+      {
+        "label": "Eine Kerze daran entzünden",
+        "text": "Die Kerze brennt ruhig und ein wenig zu hell. Du hast das Gefühl, dass jemand dafür dankbar sein wird. Oder sehr wütend.",
+        "effects": [
+          {
+            "setFlag": "ewige_flamme"
+          },
+          {
+            "gainXp": 2
+          }
+        ]
+      },
+      {
+        "label": "Die Hände wärmen",
+        "text": "Wärme kriecht dir bis in die Zehen. Die Katakomben fühlen sich kurz wie zu Hause an.",
+        "effects": [
+          {
+            "heal": 2
+          }
+        ]
+      },
+      {
+        "label": "Auspusten",
+        "text": "Du pustest. Die Flamme denkt nicht einmal darüber nach.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "schrein_tempelwaechter",
+    "type": "combat",
+    "title": "Der Tempelwächter",
+    "text": "Ein Geist in Rüstung versperrt dir den Weg zum Altar. Er hält dich für einen Grabräuber, und so ganz unrecht hat er nicht.",
+    "figures": [
+      {
+        "figure": "geist",
+        "place": "center"
+      }
+    ],
+    "options": [
+      {
+        "label": "Deine Unschuld beteuern",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Er glaubt dir und entschuldigt sich steif. Zum Abschied segnet er dich.",
+          "effects": [
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Deine Taschen klimpern im falschen Moment.",
+          "effects": [
+            {
+              "combat": "geist"
+            },
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      },
+      {
+        "label": "Rückwärts zur Tür",
+        "check": {
+          "category": "flucht",
+          "dc": 12
+        },
+        "success": {
+          "text": "Er nickt zufrieden und schwebt zurück auf seinen Posten.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Du stolperst über eine Kniebank. Er nimmt das als Geständnis.",
+          "effects": [
+            {
+              "damage": "W4"
+            },
+            {
+              "combat": "geist"
+            },
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      },
+      {
+        "label": "Angreifen",
+        "effects": [
+          {
+            "combat": "geist"
+          },
+          {
+            "loot": "tier1"
+          },
+          {
+            "gainXp": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "schrein_weihwasser",
+    "type": "trap",
+    "title": "Das Weihwasser",
+    "text": "Ein Steinbecken ist bis zum Rand gefüllt. Es ist geweiht, steht auf dem Schild. Womit, steht nicht dran.",
+    "options": [
+      {
+        "label": "Einen Schluck trinken",
+        "check": {
+          "category": "widerstand",
+          "dc": 12
+        },
+        "success": {
+          "text": "Es schmeckt nach Minze und Heiligkeit. Du fühlst dich erfrischt.",
+          "effects": [
+            {
+              "heal": "W6"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Geweiht mit Essig. Und mit etwas, das sich bewegt.",
+          "effects": [
+            {
+              "damage": "W4"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Die Rune am Becken deuten",
+        "check": {
+          "category": "wissen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Segen gegen Fußpilz, eindeutig. Du benetzt nur die Stiefel und fühlst dich klüger.",
+          "effects": [
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Du tippst zur Probe hinein. Deine Finger werden taub, dann blau, dann fast wieder normal.",
+          "effects": [
+            {
+              "damage": 1
+            }
+          ]
+        }
+      },
+      {
+        "label": "Weitergehen",
+        "text": "Manche Fragen müssen nicht beantwortet werden.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "schrein_heiliger_segen",
+    "type": "choice",
+    "title": "Der gestürzte Heilige",
+    "text": "Eine Heiligenstatue liegt quer im Gang, das Gesicht im Staub. Sie sieht aus, als würde sie das selbst am meisten stören.",
+    "options": [
+      {
+        "label": "Die Statue aufrichten",
+        "check": {
+          "category": "kraftakt",
+          "dc": 12
+        },
+        "success": {
+          "text": "Die Statue steht wieder. Ein warmes Licht durchströmt dich.",
+          "effects": [
+            {
+              "heal": "2W4"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Die Statue kippt zurück, genau auf deinen Fuß. Heilig ist anders.",
+          "effects": [
+            {
+              "damage": "W4"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Liegen lassen",
+        "text": "Du steigst drüber. Die Statue sagt nichts, aber du spürst ihren Blick im Nacken.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "schrein_heiliger_weisheit",
+    "type": "choice",
+    "title": "Der gestürzte Heilige",
+    "text": "Eine Heiligenstatue liegt quer im Gang, das Gesicht im Staub. Sie sieht aus, als würde sie das selbst am meisten stören.",
+    "options": [
+      {
+        "label": "Die Statue aufrichten",
+        "check": {
+          "category": "kraftakt",
+          "dc": 12
+        },
+        "success": {
+          "text": "Die Statue steht wieder und flüstert dir etwas Kluges zu. Du verstehst die Hälfte, das reicht.",
+          "effects": [
+            {
+              "gainXp": 4
+            }
+          ]
+        },
+        "failure": {
+          "text": "Die Statue kippt zurück, genau auf deinen Fuß. Heilig ist anders.",
+          "effects": [
+            {
+              "damage": "W4"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Liegen lassen",
+        "text": "Du steigst drüber. Die Statue sagt nichts, aber du spürst ihren Blick im Nacken.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "schrein_heiliger_reichtum",
+    "type": "choice",
+    "title": "Der gestürzte Heilige",
+    "text": "Eine Heiligenstatue liegt quer im Gang, das Gesicht im Staub. Sie sieht aus, als würde sie das selbst am meisten stören.",
+    "options": [
+      {
+        "label": "Die Statue aufrichten",
+        "check": {
+          "category": "kraftakt",
+          "dc": 12
+        },
+        "success": {
+          "text": "Die Statue steht wieder. Darunter liegen Münzen, auf denen sie offenbar jahrelang gelegen hat.",
+          "effects": [
+            {
+              "gold": "2W6"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Die Statue kippt zurück, genau auf deinen Fuß. Heilig ist anders.",
+          "effects": [
+            {
+              "damage": "W4"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Liegen lassen",
+        "text": "Du steigst drüber. Die Statue sagt nichts, aber du spürst ihren Blick im Nacken.",
+        "effects": []
+      }
+    ]
   }
 ]

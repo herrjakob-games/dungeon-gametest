@@ -91,6 +91,23 @@ export function torchSlots(doors, spec, seed, feature) {
   return out;
 }
 // Nur mit torchCount: auch die (unsichtbaren) Lichter der vorderen Fackeln fallen weg, es zählen nur die Wandfackeln
+/**
+ * Risswände (Stilguide, Wände): share = Anteil der Wandkacheln an Nord- und Westwand (wandRiss des Themas). Eine Risswand
+ * deckt zwei Wandkacheln, nur auf den Abschnitten 1–2 und 8–9, nie auf einer Fackelkachel und nie hinter der Treppe
+ * (mit Treppe nur 8–9). Der Raum-Seed wählt die Abschnitte. Ergebnis: [{ wall: "N" | "W", t }] mit t = erste Kachel (ab 0).
+ */
+export function crackedWalls(doors, spec, seed, feature, share) {
+  if (!share) return [];
+  const torches = new Set(torchSlots(doors, spec, seed, feature).map(f => f.wall + f.t));
+  const starts = feature ? [N - 2] : [0, N - 2];
+  const R = mulberry32(((seed || 0) ^ 0x6a09e667) >>> 0);
+  const all = ["N", "W"].flatMap(wall => starts.map(t => ({ wall, t })))
+    .filter(s => !torches.has(s.wall + s.t) && !torches.has(s.wall + (s.t + 1)))
+    .map(s => [R(), s]).sort((a, b) => a[0] - b[0]).map(x => x[1]);
+  const n = Math.min(all.length, Math.round(share * 2 * N / 2)); // je Risswand zwei der 2·N Wandkacheln
+  return all.slice(0, n);
+}
+
 export const frontTorchLights = (spec) => !(spec && spec.torchCount !== undefined);
 
 // Einrichtung mit "torches": "saeulen": keine Fackeln an den Wänden, dafür an jeder Säule eine, die zur Raummitte zeigt
@@ -157,6 +174,9 @@ export function checkFloorTiles(list, where, err) {
 }
 
 // Einrichtung eines Raumtyps im Thema: themeDecor ersetzt decor; ohne beides null (altes Muster aus dem Code)
+// Varianten einer Einrichtung; Zellen ohne layouts haben eine leere Variante "zellen"
+export const layoutsOf = (spec) => (spec.layouts && spec.layouts.length ? spec.layouts : [{ id: spec.cells ? "zellen" : "leer", props: [] }]);
+
 export const decorFor = (roomType, themeId) => ((roomType.themeDecor || {})[themeId]) || roomType.decor || null;
 
 // Türkacheln und die Kachel davor
@@ -182,10 +202,11 @@ const centerOf = (tiles) => [
 
 /**
  * Prüft, ob alle Türen, die Startkachel und jedes anklickbare Objekt von einer Tür aus erreichbar sind.
- * blocked: Set "x,z"; doors: Bitmaske; clickables: Liste von Kachellisten; extra: Kacheln, die erreichbar sein müssen.
+ * blocked: Set "x,z"; doors: Bitmaske; clickables: Liste von Kachellisten; extra: Kacheln, die erreichbar sein müssen;
+ * edges: gesperrte Kanten (Zellwände), die der Weg nicht kreuzen darf.
  * Erreichbar ist ein Objekt, wenn eine freie Nachbarkachel (auch schräg) erreichbar ist (wie movement.js).
  */
-export function reachable(blocked, doors, clickables, extra) {
+export function reachable(blocked, doors, clickables, extra, edges) {
   const free = (x, z) => inBounds(x, z) && !blocked.has(key(x, z));
   let targets = DIRKEYS.filter(d => doors & DIR[d].bit).map(d => DIR[d].approach).concat(extra || []);
   if (!targets.length) {
@@ -202,7 +223,7 @@ export function reachable(blocked, doors, clickables, extra) {
     const [x, z] = queue.shift();
     [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(([dx, dz]) => {
       const nx = x + dx, nz = z + dz, k = key(nx, nz);
-      if (free(nx, nz) && !seen.has(k)) { seen.add(k); queue.push([nx, nz]); }
+      if (free(nx, nz) && !seen.has(k) && !(edges && edges.has(edgeKey(x, z, nx, nz)))) { seen.add(k); queue.push([nx, nz]); }
     });
   }
   if (!targets.every(t => seen.has(key(...t)))) return false;
@@ -210,6 +231,112 @@ export function reachable(blocked, doors, clickables, extra) {
     for (let dx = -1; dx <= 1; dx++) for (let dz = -1; dz <= 1; dz++) if (seen.has(key(x + dx, z + dz))) return true;
     return false;
   }));
+}
+
+// ---------- Zellen (Kerker der Katakomben, GDD „Einrichtung pro Raumtyp“, Zellen) ----------
+// Zellwände stehen auf der Kante zwischen zwei Kacheln. Kanten heißen "x,z|x,z" (kleinere Kachel zuerst).
+export const edgeKey = (ax, az, bx, bz) => (ax < bx || (ax === bx && az < bz) ? key(ax, az) + "|" + key(bx, bz) : key(bx, bz) + "|" + key(ax, az));
+
+// Darf ein Schritt (auch schräg) von a nach b gehen? Schräg nur, wenn keine der vier Kanten um die Ecke gesperrt ist.
+export function stepOpen(edges, ax, az, bx, bz) {
+  if (ax === bx || az === bz) return !edges.has(edgeKey(ax, az, bx, bz));
+  return !edges.has(edgeKey(ax, az, bx, az)) && !edges.has(edgeKey(ax, az, ax, bz)) &&
+    !edges.has(edgeKey(bx, az, bx, bz)) && !edges.has(edgeKey(ax, bz, bx, bz));
+}
+
+// Drehung (Vielfaches von 90°) eines L-förmigen Eckteils, dessen Arme ungedreht nach -x und +z zeigen, so dass sie in
+// die Richtungen a und b zeigen ([dx, dz]); Drehung um y wie in Three.js: x' = x cos + z sin, z' = -x sin + z cos
+function cornerRot(a, b) {
+  for (let k = 0; k < 4; k++) {
+    const r = k * Math.PI / 2, c = Math.round(Math.cos(r)), sn = Math.round(Math.sin(r));
+    const turn = ([x, z]) => [x * c + z * sn, -x * sn + z * c];
+    const arms = [turn([-1, 0]), turn([0, 1])].map(v => v.join());
+    if (arms.includes(a.join()) && arms.includes(b.join())) return r;
+  }
+  return 0;
+}
+
+/**
+ * Eine Zellseite: läuft entlang axis ("x" oder "z") auf der Kachelkante at (etwa 2.5 zwischen Kachel 2 und 3) von a bis b
+ * (Kachelkanten, b - a = Länge). Ergebnis: Kanten und die Kachelpaare quer zur Seite, nach Kachel entlang der Seite.
+ */
+function sideTiles(side) {
+  const out = [];
+  for (let t = side.a + 0.5; t < side.b; t++) {
+    const lo = side.at - 0.5, hi = side.at + 0.5;
+    out.push(side.axis === "x" ? { t, a: [t, lo], b: [t, hi] } : { t, a: [lo, t], b: [hi, t] });
+  }
+  return out;
+}
+
+// Teil auf einer Seite: Mittelpunkt in Kachelkoordinaten (Bruchteile erlaubt) und Drehung entlang der Seite
+const onSide = (side, along, prop) => side.axis === "x"
+  ? { prop, x: along, z: side.at, rot: 0 }
+  : { prop, x: side.at, z: along, rot: Math.PI / 2 };
+
+/**
+ * Zellen nach Raum-Seed: Variante A (vier Eckzellen 3×3) oder B (große Zelle 5×5).
+ * Ergebnis: { variant, cells: [{ tiles, inside (Kachel am Durchgang innen) }], pieces: [{ prop, x, z, rot }], edges (Set) }
+ */
+export function planCells(R) {
+  const edges = new Set(), pieces = [], cells = [];
+  const block = (side, open) => sideTiles(side).forEach(({ t, a, b }) => { if (t !== open) edges.add(edgeKey(...a, ...b)); });
+  if (R() < 0.5) {
+    // A: Seiten von der Außenwand (wall) bis zur Innenecke (corner); Torbogen laut GDD
+    const L = -0.5, H = N - 0.5, i1 = 2.5, i2 = N - 3.5; // Raumkanten und Kanten der Eckzellen
+    const defs = [
+      { tiles: [0, 0], corner: [i1, i1], sides: [{ axis: "z", at: i1, wall: L, kind: "gitter" }, { axis: "x", at: i1, wall: L, kind: "tor" }] },
+      { tiles: [N - 3, 0], corner: [i2, i1], sides: [{ axis: "z", at: i2, wall: L, kind: "gitter" }, { axis: "x", at: i1, wall: H, kind: "tor" }] },
+      { tiles: [0, N - 3], corner: [i1, i2], sides: [{ axis: "x", at: i2, wall: L, kind: "gitter" }, { axis: "z", at: i1, wall: H, kind: "tor" }] },
+      { tiles: [N - 3, N - 3], corner: [i2, i2], sides: [{ axis: "x", at: i2, wall: H, kind: "gitter" }, { axis: "z", at: i2, wall: H, kind: "tor" }] }
+    ];
+    defs.forEach(d => {
+      const tiles = rect(d.tiles[0], d.tiles[1], 3, 3);
+      let inside = null;
+      const arms = [];
+      d.sides.forEach(sd => {
+        const end = sd.axis === "x" ? d.corner[0] : d.corner[1]; // Innenecke entlang der Seite
+        const side = Object.assign({ a: Math.min(sd.wall, end), b: Math.max(sd.wall, end) }, sd);
+        const dir = Math.sign(sd.wall - end); // von der Innenecke zur Außenwand
+        const mid = (side.a + side.b) / 2;
+        pieces.push(onSide(side, mid, sd.kind === "tor" ? "zelltor" : "zellgitter"));
+        pieces.push(onSide(side, sd.wall - dir * 0.25, "wand_ecke")); // Endstück an der Außenwand
+        arms.push(sd.axis === "x" ? [dir, 0] : [0, dir]);
+        const open = sd.kind === "tor" ? mid : null;
+        block(side, open);
+        if (open !== null) {
+          const pair = sideTiles(side).find(p => p.t === open);
+          inside = [pair.a, pair.b].find(([x, z]) => tiles.some(t => t[0] === x && t[1] === z));
+        }
+      });
+      pieces.push({ prop: "zellecke", x: d.corner[0], z: d.corner[1], rot: cornerRot(...arms) });
+      cells.push({ tiles, inside });
+    });
+    return { variant: "A", cells, pieces, edges };
+  }
+  // B: große Zelle 3|3 bis 7|7; je Seite Gitter, Steinpfeiler, Gitter; an einer Seite fehlt der Pfeiler (Öffnung)
+  const lo = 1.5, hi = N - 2.5, mid = MID;
+  const sides = [
+    { axis: "x", at: lo, a: lo, b: hi, inward: [0, 1] }, { axis: "z", at: hi, a: lo, b: hi, inward: [-1, 0] },
+    { axis: "x", at: hi, a: lo, b: hi, inward: [0, -1] }, { axis: "z", at: lo, a: lo, b: hi, inward: [1, 0] }
+  ];
+  const openSide = Math.floor(R() * 4);
+  const tiles = rect(2, 2, N - 4, N - 4);
+  let inside = null;
+  sides.forEach((side, i) => {
+    pieces.push(onSide(side, side.a + 1, "zellgitter"), onSide(side, side.b - 1, "zellgitter"));
+    if (i !== openSide) pieces.push(onSide(side, mid, "wand"));
+    block(side, i === openSide ? mid : null);
+    if (i === openSide) {
+      const pair = sideTiles(side).find(p => p.t === mid);
+      inside = [pair.a, pair.b].find(([x, z]) => x >= 2 && x <= N - 3 && z >= 2 && z <= N - 3);
+    }
+  });
+  // Ecken: schmale Eckpfeiler schließen die Fuge zwischen zwei Gitterwänden
+  [[lo, lo, [1, 0], [0, 1]], [hi, lo, [-1, 0], [0, 1]], [lo, hi, [1, 0], [0, -1]], [hi, hi, [-1, 0], [0, -1]]]
+    .forEach(([x, z, a, b]) => pieces.push({ prop: "zellecke", x, z, rot: cornerRot(a, b) }));
+  cells.push({ tiles, inside });
+  return { variant: "B", cells, pieces, edges };
 }
 
 /**
@@ -228,8 +355,12 @@ export function planDecor(spec, opts) {
     for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(R() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
     return a;
   };
-  const idx = opts.layoutIndex !== undefined ? opts.layoutIndex : Math.floor(R() * spec.layouts.length);
-  const layout = spec.layouts[idx];
+  // Zellen (cells): eigene Planung statt layouts, Einrichtung nur in den Zellen
+  const layouts = layoutsOf(spec);
+  const idx = opts.layoutIndex !== undefined ? opts.layoutIndex : Math.floor(R() * layouts.length);
+  const layout = layouts[idx];
+  const cellPlan = spec.cells ? planCells(R) : null;
+  const edges = cellPlan ? cellPlan.edges : new Set();
   const doors = opts.doors, feature = opts.feature || null;
 
   const reserved = new Set(doorTiles(doors).map(t => key(...t)));
@@ -348,7 +479,7 @@ export function planDecor(spec, opts) {
     if (!def.blocks) return true;
     const test = new Set(blocked);
     c.tiles.forEach(t => test.add(key(...t)));
-    return reachable(test, doors, def.click ? clickables.concat([c.tiles]) : clickables, extra);
+    return reachable(test, doors, def.click ? clickables.concat([c.tiles]) : clickables, extra, edges);
   }
 
   function put(item, c) {
@@ -419,6 +550,26 @@ export function planDecor(spec, opts) {
       put(item, c);
     }
   }
+  // Zelleinrichtung: je Zelle entweder ein Strohlager (eine Kachel Abstand zum Durchgang) oder Knochen, nie beides
+  if (cellPlan) {
+    cellPlan.cells.forEach(cell => {
+      const inCell = (tiles) => tiles.every(([x, z]) => cell.tiles.some(t => t[0] === x && t[1] === z));
+      const own = cell.tiles.filter(([x, z]) => !(cell.inside && x === cell.inside[0] && z === cell.inside[1]));
+      if (R() < 0.5) {
+        const item = { prop: "strohlager", place: "cell" };
+        const cands = shuffle(own.flatMap(([x, z]) => ["h", "v"].map(o => ({ tiles: shape("strohlager", null, x, z, o), rot: (o === "v" ? Math.PI / 2 : 0) + (R() < 0.5 ? 0 : Math.PI) }))));
+        const c = cands.find(cd => inCell(cd.tiles) && (!cell.inside || gap(cd.tiles, [cell.inside]) >= 2) && fits(item, cd));
+        if (c) put(item, c); else dropped.push(tag(item));
+      } else {
+        const n = cell.tiles.length > 9 ? 2 + Math.floor(R() * 2) : 1; // Eckzelle: eine Gruppe, große Zelle: 2 bis 3
+        const item = { prop: "knochen", place: "cell" };
+        shuffle(own).slice(0, n).forEach(t => {
+          const c = { tiles: [t], rot: R() * Math.PI * 2 };
+          if (fits(item, c)) put(item, c); else dropped.push(tag(item));
+        });
+      }
+    });
+  }
   // Fackeln an Säulen: zur Raummitte (Säulen in Reihen: zum Gang in der Mitte); torchCount wählt, wie viele Säulen eine tragen
   let torchSpots = [];
   if (pillarTorches(spec)) {
@@ -432,11 +583,14 @@ export function planDecor(spec, opts) {
       torchSpots = shuffle(torchSpots).slice(0, lo + Math.floor(R() * (hi - lo + 1)));
     }
   }
-  return { layout: layout.id, placements, corrected, dropped, missingRequired, blocked, torchColor: spec.torchColor || null, torchSpots, clickables, extra };
+  return { layout: layout.id, placements, corrected, dropped, missingRequired, blocked, torchColor: spec.torchColor || null, torchSpots, clickables, extra,
+    edges, cells: cellPlan };
 }
 
 // Datenprüfung der Einrichtung (für validateData)
 export function checkDecor(spec, where, err) {
+  if (spec && spec.cells !== undefined && spec.cells !== true) err(where, "cells muss true sein");
+  if (spec && spec.cells && spec.layouts === undefined) return; // Zellen ohne weitere Einrichtung (Kerker der Katakomben)
   if (!spec || !Array.isArray(spec.layouts) || !spec.layouts.length) { err(where, "decor braucht mindestens eine Variante in layouts"); return; }
   if (spec.mimics !== undefined && typeof spec.mimics !== "boolean") err(where, "mimics muss true oder false sein");
   if (spec.torchFlame !== undefined && !/^#[0-9a-fA-F]{6}$/.test(spec.torchFlame)) err(where, "torchFlame muss eine Farbe wie #6f9bff sein");

@@ -58,7 +58,8 @@
         "tile": "boden_bruch_b",
         "weight": 7
       }
-    ]
+    ],
+    "seeThroughOpacity": 0.4
   },
   {
     "id": "katakomben",
@@ -79,9 +80,6 @@
     ],
     "boss": "skelettkoenig",
     "overrides": {
-      "kerker": {
-        "max": null
-      },
       "gruft": {
         "nextToStart": null
       }
@@ -110,7 +108,34 @@
         "tile": "boden_unkraut_b",
         "weight": 1
       }
-    ]
+    ],
+    "wandRiss": 0.3,
+    "encounters": {
+      "chance": 0.15,
+      "monsters": [
+        {
+          "monster": "skelett_krieger",
+          "weight": 3
+        },
+        {
+          "monster": "geist",
+          "weight": 2
+        },
+        {
+          "monster": "poltergeist",
+          "weight": 2
+        }
+      ],
+      "reward": [
+        {
+          "loot": "tier1"
+        },
+        {
+          "gainXp": 3
+        }
+      ]
+    },
+    "seeThroughOpacity": 0.4
   },
   {
     "id": "zwergenminen",
@@ -139,7 +164,8 @@
       "accent": "#4FB3C9",
       "torch": "#FF6A2A",
       "ambient": "#2A2228"
-    }
+    },
+    "seeThroughOpacity": 0.4
   },
   {
     "id": "goblinhoehlen",
@@ -166,7 +192,8 @@
       "accent": "#A6E05A",
       "torch": "#E8B840",
       "ambient": "#22301E"
-    }
+    },
+    "seeThroughOpacity": 0.4
   },
   {
     "id": "orklager",
@@ -197,6 +224,7 @@
       "accent": "#B0B8C0",
       "torch": "#FF5A28",
       "ambient": "#3A2420"
-    }
+    },
+    "seeThroughOpacity": 0.4
   }
 ]

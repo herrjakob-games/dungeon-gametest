@@ -23,6 +23,7 @@ export const state = {
 
   // Aktueller Raum (wird von buildRoom neu gesetzt)
   blocked: new Set(),  // belegte Kacheln "x,z"
+  edges: new Set(),    // gesperrte Kanten zwischen zwei Kacheln (Zellwände im Kerker, decor.js edgeKey)
   interactables: [],   // anklickbare Objekte (Türen, Truhe, Lagerfeuer, Händler, Treppe nach unten)
   torches: [],
   decorPlan: null,     // Einrichtung des Raums aus decor.js (null beim alten Muster)

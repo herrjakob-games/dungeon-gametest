@@ -50,6 +50,11 @@
     ],
     "palette": true
   },
+  "wand_riss": {
+    "file": "assets/tiles/wand_riss.glb",
+    "scale": 0.5,
+    "palette": true
+  },
   "sockel": {
     "file": "assets/tiles/sockel.glb",
     "scale": [
@@ -551,6 +556,36 @@
       "awaken": "Skeletons_Awaken_Floor"
     }
   },
+  "skelettkoenig": {
+    "file": "assets/figures/skeleton_warrior.glb",
+    "scale": 0.598,
+    "palette": false,
+    "texture": "assets/textures/figures/skeleton/skeleton_keller.png",
+    "animations": {
+      "idle": "Idle",
+      "walk": "Walking_A",
+      "attack": "1H_Melee_Attack_Chop",
+      "hit": "Hit_A",
+      "death": "Death_A",
+      "interact": "Interact",
+      "sit": "Sit_Chair_Idle",
+      "sit_floor": "Sit_Floor_Idle",
+      "lie": "Skeletons_Inactive_Floor_Pose",
+      "awaken": "Skeletons_Awaken_Floor"
+    },
+    "accessories": [
+      {
+        "shape": "krone",
+        "bone": "head",
+        "offset": [
+          0,
+          0.66,
+          0
+        ],
+        "size": 0.4
+      }
+    ]
+  },
   "skeleton": {
     "file": "assets/figures/skeleton_minion.glb",
     "scale": 0.46,
@@ -1026,6 +1061,26 @@
       -0.025,
       0
     ],
+    "palette": true
+  },
+  "zellgitter": {
+    "file": "assets/props/zellgitter.glb",
+    "scale": 0.5,
+    "palette": true
+  },
+  "zellgitter_ecke": {
+    "file": "assets/props/zellgitter_ecke.glb",
+    "scale": 0.5,
+    "palette": true
+  },
+  "zelltor": {
+    "file": "assets/props/zelltor.glb",
+    "scale": 0.5,
+    "palette": true
+  },
+  "zellecke": {
+    "file": "assets/props/zellecke.glb",
+    "scale": 0.5,
     "palette": true
   }
 }

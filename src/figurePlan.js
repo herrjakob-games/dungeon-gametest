@@ -1,7 +1,7 @@
 // Figuren im Raum (docs/GDD.md: „Gegner im Raum“, „Figuren in Events“, Figurenliste). Reine Logik, testbar.
 // Hier steht, wo eine Figur stehen darf. Gebaut werden die Figuren in monsterFigures.js, bewegt in roomFigures.js.
 import { N, MID, key, inBounds } from "./config.js";
-import { PLACES, reachable, doorTiles, STAIRS_FOOT } from "./decor.js";
+import { PLACES, reachable, doorTiles, STAIRS_FOOT, stepOpen } from "./decor.js";
 
 /**
  * Figurenliste aus dem GDD. size: Kacheln je Seite (2 = 2×2), blocks: steht im Weg, variants: erlaubte Varianten.
@@ -36,7 +36,7 @@ const N8 = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, 1], [1, -1], [-1, -1]
 /**
  * Plant Figuren eines Events.
  * list: Feld "figures" ({ figure, place, count, variant, stay }) oder Inszenierung aus staging.js (zusätzlich anchor)
- * ctx: { placements (Einrichtung aus planDecor, sonst []), blocked (Set "x,z"), doors, player [x,z],
+ * ctx: { placements (Einrichtung aus planDecor, sonst []), blocked (Set "x,z"), edges (gesperrte Kanten), doors, player [x,z],
  *        occupied (Set "x,z" weiterer Figuren), rand,
  *        anchors (Anker aus data/staging.json), canPose(figure, variant, anim) (hat das Modell die Animation?),
  *        stairsDown (true, wenn im Raum eine Treppe nach unten steht),
@@ -70,7 +70,7 @@ export function planFigures(list, ctx) {
     if (info.blocks) {
       const test = new Set(blocked);
       tiles.forEach(t => test.add(key(...t)));
-      if (!reachable(test, ctx.doors, [], ctx.player ? [ctx.player] : [])) return null;
+      if (!reachable(test, ctx.doors, [], ctx.player ? [ctx.player] : [], ctx.edges)) return null;
     }
     return tiles;
   }
@@ -191,7 +191,7 @@ export function planFigures(list, ctx) {
 
 /**
  * Wo steht der Gegner im Kampf? Neben der Spielfigur, im Bossraum in der Raummitte.
- * ctx: { blocked, doors, player, boss (true im Bossraum), occupied }
+ * ctx: { blocked, doors, player, boss (true im Bossraum), occupied, edges (Zellwände: nicht durch eine Wand hindurch) }
  * Ergebnis: { tiles, cx, cz, meet } – meet: Kachel, auf die die Spielfigur im Bossraum läuft (sonst null)
  */
 export function combatSpot(figure, ctx) {
@@ -211,6 +211,7 @@ export function combatSpot(figure, ctx) {
     for (const [ox, oz] of info.size > 1 ? [[0, 0], [-1, 0], [0, -1], [-1, -1]] : [[0, 0]]) {
       const tiles = footprint(p[0] + dx + ox, p[1] + dz + oz, info.size);
       if (tiles.some(t => t[0] === p[0] && t[1] === p[1])) continue;
+      if (ctx.edges && ctx.edges.size && !stepOpen(ctx.edges, p[0], p[1], p[0] + dx, p[1] + dz)) continue;
       cands.push({ tiles, d: i < 4 ? 0 : 1 });
     }
   });
