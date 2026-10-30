@@ -7,7 +7,7 @@ import { state, walkable } from "./state.js";
 import { scene } from "./scene.js";
 import { DATA } from "./data.js";
 import { mulberry32 } from "./rng.js";
-import { planFigures, combatSpot, figureInfo } from "./figurePlan.js";
+import { planFigures, combatSpot, figureInfo, processionRoute } from "./figurePlan.js";
 import { eventFigures } from "./staging.js";
 import { buildMonsterFigure } from "./monsterFigures.js";
 import { makeFigureModel, hasAnimation } from "./models.js";
@@ -27,6 +27,8 @@ let fighters = [];    // alle Gegner des Kampfs (laufen gemeinsam an, sterben ge
 let turn = 0;         // reihum, wer angreift
 
 const SPEED = 2.6;        // Kacheln pro Sekunde
+const PROCESSION_SPEED = 0.9; // Prozession: langsam, im Gänsemarsch
+const PROCESSION_GAP = 2;     // Abstand in der Reihe (Kacheln des Rundwegs)
 const MAX_ANIMATED = 6;   // höchstens so viele animierte Figuren pro Raum, der Rest steht still
 const TURN = 12;          // Drehgeschwindigkeit: nach etwa 0,25 Sekunden ist die Drehung fertig
 const tilesOf = (list) => new Set(list.flatMap(f => f.tiles.map(t => key(...t))));
@@ -133,11 +135,31 @@ export function showEventFigures(ev, opts) {
     stairsDown: state.stairsFeature === "down" || state.stairsFeature === "arena",
     awayFrom: opts && opts.awayFrom, awayDist: opts && opts.dist
   });
-  plan.forEach(pl => {
+  const made = plan.map(pl => {
     const f = make(pl, ev.id, true);
     if (pl.stay) saveStay(f);
+    return f;
   });
+  if (((DATA.staging || {}).events || {})[ev.id] && DATA.staging.events[ev.id].procession) startProcession(made);
   return plan.length;
+}
+
+/**
+ * Prozession (Inszenierung procession): die Figuren ziehen hintereinander auf einem Rundweg durch den Raum, bis das
+ * Event endet. Sie blockieren keine Kacheln (Geister gehen durch alles hindurch, auch durch die Spielfigur).
+ */
+function startProcession(list) {
+  list.forEach(unblock);
+  const route = processionRoute(state.blocked, state.edges);
+  if (!route) return;
+  const world = route.map(([x, z]) => [tw(x), 0, tw(z)]);
+  list.forEach((f, k) => {
+    const i = (route.length - k * PROCESSION_GAP + route.length * 4) % route.length; // die erste vorn, die übrigen dahinter
+    f.outer.position.set(world[i][0], 0, world[i][2]);
+    f.procession = { world, i };
+    f.speed = PROCESSION_SPEED;
+    f.tiles = [];
+  });
 }
 
 /**
@@ -183,6 +205,8 @@ export function endEventFigures() {
 
 function leave(f) {
   unblock(f);
+  f.procession = null;
+  f.speed = 0;
   f.leaving = true;
   f.pose = null;
   if (f.flat) layFlat(f, false);
@@ -341,12 +365,18 @@ export function updateFigures(dt, t) {
     }
     // Laufen; die Blickrichtung folgt dem Weg, im Stand schaut die Figur zur Spielfigur (Kampf) oder bleibt
     let want = f.rot;
+    if (f.procession && !f.path.length) {
+      // Prozession: nächste Kachel des Rundwegs
+      const pr = f.procession;
+      pr.i = (pr.i + 1) % pr.world.length;
+      f.path = [pr.world[pr.i]];
+    }
     if (f.path.length) {
       const [x, y, z] = f.path[0];
       const p = f.outer.position;
       const dx = x - p.x, dz = z - p.z, dy = y - p.y;
       const d = Math.hypot(dx, dz, dy);
-      const step = SPEED * dt;
+      const step = (f.speed || SPEED) * dt;
       if (d <= step) { p.set(x, y, z); f.path.shift(); }
       else { p.x += dx / d * step; p.z += dz / d * step; p.y += dy / d * step; }
       if (Math.hypot(dx, dz) > 0.01) want = Math.atan2(dx, dz);

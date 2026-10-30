@@ -174,6 +174,18 @@
           "weight": 3,
           "condition": "flag:monsterratte_gesehen"
         }
+      ],
+      "katakomben": [
+        {
+          "id": "boss_skelettkoenig",
+          "weight": 1,
+          "condition": "notFlag:skelettkoenig_gesehen"
+        },
+        {
+          "id": "boss_skelettkoenig_zurueck",
+          "weight": 1,
+          "condition": "flag:skelettkoenig_gesehen"
+        }
       ]
     },
     "themeDecor": {
@@ -215,6 +227,65 @@
               {
                 "prop": "fass",
                 "place": "corner"
+              }
+            ]
+          }
+        ]
+      },
+      "katakomben": {
+        "layouts": [
+          {
+            "id": "A",
+            "props": [
+              {
+                "prop": "knochenthron",
+                "place": "wall-back",
+                "required": true
+              },
+              {
+                "prop": "kerzen",
+                "place": "around:knochenthron",
+                "count": 2
+              },
+              {
+                "prop": "knochen",
+                "place": "free",
+                "count": 5
+              },
+              {
+                "prop": "saeule",
+                "place": "corner",
+                "count": 2
+              }
+            ]
+          },
+          {
+            "id": "B",
+            "props": [
+              {
+                "prop": "knochenthron",
+                "place": "wall-back",
+                "required": true
+              },
+              {
+                "prop": "kerzen",
+                "place": "around:knochenthron",
+                "count": 2
+              },
+              {
+                "prop": "knochen",
+                "place": "around:knochenthron",
+                "count": 2
+              },
+              {
+                "prop": "knochen",
+                "place": "free",
+                "count": 3
+              },
+              {
+                "prop": "saeule",
+                "place": "corner",
+                "count": 2
               }
             ]
           }
@@ -786,6 +857,28 @@
           "id": "gruft_ruecken",
           "weight": 3
         }
+      ],
+      "katakomben": [
+        {
+          "id": "gruft_grabraeuber",
+          "weight": 3
+        },
+        {
+          "id": "gruft_erbstreit",
+          "weight": 3
+        },
+        {
+          "id": "gruft_totenwache",
+          "weight": 3
+        },
+        {
+          "id": "gruft_staub",
+          "weight": 3
+        },
+        {
+          "id": "gruft_familiengrab",
+          "weight": 2
+        }
       ]
     },
     "decor": {
@@ -922,6 +1015,44 @@
         {
           "id": "halle_fledermaeuse",
           "weight": 2,
+          "hostile": true,
+          "rating": "hostile"
+        }
+      ],
+      "katakomben": [
+        {
+          "id": "halle_fresko",
+          "weight": 4,
+          "hostile": false,
+          "rating": "neutral"
+        },
+        {
+          "id": "halle_prozession",
+          "weight": 3,
+          "hostile": false,
+          "rating": "neutral"
+        },
+        {
+          "id": "halle_fluestern",
+          "weight": 3,
+          "hostile": false,
+          "rating": "neutral"
+        },
+        {
+          "id": "halle_poltergeist",
+          "weight": 2,
+          "hostile": true,
+          "rating": "hostile"
+        },
+        {
+          "id": "halle_decke",
+          "weight": 1,
+          "hostile": true,
+          "rating": "hostile"
+        },
+        {
+          "id": "halle_skelettkrieger",
+          "weight": 1,
           "hostile": true,
           "rating": "hostile"
         }

@@ -2,6 +2,7 @@
 // Hier steht, wo eine Figur stehen darf. Gebaut werden die Figuren in monsterFigures.js, bewegt in roomFigures.js.
 import { N, MID, key, inBounds } from "./config.js";
 import { PLACES, reachable, doorTiles, STAIRS_FOOT, stepOpen } from "./decor.js";
+import { findPath } from "./pathfinding.js";
 
 /**
  * Figurenliste aus dem GDD. size: Kacheln je Seite (2 = 2×2), blocks: steht im Weg, variants: erlaubte Varianten.
@@ -108,6 +109,7 @@ export function planFigures(list, ctx) {
     const off = a.offset || [0, 0, 0];
     const lookAt = (t) => {
       if (a.face === "random") return R() * Math.PI * 2;
+      if (a.face === "forward") return t.rot || 0; // Blick wie das Requisit (sitzt auf dem Thron, Blick in den Raum)
       let p = ctx.player || [MID, MID];
       if (a.face === "prop") p = [t.cx, t.cz];
       if (a.face === "target") { const tt = t.target && placements.find(q => q.prop === t.target); p = tt ? [tt.cx, tt.cz] : [t.cx, t.cz]; }
@@ -187,6 +189,28 @@ export function planFigures(list, ctx) {
     }
   }
   return out;
+}
+
+/**
+ * Prozession (Inszenierung "procession"): Rundweg eine Kachel vor den Wänden (2|2, 8|2, 8|8, 2|8), um Hindernisse herum.
+ * blocked: belegte Kacheln, edges: gesperrte Kanten. Ergebnis: geschlossene Liste von Kacheln [[x, z], …] (ohne
+ * Wiederholung des Starts) oder null, wenn es keinen Rundweg gibt.
+ */
+export function processionRoute(blocked, edges) {
+  const free = (x, z) => inBounds(x, z) && !blocked.has(key(x, z));
+  const nearestFree = ([x, z]) => {
+    for (let r = 0; r <= 2; r++) for (let dz = -r; dz <= r; dz++) for (let dx = -r; dx <= r; dx++) if (free(x + dx, z + dz)) return [x + dx, z + dz];
+    return null;
+  };
+  const corners = [[1, 1], [N - 2, 1], [N - 2, N - 2], [1, N - 2]].map(nearestFree);
+  if (corners.some(c => !c)) return null;
+  const route = [];
+  for (let i = 0; i < 4; i++) {
+    const p = findPath(...corners[i], ...corners[(i + 1) % 4], free, edges);
+    if (!p) return null;
+    route.push(...p.slice(0, -1));
+  }
+  return route.length >= 8 ? route : null;
 }
 
 /**

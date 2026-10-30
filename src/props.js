@@ -387,6 +387,16 @@ export function souvenirkiste() {
   return g;
 }
 
+// Thron aus Knochen (Bossraum Katakomben), Rückfall ohne Modell: hoher Stuhl in Knochenfarbe, Lehne zur Wand
+export function knochenthron() {
+  const g = new THREE.Group();
+  const bone = mat(0xe0d4b8);
+  g.add(box(0.7, 0.1, 0.6, bone, 0, 0.55, 0));
+  g.add(box(0.7, 1.1, 0.1, bone, 0, 1.05, -0.28));
+  [-1, 1].forEach(s => g.add(box(0.1, 0.5, 0.6, bone, s * 0.32, 0.3, 0)));
+  return g;
+}
+
 // Käseberg mit Thron (Bossraum Keller), eigenes Licht
 export function kaeseberg(pl, ctx) {
   const g = new THREE.Group();

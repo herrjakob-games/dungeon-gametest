@@ -828,6 +828,24 @@
     "zellecke": {
       "dir": "props",
       "file": "wall_corner_small.gltf.glb"
+    },
+    "knochenthron": {
+      "dir": "props",
+      "pieces": [
+        {
+          "file": "chair.gltf.glb",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1.6,
+            1.6,
+            1.6
+          ]
+        }
+      ]
     }
   },
   "figureSource": "assets/source/kaykit-adventurers/",
