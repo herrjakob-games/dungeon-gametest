@@ -86,7 +86,7 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/props.js` | Requisiten aus Grundformen (Platzhalter, wenn ein Modell fehlt) |
 | `src/stairs.js` | Treppen in der Nordwest-Ecke: KayKit `stairs` (`treppe_hoch`, `treppe_runter`), Loch mit Steinkante und kühlem Licht, Gitter im Bossraum, Verlauf zur Schattenfarbe; Rückfall aus Grundformen |
 | `src/models.js` | Modell-Lader: `data/models.json`, Paletten-Textur des Themas, Klone pro Instanz, Figuren mit Animationen (`makeFigureModel`), Rückfall auf Platzhalter |
-| `src/seeThrough.js` | Durchblick: Innenwände (Zellwände) und Säulen werden im Kreis um eine verdeckte Spielfigur oder einen Gegner durchsichtig |
+| `src/seeThrough.js` | Durchblick: Innenwände (Zellwände, auch Gitter mit ganzer Fläche) und Säulen werden im Kreis um eine verdeckte Spielfigur oder einen Gegner durchsichtig |
 | `src/outline.js` | goldene Umrisslinie für anklickbare Objekte beim Überfahren mit der Maus |
 | `data/models.json` | Zuordnung der Modelle: Datei, Maßstab, Drehung, Versatz, Einfärbung (`tint`), Lichtpunkte, Deckkraft (`opacity`, durchscheinende Figur), Animationen, Zubehör an Knochen (`accessories`) |
 | `src/figurePlan.js` | Figuren im Raum: Figurenliste (Größe, Varianten), Platzierung für `figures` (inkl. `near:`) und Anker der Inszenierung, Platz im Kampf, Datenprüfung; rein logisch |
