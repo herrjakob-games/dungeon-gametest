@@ -243,24 +243,33 @@ test("Bossraum: Event-Tabelle pro Thema, bei jedem Betreten neu gewürfelt, bis 
   assert.equal(res.combat.monster, "monsterratte", "das Event startet den Bosskampf");
   assert.deepEqual(res.combat.rest, [], "die Siegbeute vergibt der Code, nicht das Event");
   for (let i = 0; i < 20; i++) assert.equal(pickEvent(keller, run, Math.random, z), "boss_monsterratte_zurueck");
-  // Andere Themen haben noch keine Boss-Events: dort startet der Kampf direkt
-  assert.equal(pickEvent(bossEventTable(boss, "katakomben"), newRun(), Math.random, z), null);
+  // Katakomben: Audienz beim Skelett-König, danach der zweite Gang
+  const kata = bossEventTable(boss, "katakomben"), run2 = newRun();
+  for (let i = 0; i < 20; i++) assert.equal(pickEvent(kata, run2, Math.random, z), "boss_skelettkoenig");
+  const res2 = applyEffects(DATA.events.boss_skelettkoenig.options[3].effects, { player: z, run: run2, items: DATA.items, stage: 2 }, Math.random);
+  assert.equal(res2.combat.monster, "skelettkoenig");
+  for (let i = 0; i < 20; i++) assert.equal(pickEvent(kata, run2, Math.random, z), "boss_skelettkoenig_zurueck");
+  // Themen ohne Boss-Events: dort startet der Kampf direkt
+  assert.equal(pickEvent(bossEventTable(boss, "zwergenminen"), newRun(), Math.random, z), null);
   // Eigene Todessätze für die Boss-Events
   assert.ok(DATA.texts.death.events.boss_monsterratte && DATA.texts.death.events.boss_monsterratte_zurueck);
+  assert.ok(DATA.texts.death.events.boss_skelettkoenig && DATA.texts.death.events.boss_skelettkoenig_zurueck);
 });
 
 test("Tabellen und Bewertung pro Thema: themeEvents ersetzt events, themeRating ändert die Bewertung", () => {
   const gruft = DATA.roomTypes.gruft;
   assert.deepEqual(gruft.events, [], "Keller-Events liegen in themeEvents.keller");
   assert.ok(eventTable(gruft, "keller").length >= 2);
-  assert.deepEqual(eventTable(gruft, "katakomben"), [], "ohne Tabelle im Thema gilt events");
+  assert.equal(eventTable(gruft, "katakomben").length, 5, "Katakomben mit eigener Tabelle");
+  assert.deepEqual(eventTable(gruft, "zwergenminen"), [], "ohne Tabelle im Thema gilt events");
   assert.deepEqual(eventTable(DATA.roomTypes.start, "orklager"), DATA.roomTypes.start.events);
   const rt = { id: "x", rating: "hostile", themeRating: { katakomben: "mixed" } };
   assert.equal(ratingFor(rt, "keller"), "hostile");
   assert.equal(ratingFor(rt, "katakomben"), "mixed");
-  // Boss nutzt denselben Weg: Keller mit Tabelle, Katakomben ohne (dann intro und direkt Kampf)
+  // Boss nutzt denselben Weg: Keller und Katakomben mit Tabelle, Zwergenminen ohne (dann intro und direkt Kampf)
   assert.ok(bossEventTable(DATA.roomTypes.boss, "keller").events.length >= 2);
-  assert.equal(bossEventTable(DATA.roomTypes.boss, "katakomben").eventChance, 0);
+  assert.ok(bossEventTable(DATA.roomTypes.boss, "katakomben").events.length >= 2);
+  assert.equal(bossEventTable(DATA.roomTypes.boss, "zwergenminen").eventChance, 0);
 });
 
 test("Markierungspflicht pro Thema: gemischt im Thema heißt hostile und rating an jedem Eintrag", () => {

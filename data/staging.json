@@ -333,6 +333,14 @@
           "anchor": "zwischen_knochen_liegend"
         }
       ]
+    },
+    "gruft_totenwache": {
+      "figures": [
+        {
+          "figure": "skelett_krieger",
+          "anchor": "am_sarkophag"
+        }
+      ]
     }
   }
 }

@@ -4348,5 +4348,850 @@
         "effects": []
       }
     ]
+  },
+  {
+    "id": "gruft_grabraeuber",
+    "type": "trap",
+    "title": "Der Grabräuber",
+    "text": "Vor einer Grabnische liegt ein Skelett mit einem Brecheisen in der Hand. Es war offenbar fast fertig. Die Falle, die es erwischt hat, glänzt noch.",
+    "options": [
+      {
+        "label": "Die Falle entschärfen",
+        "check": {
+          "category": "fingerfertigkeit",
+          "dc": 12
+        },
+        "success": {
+          "text": "Ein Klick, und die Nische gehört dir. Du vollendest das Werk deines Vorgängers.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Die Falle ist noch scharf. Du und der Grabräuber habt jetzt etwas gemeinsam.",
+          "effects": [
+            {
+              "damage": "W4"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Den Grabräuber durchsuchen",
+        "check": {
+          "category": "wahrnehmung",
+          "dc": 12
+        },
+        "success": {
+          "text": "In seinem Stiefel steckt die Beute vom letzten Grab. Er hätte aufhören sollen, als es lief.",
+          "effects": [
+            {
+              "gold": "2W6"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Du stützt dich an der Nische ab. Die Falle hat auf genau diese Hand gewartet.",
+          "effects": [
+            {
+              "damage": "W4"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Weitergehen",
+        "text": "Du nickst dem Grabräuber kollegial zu. Er nickt nicht zurück.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "gruft_erbstreit",
+    "type": "combat",
+    "title": "Der Erbstreit",
+    "text": "Zwei Geister streiten sich über einem Testament, und das seit 200 Jahren. Als sie dich sehen, verlangen beide, dass du entscheidest.",
+    "figures": [
+      {
+        "figure": "geist",
+        "count": 2,
+        "place": "center"
+      }
+    ],
+    "options": [
+      {
+        "label": "Schlichten",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Halbe-halbe, schlägst du vor. Die Geister sind so verblüfft, dass sie dir die Anwaltskosten zahlen.",
+          "effects": [
+            {
+              "gold": "2W6"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Dein Vorschlag gefällt keinem. Endlich sind sich beide einig.",
+          "effects": [
+            {
+              "combat": "geist"
+            },
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      },
+      {
+        "label": "Das Testament vorlesen",
+        "check": {
+          "category": "wissen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Im Kleingedruckten erbt der, der das Grab zuletzt betritt. Also du.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Du liest es falsch vor. Leider so, dass beide enterbt sind.",
+          "effects": [
+            {
+              "combat": "geist"
+            },
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      },
+      {
+        "label": "Weitergehen",
+        "text": "Sie streiten weiter. In 200 Jahren schaust du noch mal vorbei.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "gruft_totenwache",
+    "type": "combat",
+    "title": "Die Totenwache",
+    "text": "Ein Skelettkrieger steht reglos vor einem Sarg. Er verlangt das Losungswort, und er wartet schon sehr lange auf das richtige.",
+    "figures": [
+      {
+        "figure": "skelett_krieger",
+        "place": "near:sarkophag"
+      }
+    ],
+    "options": [
+      {
+        "label": "Das Losungswort nennen",
+        "check": {
+          "category": "wissen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Er tritt beiseite und salutiert. Im Sarg liegen Grabbeigaben, die niemand mehr vermisst.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "„Sesam“ war es nicht. Er zieht das Schwert.",
+          "effects": [
+            {
+              "combat": "skelett_krieger"
+            },
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      },
+      {
+        "label": "Angreifen",
+        "effects": [
+          {
+            "combat": "skelett_krieger"
+          },
+          {
+            "loot": "tier1"
+          },
+          {
+            "gainXp": 3
+          }
+        ]
+      },
+      {
+        "label": "Weitergehen",
+        "text": "Er sieht dir nach. Wachen sind dankbar für jeden, der nicht stört.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "gruft_staub",
+    "type": "trap",
+    "title": "Der Staub der Jahrhunderte",
+    "text": "Eine Grabplatte ist einen Spalt geöffnet, und heraus quillt grauer Rauch. Er riecht nach Uroma und sticht eisig kalt.",
+    "options": [
+      {
+        "label": "Einfach weitergehen",
+        "check": {
+          "category": "widerstand",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du hältst die Luft an und gehst durch. Uroma wäre stolz.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Der Rauch kriecht dir in die Lunge. Er bleibt eine Weile, wie Besuch.",
+          "effects": [
+            {
+              "damage": "W4"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Die Platte zuschieben",
+        "check": {
+          "category": "kraftakt",
+          "dc": 12
+        },
+        "success": {
+          "text": "Mit einem dumpfen Schlag ist Ruhe. Von drinnen klopft es einmal, dann nicht mehr.",
+          "effects": [
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Die Platte rührt sich nicht, aber du atmest beim Schieben kräftig ein.",
+          "effects": [
+            {
+              "damage": "W4"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Gekonnt darüberspringen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Ein eleganter Sprung über den Rauch. Niemand sieht ihn, und das ist eine Schande.",
+          "effects": [
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Du rutschst auf dem Reif aus und landest mitten im Rauch. Doppelt kalt, doppelt peinlich.",
+          "effects": [
+            {
+              "damage": "W4"
+            },
+            {
+              "damage": "W4"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "gruft_familiengrab",
+    "type": "combat",
+    "title": "Das Familiengrab",
+    "text": "Drei reich verzierte Särge stehen nebeneinander, auf jedem ein Name. Die Familie hat offenbar Wert darauf gelegt, zusammenzubleiben.",
+    "options": [
+      {
+        "label": "Einen Sarg aufstemmen",
+        "check": {
+          "category": "kraftakt",
+          "dc": 16
+        },
+        "success": {
+          "text": "Der Deckel springt auf, der Bewohner schläft tief. Sein Schmuck wechselt leise den Besitzer.",
+          "effects": [
+            {
+              "loot": "tier2"
+            },
+            {
+              "gainXp": 4
+            }
+          ]
+        },
+        "failure": {
+          "text": "Es knirscht laut. Die ganze Familie wacht auf, und sie empfängt nicht gern Besuch.",
+          "effects": [
+            {
+              "combat": "skelett_krieger"
+            },
+            {
+              "loot": "tier2"
+            },
+            {
+              "gainXp": 4
+            }
+          ]
+        }
+      },
+      {
+        "label": "Weitergehen",
+        "text": "Familienangelegenheiten gehen dich nichts an. Schon gar nicht die von Toten.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "halle_fresko",
+    "type": "choice",
+    "title": "Das Fresko",
+    "text": "Ein verblasstes Wandbild zeigt die Katakomben, erstaunlich ungenau. Mitten darauf ist ein rotes Kreuz gemalt.",
+    "options": [
+      {
+        "label": "Das Kreuz in der Halle suchen",
+        "check": {
+          "category": "wahrnehmung",
+          "dc": 12
+        },
+        "success": {
+          "text": "Unter einer losen Fliese liegt ein Beutel. Das Fresko war doch zu etwas gut.",
+          "effects": [
+            {
+              "gold": "2W6"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Das Kreuz markiert, wo der Maler sein Pausenbrot vergessen hat. Es ist noch essbar, gerade so.",
+          "effects": [
+            {
+              "heal": 1
+            }
+          ]
+        }
+      },
+      {
+        "label": "Das Fresko deuten",
+        "check": {
+          "category": "wissen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Der Maler hatte keine Ahnung, aber du jetzt.",
+          "effects": [
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Du hältst das Fresko verkehrt herum für eine Karte. Es ist eine Speisekarte.",
+          "effects": []
+        }
+      },
+      {
+        "label": "Weitergehen",
+        "text": "Kunst kommt von Können. Dieses Fresko kommt von woanders.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "halle_prozession",
+    "type": "npc",
+    "title": "Die Prozession",
+    "text": "Eine Reihe Geister zieht langsam durch die Halle und summt. Keiner beachtet dich, und die Reihe nimmt kein Ende.",
+    "figures": [
+      {
+        "figure": "geist",
+        "count": 3,
+        "place": "free"
+      }
+    ],
+    "options": [
+      {
+        "label": "Mitlaufen",
+        "text": "Du summst mit. Niemand merkt, dass du lebst, und das fühlt sich überraschend friedlich an.",
+        "effects": [
+          {
+            "heal": "W4"
+          },
+          {
+            "gainXp": 2
+          }
+        ]
+      },
+      {
+        "label": "Vordrängeln",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Die Geister lassen dich höflich vor. Ganz vorn wird etwas verteilt.",
+          "effects": [
+            {
+              "item": "tier1"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Sie schauen dich nur an. Es ist schlimmer als jeder Kampf.",
+          "effects": []
+        }
+      },
+      {
+        "label": "Platz machen",
+        "text": "Du wartest an der Wand, bis der letzte vorbei ist. Es dauert. Geister haben Zeit.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "halle_fluestern",
+    "type": "choice",
+    "title": "Die flüsternden Säulen",
+    "text": "Zwischen den Säulen flüstert es mit fremden Stimmen. Sie reden über Gold, über Verstecke und über dich.",
+    "options": [
+      {
+        "label": "Genau hinhören",
+        "check": {
+          "category": "wahrnehmung",
+          "dc": 12
+        },
+        "success": {
+          "text": "Eine Stimme verrät, wo jemand sein Gold versteckt hat. Es ist noch da.",
+          "effects": [
+            {
+              "gold": "2W6"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Die Säulen erzählen dir nur Rezepte. Alle mit Knochenbrühe.",
+          "effects": []
+        }
+      },
+      {
+        "label": "Ein eigenes Geheimnis zurückflüstern",
+        "text": "Die Säulen verstummen kurz. Dann kichert eine.",
+        "effects": [
+          {
+            "gainXp": 2
+          }
+        ]
+      },
+      {
+        "label": "Weitergehen",
+        "text": "Wer lauscht, hört nur Schlechtes über sich. Du willst es lieber nicht wissen.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "halle_poltergeist",
+    "type": "combat",
+    "title": "Der Poltergeist",
+    "text": "Knochen fliegen dir um die Ohren, ein Schädel prallt an der Säule neben dir ab. Irgendwer hier hat schlechte Laune.",
+    "figures": [
+      {
+        "figure": "poltergeist",
+        "place": "center"
+      }
+    ],
+    "options": [
+      {
+        "label": "Ausweichen und abwarten",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Kein Knochen trifft. Der Poltergeist gibt auf und schmollt in einer Nische.",
+          "effects": [
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Ein Oberschenkelknochen trifft dich am Kopf. Der Poltergeist fühlt sich bestätigt.",
+          "effects": [
+            {
+              "combat": "poltergeist"
+            },
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      },
+      {
+        "label": "Ihn beruhigen",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du fragst, was los ist. Er erzählt eine Stunde lang und schenkt dir zum Dank einen Knochen. Und ein paar Münzen.",
+          "effects": [
+            {
+              "gold": "2W6"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "„Beruhig dich“ hat noch nie jemanden beruhigt.",
+          "effects": [
+            {
+              "combat": "poltergeist"
+            },
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      },
+      {
+        "label": "Angreifen",
+        "effects": [
+          {
+            "combat": "poltergeist"
+          },
+          {
+            "loot": "tier1"
+          },
+          {
+            "gainXp": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "halle_decke",
+    "type": "trap",
+    "title": "Die bröckelnde Decke",
+    "text": "Ein Riss läuft knirschend über die Gewölbedecke. Kleine Steine rieseln herunter, und es werden mehr.",
+    "options": [
+      {
+        "label": "Zur Seite springen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Die Steine prasseln dort nieder, wo du eben noch standest.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Du springst genau in den größten Brocken.",
+          "effects": [
+            {
+              "damage": "W4"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Arme über den Kopf und stehen bleiben",
+        "text": "Ein paar Steinchen treffen dich. Es ist unangenehm, aber berechenbar.",
+        "effects": [
+          {
+            "damage": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "halle_skelettkrieger",
+    "type": "combat",
+    "title": "Der Skelettkrieger",
+    "text": "Zwischen den Säulen steht ein Skelettkrieger. Er sieht dich, hebt das Schwert und kommt auf dich zu.",
+    "figures": [
+      {
+        "figure": "skelett_krieger",
+        "place": "center"
+      }
+    ],
+    "options": [
+      {
+        "label": "Kämpfen",
+        "effects": [
+          {
+            "combat": "skelett_krieger"
+          },
+          {
+            "loot": "tier1"
+          },
+          {
+            "gainXp": 3
+          }
+        ]
+      },
+      {
+        "label": "Fliehen",
+        "check": {
+          "category": "flucht",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du verschwindest hinter einer Säule. Er verliert das Interesse und schlurft davon.",
+          "effects": []
+        },
+        "failure": {
+          "text": "Er ist schneller, als ein Toter sein dürfte. Die Klinge erwischt dich im Rücken.",
+          "effects": [
+            {
+              "damage": "W4"
+            },
+            {
+              "combat": "skelett_krieger"
+            },
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "boss_skelettkoenig",
+    "type": "combat",
+    "title": "Audienz beim Skelett-König",
+    "text": "Auf einem Thron aus Knochen sitzt ein Skelett mit goldener Krone. Er hebt sein Zepter und bittet zur Audienz. Sein Hof schweigt, seit 400 Jahren.",
+    "options": [
+      {
+        "label": "Tief verbeugen",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Der König ist geschmeichelt und gewährt dir einen Moment zum Durchatmen. Dann will er dich trotzdem hinrichten.",
+          "effects": [
+            {
+              "setFlag": "skelettkoenig_gesehen"
+            },
+            {
+              "heal": "W4"
+            },
+            {
+              "combat": "skelettkoenig"
+            }
+          ]
+        },
+        "failure": {
+          "text": "Dein Rücken knackt lauter als seiner. Er nimmt das als Beleidigung.",
+          "effects": [
+            {
+              "setFlag": "skelettkoenig_gesehen"
+            },
+            {
+              "damage": "W4"
+            },
+            {
+              "combat": "skelettkoenig"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Den Hofnarren spielen",
+        "check": {
+          "category": "fingerfertigkeit",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du jonglierst mit drei Schädeln. Der König lacht so sehr, dass ihm der Kiefer herunterfällt, und du sammelst dich.",
+          "effects": [
+            {
+              "setFlag": "skelettkoenig_gesehen"
+            },
+            {
+              "heal": "W4"
+            },
+            {
+              "combat": "skelettkoenig"
+            }
+          ]
+        },
+        "failure": {
+          "text": "Ein Schädel landet auf deinem Fuß. Der König lacht trotzdem, aber über dich.",
+          "effects": [
+            {
+              "setFlag": "skelettkoenig_gesehen"
+            },
+            {
+              "damage": "W4"
+            },
+            {
+              "combat": "skelettkoenig"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Die Kerze der Ewigen Flamme hochhalten",
+        "condition": "flag:ewige_flamme",
+        "text": "Der König weicht geblendet zurück und hält die Hand vor die leeren Augenhöhlen. Du nutzt den Moment.",
+        "effects": [
+          {
+            "setFlag": "skelettkoenig_gesehen"
+          },
+          {
+            "heal": "2W4"
+          },
+          {
+            "combat": "skelettkoenig"
+          }
+        ]
+      },
+      {
+        "label": "Sofort zuschlagen",
+        "text": "Kein Protokoll, keine Verbeugung. Der Hof ist entsetzt, so gut es ohne Gesicht geht.",
+        "effects": [
+          {
+            "setFlag": "skelettkoenig_gesehen"
+          },
+          {
+            "combat": "skelettkoenig"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "boss_skelettkoenig_zurueck",
+    "type": "combat",
+    "title": "Der König ist verstimmt",
+    "text": "Der Skelett-König sitzt wieder auf seinem Thron. Er hat dich nicht vergessen, er hat sonst auch wenig zu tun.",
+    "options": [
+      {
+        "label": "Um Verzeihung bitten",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Er nimmt die Entschuldigung an. Die Hinrichtung findet trotzdem statt, aber gnädiger.",
+          "effects": [
+            {
+              "heal": "W4"
+            },
+            {
+              "combat": "skelettkoenig"
+            }
+          ]
+        },
+        "failure": {
+          "text": "Er hat keine Ohren, aber er hört sehr genau, dass du es nicht ernst meinst.",
+          "effects": [
+            {
+              "damage": "W4"
+            },
+            {
+              "combat": "skelettkoenig"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Die Kerze der Ewigen Flamme hochhalten",
+        "condition": "flag:ewige_flamme",
+        "text": "Er erinnert sich an das Licht und kneift die Augenhöhlen zusammen. Wieder ein Moment für dich.",
+        "effects": [
+          {
+            "heal": "2W4"
+          },
+          {
+            "combat": "skelettkoenig"
+          }
+        ]
+      },
+      {
+        "label": "Angreifen",
+        "text": "Runde zwei. Der Hof schweigt weiter.",
+        "effects": [
+          {
+            "combat": "skelettkoenig"
+          }
+        ]
+      }
+    ]
   }
 ]

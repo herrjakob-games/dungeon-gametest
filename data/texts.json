@@ -14,7 +14,13 @@
       "schrein_weihwasser": "Gestorben an Weihwasser. Die Götter sagen, es sei gut gemeint gewesen.",
       "schrein_heiliger_segen": "Von einem Heiligen erschlagen. Es gibt schlechtere Arten, in die Legende einzugehen.",
       "schrein_heiliger_weisheit": "Von einem Heiligen erschlagen. Es gibt schlechtere Arten, in die Legende einzugehen.",
-      "schrein_heiliger_reichtum": "Von einem Heiligen erschlagen. Es gibt schlechtere Arten, in die Legende einzugehen."
+      "schrein_heiliger_reichtum": "Von einem Heiligen erschlagen. Es gibt schlechtere Arten, in die Legende einzugehen.",
+      "gruft_grabraeuber": "Von derselben Falle erwischt wie der Grabräuber. Ihr liegt jetzt nebeneinander, das spart Platz.",
+      "gruft_staub": "Erstickt am Staub der Jahrhunderte. Uroma hätte gesagt, du sollst lüften.",
+      "halle_decke": "Die Decke kam runter, und du warst darunter. Die Säulen halten seitdem eine Schweigeminute.",
+      "halle_skelettkrieger": "Auf der Flucht von hinten erwischt. Der Skelettkrieger erzählt die Geschichte trotzdem als großes Duell.",
+      "boss_skelettkoenig": "Schon bei der Audienz gestorben. Der König hat dich nicht einmal zu Ende hinrichten müssen.",
+      "boss_skelettkoenig_zurueck": "Zur zweiten Audienz gekommen, zur dritten nicht mehr. Der König vermerkt es im Hofbuch."
     }
   }
 }

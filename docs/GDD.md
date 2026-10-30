@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.47 · Oct 30, 2026 · @Christian
+Version 2.48 · Oct 30, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.48 | 30.10.2026 | Katakomben Paket 3: Events für Gruft, Säulenhalle und Bossraum (Skelett-König mit Audienz und Rückkehr) |
 | 2.47 | 30.10.2026 | Gruft darf in den Katakomben direkt neben dem Start stehen; große Zelle im Kerker mit schmalen Eckpfeilern (`zellecke`) statt Gitterecken |
 | 2.46 | 30.10.2026 | Kerker in den Katakomben mit zwei Varianten: vier Eckzellen (3×3) oder eine große Zelle (5×5); Zellwände aus KayKit-Gittern, Torbögen und Steinpfeilern auf Kachelkanten; Wegfindung sperrt Kanten; in jeder Zelle entweder ein Strohlager oder Knochen; Rückwände in allen Räumen der Katakomben zu etwa 30 % gesprungen (`wand_riss`); Innenwände und Säulen werden um verdeckte Figuren herum durchsichtig (Durchblick) |
 | 2.45 | 30.10.2026 | Katakomben Paket 1 und 2: Monster Skelettkrieger, Geist, Poltergeist, Skelett-König; Begegnungen; Events für Kerker und Schrein; Skelett-König als Warrior 1,3-fach mit goldener Krone; Kerker auch in den Katakomben höchstens 2 |
@@ -333,7 +334,7 @@ Der Dungeon führt durch Themen, die alle drei Ebenen wechseln. Das Thema bestim
 - **Rastplatz:** auf jeder geraden Ebene (2, 4, 6 …). Ein Lagerfeuer im Raum heilt einmal auf volle Lebenspunkte, danach ist es aus. Um das Feuer liegt im Umkreis von zwei Kacheln nichts, auch kein Schutt. Im Raum verteilt liegen 2 bis 3 Schlaflager, nie neben einer Tür; daneben stehen dünne Kerzen (eine brennend, eine aus). Dazu 2 bis 3 Flaschen und 2 bis 3 Fässer; keine Säcke.
 - **Treppen:** Vorkammer und Abstieg haben in der Nordwest-Ecke eine gerade Steintreppe (KayKit `stairs`) aus 3×3 Kacheln (1|1 bis 3|3), die zur Nordwand hin läuft; ihr Fuß liegt an der Südkante (Reihe y=3). In der Vorkammer beginnt sie auf Bodenhöhe und steigt bis zur Wandoberkante (2 Kacheln); ihr oberes Ende wird dunkel, wie ein Schacht nach oben, ohne eigenes Licht und ohne Farbstich: Es kommt kein bläulicher Lichtschein von oben. Sie ist nicht anklickbar und zeigt, woher der Spieler kommt. Im Abstieg fehlt auf diesen Kacheln der Boden: Ein Loch mit Steinkante öffnet sich, die Treppe beginnt an der Südkante auf Bodenhöhe und führt nach Norden in die Tiefe. Die Innenwände des Lochs sind dunkel, unten verläuft alles in die Schattenfarbe, und ein schwacher, kühler Schimmer steigt von unten auf. Die ganze Fläche ist anklickbar und blockiert; ein Klick führt eine Ebene tiefer. Der Code setzt die Treppen fest, sie stehen nicht in der Einrichtung. Die Türen Nord (5|1) und West (1|5) und die Kacheln davor bleiben frei.
 - **Bossraum:** Betreten startet den Bosskampf, auch bei jedem weiteren Betreten, bis der Boss besiegt ist. Flucht ist erlaubt, der Boss wartet dann mit vollen Lebenspunkten. Die Nordwest-Ecke (1|1 bis 3|3) bleibt bis zum Sieg frei: Über Loch und Treppe liegt ein Metallgitter, das man betreten kann; es ist nicht anklickbar. Sieg: Beute `tier2` und 10 Erfahrung, danach wechselt die Nordwest-Ecke mit kurzer Abblende (etwa 0,5 Sekunden) zu Loch und Treppe nach unten. Die Siegbeute vergibt das Spiel, nicht das Event.
-- **Boss-Events:** Der Bossraum hat pro Thema eine eigene Event-Tabelle in `themeEvents` wie jeder Raumtyp, etwa `"themeEvents": { "keller": [ … ] }`, mit `eventChance` 1. Bei jedem Betreten wird daraus neu gewürfelt, bis der Boss besiegt ist. Die Events starten den Kampf gegen den Boss mit `combat`. Bedingungen wie `flag:name` unterscheiden die erste Begegnung von der Rückkehr. Themen ohne Tabelle zeigen den Einleitungstext des Bosses (`intro`) und starten den Kampf direkt. Bisher hat nur der Keller (Monsterratte) Boss-Events.
+- **Boss-Events:** Der Bossraum hat pro Thema eine eigene Event-Tabelle in `themeEvents` wie jeder Raumtyp, etwa `"themeEvents": { "keller": [ … ] }`, mit `eventChance` 1. Bei jedem Betreten wird daraus neu gewürfelt, bis der Boss besiegt ist. Die Events starten den Kampf gegen den Boss mit `combat`. Bedingungen wie `flag:name` unterscheiden die erste Begegnung von der Rückkehr. Themen ohne Tabelle zeigen den Einleitungstext des Bosses (`intro`) und starten den Kampf direkt. Boss-Events haben der Keller (Monsterratte) und die Katakomben (Skelett-König).
 - **Bosse:** passend zum Thema, einer am Ende jeder Themenwelt.
 
 ### Ebenen
@@ -892,3 +893,4 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Durchblick statt Ausblenden: Innenwände und Säulen werden nur im Kreis um eine verdeckte Spielfigur oder einen verdeckten Gegner durchsichtig (Startwert Deckkraft 0,4, im Spiel testen)
 - [x] Gruft darf in den Katakomben direkt neben dem Start stehen (Ausnahme `overrides` in `data/themes.json`)
 - [x] Große Zelle im Kerker: an den Ecken schmale Eckpfeiler (`zellecke`) statt Gitterecken
+- [x] Katakomben Paket 3: Event-Tabellen der Katakomben für Gruft (feindlich), Säulenhalle (gemischt) und Bossraum (Skelett-König); Totenwache steht am Sarkophag auf
