@@ -2,7 +2,8 @@
 // Reine Logik ohne Grafik und Textfenster, damit sie in tests/ geprüft werden kann.
 // Zufall kommt immer als Funktion rand() herein: im Spiel Math.random, in Tests fest.
 import { DIR, DIRKEYS } from "./config.js";
-import { checkDecor } from "./decor.js";
+import { mulberry32 } from "./rng.js";
+import { checkDecor, checkFloorTiles } from "./decor.js";
 import { checkFigures } from "./figurePlan.js";
 import { ATTRS, hasItem, ATTR_MIN, ATTR_MAX, START_ATTR_MAX, VOLK_NAMES } from "./character.js";
 
@@ -79,6 +80,34 @@ export function checkCondition(cond, run, player) {
   return !!player && hasItem(player, m[2]);
 }
 
+// ---------- Tabellen und Bewertung pro Thema (docs/GDD.md, Raumtypen und Event-System) ----------
+// Raumtypen mit fester Bewertung in jedem Thema (themeRating darf sie nicht ändern)
+export const FIXED_RATING = { start: "neutral", rast: "neutral", haendler: "neutral", schatz: "hostile", boss: "hostile" };
+// Event-Tabelle im Thema: themeEvents[thema] ersetzt events vollständig, sonst gilt events
+export const eventTable = (rt, themeId) => ((rt.themeEvents || {})[themeId]) || rt.events || [];
+// Bewertung im Thema: themeRating[thema], sonst die Bewertung des Raumtyps
+export const ratingFor = (rt, themeId) => ((rt.themeRating || {})[themeId]) || rt.rating;
+// Raumtyp, wie er im Thema gilt (Tabelle und Bewertung), für pickEvent
+export const inTheme = (rt, themeId) => Object.assign({}, rt, { events: eventTable(rt, themeId), rating: ratingFor(rt, themeId) });
+
+// ---------- Begegnungen (docs/GDD.md, Begegnungen) ----------
+// Nie in diesen Räumen, auch wenn sie im Thema feindlich sind
+export const NO_ENCOUNTER = ["start", "exit", "rast", "haendler", "schatz", "boss"];
+/**
+ * Begegnung beim ersten Betreten: Würfelt mit dem Raum-Seed gegen die Chance des Themas (encounters) und wählt gewichtet
+ * ein Monster. Nur in Räumen, die im Thema feindlich oder gemischt sind. Ergebnis: Monster-id oder null.
+ */
+export function pickEncounter(theme, rt, seed) {
+  const enc = theme && theme.encounters;
+  if (!enc || !rt || NO_ENCOUNTER.includes(rt.id) || ratingFor(rt, theme.id) === "neutral") return null;
+  const R = mulberry32(((seed || 0) ^ 0x6a09e667) >>> 0);
+  if (!(R() < enc.chance)) return null;
+  const total = enc.monsters.reduce((s, m) => s + m.weight, 0);
+  let r = R() * total;
+  for (const m of enc.monsters) { if ((r -= m.weight) < 0) return m.monster; }
+  return enc.monsters[enc.monsters.length - 1].monster;
+}
+
 // ---------- Event-Auswahl ----------
 // Würfelt gegen die Event-Chance und wählt dann gewichtet aus den erlaubten Events. Ergebnis: id oder null.
 export function pickEvent(roomType, run, rand, player) {
@@ -97,10 +126,11 @@ export function pickEvent(roomType, run, rand, player) {
   return allowed[allowed.length - 1].id;
 }
 
-// Event-Tabelle des Bossraums für ein Thema (Feld themeEvents); ohne Tabelle gibt es kein Boss-Event
+// Event-Tabelle des Bossraums für ein Thema: derselbe Weg wie bei jedem Raumtyp (themeEvents, sonst events);
+// ohne Events gibt es kein Boss-Event (dann intro und direkt der Kampf)
 export const bossEventTable = (bossType, themeId) => {
-  const events = (bossType.themeEvents || {})[themeId];
-  return events ? Object.assign({}, bossType, { events }) : Object.assign({}, bossType, { eventChance: 0, events: [] });
+  const t = inTheme(bossType, themeId);
+  return t.events.length ? t : Object.assign(t, { eventChance: 0 });
 };
 
 // Optionen eines Events, die die Figur sehen darf (Volks-Bedingungen einzelner Optionen)
@@ -231,6 +261,11 @@ export function validateData(data) {
     if (!rt.name) err(w, "Name fehlt");
     if (!(rt.eventChance >= 0 && rt.eventChance <= 1)) err(w, "eventChance muss zwischen 0 und 1 liegen");
     if (!RATINGS.includes(rt.rating)) err(w, "Bewertung muss hostile, mixed oder neutral sein");
+    Object.entries(rt.themeRating || {}).forEach(([th, r]) => {
+      if (!(data.themes || []).some(t => t.id === th)) err(w, "themeRating für unbekanntes Thema " + th);
+      if (!RATINGS.includes(r)) err(w, "themeRating " + th + " muss hostile, mixed oder neutral sein");
+      if (FIXED_RATING[rt.id] && r !== FIXED_RATING[rt.id]) err(w, "Bewertung ist in jedem Thema " + FIXED_RATING[rt.id]);
+    });
     if (!rt.layout) err(w, "layout fehlt");
     if (rt.deadEnd !== undefined && !["only", "never", "prefer"].includes(rt.deadEnd)) err(w, "deadEnd muss only, never oder prefer sein");
     if (rt.themeLevel !== undefined && ![1, 2, 3].includes(rt.themeLevel)) err(w, "themeLevel muss 1, 2 oder 3 sein (Ebene im Thema)");
@@ -245,19 +280,28 @@ export function validateData(data) {
     const tables = Object.entries(rt.themeEvents || {});
     tables.forEach(([th]) => { if (!(data.themes || []).some(t => t.id === th)) err(w, "themeEvents für unbekanntes Thema " + th); });
     if (rt.eventChance > 0 && !rt.events.length && !tables.length) err(w, "Event-Chance ohne Events");
-    for (const e of rt.events.concat(...tables.map(([, l]) => l))) {
-      if (!data.events[e.id]) err(w, "unbekanntes Event " + e.id);
-      if (!(e.weight > 0)) err(w, "Gewicht von " + e.id + " muss größer als 0 sein");
-      checkCond(w, e.condition);
-      if (rt.rating === "mixed" && !["hostile", "neutral"].includes(e.rating)) err(w, e.id + " braucht die Markierung hostile oder neutral");
-      if (e.hostile !== undefined && typeof e.hostile !== "boolean") err(w, e.id + ": hostile muss true oder false sein");
-      if (typeof e.hostile === "boolean" && e.rating && (e.rating === "hostile") !== e.hostile) err(w, e.id + ": hostile und rating widersprechen sich");
-    }
-    if (rt.rating === "mixed" && !["hostile", "neutral"].every(r => rt.events.some(e => e.rating === r))) {
-      err(w, "gemischter Raumtyp braucht feindliche und harmlose Events");
+    // Jede Tabelle mit der Bewertung, die in ihrem Thema gilt (events: Standard und jedes Thema ohne eigene Tabelle)
+    const rated = [[null, rt.events, rt.rating]].concat(tables.map(([th, l]) => [th, l, ratingFor(rt, th)]));
+    (data.themes || []).forEach(th => { if (!(rt.themeEvents || {})[th.id] && ratingFor(rt, th.id) !== rt.rating) rated.push([th.id, rt.events, ratingFor(rt, th.id)]); });
+    for (const [th, list, rating] of rated) {
+      const where = w + (th ? " (" + th + ")" : "");
+      for (const e of list) {
+        if (!data.events[e.id]) err(where, "unbekanntes Event " + e.id);
+        if (!(e.weight > 0)) err(where, "Gewicht von " + e.id + " muss größer als 0 sein");
+        checkCond(where, e.condition);
+        // Markierungspflicht: Ist der Raumtyp im Thema gemischt, tragen alle Einträge hostile und rating
+        if (rating === "mixed" && !["hostile", "neutral"].includes(e.rating)) err(where, e.id + " braucht die Markierung rating hostile oder neutral");
+        if (rating === "mixed" && typeof e.hostile !== "boolean") err(where, e.id + " braucht die Markierung hostile true oder false");
+        if (e.hostile !== undefined && typeof e.hostile !== "boolean") err(where, e.id + ": hostile muss true oder false sein");
+        if (typeof e.hostile === "boolean" && e.rating && (e.rating === "hostile") !== e.hostile) err(where, e.id + ": hostile und rating widersprechen sich");
+      }
+      if (rating === "mixed" && list.length && !["hostile", "neutral"].every(r => list.some(e => e.rating === r))) {
+        err(where, "gemischter Raumtyp braucht feindliche und harmlose Events");
+      }
     }
   }
 
+  const rewardChecks = [];
   for (const th of data.themes || []) {
     const w = "Thema " + th.id;
     if (!th.name) err(w, "Name fehlt");
@@ -275,6 +319,18 @@ export function validateData(data) {
     });
     [th.startNeighbor].concat(th.roomTypes || []).forEach(t => { if (!data.roomTypes[t]) err(w, "unbekannter Raumtyp " + t); });
     [th.boss].concat(th.endlessBosses || []).concat(th.monsters || []).forEach(m => { if (!data.monsters[m]) err(w, "unbekanntes Monster " + m); });
+    if (th.floorTiles !== undefined) checkFloorTiles(th.floorTiles, w, err);
+    if (th.encounters !== undefined) {
+      const enc = th.encounters;
+      if (!(enc.chance > 0 && enc.chance <= 1)) err(w, "encounters: chance muss zwischen 0 und 1 liegen");
+      if (!Array.isArray(enc.monsters) || !enc.monsters.length) err(w, "encounters: monsters fehlt");
+      else enc.monsters.forEach(m => {
+        if (!data.monsters[m.monster]) err(w, "encounters: unbekanntes Monster " + m.monster);
+        if (!(m.weight > 0)) err(w, "encounters: Gewicht von " + m.monster + " muss größer als 0 sein");
+      });
+      if (!Array.isArray(enc.reward)) err(w, "encounters: reward muss eine Liste von Effekten sein");
+      else rewardChecks.push([w + " encounters reward", enc.reward]); // geprüft wie Event-Effekte, siehe unten
+    }
     Object.entries(th.overrides || {}).forEach(([t, o]) => {
       if (!(th.roomTypes || []).includes(t)) err(w, "Ausnahme für " + t + ", das nicht zum Thema gehört");
       Object.keys(o).forEach(k => { if (!["max", "deadEnd", "nextToStart", "near", "crossroads"].includes(k)) err(w, "unbekannte Regel " + k + " bei " + t); });
@@ -358,6 +414,11 @@ export function validateData(data) {
       else if (type === "setFlag" && !/^[\w-]+$/.test(v)) err(w, "ungültiger Flag-Name " + v);
     }
   };
+
+  rewardChecks.forEach(([w, fx]) => {
+    checkOutcome(w, { effects: fx });
+    if (fx.some(e => e.combat)) err(w, "Siegbeute darf keinen Kampf starten");
+  });
 
   for (const ev of Object.values(data.events)) {
     const w = "Event " + ev.id;

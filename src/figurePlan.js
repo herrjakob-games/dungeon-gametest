@@ -39,7 +39,8 @@ const N8 = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, 1], [1, -1], [-1, -1]
  * ctx: { placements (Einrichtung aus planDecor, sonst []), blocked (Set "x,z"), doors, player [x,z],
  *        occupied (Set "x,z" weiterer Figuren), rand,
  *        anchors (Anker aus data/staging.json), canPose(figure, variant, anim) (hat das Modell die Animation?),
- *        stairsDown (true, wenn im Raum eine Treppe nach unten steht) }
+ *        stairsDown (true, wenn im Raum eine Treppe nach unten steht),
+ *        awayFrom [x, z] und awayDist: Figuren ohne Anker stehen mindestens awayDist Kacheln davon entfernt (Begegnungen) }
  * Ergebnis: [{ figure, variant, tiles, cx, cz, y, rot, stay, blocks, onProp, anim, seat }]
  * anim "flat": die Figur hat keine Liege-Animation und liegt starr auf dem Rücken (Anker mit flat).
  * Passt eine Figur nirgends hin, fehlt sie im Ergebnis. Fehlt der Anker oder die Animation, steht die Figur
@@ -65,6 +66,7 @@ export function planFigures(list, ctx) {
   function fits(x, z, info) {
     const tiles = footprint(x, z, info.size);
     if (!tiles.every(t => inBounds(...t) && !blocked.has(key(...t)) && !reserved.has(key(...t)) && !used.has(key(...t)))) return null;
+    if (ctx.awayFrom && tiles.some(([tx, tz]) => Math.max(Math.abs(tx - ctx.awayFrom[0]), Math.abs(tz - ctx.awayFrom[1])) < ctx.awayDist)) return null;
     if (info.blocks) {
       const test = new Set(blocked);
       tiles.forEach(t => test.add(key(...t)));

@@ -5,7 +5,7 @@ import { DIR, reduceMotion } from "./config.js";
 import { state } from "./state.js";
 import { DATA } from "./data.js";
 import { TYPES } from "./roomTypes.js";
-import { CATEGORY_NAMES, CATEGORIES, pickEvent, bossEventTable, doCheck, applyEffects, releaseIfTrapped, visibleOptions } from "./eventLogic.js";
+import { CATEGORY_NAMES, CATEGORIES, pickEvent, bossEventTable, inTheme, pickEncounter, doCheck, applyEffects, releaseIfTrapped, visibleOptions } from "./eventLogic.js";
 import { ATTR_NAMES, addItem, levelUp, raisableAttrs, pendingLevelUps } from "./character.js";
 import { showDialog, closeDialog } from "./dialog.js";
 import { refreshLocks, chestState, removeChest } from "./roomBuilder.js";
@@ -53,10 +53,14 @@ function roomCtx() {
 }
 const effectCtx = () => ({ player: state.player, run: state.run, items: DATA.items, stage: state.theme.stage, room: roomCtx() });
 
-// Beim ersten Betreten: gegen die Event-Chance des Raumtyps würfeln. Ergebnis: true, wenn ein Event startet.
+// Beim ersten Betreten: zuerst eine Begegnung prüfen (Raum-Seed), sonst gegen die Event-Chance würfeln und aus der
+// Tabelle des aktuellen Themas wählen (themeEvents, sonst events). Ergebnis: true, wenn ein Event oder Kampf startet.
 export function startRoomEvent() {
-  const type = TYPES[state.dungeon.rooms[state.current].type];
-  const id = pickEvent(type, state.run, Math.random, state.player);
+  const room = state.dungeon.rooms[state.current];
+  const type = TYPES[room.type];
+  const monster = pickEncounter(state.theme, type, room.seed);
+  if (monster) { startEncounter(monster); return true; }
+  const id = pickEvent(inTheme(type, state.theme ? state.theme.id : null), state.run, Math.random, state.player);
   if (!id) return false;
   state.run.usedOnce.add(id);
   runEvent(id);
@@ -229,6 +233,18 @@ export function startBoss() {
     label: "Kämpfen",
     pick: () => fight({ title: boss.name }, {}, { monster: boss.id, rest: [] })
   }], { modal: true });
+}
+
+// Begegnung (docs/GDD.md, Begegnungen): Die Figuren stehen schon im Raum, mindestens drei Kacheln von der Eingangstür,
+// und laufen zum Kampf an; kein Event-Fenster. Sieg: reward des Themas; Flucht: durch die Rück-Tür; Tod: deathText.
+export function startEncounter(monsterId) {
+  const enc = state.theme.encounters;
+  const ev = { id: "begegnung_" + monsterId, title: DATA.monsters[monsterId].name, options: [{ effects: [{ combat: monsterId }] }] };
+  state.eventActive = true;
+  const door = state.backDoor ? DIR[state.backDoor].approach : state.pTile;
+  const shown = showEventFigures(ev, { awayFrom: door, dist: 3 });
+  const go = () => fight(ev, {}, { monster: monsterId, rest: (enc.reward || []).slice() });
+  if (shown && !reduceMotion) setTimeout(go, FIGURE_DELAY); else go();
 }
 
 // Testmodus (?fight=<monster-id>): Kampf ohne Event, etwa in der Vorkammer

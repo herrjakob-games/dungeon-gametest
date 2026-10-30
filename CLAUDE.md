@@ -64,8 +64,8 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/pathfinding.js` | A*-Wegfindung, rein logisch |
 | `src/rng.js` | Seed-basierte Zufallszahlen und Würfel |
 | `src/state.js` | gemeinsamer Spielzustand |
-| `data/themes.json` | Themen: Name, Stufe, Proben-Zuschlag, Raumtypen, Nachbar des Starts, Monster, Boss, Regel-Ausnahmen (`overrides`), Palette (`palette`, `roomPalettes`, dort optional `brightness` für hellere Räume) |
-| `data/room-types.json` | Raumtypen: Name, Farben, Einrichtung als Daten (`decor`, `themeDecor`, dort `mimics` für Mimik-Truhen) oder altes Muster (`layout`), Bewertung, Lage- und Anzahlregeln (`themeLevel`: Ebene im Thema), Event-Chance, Event-Tabelle; beim Bossraum Tabellen pro Thema (`themeEvents`) |
+| `data/themes.json` | Themen: Name, Stufe, Proben-Zuschlag, Raumtypen, Nachbar des Starts, Monster, Boss, Regel-Ausnahmen (`overrides`), Palette (`palette`, `roomPalettes`, dort optional `brightness` für hellere Räume), Begegnungen (`encounters`), Bodenvarianten (`floorTiles`) |
+| `data/room-types.json` | Raumtypen: Name, Farben, Einrichtung als Daten (`decor`, `themeDecor`, dort `mimics` für Mimik-Truhen) oder altes Muster (`layout`), Bewertung und Bewertung pro Thema (`themeRating`), Lage- und Anzahlregeln (`themeLevel`: Ebene im Thema), Event-Chance, Event-Tabelle (`events`) und Tabellen pro Thema (`themeEvents`, ersetzen `events` im Thema), Bodenvarianten in der Einrichtung (`floorTiles`) |
 | `data/events.json` | alle Events (auch die Truhe), Figuren beim Event-Start (`figures`) |
 | `data/staging.json` | Inszenierung der Event-Figuren: Standard, Anker an Requisiten, Modell-Varianten und `stays`, eigene Inszenierung pro Event |
 | `data/monsters.json` | Monster und Bosse mit Lebenspunkten, Rüstung, Angriff, Schaden, Satz zur Todesursache, Angriffsklang (`sound`) |
@@ -77,11 +77,11 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/data.js` | lädt `data/*.json` und prüft die Daten |
 | `src/sound.js` | Sound über die Web Audio API: Kanäle, Raum-Stimmung mit Überblendung und Zufallsgeräuschen, Schritte, Dämpfen bei Events; fehlende Sounds bleiben still |
 | `src/soundLogic.js` | Sound-Regeln: Angriffsklang, Treffer und Tod, Raum-Sound (`themeSound` vor `sound`), Schritte, Datenprüfung; rein logisch |
-| `src/eventLogic.js` | Event-Regeln: Proben-Kategorien, Auswahl, Effekte, Beute, Bedingungen, Datenprüfung; rein logisch |
+| `src/eventLogic.js` | Event-Regeln: Proben-Kategorien, Tabelle und Bewertung pro Thema (`inTheme`), Auswahl, Begegnungen (`pickEncounter`), Effekte, Beute, Bedingungen, Datenprüfung; rein logisch |
 | `src/character.js` | Figur: Volk, Inventar, Anlegen, Stufenaufstieg, Fähigkeit; rein logisch |
 | `src/combat.js` | Rundenkampf: Angriff, Gegnerzug, Verteidigen, Gegenstände, Flucht, Tiefe; rein logisch |
 | `src/roomTypes.js` | Raumtypen-Tabelle, befüllt aus `data/room-types.json` |
-| `src/decor.js` | Einrichtung als Daten: Requisiten-Größen, Platzierung (`center`, `wall-back`, `corner`, `free`, `around:`, `above:`, `tile:x|y`, `door-sides`), Fackeln an Säulen (`torches`) und ihre Anzahl (`torchCount`), Abstand zur Wand (`wallGap`), Freiraum (`clear`), Abstand zu Türen (`doorGap`), Treppenfläche und Startkachel, Erreichbarkeit, Datenprüfung; rein logisch |
+| `src/decor.js` | Einrichtung als Daten: Requisiten-Größen, Platzierung (`center`, `wall-back`, `corner`, `free`, `around:`, `above:`, `tile:x|y`, `door-sides`), Fackeln an Säulen (`torches`) und ihre Anzahl (`torchCount`), Abstand zur Wand (`wallGap`), Freiraum (`clear`), Abstand zu Türen (`doorGap`), Bodenvarianten (`floorTiles`), Treppenfläche und Startkachel, Erreichbarkeit, Datenprüfung; rein logisch |
 | `src/props.js` | Requisiten aus Grundformen (Platzhalter, wenn ein Modell fehlt) |
 | `src/stairs.js` | Treppen in der Nordwest-Ecke: KayKit `stairs` (`treppe_hoch`, `treppe_runter`), Loch mit Steinkante und kühlem Licht, Gitter im Bossraum, Verlauf zur Schattenfarbe; Rückfall aus Grundformen |
 | `src/models.js` | Modell-Lader: `data/models.json`, Paletten-Textur des Themas, Klone pro Instanz, Figuren mit Animationen (`makeFigureModel`), Rückfall auf Platzhalter |
@@ -95,7 +95,7 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/player.js` | Spielfigur, Platzierung; `setFigure(volk)` tauscht das Modell (KayKit-Figur oder Platzhalter), `animateFigure` wechselt Stehen und Laufen |
 | `src/figures.js` | Platzhalterfiguren der Völker aus Grundformen (Rückfall, wenn ein Modell fehlt) |
 | `src/movement.js` | Laufbewegung entlang des Weges |
-| `src/events.js` | Event-Ablauf im Textfenster, Proben-Zuschlag, Fundstücke, Stufenaufstieg, Tod, Truhe, Boss, Rastplatz, Abstieg |
+| `src/events.js` | Event-Ablauf im Textfenster, Begegnungen (Kampf ohne Event), Proben-Zuschlag, Fundstücke, Stufenaufstieg, Tod, Truhe, Boss, Rastplatz, Abstieg |
 | `src/combatUI.js` | Kampf im Textfenster |
 | `src/checkUI.js` | Würfelzeile und Angebot der Volks-Fähigkeit |
 | `src/inventory.js` | Ausrüstungs- und Rucksack-Feld oben rechts |

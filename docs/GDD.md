@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.36 · Oct 30, 2026 · @Christian
+Version 2.37 · Oct 30, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.37 | 30.10.2026 | Event-Tabellen (`themeEvents`) und Bewertung (`themeRating`) pro Thema für alle Raumtypen; Begegnungen ab den Katakomben: Monster stehen per Zufall im Raum, der Kampf beginnt ohne Event (`encounters` in `data/themes.json`); Bodenplatten pro Thema und Raumtyp aus KayKit-Varianten (`floorTiles`) |
 | 2.36 | 30.10.2026 | Eigener Sound für den Tod der Spielfigur: `tod_<volk>`, sonst `tod_spieler`, sonst `tod` |
 | 2.35 | 29.10.2026 | Rastplatz: zwei Kacheln frei um das Feuer; 2 bis 3 Schlaflager (`bed_floor`) nie neben Türen, daneben dünne Kerzen; 2 bis 3 Flaschen und 2 bis 3 Fässer statt Säcken |
 | 2.34 | 29.10.2026 | Vorkammer: kein Wegweiser mehr; das Pult mit Buch steht immer auf 4\|3 seitlich der Treppe |
@@ -103,7 +104,7 @@ Das Spiel kennt zwei Modi: freie Erkundung in Echtzeit und rundenbasierte Events
 - **Raumwechsel:** Klick auf eine Tür. Das Bild blendet kurz ab, die Figur steht im neuen Raum an der gegenüberliegenden Tür.
 - **Startposition:** Zu Beginn jedes Dungeons, auch nach jedem Abstieg, steht die Figur in der Vorkammer am Fuß der Treppe nach oben, auf Kachel 2|4.
 - **Kamera:** Zentriert auf den aktuellen Raum. Die vorderen Wände sind ausgeblendet, damit nichts die Figur verdeckt.
-- **Modus-Wechsel:** Löst ein Event aus, stoppt die Bewegung und das Textfenster übernimmt. Events gibt es nur beim ersten Betreten eines Raums, danach durchläuft der Spieler ihn ohne neues Event.
+- **Modus-Wechsel:** Löst ein Event aus, stoppt die Bewegung und das Textfenster übernimmt. Events gibt es nur beim ersten Betreten eines Raums, danach durchläuft der Spieler ihn ohne neues Event. Eine Begegnung (siehe Begegnungen) startet statt eines Events direkt den Kampf.
 - **Minimap:** Zeigt besuchte Räume und bekannte Türen. Ein Klick auf einen besuchten Raum reist sofort mit Abblende dorthin, ohne Kosten. Die Figur erscheint in der Raummitte, ist diese blockiert, auf dem nächsten freien Feld. Unbesuchte Räume sind kein Reiseziel. Während eines Events oder Kampfes ist die Schnellreise gesperrt.
 
 ## Regelwerk
@@ -147,7 +148,7 @@ Der Spieler wählt vor dem ersten Dungeon ein Volk. Das Volk legt Attribute, Leb
 - **Fliehen:** Probe Flucht gegen SG 12. Erfolg: Rückzug durch die Tür, durch die der Raum betreten wurde (im Startraum endet nur der Kampf). Das Event ist dann vorbei, ohne Beute und ohne Folge-Event. Fehlschlag: Der Gegner handelt normal.
 - **Fähigkeit im Kampf:** gilt für das tatsächlich gewürfelte Attribut. Der Elf kann also einen verfehlten Angriff mit leichter Waffe retten, der Zwerg einen mit schwerer Waffe, der Mensch einen mit magischer Waffe.
 - **Kampf in Events:** Der Effekt `combat` startet einen Rundenkampf. Die Effekte danach (etwa Beute) gelten erst nach einem Sieg.
-- **Gegner im Raum:** Startet ein Kampf, laufen alle Figuren dieses Gegners auf freie Kacheln neben der Spielfigur; zeigt kein Event sie, erscheint der Gegner dort. Im Bossraum treffen sich beide in der Raummitte. Gekämpft wird nach den Regeln gegen einen Gegner; die Figuren der Gruppe greifen reihum an und sterben beim Sieg gemeinsam. Bei einem Treffer zuckt die Figur kurz, bei ihrem Tod spielt sie Death und bleibt liegen (Einzelheiten unter „Inszenierung der Figuren“).
+- **Gegner im Raum:** Startet ein Kampf, laufen alle Figuren dieses Gegners auf freie Kacheln neben der Spielfigur; zeigt kein Event sie, erscheint der Gegner dort. Bei einer Begegnung stehen die Figuren schon beim Betreten im Raum (siehe Begegnungen). Im Bossraum treffen sich beide in der Raummitte. Gekämpft wird nach den Regeln gegen einen Gegner; die Figuren der Gruppe greifen reihum an und sterben beim Sieg gemeinsam. Bei einem Treffer zuckt die Figur kurz, bei ihrem Tod spielt sie Death und bleibt liegen (Einzelheiten unter „Inszenierung der Figuren“).
 - **Gegner:** Lebenspunkte, Rüstungswert, Angriffsbonus, Schaden (z. B. W6) und ein witziger Satz für den Endbildschirm. Wie Gegner mit der Tiefe stärker werden, steht im Abschnitt Raumtypen und Ebenen.
 - **Fortschritt:** Erfahrung aus Events. Stufe 2 bei 10, Stufe 3 bei 25, Stufe 4 bei 45, Stufe 5 bei 70 Erfahrung, danach alle 30 Erfahrung eine weitere Stufe. Beim Stufenaufstieg wählt der Spieler ein Attribut für +1 (höchstens +10) und bekommt maximale Lebenspunkte je nach Volk (Zwerg +5, Elf +3, Mensch +4), die ihn auch um denselben Wert heilen. Sind alle Attribute auf +10, gibt es nur die Lebenspunkte.
 - **Beute:** Beutestufe `tier1` = 2W6 Gold und mit 1/3 Chance ein einfacher Gegenstand. `tier2` = 4W6 Gold und immer ein besserer Gegenstand. Welchen Rang ein Gegenstand hat, steht in `data/items.json`. Gibt es für einen Rang noch keine Gegenstände, gilt der höchste Rang darunter, der welche hat. Die Beutestufen verschieben sich mit dem Thema (siehe Raumtypen und Ebenen). Gold ist Zahlungsmittel beim Händler.
@@ -197,7 +198,7 @@ Jedes Volk erfüllt die Mindestwerte seiner Startausrüstung mit den Startattrib
 
 ## Raumtypen und Event-System
 
-Jeder Raumtyp hat eine Event-Chance und eine gewichtete Event-Tabelle. Jedes Event besteht aus Text, Optionen, Proben und Effekten.
+Jeder Raumtyp hat eine Event-Chance und eine gewichtete Event-Tabelle, auf Wunsch eine eigene pro Thema. Jedes Event besteht aus Text, Optionen, Proben und Effekten.
 
 **Raumtyp:**
 
@@ -211,6 +212,22 @@ Jeder Raumtyp hat eine Event-Chance und eine gewichtete Event-Tabelle. Jedes Eve
     { "id": "cursed_sarcophagus", "weight": 2, "once": true },
     { "id": "whispering_voice", "weight": 3, "condition": "hasItem:torch" }
   ]
+}
+```
+
+**Raumtyp mit Tabellen pro Thema:**
+
+```json
+{
+  "id": "gruft",
+  "name": "Gruft",
+  "eventChance": 0.6,
+  "events": [],
+  "themeEvents": {
+    "keller": [ { "id": "gruft_sarkophag", "weight": 3 } ],
+    "katakomben": [ { "id": "gruft_grabraeuber", "weight": 3 } ]
+  },
+  "themeRating": { "katakomben": "hostile" }
 }
 ```
 
@@ -233,7 +250,9 @@ Jeder Raumtyp hat eine Event-Chance und eine gewichtete Event-Tabelle. Jedes Eve
 }
 ```
 
-- **Ablauf:** Beim ersten Betreten eines Raums würfelt das Spiel gegen die Event-Chance und wählt dann gewichtet ein Event, dessen Bedingung erfüllt ist. Der Startraum hat die Chance 100 %: Jeder Dungeon beginnt mit einem kurzen, harmlosen Begrüßungs-Event.
+- **Ablauf:** Beim ersten Betreten eines Raums prüft das Spiel zuerst eine Begegnung (siehe Begegnungen). Kommt keine, würfelt es gegen die Event-Chance und wählt gewichtet ein Event aus der Tabelle des aktuellen Themas, dessen Bedingung erfüllt ist. Der Startraum hat die Chance 100 %: Jeder Dungeon beginnt mit einem kurzen, harmlosen Begrüßungs-Event.
+- **Tabellen pro Thema:** Jeder Raumtyp kann in `data/room-types.json` im Feld `themeEvents` pro Thema eine eigene Event-Tabelle haben. Gibt es eine Tabelle für das aktuelle Thema, ersetzt sie `events` vollständig; ohne Tabelle gilt `events`. In `events` stehen deshalb nur Events, die in jedem Thema passen. Ein Raumtyp, der in mehreren Themen vorkommt, bekommt seine themenspezifischen Events in `themeEvents`. Der Bossraum nutzt dasselbe Feld.
+- **Bewertung pro Thema:** Die Bewertung aus der Raumtyp-Tabelle (feindlich, neutral, gemischt) ist der Standard. Das Feld `themeRating` legt sie für einzelne Themen anders fest, Werte `hostile`, `neutral` und `mixed`. Sie gilt für den Anteil feindlicher Räume, für Begegnungen und für die Markierung der Events: Ist ein Raumtyp in einem Thema gemischt, tragen alle Einträge seiner Tabelle für dieses Thema `hostile` und `rating`. Vorkammer, Rastplatz und Händler bleiben in jedem Thema neutral, Schatzkammer und Bossraum feindlich.
 - **Dateien:** `data/room-types.json`, `data/events.json`, `data/monsters.json`, `data/characters.json`, `data/items.json`, `data/texts.json` (Sätze zur Todesursache bei Events: allgemeine Sätze und unter `death.events` eigene Sätze für einzelne Events, nach Event-id). Ein Event hat zusätzlich einen `title` für das Textfenster. Ein Ergebnis kann mit `next` ein Folge-Event starten, so laufen Proben Runde für Runde. `data/sounds.json` ordnet Sound-ids den MP3-Dateien zu (siehe Sound). Ein Event kann im Feld `sound` eine Sound-id nennen.
 - **Proben in Events:** Jede Probe nennt ihre Kategorie, zum Beispiel `{ "category": "kraftakt", "dc": 12 }`. Das Attribut ergibt sich aus der Kategorie.
 - **Event-Typen:** combat, choice, trap, treasure, npc. Bossgegner und Artefakte laufen als normale Events über die Tabellen.
@@ -295,7 +314,8 @@ Der Dungeon führt durch Themen, die alle drei Ebenen wechseln. Das Thema bestim
 | Wolfs-Höhle | feindlich | bevorzugt in Sackgassen | höchstens 2 |
 
 - **Lesart der Lage:** „nur“, „nie“ und „direkt neben dem Start“ sind feste Regeln. „Bevorzugt“ und „neben X“ gelten, wenn der Grundriss es zulässt und der andere Raumtyp auf der Ebene vorkommt.
-- **Feindlich:** Events mit Kämpfen und Fallen. **Neutral:** Rätsel, Gespräche, Fundstücke oder gar kein Event, nur Start, Rastplatz und Händler sind verlässlich sicher. Der Abstieg ist neutral, seine Events dürfen aber kleine Folgen haben (etwas Schaden, Goldverlust) und einen Kampf, etwa mit dem Türsteher. **Gemischt:** Wenn ein Event auslöst, ist es in etwa 30 % der Fälle ein Gegner oder eine Falle, sonst harmlos. Dafür trägt jedes Event in der Tabelle eines gemischten Raumtyps die Markierung feindlich oder neutral, und zwar doppelt: `"hostile": true` oder `false` (Feld des Content-Projekts) und `"rating": "hostile"` oder `"neutral"` (wertet der Code aus). Beide müssen übereinstimmen, `npm test` prüft das. Für den Anteil feindlicher Räume zählen gemischte Räume nicht als feindlich.
+- **Bewertung pro Thema:** Die Spalte Bewertung ist der Standard. Einzelne Themen können sie über `themeRating` ändern (siehe Event-System).
+- **Feindlich:** Events mit Kämpfen und Fallen. **Neutral:** Rätsel, Gespräche, Fundstücke oder gar kein Event, nur Start, Rastplatz und Händler sind verlässlich sicher. Der Abstieg ist neutral, seine Events dürfen aber kleine Folgen haben (etwas Schaden, Goldverlust) und einen Kampf, etwa mit dem Türsteher. **Gemischt:** Wenn ein Event auslöst, ist es in etwa 30 % der Fälle ein Gegner oder eine Falle, sonst harmlos. Dafür trägt jedes Event in der Tabelle eines Raumtyps, der im jeweiligen Thema gemischt ist, die Markierung feindlich oder neutral, und zwar doppelt: `"hostile": true` oder `false` (Feld des Content-Projekts) und `"rating": "hostile"` oder `"neutral"` (wertet der Code aus). Beide müssen übereinstimmen, `npm test` prüft das. Für den Anteil feindlicher Räume zählen gemischte Räume nicht als feindlich.
 - **Anteil feindlicher Räume:** steigt von etwa 40 % auf Ebene 1 auf 70 % ab Ebene 13.
 - **Sackgassen:** Sackgassen, die keine Schatzkammer werden, bekommen einen anderen Raumtyp des Themas.
 - **Schatzkammer:** Sie kommt in jedem Thema nur einmal vor, auf der mittleren der drei Ebenen (Feld `"themeLevel": 2` im Raumtyp; im endlosen Ork-Lager auf jeder dritten Ebene, also 14, 17 …). Hat diese Ebene keine Sackgasse, fehlt die Schatzkammer in diesem Thema. Sie hat 2 bis 3 Truhen. Eine davon ist echt und öffnet sich wie jede Truhe (Event `chest`). Die übrigen sind Mimiken. Welche echt ist, sieht man nicht; der Raum-Seed legt es fest. Klickt man eine Mimik an, erwacht sie, und das Event `schatz_mimik` beginnt (Kampf mit Beute tier2, Zurücklächeln oder Rückzug). Danach ist die Truhe weg: Eine besiegte Mimik bleibt liegen, sonst hüpft sie zur Tür hinaus. Das Event `schatz_mimik` steht deshalb nicht mehr in der Event-Tabelle des Raums.
@@ -303,7 +323,7 @@ Der Dungeon führt durch Themen, die alle drei Ebenen wechseln. Das Thema bestim
 - **Rastplatz:** auf jeder geraden Ebene (2, 4, 6 …). Ein Lagerfeuer im Raum heilt einmal auf volle Lebenspunkte, danach ist es aus. Um das Feuer liegt im Umkreis von zwei Kacheln nichts, auch kein Schutt. Im Raum verteilt liegen 2 bis 3 Schlaflager, nie neben einer Tür; daneben stehen dünne Kerzen (eine brennend, eine aus). Dazu 2 bis 3 Flaschen und 2 bis 3 Fässer; keine Säcke.
 - **Treppen:** Vorkammer und Abstieg haben in der Nordwest-Ecke eine gerade Steintreppe (KayKit `stairs`) aus 3×3 Kacheln (1|1 bis 3|3), die zur Nordwand hin läuft; ihr Fuß liegt an der Südkante (Reihe y=3). In der Vorkammer beginnt sie auf Bodenhöhe und steigt bis zur Wandoberkante (2 Kacheln); ihr oberes Ende wird dunkel, wie ein Schacht nach oben, ohne eigenes Licht und ohne Farbstich: Es kommt kein bläulicher Lichtschein von oben. Sie ist nicht anklickbar und zeigt, woher der Spieler kommt. Im Abstieg fehlt auf diesen Kacheln der Boden: Ein Loch mit Steinkante öffnet sich, die Treppe beginnt an der Südkante auf Bodenhöhe und führt nach Norden in die Tiefe. Die Innenwände des Lochs sind dunkel, unten verläuft alles in die Schattenfarbe, und ein schwacher, kühler Schimmer steigt von unten auf. Die ganze Fläche ist anklickbar und blockiert; ein Klick führt eine Ebene tiefer. Der Code setzt die Treppen fest, sie stehen nicht in der Einrichtung. Die Türen Nord (5|1) und West (1|5) und die Kacheln davor bleiben frei.
 - **Bossraum:** Betreten startet den Bosskampf, auch bei jedem weiteren Betreten, bis der Boss besiegt ist. Flucht ist erlaubt, der Boss wartet dann mit vollen Lebenspunkten. Die Nordwest-Ecke (1|1 bis 3|3) bleibt bis zum Sieg frei: Über Loch und Treppe liegt ein Metallgitter, das man betreten kann; es ist nicht anklickbar. Sieg: Beute `tier2` und 10 Erfahrung, danach wechselt die Nordwest-Ecke mit kurzer Abblende (etwa 0,5 Sekunden) zu Loch und Treppe nach unten. Die Siegbeute vergibt das Spiel, nicht das Event.
-- **Boss-Events:** Der Bossraum kann pro Thema eine eigene Event-Tabelle haben, in `data/room-types.json` beim Bossraum im Feld `themeEvents`, etwa `"themeEvents": { "keller": [ … ] }`, mit `eventChance` 1. Bei jedem Betreten wird daraus neu gewürfelt, bis der Boss besiegt ist. Die Events starten den Kampf gegen den Boss mit `combat`. Bedingungen wie `flag:name` unterscheiden die erste Begegnung von der Rückkehr. Themen ohne Tabelle zeigen den Einleitungstext des Bosses (`intro`) und starten den Kampf direkt. Bisher hat nur der Keller (Monsterratte) Boss-Events.
+- **Boss-Events:** Der Bossraum hat pro Thema eine eigene Event-Tabelle in `themeEvents` wie jeder Raumtyp, etwa `"themeEvents": { "keller": [ … ] }`, mit `eventChance` 1. Bei jedem Betreten wird daraus neu gewürfelt, bis der Boss besiegt ist. Die Events starten den Kampf gegen den Boss mit `combat`. Bedingungen wie `flag:name` unterscheiden die erste Begegnung von der Rückkehr. Themen ohne Tabelle zeigen den Einleitungstext des Bosses (`intro`) und starten den Kampf direkt. Bisher hat nur der Keller (Monsterratte) Boss-Events.
 - **Bosse:** passend zum Thema, einer am Ende jeder Themenwelt.
 
 ### Ebenen
@@ -313,6 +333,29 @@ Der Dungeon führt durch Themen, die alle drei Ebenen wechseln. Das Thema bestim
 - **Monster:** Jedes Thema hat eigene Monster. Innerhalb eines Themas bekommen Gegner +1 Lebenspunkt pro Ebene (erste Ebene des Themas +0, zweite +1, dritte +2), im endlosen Ork-Lager wächst das weiter. Das ersetzt das bisherige Wachstum von +2 Lebenspunkten und +1 Angriff je Ebene. Richtwert für neue Monster: pro Thema tiefer etwa +3 Lebenspunkte, +2 Rüstung, +2 Angriff und eine Würfelstufe mehr Schaden, damit sie gegen Attribute bis +10 und Rüstungen bis +10 bestehen (im Spiel testen).
 - **Beute:** Die Beutestufen verschieben sich mit dem Thema. `tier1` ergibt Gegenstände vom Rang der Stufe des Themas (Keller 1 bis Ork-Lager 5), `tier2` einen Rang höher. Dafür braucht `data/items.json` Gegenstände bis Rang 6; solange ein Rang leer ist, gilt der höchste Rang darunter.
 - **Ergebnis:** Der Endbildschirm zeigt die erreichte Ebene als Ergebnis.
+
+### Begegnungen
+
+Ab den Katakomben können beim ersten Betreten eines Raums schon Monster im Raum stehen. Es gibt kein Event-Fenster, der Kampf beginnt direkt.
+
+- **Wo:** nur in Räumen, die im aktuellen Thema feindlich oder gemischt sind. Nie in Vorkammer, Abstieg, Rastplatz, Händler, Schatzkammer und Bossraum.
+- **Ablauf:** Beim ersten Betreten würfelt das Spiel zuerst gegen die Begegnungschance des Themas. Bei Erfolg wählt es gewichtet ein Monster aus der Begegnungstabelle, und der Raum bekommt kein Event. Ohne Begegnung folgt der normale Event-Wurf. Gleicher Raum-Seed ergibt dieselbe Begegnung.
+- **Daten:** `data/themes.json` hält pro Thema das Feld `encounters` mit `chance`, `monsters` (Monster-id und Gewicht) und `reward` (Effekte nach dem Sieg). Ohne `encounters` gibt es im Thema keine Begegnungen, heute im Keller.
+
+```json
+"katakomben": {
+  "encounters": {
+    "chance": 0.15,
+    "monsters": [ { "monster": "skelett_krieger", "weight": 3 }, { "monster": "geist", "weight": 2 } ],
+    "reward": [ { "loot": "tier1" }, { "gainXp": 3 } ]
+  }
+}
+```
+
+- **Figuren:** 1 bis 3 nach Raum-Seed, wie bei Kämpfen ohne Anzahl. Beim Einblenden stehen sie auf freien Kacheln mit mindestens drei Kacheln Abstand zur Eingangstür, Blick zur Spielfigur, und laufen dann zum Kampf an. Das Kampffenster nennt den Gegner wie bei jedem Kampf, einen Event-Text gibt es nicht.
+- **Kampf:** nach den normalen Regeln. Sieg: die Effekte aus `reward`, Besiegte bleiben liegen. Flucht: durch die Rück-Tür, die Begegnung ist danach vorbei wie ein Event. Tod: `deathText` des Monsters.
+- **Richtwerte:** Chance Katakomben 0,15, pro Thema tiefer +0,05 (Zwergenminen 0,2, Goblin-Höhlen 0,25, Ork-Lager 0,3, auch im endlosen Ork-Lager). Siegbeute `tier1` und 3 Erfahrung. Werte im Spiel testen.
+- Begegnungen zählen nicht zum Anteil feindlicher Räume.
 
 ### Bosse, Gold und Händler
 
@@ -412,6 +455,15 @@ Ein Dungeon wie aus warmem Ton geknetet: weiche, blockige Formen, gedeckte Erdt�
 
 Gruft und Brunnen sind im Keller die düsteren Räume: kälteres Grundlicht, Kerzen statt Fackeln. In der Gruft hängen höchstens zwei Fackeln mit blauem Licht und blauer Flamme, damit der Raum düster und kühl wirkt. Im Ork-Lager wird das Gefahr-Rot vor den rötlichen Wänden geprüft und bei Bedarf nachgeschärft.
 
+**Böden**
+
+- Neben der Farbe kann pro Thema und Raumtyp auch die Form der Bodenplatten wechseln. Dafür gibt es Bodenvarianten aus KayKit Dungeon Remastered, etwa glatte, gesprungene und verzierte Steinplatten, Holzdielen oder Erde.
+- Nur Platten, die genau eine Kachel decken. Keine Platten mit Gittern, Löchern oder Stacheln: Sie würden wie Fallen oder Hindernisse wirken.
+- Ein Raum mischt die Varianten gewichtet nach Raum-Seed, etwa meist glatte Platten mit wenigen gesprungenen. Feld `floorTiles`: `"floorTiles": [ { "tile": "boden", "weight": 8 }, { "tile": "boden_gesprungen", "weight": 1 } ]`.
+- Reihenfolge: `floorTiles` in der Einrichtung des Raumtyps (`themeDecor` vor `decor`), sonst `floorTiles` des Themas in `data/themes.json`, sonst `boden`.
+- Die Farbe bleibt Sache der Paletten-Textur des Themas, die Variante bestimmt nur die Form. Der Boden bleibt ruhig: Er ist Bühne, nicht Requisit.
+- Der Schrittklang bleibt ein eigenes Feld (`floor` unter `sound`) und soll zur Variante passen, etwa Holzdielen mit `wood`, Erde mit `mud` oder `gravel`.
+
 **Formensprache**
 
 - Figuren etwa 1:3 (Kopf ein Drittel der Höhe), große Hände und Füße, Augen als einfache Formen.
@@ -447,7 +499,7 @@ Gilt für alle Modelle. Bei Paketteilen gilt sie für das Ergebnis im Spiel; Abw
 - **Animationen:** Idle, Walk, Attack, Hit, Death, Interact. Heißen sie im Paket anders, ordnet `data/models.json` sie zu. Fehlt eine Animation, gilt die Bewegung aus dem Code: Hit als kurzes Zucken, Death als Versinken im Boden, eine Figur ganz ohne Animationen gleitet und wippt wie die Platzhalter.
 - **Dateinamen:** id aus dem GDD; Varianten als `id_variante.glb`, etwa `fass_gruppe.glb`. Fehlt die Variante, gilt die Grunddatei. Eine Variante kann auch nur eine andere Animation sein (Skelett sitzend).
 - **Ordner:** `assets/tiles/` (Boden, Wand, Sockel, Ecken, Türrahmen), `assets/props/`, `assets/figures/`, `assets/textures/`, `assets/sounds/`. Rohdateien der Pakete in `assets/source/`.
-- **Bauteile:** `boden`, `wand`, `wand_ecke`, `sockel`, `sockel_ecke`, `tuerrahmen`, `fackel`, `schloss`. Der Türrahmen hinten deckt drei Kacheln (Tür mittig). Neben jeder Tür hängt eine Fackel. In der Vorkammer hängt keine Fackel hinter oder neben der Treppe, also nicht auf den Kacheln 1 bis 4 von Nord- und Westwand; die Fackel dort fällt weg. An den vorderen Türen (Süd, Ost) ist sie wie die vorderen Wände ausgeblendet: kein Modell und kein Pfosten, nur ihr Licht bleibt, damit der Raum gleich hell bleibt.
+- **Bauteile:** `boden`, Bodenvarianten `boden_<name>` (siehe Stilguide, Böden), `wand`, `wand_ecke`, `sockel`, `sockel_ecke`, `tuerrahmen`, `fackel`, `schloss`. Der Türrahmen hinten deckt drei Kacheln (Tür mittig). Neben jeder Tür hängt eine Fackel. In der Vorkammer hängt keine Fackel hinter oder neben der Treppe, also nicht auf den Kacheln 1 bis 4 von Nord- und Westwand; die Fackel dort fällt weg. An den vorderen Türen (Süd, Ost) ist sie wie die vorderen Wände ausgeblendet: kein Modell und kein Pfosten, nur ihr Licht bleibt, damit der Raum gleich hell bleibt.
 - **Zuordnung:** `data/models.json` hält pro id Datei, Maßstab (Zahl oder [x, y, z]), Drehung, Versatz, Einfärbung (`tint`, Farbe, mit der die Paletten-Textur multipliziert wird, etwa Holzton für graue Kisten), Animationszuordnung, Lichtpunkte (Position relativ zum Ursprung, Farbe, Stärke, Reichweite) und Zubehör (`accessories`: Teil aus Grundformen wie Kochmütze, Krone oder rote Augen, an einem Knochen der Figur, mit Versatz und Größe in Kacheln). Mehrere ids dürfen dieselbe Datei nutzen (Riesenratte, Küchenchef und Monsterratte).
 - **Build-Skript:** `tools/build-assets.mjs` setzt Teile aus Paketen zu einer GLB zusammen (Tafel, Regal, Türrahmen) und speckt Paketfiguren ab (nur benötigte Animationen und Zubehörteile, komprimiert). FBX-Dateien wandelt es vorher in GLB um; es kann Materialfarben auf die Palette setzen (matt, ohne Metallglanz), eine Waffe an einen Knochen hängen und Figuren auf höchstens 3.000 Dreiecke vereinfachen. Requisiten kann es aus Teilen einer Paketfigur zusammensetzen (`extracts`), etwa die Knochen aus Schädel, Kiefer und Armen der Skelette.
 - **Platzhalter:** Fehlt eine Datei oder lädt sie nicht, baut der Code das Teil wie bisher aus Grundformen.
@@ -480,7 +532,7 @@ Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kan
 - **Platzierung (`place`):** `center` (Raummitte), `wall-back` (an der Nord- oder Westwand, weil die vorderen Wände nur Sockel sind), `corner` (in einer Ecke, bei `count` über 1 in verschiedenen Ecken), `free` (beliebige freie Kachel), `around:<prop>` (um ein anderes Requisit herum, etwa Stühle um die Tafel), `above:<prop>` (über einem anderen Requisit, etwa der Kronleuchter über der Tafel), `tile:x|y` (genau diese Kachel, etwa die Säulen der Schatzkammer; ohne Korrektur, passt sie nicht, fällt das Requisit weg), `door-sides` (Wandschmuck links und rechts jeder Tür in Nord- und Westwand, eine Kachel Abstand zum Türrahmen, an der Nordwand also 3|1 und 7|1; alle in derselben Variante; an Süd- und Osttüren nicht, weil die vorderen Wände nur Sockel sind).
 - **Fackeln an Säulen (`torches`):** Mit `"torches": "saeulen"` in der Einrichtung hängen keine Fackeln an den Wänden, und die Lichter der vorderen Fackeln fallen weg. Stattdessen trägt jede Säule eine leuchtende Fackel auf der Seite zur Raummitte; Säulen in Reihen (Säulengang) tragen sie auf der Seite zum Gang. Heute so in der Schatzkammer (alle Säulen) und in der Säulenhalle (3 bis 4 zufällige Säulen).
 - **Anzahl der Fackeln (`torchCount`):** Zahl oder Bereich `[von, bis]`. Mit `torches: "saeulen"` zählt es die Säulen mit Fackel, sonst die Wandfackeln an Nord- und Westwand (Auswahl nach Raum-Seed); dann fallen auch die Lichter der vorderen Fackeln weg. `torchFlame` (Farbe) legt eine eigene Flamme über die des Modells. Heute: Gruft mit zwei Fackeln, Licht `#5d86e0`, Flamme `#8fb4ff`.
-- **Weitere Felder:** `count` (Anzahl, Standard 1, oder ein Bereich wie `[2, 3]`, aus dem der Raum-Seed wählt), `mimics` (bei der Einrichtung: `true` heißt, von mehreren Truhen ist eine echt, die übrigen sind Mimiken), `variant` (Abwandlung eines Requisits, etwa der Tisch mit Töpfen statt Würfeln), `clear` (Freiraum: im Umkreis von so vielen Kacheln um dieses Requisit liegt nichts anderes, auch schräg gezählt; Lagerfeuer 2), `doorGap` (so viele Kacheln Abstand zu Türkachel und Kachel davor; Schlaflager im Rastplatz 1).
+- **Weitere Felder:** `count` (Anzahl, Standard 1, oder ein Bereich wie `[2, 3]`, aus dem der Raum-Seed wählt), `mimics` (bei der Einrichtung: `true` heißt, von mehreren Truhen ist eine echt, die übrigen sind Mimiken), `variant` (Abwandlung eines Requisits, etwa der Tisch mit Töpfen statt Würfeln), `clear` (Freiraum: im Umkreis von so vielen Kacheln um dieses Requisit liegt nichts anderes, auch schräg gezählt; Lagerfeuer 2), `doorGap` (so viele Kacheln Abstand zu Türkachel und Kachel davor; Schlaflager im Rastplatz 1). `floorTiles` (Bodenvarianten mit Gewicht für diesen Raumtyp, siehe Stilguide, Böden).
 - **Feste Regeln:** Türkacheln und die Kachel davor bleiben frei. Wandrequisiten (Regale, Fahnen, Schlüsselbund, Herd, Anrichte und alle anderen an der Wand) verdecken oder überlagern keine Fackel: Die Wandkachel einer Fackel bleibt für sie frei. Abgebrannte Kerzen (Kerzenstummel) stehen nicht als Deko auf dem Boden. Münzstapel (`goldhaufen`, `muenzen` mit allen Varianten) haben einen Mindestabstand (`spread: 2`): Derselbe Typ, also gleiches Requisit und gleiche Variante, steht nicht noch einmal im Umkreis von zwei Kacheln, auch schräg gezählt. Verschiedene Typen dürfen nebeneinander liegen, etwa mittlerer neben kleinem Stapel, aber nicht kleiner neben kleinem. Sarkophage halten eine Kachel Abstand zur Wand (`wallGap: 1`) und zum nächsten Sarkophag (`spread: 1`). Passt ein Stapel nirgends, gilt der Korrekturablauf. Jede Tür und jedes anklickbare Objekt bleibt erreichbar, `npm test` prüft das für alle Varianten. In Vorkammer, Abstieg und Bossraum bleibt die Nordwest-Ecke (1|1 bis 3|3) für die Treppe frei; `corner` meint dort nur die drei übrigen Ecken, `wall-back` nur die freien Abschnitte von Nord- und Westwand.
 - **Pflichtstücke:** Ein Requisit mit `"required": true` macht den Raumtyp erkennbar (Herd in der Küche, Tafel im Speisesaal, Brunnen im Brunnenraum). Es wird immer zuerst platziert und nie weggelassen. Passt es in einer Variante bei einer Türkombination nicht, ist das ein Fehler in den Daten, und `npm test` schlägt fehl.
 - **Korrektur:** Passt ein Requisit nicht, versucht der Code in dieser Reihenfolge: 1. eine andere Kachel mit derselben Platzierung, 2. die nächste Platzierung in der Reihe `center` → `corner` → `wall-back` → `free`, 3. eine kleinere Anzahl, 4. weglassen. Requisiten mit `around:` oder `above:` fallen mit ihrem Bezugsrequisit weg. Gleicher Seed ergibt immer dieselbe Korrektur.
@@ -790,3 +842,6 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Vorkammer ohne Wegweiser; Pult mit Buch immer auf 4|3 rechts neben der untersten Stufe der Treppe
 - [x] Rastplatz: zwei Kacheln frei um das Feuer (`clear`), 2 bis 3 Schlaflager nie neben Türen (`doorGap`) mit dünnen Kerzen daneben, 2 bis 3 Flaschen und 2 bis 3 Fässer, keine Säcke
 - [x] Eigener Sound für den Tod der Spielfigur (`tod_spieler`, pro Volk überschreibbar mit `tod_<volk>`); `tod` bleibt für sterbende Gegner
+- [x] Event-Tabellen pro Thema für alle Raumtypen (`themeEvents`), sie ersetzen `events` im jeweiligen Thema; Bewertung pro Thema (`themeRating`), ohne Eintrag gilt die Bewertung des Raumtyps
+- [x] Begegnungen ab den Katakomben: Monster stehen per Zufall in feindlichen und gemischten Räumen, der Kampf beginnt ohne Event; Chance, Monster und Siegbeute pro Thema in `data/themes.json` (`encounters`)
+- [x] Bodenplatten pro Thema und Raumtyp aus KayKit-Varianten (`floorTiles`), nur 1×1, ohne Gitter, Löcher und Stacheln

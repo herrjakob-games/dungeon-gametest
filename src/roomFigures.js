@@ -118,7 +118,8 @@ export function syncRoom(id) {
  * Event-Start: Figuren nach der Inszenierung (data/staging.json) aufstellen. Ergebnis: Anzahl neuer Figuren
  * (der Event-Ablauf wartet dann kurz, damit man sie sieht, bevor das Fenster aufgeht).
  */
-export function showEventFigures(ev) {
+// opts.awayFrom [x, z] und opts.dist: Figuren stehen mindestens so viele Kacheln davon entfernt (Begegnungen: Eingangstür)
+export function showEventFigures(ev, opts) {
   if (!roomKey || alive().some(f => f.eventId === ev.id)) return 0;
   const room = state.dungeon.rooms[state.current];
   const list = eventFigures(ev, DATA.staging, room.seed);
@@ -129,7 +130,8 @@ export function showEventFigures(ev) {
     placements: state.decorPlan ? state.decorPlan.placements : [],
     blocked: state.blocked, doors: room.doors, player: state.pTile, occupied: tilesOf(figs.filter(f => !f.sink)), rand: mulberry32(h),
     anchors: (DATA.staging || {}).anchors, canPose: (id, variant, name) => hasAnimation(id, variant, name),
-    stairsDown: state.stairsFeature === "down" || state.stairsFeature === "arena"
+    stairsDown: state.stairsFeature === "down" || state.stairsFeature === "arena",
+    awayFrom: opts && opts.awayFrom, awayDist: opts && opts.dist
   });
   plan.forEach(pl => {
     const f = make(pl, ev.id, true);

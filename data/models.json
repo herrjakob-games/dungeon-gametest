@@ -865,5 +865,105 @@
         "distance": 2.5
       }
     ]
+  },
+  "boden_unkraut_a": {
+    "file": "assets/tiles/boden_unkraut_a.glb",
+    "scale": 0.5,
+    "offset": [
+      0,
+      -0.025,
+      0
+    ],
+    "palette": true
+  },
+  "boden_unkraut_b": {
+    "file": "assets/tiles/boden_unkraut_b.glb",
+    "scale": 0.5,
+    "offset": [
+      0,
+      -0.025,
+      0
+    ],
+    "palette": true
+  },
+  "boden_erde_a": {
+    "file": "assets/tiles/boden_erde_a.glb",
+    "scale": 0.5,
+    "offset": [
+      0,
+      -0.025,
+      0
+    ],
+    "palette": true
+  },
+  "boden_erde_b": {
+    "file": "assets/tiles/boden_erde_b.glb",
+    "scale": 0.5,
+    "offset": [
+      0,
+      -0.025,
+      0
+    ],
+    "palette": true
+  },
+  "boden_erde_c": {
+    "file": "assets/tiles/boden_erde_c.glb",
+    "scale": 0.5,
+    "offset": [
+      0,
+      -0.025,
+      0
+    ],
+    "palette": true
+  },
+  "boden_erde_d": {
+    "file": "assets/tiles/boden_erde_d.glb",
+    "scale": 0.5,
+    "offset": [
+      0,
+      -0.025,
+      0
+    ],
+    "palette": true
+  },
+  "boden_erde_ecke": {
+    "file": "assets/tiles/boden_erde_ecke.glb",
+    "scale": 0.5,
+    "offset": [
+      0,
+      -0.025,
+      0
+    ],
+    "palette": true
+  },
+  "boden_erde_unkraut": {
+    "file": "assets/tiles/boden_erde_unkraut.glb",
+    "scale": 0.5,
+    "offset": [
+      0,
+      -0.025,
+      0
+    ],
+    "palette": true
+  },
+  "boden_holz": {
+    "file": "assets/tiles/boden_holz.glb",
+    "scale": 0.5,
+    "offset": [
+      0,
+      -0.025,
+      0
+    ],
+    "palette": true
+  },
+  "boden_holz_dunkel": {
+    "file": "assets/tiles/boden_holz_dunkel.glb",
+    "scale": 0.5,
+    "offset": [
+      0,
+      -0.025,
+      0
+    ],
+    "palette": true
   }
 }
