@@ -4,12 +4,13 @@ import { generate } from "./generator.js";
 import { state, walkable } from "./state.js";
 import { renderer, scene, camera, zoomBy } from "./scene.js";
 import { buildRoom, douseCampfire } from "./roomBuilder.js";
-import { placePlayer, setFigure } from "./player.js";
+import { placePlayer, setFigure, player } from "./player.js";
 import { hoverMesh, showHoverTile } from "./markers.js";
 import { moveTo, stopMoving, approachTile, updateMovement } from "./movement.js";
 import { closeDialog, isDialogOpen, isDialogModal, showDialog } from "./dialog.js";
 import { initEvents, startRoomEvent, chestEvent, lockedDoorNote, startBoss, restEvent, runEvent, startFight } from "./events.js";
-import { updateFigures } from "./roomFigures.js";
+import { updateFigures, enemyObjects } from "./roomFigures.js";
+import { updateSeeThrough } from "./seeThrough.js";
 import { showGrid } from "./gridOverlay.js";
 import { loadModels } from "./models.js";
 import { loadSounds, play, setDuck } from "./sound.js";
@@ -379,6 +380,7 @@ function loop() {
 
   updateMovement(dt, t);
   updateFigures(dt, t);
+  updateSeeThrough(dt, [player].concat(enemyObjects())); // Innenwände und Säulen um verdeckte Figuren durchsichtig
   setDuck(state.eventActive || !!state.combat); // Hintergrund halb so laut während Events und Kämpfen
 
   if (state.merchantAnim) state.merchantAnim.update(dt); // Händler steht mit Idle-Animation

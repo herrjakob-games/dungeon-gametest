@@ -309,6 +309,9 @@ export function killCombatFigure() {
 }
 
 // Für Tests und den Testmodus: Figuren im aktuellen Raum
+// Gegner im Raum für den Durchblick (seeThrough.js): lebende Monster, keine friedlichen Figuren
+export const enemyObjects = () => alive().filter(f => DATA.monsters[f.id] && !figureInfo(f.id).noCombat).map(f => f.outer);
+
 export const roomFigureList = () => alive().map(f => ({ id: f.id, variant: f.variant, tiles: f.tiles, stay: f.stay, pose: f.pose }));
 export const deadFigureList = () => figs.filter(f => f.dead).map(f => ({ id: f.id, variant: f.variant }));
 

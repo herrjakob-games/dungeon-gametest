@@ -58,7 +58,8 @@
         "tile": "boden_bruch_b",
         "weight": 7
       }
-    ]
+    ],
+    "seeThroughOpacity": 0.4
   },
   {
     "id": "katakomben",
@@ -133,7 +134,8 @@
           "gainXp": 3
         }
       ]
-    }
+    },
+    "seeThroughOpacity": 0.4
   },
   {
     "id": "zwergenminen",
@@ -162,7 +164,8 @@
       "accent": "#4FB3C9",
       "torch": "#FF6A2A",
       "ambient": "#2A2228"
-    }
+    },
+    "seeThroughOpacity": 0.4
   },
   {
     "id": "goblinhoehlen",
@@ -189,7 +192,8 @@
       "accent": "#A6E05A",
       "torch": "#E8B840",
       "ambient": "#22301E"
-    }
+    },
+    "seeThroughOpacity": 0.4
   },
   {
     "id": "orklager",
@@ -220,6 +224,7 @@
       "accent": "#B0B8C0",
       "torch": "#FF5A28",
       "ambient": "#3A2420"
-    }
+    },
+    "seeThroughOpacity": 0.4
   }
 ]

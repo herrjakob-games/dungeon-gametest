@@ -17,6 +17,7 @@ import { syncRoom } from "./roomFigures.js";
 import { buildStairs, hasHole } from "./stairs.js";
 import { setMood } from "./sound.js";
 import { roomSound } from "./soundLogic.js";
+import { addOccluder, resetOccluders } from "./seeThrough.js";
 const THREE = window.THREE;
 
 let roomGroup = null;
@@ -38,6 +39,7 @@ export function buildRoom(id) {
 
   state.blocked = new Set();
   state.edges = new Set();
+  resetOccluders(state.theme && state.theme.seeThroughOpacity); // Durchblick durch Innenwände und Säulen
   state.interactables = [];
   state.torches = [];
   state.lidPivot = null;
@@ -366,10 +368,13 @@ function placeDecor(spec, room, feature, id, torch) {
   state.decorPlan = plan; // für Figuren mit near:<prop>
   state.edges = plan.edges; // Zellwände sperren Kanten für die Wegfindung
   // Zellwände (Kerker der Katakomben): Teile auf Kachelkanten, Lage in Kachelkoordinaten
+  // Durchblick: Torbögen, Pfeiler und Ecken werden um verdeckte Figuren durchsichtig, Gitter nicht
   if (plan.cells) plan.cells.pieces.forEach(pc => {
     const m = makeModel(pc.prop);
-    if (m) placeAt(m, tw(pc.x), tw(pc.z), pc.rot);
-    else add(box(pc.prop === "zellecke" ? 0.3 : 1, WALL_H, 0.3, stone(), tw(pc.x), WALL_H / 2, tw(pc.z))).rotation.y = pc.rot;
+    const o = m ? placeAt(m, tw(pc.x), tw(pc.z), pc.rot)
+      : add(box(pc.prop === "zellecke" ? 0.3 : 1, WALL_H, 0.3, stone(), tw(pc.x), WALL_H / 2, tw(pc.z)));
+    if (!m) o.rotation.y = pc.rot;
+    if (pc.prop !== "zellgitter") addOccluder(o);
   });
   plan.torchSpots.forEach(s => makePillarTorch(s, torch));
   // Truhen: eine echt, die übrigen Mimiken, wenn die Einrichtung es will (Schatzkammer)
@@ -388,7 +393,8 @@ function placeDecor(spec, room, feature, id, torch) {
       continue;
     }
     if (PROPS[pl.prop].blocks) pl.tiles.forEach(t => block(t[0], t[1]));
-    at(propMesh(pl.prop, pl), pl.cx, pl.cz, pl.rot);
+    const o = at(propMesh(pl.prop, pl), pl.cx, pl.cz, pl.rot);
+    if (SEE_THROUGH.includes(pl.prop)) addOccluder(o); // Säulen: Durchblick
 
   }
 }
@@ -453,8 +459,11 @@ function furnish(t, id) {
 function pillar(x, z) {
   if (!free(x, z)) return;
   block(x, z);
-  at(propMesh("saeule"), x, z);
+  addOccluder(at(propMesh("saeule"), x, z));
 }
+
+// Requisiten, die um verdeckte Figuren durchsichtig werden (Durchblick): Säulen
+const SEE_THROUGH = ["saeule", "saeule_verziert"];
 
 function barrel(x, z) {
   if (!free(x, z)) return;
