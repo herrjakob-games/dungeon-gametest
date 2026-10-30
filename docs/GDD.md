@@ -8,7 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
-| 2.47 | 30.10.2026 | Gruft darf in den Katakomben direkt neben dem Start stehen |
+| 2.47 | 30.10.2026 | Gruft darf in den Katakomben direkt neben dem Start stehen; große Zelle im Kerker mit schmalen Eckpfeilern (`zellecke`) statt Gitterecken |
 | 2.46 | 30.10.2026 | Kerker in den Katakomben mit zwei Varianten: vier Eckzellen (3×3) oder eine große Zelle (5×5); Zellwände aus KayKit-Gittern, Torbögen und Steinpfeilern auf Kachelkanten; Wegfindung sperrt Kanten; in jeder Zelle entweder ein Strohlager oder Knochen; Rückwände in allen Räumen der Katakomben zu etwa 30 % gesprungen (`wand_riss`); Innenwände und Säulen werden um verdeckte Figuren herum durchsichtig (Durchblick) |
 | 2.45 | 30.10.2026 | Katakomben Paket 1 und 2: Monster Skelettkrieger, Geist, Poltergeist, Skelett-König; Begegnungen; Events für Kerker und Schrein; Skelett-König als Warrior 1,3-fach mit goldener Krone; Kerker auch in den Katakomben höchstens 2 |
 | 2.44 | 30.10.2026 | Poltergeist mit denselben Tönen wie der Geist |
@@ -553,7 +553,7 @@ Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kan
 - **Anzahl der Fackeln (`torchCount`):** Zahl oder Bereich `[von, bis]`. Mit `torches: "saeulen"` zählt es die Säulen mit Fackel, sonst die Wandfackeln an Nord- und Westwand (Auswahl nach Raum-Seed); dann fallen auch die Lichter der vorderen Fackeln weg. `torchFlame` (Farbe) legt eine eigene Flamme über die des Modells. Heute: Gruft mit zwei Fackeln, Licht `#5d86e0`, Flamme `#8fb4ff`.
 - **Zellen (`cells`):** Im Kerker der Katakomben (`themeDecor.katakomben`) baut der Code Zellen aus Wandteilen auf Kachelkanten. Die Zellen stehen nicht in `layouts`, der Raum-Seed wählt eine von zwei Varianten:
   - **A, vier Eckzellen:** je 3×3 Kacheln (1|1–3|3, 7|1–9|3, 1|7–3|9, 7|7–9|9). Jede Zelle hat zwei Innenseiten: eine Gitterwand (`zellgitter`) und einen offenen Torbogen (`zelltor`), beide mittig auf der Seite; die Lücken an den Enden schließen Endstücke (`wand_ecke`), die Innenecke `zellecke`. Der Durchgang liegt auf der mittleren Kachel der Seite. Torbogen: Nordwest Südseite, Nordost Südseite, Südwest Ostseite, Südost Westseite; die übrigen Innenseiten sind Gitter.
-  - **B, große Zelle:** 5×5 Kacheln (3|3–7|7). Jede Seite besteht aus zwei Gitterwänden mit einem Steinpfeiler (`wand`, 1 Kachel) dazwischen, an den Ecken `zellgitter_ecke`. Auf einer Seite, nach Raum-Seed, fehlt der Pfeiler: Die mittlere Kachel ist die Öffnung (5|3, 7|5, 5|7 oder 3|5).
+  - **B, große Zelle:** 5×5 Kacheln (3|3–7|7). Jede Seite besteht aus zwei Gitterwänden mit einem Steinpfeiler (`wand`, 1 Kachel) dazwischen, an den Ecken schmale Eckpfeiler (`zellecke`); die Gitterecke wäre mit ihren 1 Kachel langen Armen zu lang. Auf einer Seite, nach Raum-Seed, fehlt der Pfeiler: Die mittlere Kachel ist die Öffnung (5|3, 7|5, 5|7 oder 3|5).
   - Die Gänge zwischen und um die Zellen lassen alle Türkacheln und die Kacheln davor frei.
 - **Kantensperre:** Zellwände stehen auf der Kante zwischen zwei Kacheln. Die Wegfindung darf diese Kanten nicht kreuzen; nur Torbogen und Öffnung lassen durch. `npm test` prüft die Erreichbarkeit mit Kantensperren.
 - **Zelleinrichtung:** Jede Zelle bekommt nach Raum-Seed entweder ein Strohlager (`strohlager`) oder Knochen (`knochen`, in den Eckzellen eine Gruppe, in der großen Zelle 2 bis 3), nie beides. Das Strohlager hält eine Kachel Abstand zum Durchgang. Außerhalb der Zellen steht im Kerker keine Deko.
@@ -619,9 +619,9 @@ Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kan
 | treppe_hoch | Steintreppe nach oben (KayKit `stairs`), steigt zur Nordwand | 3×3, Nordwest-Ecke | ja | nein | nein | Vorkammer, vom Code gesetzt |
 | treppe_runter | Steintreppe nach unten in ein Loch im Boden (KayKit `stairs`), kühler Schimmer von unten | 3×3, Nordwest-Ecke | ja | ja | ja | Abstieg und Bossraum, vom Code gesetzt |
 | zellgitter | Gitterwand (KayKit `wall_gated`) | 2, Kante | ja | nein | nein | Kerker |
-| zellgitter_ecke | Gitterecke (KayKit `wall_corner_gated`) | Ecke | ja | nein | nein | Kerker |
+| zellgitter_ecke | Gitterecke (KayKit `wall_corner_gated`), Arme je 1 Kachel | Ecke | ja | nein | nein | derzeit in keinem Raum |
 | zelltor | Offener Torbogen (KayKit `wall_doorway` ohne Türblatt `wall_doorway_door`) | 2, Kante, Durchgang 1 | ja | nein | nein | Kerker |
-| zellecke | Schmale Ecke (KayKit `wall_corner_small`) | Ecke | ja | nein | nein | Kerker |
+| zellecke | Schmale Ecke (KayKit `wall_corner_small`): Innenecken der Eckzellen, Ecken der großen Zelle | Ecke | ja | nein | nein | Kerker |
 
 **Figuren**
 
@@ -891,3 +891,4 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Risswand `wand_riss` (KayKit `wall_cracked`) in allen Räumen der Katakomben zu etwa 30 % der Wandkacheln, nicht auf Fackelkacheln und nicht hinter der Treppe
 - [x] Durchblick statt Ausblenden: Innenwände und Säulen werden nur im Kreis um eine verdeckte Spielfigur oder einen verdeckten Gegner durchsichtig (Startwert Deckkraft 0,4, im Spiel testen)
 - [x] Gruft darf in den Katakomben direkt neben dem Start stehen (Ausnahme `overrides` in `data/themes.json`)
+- [x] Große Zelle im Kerker: an den Ecken schmale Eckpfeiler (`zellecke`) statt Gitterecken
