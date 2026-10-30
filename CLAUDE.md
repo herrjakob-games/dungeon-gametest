@@ -62,7 +62,7 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/generator.js` | Ebenen-Generator (Größe nach Tiefe, Random Walk, Raumtypen nach Thema, Lage- und Anzahlregeln), rein logisch |
 | `src/world.js` | Themen und Ebenen: Thema je Tiefe, Größe, Anteil feindlicher Räume, Boss, Rastplatz, Monster-Wachstum; rein logisch |
 | `src/shop.js` | Händler: Preise, Angebot, Kaufen, Verkaufen; rein logisch |
-| `src/pathfinding.js` | A*-Wegfindung, rein logisch |
+| `src/pathfinding.js` | A*-Wegfindung, gesperrte Kanten (Zellwände) werden nicht gekreuzt; rein logisch |
 | `src/rng.js` | Seed-basierte Zufallszahlen und Würfel |
 | `src/state.js` | gemeinsamer Spielzustand |
 | `data/themes.json` | Themen: Name, Stufe, Proben-Zuschlag, Raumtypen, Nachbar des Starts, Monster, Boss, Regel-Ausnahmen (`overrides`), Palette (`palette`, `roomPalettes`, dort optional `brightness` für hellere Räume), Begegnungen (`encounters`), Bodenvarianten (`floorTiles`) |
@@ -82,7 +82,7 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/character.js` | Figur: Volk, Inventar, Anlegen, Stufenaufstieg, Fähigkeit; rein logisch |
 | `src/combat.js` | Rundenkampf: Angriff, Gegnerzug, Verteidigen, Gegenstände, Flucht, Tiefe; rein logisch |
 | `src/roomTypes.js` | Raumtypen-Tabelle, befüllt aus `data/room-types.json` |
-| `src/decor.js` | Einrichtung als Daten: Requisiten-Größen, Platzierung (`center`, `wall-back`, `corner`, `free`, `around:`, `above:`, `tile:x|y`, `door-sides`), Fackeln an Säulen (`torches`) und ihre Anzahl (`torchCount`), Abstand zur Wand (`wallGap`), Freiraum (`clear`), Abstand zu Türen (`doorGap`), Bodenvarianten (`floorTiles`), Treppenfläche und Startkachel, Erreichbarkeit, Datenprüfung; rein logisch |
+| `src/decor.js` | Einrichtung als Daten: Requisiten-Größen, Platzierung (`center`, `wall-back`, `corner`, `free`, `around:`, `above:`, `tile:x|y`, `door-sides`), Fackeln an Säulen (`torches`) und ihre Anzahl (`torchCount`), Abstand zur Wand (`wallGap`), Freiraum (`clear`), Abstand zu Türen (`doorGap`), Bodenvarianten (`floorTiles`), Zellen im Kerker (`cells`, `planCells`) mit gesperrten Kanten (`edgeKey`, `stepOpen`), Treppenfläche und Startkachel, Erreichbarkeit, Datenprüfung; rein logisch |
 | `src/props.js` | Requisiten aus Grundformen (Platzhalter, wenn ein Modell fehlt) |
 | `src/stairs.js` | Treppen in der Nordwest-Ecke: KayKit `stairs` (`treppe_hoch`, `treppe_runter`), Loch mit Steinkante und kühlem Licht, Gitter im Bossraum, Verlauf zur Schattenfarbe; Rückfall aus Grundformen |
 | `src/models.js` | Modell-Lader: `data/models.json`, Paletten-Textur des Themas, Klone pro Instanz, Figuren mit Animationen (`makeFigureModel`), Rückfall auf Platzhalter |

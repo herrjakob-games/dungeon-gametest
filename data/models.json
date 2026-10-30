@@ -50,6 +50,11 @@
     ],
     "palette": true
   },
+  "wand_riss": {
+    "file": "assets/tiles/wand_riss.glb",
+    "scale": 0.5,
+    "palette": true
+  },
   "sockel": {
     "file": "assets/tiles/sockel.glb",
     "scale": [
@@ -1056,6 +1061,26 @@
       -0.025,
       0
     ],
+    "palette": true
+  },
+  "zellgitter": {
+    "file": "assets/props/zellgitter.glb",
+    "scale": 0.5,
+    "palette": true
+  },
+  "zellgitter_ecke": {
+    "file": "assets/props/zellgitter_ecke.glb",
+    "scale": 0.5,
+    "palette": true
+  },
+  "zelltor": {
+    "file": "assets/props/zelltor.glb",
+    "scale": 0.5,
+    "palette": true
+  },
+  "zellecke": {
+    "file": "assets/props/zellecke.glb",
+    "scale": 0.5,
     "palette": true
   }
 }

@@ -56,8 +56,8 @@ test("Bauteile der Räume haben ein Modell", () => {
 test("Jede Requisiten-id hat ein Modell oder einen Platzhalter", () => {
   const ids = new Set(Object.keys(PROPS));
   ROOM_TYPES.forEach(rt => [rt.decor].concat(Object.values(rt.themeDecor || {})).filter(Boolean)
-    .forEach(d => d.layouts.forEach(l => l.props.forEach(p => ids.add(p.prop)))));
-  ["treppe_hoch", "treppe_runter"].forEach(id => ids.add(id));
+    .forEach(d => (d.layouts || []).forEach(l => l.props.forEach(p => ids.add(p.prop)))));
+  ["treppe_hoch", "treppe_runter", "zellgitter", "zellgitter_ecke", "zelltor", "zellecke", "wand_riss"].forEach(id => ids.add(id));
   for (const id of ids) {
     const special = ["truhe", "lagerfeuer", "haendlerfigur"].includes(id); // baut roomBuilder selbst
     assert.ok(MODELS[id] || typeof P[id] === "function" || special, id + ": weder Modell noch Platzhalter");

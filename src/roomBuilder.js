@@ -37,6 +37,7 @@ export function buildRoom(id) {
   add = (o) => { roomGroup.add(o); return o; };
 
   state.blocked = new Set();
+  state.edges = new Set();
   state.interactables = [];
   state.torches = [];
   state.lidPivot = null;
@@ -296,12 +297,15 @@ function makeTorch(x, z, rot, color, flameColor) {
 // und nicht im Freiraum um Requisiten mit "clear" (etwa zwei Kacheln um das Lagerfeuer)
 function scatterRubble(skipCenter) {
   const clear = state.decorPlan ? state.decorPlan.placements.filter(p => p.clear) : [];
+  // Kerker mit Zellen: außerhalb der Zellen keine Deko
+  const cells = state.decorPlan && state.decorPlan.cells ? state.decorPlan.cells.cells : null;
+  const outsideCells = (x, z) => cells && !cells.some(c => c.tiles.some(t => t[0] === x && t[1] === z));
   const nearClear = (x, z) => clear.some(p => p.tiles.some(([u, v]) => Math.max(Math.abs(x - u), Math.abs(z - v)) <= p.clear));
   for (let k = 0; k < 9; k++) {
     const r = new THREE.Mesh(new THREE.DodecahedronGeometry(0.06 + rnd() * 0.08), stone());
     const x = Math.floor(rnd() * N), z = Math.floor(rnd() * N);
     if (skipCenter && x < STAIRS_SIZE && z < STAIRS_SIZE) continue;
-    if (nearClear(x, z)) continue;
+    if (nearClear(x, z) || outsideCells(x, z)) continue;
     r.position.set(tw(x) + (rnd() - 0.5) * 0.7, 0.04, tw(z) + (rnd() - 0.5) * 0.7);
     r.castShadow = true;
     add(r);
@@ -357,6 +361,13 @@ function propMesh(id, pl) {
 function placeDecor(spec, room, feature, id, torch) {
   const plan = planDecor(spec, { seed: room.seed, doors: room.doors, feature });
   state.decorPlan = plan; // für Figuren mit near:<prop>
+  state.edges = plan.edges; // Zellwände sperren Kanten für die Wegfindung
+  // Zellwände (Kerker der Katakomben): Teile auf Kachelkanten, Lage in Kachelkoordinaten
+  if (plan.cells) plan.cells.pieces.forEach(pc => {
+    const m = makeModel(pc.prop);
+    if (m) placeAt(m, tw(pc.x), tw(pc.z), pc.rot);
+    else add(box(pc.prop === "zellecke" ? 0.3 : 1, WALL_H, 0.3, stone(), tw(pc.x), WALL_H / 2, tw(pc.z))).rotation.y = pc.rot;
+  });
   plan.torchSpots.forEach(s => makePillarTorch(s, torch));
   // Truhen: eine echt, die übrigen Mimiken, wenn die Einrichtung es will (Schatzkammer)
   const mimics = mimicChests(spec, plan.placements.filter(p => p.prop === "truhe").length, room.seed);

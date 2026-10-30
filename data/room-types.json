@@ -1729,6 +1729,11 @@
           "weight": 3
         }
       ]
+    },
+    "themeDecor": {
+      "katakomben": {
+        "cells": true
+      }
     }
   },
   {

@@ -61,6 +61,10 @@ async function build(id, recipe) {
     merged.listChildren().forEach(n => { merged.removeChild(n); main.addChild(n); });
     merged.dispose();
   }
+  // Teile entfernen (remove: Knotennamen, etwa das Türblatt des Torbogens)
+  const names = new Set(root.listNodes().map(n => n.getName()));
+  (recipe.remove || []).forEach(name => { if (!names.has(name)) throw new Error(id + ": Teil " + name + " fehlt"); });
+  root.listNodes().filter(n => (recipe.remove || []).includes(n.getName())).forEach(n => n.dispose());
   // Texturen entfernen: der Lader setzt die Paletten-Textur des Themas
   root.listMaterials().forEach(m => m.setBaseColorTexture(null));
   root.listTextures().forEach(t => t.dispose());

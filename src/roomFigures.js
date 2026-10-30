@@ -128,7 +128,7 @@ export function showEventFigures(ev, opts) {
   for (const c of ev.id) h = (h * 31 + c.charCodeAt(0)) >>> 0;
   const plan = planFigures(list, {
     placements: state.decorPlan ? state.decorPlan.placements : [],
-    blocked: state.blocked, doors: room.doors, player: state.pTile, occupied: tilesOf(figs.filter(f => !f.sink)), rand: mulberry32(h),
+    blocked: state.blocked, edges: state.edges, doors: room.doors, player: state.pTile, occupied: tilesOf(figs.filter(f => !f.sink)), rand: mulberry32(h),
     anchors: (DATA.staging || {}).anchors, canPose: (id, variant, name) => hasAnimation(id, variant, name),
     stairsDown: state.stairsFeature === "down" || state.stairsFeature === "arena",
     awayFrom: opts && opts.awayFrom, awayDist: opts && opts.dist
@@ -200,7 +200,7 @@ function walkTo(f, spot) {
   let pts = null;
   if (f.tiles.length === 1 && spot.tiles.length === 1 && !f.onProp) {
     const ok = (x, z) => own.has(key(x, z)) || walkable(x, z) || (x === spot.tiles[0][0] && z === spot.tiles[0][1]);
-    const p = findPath(from[0], from[1], spot.tiles[0][0], spot.tiles[0][1], ok);
+    const p = findPath(from[0], from[1], spot.tiles[0][0], spot.tiles[0][1], ok, state.edges);
     if (p) pts = p.slice(1).map(([x, z]) => [tw(x), 0, tw(z)]);
   }
   if (!pts || !pts.length) pts = [[tw(spot.cx), 0, tw(spot.cz)]];
@@ -228,7 +228,7 @@ export function combatFigure(monsterId) {
   let list = alive().filter(f => f.id === monsterId);
   if (!list.length) {
     // Kein Event zeigt den Gegner (Testmodus, Boss ohne Event): er erscheint direkt neben der Spielfigur
-    const spot = combatSpot(monsterId, { blocked: state.blocked, doors: room.doors, player: state.pTile, boss, occupied: tilesOf(alive()) });
+    const spot = combatSpot(monsterId, { blocked: state.blocked, edges: state.edges, doors: room.doors, player: state.pTile, boss, occupied: tilesOf(alive()) });
     list = [make({ figure: monsterId, tiles: spot.tiles, cx: spot.cx, cz: spot.cz, rot: 0, blocks: figureInfo(monsterId).blocks }, null, true)];
   }
   fighters = list;
@@ -239,7 +239,7 @@ export function combatFigure(monsterId) {
   list.forEach(f => {
     const others = alive().filter(o => !list.includes(o));
     const occupied = new Set([...tilesOf(others), ...taken]);
-    const spot = combatSpot(monsterId, { blocked: state.blocked, doors: room.doors, player: state.pTile, boss, occupied });
+    const spot = combatSpot(monsterId, { blocked: state.blocked, edges: state.edges, doors: room.doors, player: state.pTile, boss, occupied });
     spot.tiles.forEach(t => taken.add(key(...t)));
     f.onProp = f.tiles.length === 0;
     f.pose = null;

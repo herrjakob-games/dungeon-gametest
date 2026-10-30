@@ -805,6 +805,29 @@
     "boden_holz_dunkel": {
       "dir": "tiles",
       "file": "floor_wood_small_dark.gltf.glb"
+    },
+    "wand_riss": {
+      "dir": "tiles",
+      "file": "wall_cracked.gltf.glb"
+    },
+    "zellgitter": {
+      "dir": "props",
+      "file": "wall_gated.gltf.glb"
+    },
+    "zellgitter_ecke": {
+      "dir": "props",
+      "file": "wall_corner_gated.gltf.glb"
+    },
+    "zelltor": {
+      "dir": "props",
+      "file": "wall_doorway.glb",
+      "remove": [
+        "wall_doorway_door"
+      ]
+    },
+    "zellecke": {
+      "dir": "props",
+      "file": "wall_corner_small.gltf.glb"
     }
   },
   "figureSource": "assets/source/kaykit-adventurers/",

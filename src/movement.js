@@ -14,7 +14,7 @@ const pathStart = () => (state.path.length ? state.path[0] : state.pTile);
 
 export function moveTo(tx, tz, onArrive) {
   const from = pathStart();
-  const p = findPath(from[0], from[1], tx, tz, walkable);
+  const p = findPath(from[0], from[1], tx, tz, walkable, state.edges);
   if (!p) return false;
   state.path = state.path.length ? [state.path[0]].concat(p.slice(1)) : p.slice(1);
   state.onArrive = onArrive || null;
@@ -42,7 +42,7 @@ export function approachTile(tile, onArrive) {
     const nx = t[0] + dx, nz = t[1] + dz, k = nx + "," + nz;
     if ((!dx && !dz) || tried.has(k) || !walkable(nx, nz)) continue;
     tried.add(k);
-    const p = findPath(from[0], from[1], nx, nz, walkable);
+    const p = findPath(from[0], from[1], nx, nz, walkable, state.edges);
     if (p && (!best || p.length < best.p.length)) best = { p, x: nx, z: nz, t };
   }
   if (best) moveTo(best.x, best.z, () => { faceTile(best.t); onArrive(); });

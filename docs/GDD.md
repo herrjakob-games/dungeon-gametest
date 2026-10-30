@@ -586,7 +586,7 @@ Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kan
 | pfuetze | Pfütze | Deko | nein | nein | nein | Brunnenraum |
 | sarkophag | Sarkophag (eine Kachel Abstand zur Wand und zum nächsten Sarkophag) | 1×2 | ja | nein | nein | Gruft |
 | kerzen | Kerzengruppe | Deko | nein | nein | ja | Gruft, Speisesaal, Schatzkammer |
-| knochen | Knochen | Deko | nein | nein | nein | Gruft, Bossraum |
+| knochen | Knochen | Deko | nein | nein | nein | Gruft, Bossraum, Kerker |
 | geroell | Geröll | Deko | nein | nein | nein | alle |
 | goldhaufen | Goldhaufen (KayKit `coin_stack_large`) | Deko | nein | nein | nein | Schatzkammer |
 | truhe | Truhe (in der Schatzkammer 2 bis 3, davon eine echt, die übrigen Mimiken) | 1 | ja | ja | nein | Schatzkammer |
@@ -604,7 +604,7 @@ Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kan
 | fahne | Fahne an der Wand (Varianten `blau`, `gruen`, `gelb`, `wappen`) | 1, Wand | nein | nein | nein | Wachstube, Schatzkammer, Speisesaal |
 | fahne_dreifach | Drei Fahnen nebeneinander (Varianten `blau`, `gelb`) | 2, Wand | nein | nein | nein | Säulenhalle, Schatzkammer, Speisesaal |
 | schluesselbund | Schlüsselbund am Haken | 1, Wand | nein | nein | nein | Wachstube |
-| strohlager | Strohlager auf dem Boden (KayKit `bed_floor`) | 1×2 | ja | nein | nein | Wachstube, Rastplatz |
+| strohlager | Strohlager auf dem Boden (KayKit `bed_floor`) | 1×2 | ja | nein | nein | Wachstube, Rastplatz, Kerker |
 | kerze_duenn | Dünne Kerze (KayKit `candle_thin`; Variante `an`: brennend, `candle_thin_lit`, mit Licht) | 1 | nein | nein | an: ja | Rastplatz, neben dem Schlaflager |
 | zapffass | Zapffass | 1 | ja | nein | nein | Vorratskammer, Küche |
 | zapffass_verziert | Zapffass mit Gestell | 2×1 | ja | nein | nein | Vorratskammer, Küche |
