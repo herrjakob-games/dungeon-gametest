@@ -26,7 +26,8 @@ Events der neuen Raumtypen sind Platzhalter (`"placeholder": true` bzw. Text „
 Content-Projekt ersetzt. Meilenstein 6a (echte Modelle für Umgebung und Requisiten des Kellers, Licht nach Stilguide)
 ist umgesetzt; was noch kein Modell hat, bleibt Platzhalter. Meilenstein 6b (Figuren und Animationen) läuft: Die Spielfiguren der drei Völker kommen aus KayKit Adventurers,
 Ratten, Küchenchef, Monsterratte und Kröte aus dem Easy Animated Enemy Pack (Quaternius), der Goblin aus Goblin Lowpoly
-Assets (ohne Animationen), die Skelette aus KayKit Skeletons 1.0. Die Mimik ist noch Grundform. Wie Event-Figuren im Raum
+Assets (ohne Animationen), die Skelette aus KayKit Skeletons 1.0, Geist und Poltergeist aus KayKit Rogue (hellblau, durchscheinend).
+Die Katakomben haben echte Inhalte für Kerker und Schrein (Monster, Begegnungen, Events). Die Mimik ist noch Grundform. Wie Event-Figuren im Raum
 stehen und sich bewegen, regelt die Inszenierung in `data/staging.json`.
 Meilenstein 6c (Sound) ist gebaut: `data/sounds.json`, Modul `src/sound.js`; erste Sounds von Freepik sind eingebaut, was fehlt, bleibt still.
 Die Liste aller Meilensteine steht im GDD.

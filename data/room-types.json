@@ -1604,7 +1604,7 @@
     "torch": "#c9a0ff",
     "layout": "pillars",
     "rating": "mixed",
-    "eventChance": 0.5,
+    "eventChance": 0.4,
     "max": 1,
     "events": [
       {
@@ -1619,7 +1619,66 @@
         "rating": "hostile",
         "hostile": true
       }
-    ]
+    ],
+    "themeEvents": {
+      "katakomben": [
+        {
+          "id": "schrein_opferschale",
+          "weight": 3,
+          "hostile": false,
+          "rating": "neutral"
+        },
+        {
+          "id": "schrein_beichtgeist",
+          "weight": 3,
+          "hostile": false,
+          "rating": "neutral"
+        },
+        {
+          "id": "schrein_statue",
+          "weight": 3,
+          "hostile": false,
+          "rating": "neutral"
+        },
+        {
+          "id": "schrein_flamme",
+          "weight": 3,
+          "once": true,
+          "hostile": false,
+          "rating": "neutral"
+        },
+        {
+          "id": "schrein_heiliger_segen",
+          "weight": 1,
+          "hostile": false,
+          "rating": "neutral"
+        },
+        {
+          "id": "schrein_heiliger_weisheit",
+          "weight": 1,
+          "hostile": false,
+          "rating": "neutral"
+        },
+        {
+          "id": "schrein_heiliger_reichtum",
+          "weight": 1,
+          "hostile": false,
+          "rating": "neutral"
+        },
+        {
+          "id": "schrein_tempelwaechter",
+          "weight": 3,
+          "hostile": true,
+          "rating": "hostile"
+        },
+        {
+          "id": "schrein_weihwasser",
+          "weight": 3,
+          "hostile": true,
+          "rating": "hostile"
+        }
+      ]
+    }
   },
   {
     "id": "kerker",
@@ -1646,7 +1705,31 @@
         "id": "kerker_falle",
         "weight": 1
       }
-    ]
+    ],
+    "themeEvents": {
+      "katakomben": [
+        {
+          "id": "kerker_mitgefangener",
+          "weight": 3
+        },
+        {
+          "id": "kerker_fallgitter",
+          "weight": 3
+        },
+        {
+          "id": "kerker_schluesselgeist",
+          "weight": 3
+        },
+        {
+          "id": "kerker_strichliste",
+          "weight": 2
+        },
+        {
+          "id": "kerker_zellentuer",
+          "weight": 3
+        }
+      ]
+    }
   },
   {
     "id": "bibliothek",

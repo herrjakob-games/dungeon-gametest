@@ -79,9 +79,6 @@
     ],
     "boss": "skelettkoenig",
     "overrides": {
-      "kerker": {
-        "max": null
-      },
       "gruft": {
         "nextToStart": null
       }
@@ -110,7 +107,32 @@
         "tile": "boden_unkraut_b",
         "weight": 1
       }
-    ]
+    ],
+    "encounters": {
+      "chance": 0.15,
+      "monsters": [
+        {
+          "monster": "skelett_krieger",
+          "weight": 3
+        },
+        {
+          "monster": "geist",
+          "weight": 2
+        },
+        {
+          "monster": "poltergeist",
+          "weight": 2
+        }
+      ],
+      "reward": [
+        {
+          "loot": "tier1"
+        },
+        {
+          "gainXp": 3
+        }
+      ]
+    }
   },
   {
     "id": "zwergenminen",

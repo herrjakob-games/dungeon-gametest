@@ -166,7 +166,7 @@ function seeThrough(root, opacity) {
       const m = n.material.clone();
       m.transparent = true;
       m.opacity = opacity;
-      const depth = new THREE.MeshBasicMaterial({ colorWrite: false, transparent: true, side: m.side, skinning: n.isSkinnedMesh });
+      const depth = new THREE.MeshBasicMaterial({ colorWrite: false, transparent: true, side: m.side, skinning: !!n.isSkinnedMesh });
       glassy.set(k, { m, depth });
     }
     const { m, depth } = glassy.get(k);

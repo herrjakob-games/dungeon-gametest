@@ -99,14 +99,16 @@ test("Höchstzahlen pro Ebene werden eingehalten", () => {
   }
 });
 
-test("Katakomben: Kerker ohne Höchstzahl, Gruft darf neben den Start", () => {
-  let gruftNextToStart = false, manyKerker = false;
+test("Katakomben: Kerker neben dem Start und höchstens 2, Gruft darf neben den Start", () => {
+  let gruftNextToStart = false;
   for (let s = 1; s <= SEEDS; s++) for (const depth of [4, 5, 6]) {
     const d = generate(s, depth, WORLD);
-    if (neighborsOf(d, d.rooms[d.start]).some(n => n.type === "gruft")) gruftNextToStart = true;
-    if (count(d, "kerker") > 2) manyKerker = true;
+    const next = neighborsOf(d, d.rooms[d.start]);
+    if (next.some(n => n.type === "gruft")) gruftNextToStart = true;
+    assert.ok(next.some(n => n.type === "kerker"), `Seed ${s}/${depth}: kein Kerker neben dem Start`);
+    assert.ok(count(d, "kerker") <= 2, `Seed ${s}/${depth}: ${count(d, "kerker")} Kerker`);
   }
-  assert.ok(gruftNextToStart && manyKerker);
+  assert.ok(gruftNextToStart);
   // Im Keller gilt weiter: Gruft nie neben dem Start
   for (let s = 1; s <= SEEDS; s++) {
     const d = generate(s, 2, WORLD);

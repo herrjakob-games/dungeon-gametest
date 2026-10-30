@@ -7,7 +7,14 @@
   "death": {
     "events": {
       "boss_monsterratte": "Noch vor dem Bosskampf gestorben. Die Monsterratte ist ein bisschen enttäuscht.",
-      "boss_monsterratte_zurueck": "Zur Revanche angetreten und schon in der Vorrunde ausgeschieden."
+      "boss_monsterratte_zurueck": "Zur Revanche angetreten und schon in der Vorrunde ausgeschieden.",
+      "kerker_fallgitter": "Das Gitter fiel, und du warst darunter. Die Zelle hat jetzt wieder einen Insassen.",
+      "kerker_strichliste": "Die Wand hat dir genau einen Strich verpasst. Er war leider aus Metall.",
+      "schrein_tempelwaechter": "Über eine Kniebank gestolpert und vom Tempelwächter gerichtet. Wenigstens warst du schon auf den Knien.",
+      "schrein_weihwasser": "Gestorben an Weihwasser. Die Götter sagen, es sei gut gemeint gewesen.",
+      "schrein_heiliger_segen": "Von einem Heiligen erschlagen. Es gibt schlechtere Arten, in die Legende einzugehen.",
+      "schrein_heiliger_weisheit": "Von einem Heiligen erschlagen. Es gibt schlechtere Arten, in die Legende einzugehen.",
+      "schrein_heiliger_reichtum": "Von einem Heiligen erschlagen. Es gibt schlechtere Arten, in die Legende einzugehen."
     }
   }
 }

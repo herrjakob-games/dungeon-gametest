@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.44 · Oct 30, 2026 · @Christian
+Version 2.45 · Oct 30, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.45 | 30.10.2026 | Katakomben Paket 1 und 2: Monster Skelettkrieger, Geist, Poltergeist, Skelett-König; Begegnungen; Events für Kerker und Schrein; Skelett-König als Warrior 1,3-fach mit goldener Krone; Kerker auch in den Katakomben höchstens 2 |
 | 2.44 | 30.10.2026 | Poltergeist mit denselben Tönen wie der Geist |
 | 2.43 | 30.10.2026 | Töne des Geists: Angriffsklang `geist`, `treffer_geist`, `tod_geist`; Bewegung mit `schweben` statt Schritten |
 | 2.42 | 30.10.2026 | Geister zu 60 % deckend und ohne Handschuhe (Hände in Hautfarbe) |
@@ -514,7 +515,7 @@ Gilt für alle Modelle. Bei Paketteilen gilt sie für das Ergebnis im Spiel; Abw
 - **Bart des Zwergs:** Zubehör `bart` aus Grundformen, Farbe `#4A3020`, matt und weich, in zwei Teilen: Kinnansatz mit Schnurrbart-Wulst am Kopfknochen (`part: "kinn"`, Knochen `head`) und ein breiter Keil bis zum Bauch, unten leicht gegabelt, am Brustknochen (`part: "keil"`, Knochen `chest`); beide überlappen leicht. Am Kinn etwa 0,27 Kacheln breit, der Keil oben 0,24 (schmaler als geplant, damit die Schwerthand beim Angriff frei bleibt), nach unten schmaler; gesamt etwa 0,34 Kacheln lang, weil der Kopf der Figur groß ist und 0,45 bis zu den Füßen reichen würde. Der Bart schneidet bei Stehen, Laufen und Angriff nicht ins Schwert.
 - **Zubehör der Spielfiguren:** Die Figur trägt das Teil des Pakets, das der Startwaffe am nächsten kommt: Zwerg Schwert (Langschwert), Elf Messer (Dolch), Mensch Zauberstab (das Paket hat keinen Knüppel). Schilde, Zweithand-Waffen und Bücher fallen weg.
 - **Quellen der Figuren im Keller:** Mensch KayKit `Mage`, Elf `Rogue_Hooded`, Zwerg `Knight` ohne Helm, Haare und Augenbrauen in der Bartfarbe (Textur `assets/textures/figures/zwerg/zwerg_texture.png`), ungleich skaliert (Maßstab `[0,429, 0,2805, 0,429]`: breiter und kleiner), mit Bart, Händler `Rogue` ohne Kapuze und Waffen, Outfit dunkelblau statt grün (KayKit Adventurers); Skelett aus KayKit Skeletons 1.0 (Minion, Warrior, Rogue, Mage; die Fassung 1.1 FREE hat kein Sitzen, Liegen und Angreifen, Textur gleich) mit der auf die Palette umgefärbten Textur `assets/textures/figures/skeleton/skeleton_keller.png`; Goblin aus Goblin Lowpoly Assets (standout7, itch.io); Mimik aus der Truhe des KayKit Dungeon Pack (itch.io); Riesenratte, Küchenchef und Monsterratte aus `Rat`, Kröte aus `Frog` (Easy Animated Enemy Pack, Quaternius). Goblin: `Basic_Goblin` mit `Rusty Shiv`; die kostenlose Fassung hat keine Animationen.
-- **Quellen der Figuren in den Katakomben:** Skelettkrieger aus KayKit Skeletons `Warrior` mit der Skelett-Textur; Geister (Geist, Poltergeist) aus KayKit Adventurers `Rogue` ohne Kapuze und Waffen, Outfit hellblau, Haut weiß, Haare grau, ohne Handschuhe (Hände in Hautfarbe), mit kaltem blauem Licht an der Figur (Lichtpunkt ohne Schatten). Geister sind als ganze Figur durchscheinend (Deckkraft 0,6, `opacity` in `data/models.json`); innere Teile bleiben dabei verborgen.
+- **Quellen der Figuren in den Katakomben:** Skelettkrieger aus KayKit Skeletons `Warrior` mit der Skelett-Textur; Geister (Geist, Poltergeist) aus KayKit Adventurers `Rogue` ohne Kapuze und Waffen, Outfit hellblau, Haut weiß, Haare grau, ohne Handschuhe (Hände in Hautfarbe), mit kaltem blauem Licht an der Figur (Lichtpunkt ohne Schatten). Geister sind als ganze Figur durchscheinend (Deckkraft 0,6, `opacity` in `data/models.json`); innere Teile bleiben dabei verborgen. Skelett-König aus KayKit Skeletons `Warrior` mit der Skelett-Textur, 1,3-fach so groß wie die anderen Skelette, mit goldener Krone aus Grundformen auf dem Helm (`accessories`, Form `krone` am Kopfknochen).
 - **Lizenzen:** Quelle und Lizenz jeder fremden Datei in `assets/CREDITS.md`.
 
 ### Einrichtung pro Raumtyp
@@ -864,3 +865,4 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Geister zu 60 % deckend (Deckkraft 0,6) und ohne Handschuhe
 - [x] Töne des Geists: Angriffsklang `geist`, eigener Treffer- und Tod-Ton, beim Bewegen ein Schwebe-Ton (`schweben`) statt Schritten
 - [x] Poltergeist mit denselben Tönen wie der Geist
+- [x] Katakomben Paket 1 und 2: Monster, Begegnungen, Events und Todessätze für Kerker und Schrein; Schrein mit Event-Chance 0,4 wie die Säulenhalle, Kerker 0,7 wie die Gruft; Kerker auch in den Katakomben höchstens 2; Skelett-König als Warrior 1,3-fach mit goldener Krone
