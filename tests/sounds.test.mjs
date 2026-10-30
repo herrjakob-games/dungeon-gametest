@@ -3,7 +3,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, existsSync } from "node:fs";
 import { indexData } from "../src/eventLogic.js";
-import { ATTACK_SOUNDS, MOODS, FLOORS, attackSound, monsterAttackSound, roomSound, stepKind, referencedSounds, checkSounds } from "../src/soundLogic.js";
+import { ATTACK_SOUNDS, MOODS, FLOORS, attackSound, monsterAttackSound, roomSound, stepKind, referencedSounds, checkSounds, playerDeathSounds } from "../src/soundLogic.js";
 import { listSounds } from "../tools/sound-index.mjs";
 
 const read = (f) => JSON.parse(readFileSync(new URL("../data/" + f, import.meta.url), "utf8"));
@@ -43,6 +43,7 @@ test("Regeln: ohne Waffe faust, Monster ohne Klang still, themeSound vor sound, 
   assert.equal(stepKind("rat", DATA.staging, "hall"), "trippeln");
   assert.equal(stepKind("skeleton", DATA.staging, "hall"), "hall");
   assert.equal(stepKind("rat", DATA.staging, null), null, "Räume ohne Sound bleiben auch ohne Schritte");
+  assert.deepEqual(playerDeathSounds("zwerg"), ["tod_zwerg", "tod_spieler", "tod"], "Spielfigur: eigener Tod vor dem allgemeinen");
   // Alle Keller-Räume haben mood und floor
   const keller = DATA.themes.find(t => t.id === "keller");
   keller.roomTypes.concat(["start", "exit", "boss", "schatz", "rast", "haendler"]).forEach(id => assert.ok(roomSound(DATA.roomTypes[id], "keller"), id + ": ohne sound"));

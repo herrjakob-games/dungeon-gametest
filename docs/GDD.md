@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.35 · Oct 29, 2026 · @Christian
+Version 2.36 · Oct 30, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.36 | 30.10.2026 | Eigener Sound für den Tod der Spielfigur: `tod_<volk>`, sonst `tod_spieler`, sonst `tod` |
 | 2.35 | 29.10.2026 | Rastplatz: zwei Kacheln frei um das Feuer; 2 bis 3 Schlaflager (`bed_floor`) nie neben Türen, daneben dünne Kerzen; 2 bis 3 Flaschen und 2 bis 3 Fässer statt Säcken |
 | 2.34 | 29.10.2026 | Vorkammer: kein Wegweiser mehr; das Pult mit Buch steht immer auf 4\|3 seitlich der Treppe |
 | 2.33 | 29.10.2026 | Vorkammer: keine Fackel hinter oder neben der Treppe (Wandkacheln 1 bis 4 von Nord- und Westwand) |
@@ -654,6 +655,7 @@ Feste Sound-ids, die der Code an diesen Stellen spielt:
 | treppe | Klick auf die Treppe nach unten |
 | treffer_<figur-id>, sonst treffer | Figur wird getroffen, zusammen mit dem Angriffsklang |
 | tod_<figur-id>, sonst tod | Figur stirbt; bei einer Gruppe einmal |
+| tod_<volk>, sonst tod_spieler, sonst tod | Spielfigur stirbt (im Kampf oder durch ein Event) |
 
 Für die Spielfigur gilt als Figur-id das Volk (`zwerg`, `elf`, `mensch`).
 
@@ -787,3 +789,4 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Vorkammer: keine Fackel hinter oder neben der Treppe; an Nord- und Westwand fällt die Fackel auf Kachel 3 weg
 - [x] Vorkammer ohne Wegweiser; Pult mit Buch immer auf 4|3 rechts neben der untersten Stufe der Treppe
 - [x] Rastplatz: zwei Kacheln frei um das Feuer (`clear`), 2 bis 3 Schlaflager nie neben Türen (`doorGap`) mit dünnen Kerzen daneben, 2 bis 3 Flaschen und 2 bis 3 Fässer, keine Säcke
+- [x] Eigener Sound für den Tod der Spielfigur (`tod_spieler`, pro Volk überschreibbar mit `tod_<volk>`); `tod` bleibt für sterbende Gegner
