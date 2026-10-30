@@ -8,7 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
-| 2.48 | 30.10.2026 | Katakomben Paket 3: Events für Gruft, Säulenhalle und Bossraum (Skelett-König mit Audienz und Rückkehr) |
+| 2.48 | 30.10.2026 | Katakomben Paket 3: Events für Gruft, Säulenhalle und Bossraum (Skelett-König mit Audienz und Rückkehr); Flags gelten weiter nur pro Ebene |
 | 2.47 | 30.10.2026 | Gruft darf in den Katakomben direkt neben dem Start stehen; große Zelle im Kerker mit schmalen Eckpfeilern (`zellecke`) statt Gitterecken |
 | 2.46 | 30.10.2026 | Kerker in den Katakomben mit zwei Varianten: vier Eckzellen (3×3) oder eine große Zelle (5×5); Zellwände aus KayKit-Gittern, Torbögen und Steinpfeilern auf Kachelkanten; Wegfindung sperrt Kanten; in jeder Zelle entweder ein Strohlager oder Knochen; Rückwände in allen Räumen der Katakomben zu etwa 30 % gesprungen (`wand_riss`); Innenwände und Säulen werden um verdeckte Figuren herum durchsichtig (Durchblick) |
 | 2.45 | 30.10.2026 | Katakomben Paket 1 und 2: Monster Skelettkrieger, Geist, Poltergeist, Skelett-König; Begegnungen; Events für Kerker und Schrein; Skelett-König als Warrior 1,3-fach mit goldener Krone; Kerker auch in den Katakomben höchstens 2 |
@@ -270,7 +270,7 @@ Jeder Raumtyp hat eine Event-Chance und eine gewichtete Event-Tabelle, auf Wunsc
 - **Effekte:** damage, heal, loot, gold, item, loseGold, combat, gainXp, lockDoor, unlockDoor, setFlag. Mengen als Zahl oder Würfel, etwa `"W4"` oder `"2W6"`.
 - **Beute-Effekte:** `loot` gibt Gold und eventuell einen Gegenstand (siehe Beute). `gold` gibt nur Gold, der Würfelwert wird wie bei der Beute mit der Stufe des Themas malgenommen, etwa `{ "gold": "2W6" }`. `item` gibt sicher einen Gegenstand ohne Gold: `tier1` vom Rang der Stufe des Themas, `tier2` einen Rang höher. `loseGold` nimmt einen festen Betrag weg, nicht mit der Themenstufe malgenommen, etwa `{ "loseGold": 2 }`; Gold fällt nie unter 0.
 - **once:** Das Event kommt höchstens einmal pro Dungeon vor.
-- **Bedingungen:** `flag:name` (Flag ist gesetzt), `notFlag:name` (Flag fehlt) und `volk:zwerg`, `volk:elf`, `volk:mensch`. Flags gelten pro Dungeon. `hasItem:id` ist erfüllt, wenn der Gegenstand angelegt ist oder im Rucksack liegt.
+- **Bedingungen:** `flag:name` (Flag ist gesetzt), `notFlag:name` (Flag fehlt) und `volk:zwerg`, `volk:elf`, `volk:mensch`. Flags gelten pro Dungeon, also pro Ebene: Beim Abstieg werden sie gelöscht. Die Kerze der Ewigen Flamme (`ewige_flamme`) hilft beim Skelett-König deshalb nur, wenn der Schrein auf derselben Ebene wie der Bossraum steht, ein seltener Glücksfall. `hasItem:id` ist erfüllt, wenn der Gegenstand angelegt ist oder im Rucksack liegt.
 - **Volks-Bedingungen:** Ein ganzes Event kann an ein Volk gebunden sein, dann erscheint es nur für dieses Volk. Bei ausgewählten Events kann auch eine einzelne Option an ein Volk gebunden sein, andere Völker sehen sie nicht.
 - **Türen:** `lockDoor` und `unlockDoor` nennen eine Richtung (`N`, `E`, `S`, `W`) oder `back`, die Tür, durch die der Spieler kam. Eine verschlossene Tür zeigt ein Schloss und lässt sich nicht benutzen, bis `unlockDoor` sie öffnet. Sind am Ende eines Events alle Türen eines Raums zu, öffnet sich die Rück-Tür von selbst.
 - **Monster:** Name, Lebenspunkte, Rüstung, Angriffsbonus, Schaden (z. B. W6).
@@ -894,3 +894,4 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Gruft darf in den Katakomben direkt neben dem Start stehen (Ausnahme `overrides` in `data/themes.json`)
 - [x] Große Zelle im Kerker: an den Ecken schmale Eckpfeiler (`zellecke`) statt Gitterecken
 - [x] Katakomben Paket 3: Event-Tabellen der Katakomben für Gruft (feindlich), Säulenhalle (gemischt) und Bossraum (Skelett-König); Totenwache steht am Sarkophag auf
+- [x] Flags gelten weiter nur pro Ebene; die Kerze der Ewigen Flamme wirkt beim Skelett-König nur, wenn der Schrein auf der Bossebene steht
