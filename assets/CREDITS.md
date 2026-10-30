@@ -9,7 +9,7 @@ Quelle und Lizenz jeder fremden Datei (docs/GDD.md, Asset-Spezifikation).
 - Quelle: https://github.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0, Commit `b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07`
 - Übernommene Dateien (in `source/kaykit-dungeon-remastered/`): `texture/dungeon_texture.png` und aus `gltf/`:
   barrel_large, barrel_small_stack, bottle_A_brown, bottle_B_green, box_large, candle_triple, chair, chest,
-  coin_stack_large, floor_tile_small, floor_tile_small_broken_A, floor_tile_small_broken_B, floor_tile_small_decorated,
+  coin_stack_large, floor_tile_small, floor_tile_small_broken_A, floor_tile_small_broken_B,
   pillar, plate_food_A, plate_food_B, plate_stack, rubble_half, shelves, stool, sword_shield, table_long,
   table_long_tablecloth, torch_mounted, trunk_large_A, wall_corner, wall_doorway, wall_endcap, wall_half,
   sowie (für die Requisiten aus GDD 2.19) banner_red, banner_blue, banner_green, banner_yellow, banner_shield_red, banner_triple_red,

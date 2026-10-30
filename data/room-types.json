@@ -792,6 +792,24 @@
       "torchCount": 2,
       "torchColor": "#5d86e0",
       "torchFlame": "#8fb4ff",
+      "floorTiles": [
+        {
+          "tile": "boden_bruch_a",
+          "weight": 35
+        },
+        {
+          "tile": "boden_bruch_b",
+          "weight": 35
+        },
+        {
+          "tile": "boden_unkraut_a",
+          "weight": 15
+        },
+        {
+          "tile": "boden_unkraut_b",
+          "weight": 15
+        }
+      ],
       "layouts": [
         {
           "id": "A",
@@ -1502,6 +1520,24 @@
       ]
     },
     "decor": {
+      "floorTiles": [
+        {
+          "tile": "boden_bruch_a",
+          "weight": 35
+        },
+        {
+          "tile": "boden_bruch_b",
+          "weight": 35
+        },
+        {
+          "tile": "boden_unkraut_a",
+          "weight": 15
+        },
+        {
+          "tile": "boden_unkraut_b",
+          "weight": 15
+        }
+      ],
       "layouts": [
         {
           "id": "A",

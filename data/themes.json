@@ -44,7 +44,21 @@
       "haendler": {
         "brightness": 1.8
       }
-    }
+    },
+    "floorTiles": [
+      {
+        "tile": "boden",
+        "weight": 86
+      },
+      {
+        "tile": "boden_bruch_a",
+        "weight": 7
+      },
+      {
+        "tile": "boden_bruch_b",
+        "weight": 7
+      }
+    ]
   },
   {
     "id": "katakomben",
@@ -78,7 +92,25 @@
       "accent": "#9FE0C8",
       "torch": "#FFB05A",
       "ambient": "#2A3330"
-    }
+    },
+    "floorTiles": [
+      {
+        "tile": "boden_bruch_a",
+        "weight": 1
+      },
+      {
+        "tile": "boden_bruch_b",
+        "weight": 1
+      },
+      {
+        "tile": "boden_unkraut_a",
+        "weight": 1
+      },
+      {
+        "tile": "boden_unkraut_b",
+        "weight": 1
+      }
+    ]
   },
   {
     "id": "zwergenminen",

@@ -14,10 +14,6 @@
       "dir": "tiles",
       "file": "floor_tile_small_broken_B.gltf.glb"
     },
-    "boden_deko": {
-      "dir": "tiles",
-      "file": "floor_tile_small_decorated.gltf.glb"
-    },
     "wand": {
       "dir": "tiles",
       "file": "wall_half.gltf.glb"

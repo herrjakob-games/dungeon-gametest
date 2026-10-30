@@ -136,9 +136,8 @@ export function centerFeature(typeId, bossDefeated) {
   return null;
 }
 
-// Bodenplatten (docs/GDD.md, Stilguide, Böden): Varianten mit Gewicht, nach Raum-Seed gemischt. Ohne Angabe gilt der
-// bisherige Boden: meist glatte Platten, wenige gesprungene, selten eine verzierte (so bleibt der Keller unverändert).
-export const DEFAULT_FLOOR = [{ tile: "boden_bruch_a", weight: 7 }, { tile: "boden_bruch_b", weight: 7 }, { tile: "boden_deko", weight: 3 }, { tile: "boden", weight: 83 }];
+// Bodenplatten (docs/GDD.md, Stilguide, Böden): Varianten mit Gewicht, nach Raum-Seed gemischt. Ohne Angabe nur boden.
+export const DEFAULT_FLOOR = [{ tile: "boden", weight: 1 }];
 // Reihenfolge: floorTiles der Einrichtung des Raumtyps (themeDecor vor decor), sonst des Themas, sonst DEFAULT_FLOOR
 export const floorTilesFor = (spec, theme) => (spec && spec.floorTiles) || (theme && theme.floorTiles) || DEFAULT_FLOOR;
 // Variante für eine Zufallszahl r (0 bis 1)
