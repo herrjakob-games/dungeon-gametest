@@ -91,6 +91,23 @@ export function torchSlots(doors, spec, seed, feature) {
   return out;
 }
 // Nur mit torchCount: auch die (unsichtbaren) Lichter der vorderen Fackeln fallen weg, es zählen nur die Wandfackeln
+/**
+ * Risswände (Stilguide, Wände): share = Anteil der Wandkacheln an Nord- und Westwand (wandRiss des Themas). Eine Risswand
+ * deckt zwei Wandkacheln, nur auf den Abschnitten 1–2 und 8–9, nie auf einer Fackelkachel und nie hinter der Treppe
+ * (mit Treppe nur 8–9). Der Raum-Seed wählt die Abschnitte. Ergebnis: [{ wall: "N" | "W", t }] mit t = erste Kachel (ab 0).
+ */
+export function crackedWalls(doors, spec, seed, feature, share) {
+  if (!share) return [];
+  const torches = new Set(torchSlots(doors, spec, seed, feature).map(f => f.wall + f.t));
+  const starts = feature ? [N - 2] : [0, N - 2];
+  const R = mulberry32(((seed || 0) ^ 0x6a09e667) >>> 0);
+  const all = ["N", "W"].flatMap(wall => starts.map(t => ({ wall, t })))
+    .filter(s => !torches.has(s.wall + s.t) && !torches.has(s.wall + (s.t + 1)))
+    .map(s => [R(), s]).sort((a, b) => a[0] - b[0]).map(x => x[1]);
+  const n = Math.min(all.length, Math.round(share * 2 * N / 2)); // je Risswand zwei der 2·N Wandkacheln
+  return all.slice(0, n);
+}
+
 export const frontTorchLights = (spec) => !(spec && spec.torchCount !== undefined);
 
 // Einrichtung mit "torches": "saeulen": keine Fackeln an den Wänden, dafür an jeder Säule eine, die zur Raummitte zeigt

@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import {
   mimicChests,
-  PROPS, planDecor, decorFor, centerFeature, doorTiles, checkDecor, STAIRS_TILES, STAIRS_FOOT, torchSlots, layoutsOf, planCells
+  PROPS, planDecor, decorFor, centerFeature, doorTiles, checkDecor, STAIRS_TILES, STAIRS_FOOT, torchSlots, layoutsOf, planCells, crackedWalls
 } from "../src/decor.js";
 import { findPath } from "../src/pathfinding.js";
 import { mulberry32 } from "../src/rng.js";
@@ -408,4 +408,24 @@ test("Kerker mit Zellen: Varianten A und B, Kantensperre, Einrichtung nur in den
   assert.equal(A.pieces.filter(p => p.prop === "zellgitter").length, 4);
   assert.equal(B.pieces.filter(p => p.prop === "zellgitter").length, 8);
   assert.equal(B.pieces.filter(p => p.prop === "wand").length, 3);
+});
+
+test("Risswände: nur auf 1–2 und 8–9 von Nord- und Westwand, nie auf Fackeln, nie hinter der Treppe", () => {
+  const THEMES = JSON.parse(readFileSync(new URL("../data/themes.json", import.meta.url), "utf8"));
+  assert.equal(THEMES.find(t => t.id === "katakomben").wandRiss, 0.3);
+  THEMES.filter(t => t.id !== "katakomben").forEach(t => assert.ok(!t.wandRiss, t.id + " ohne Risswand"));
+  let total = 0, rooms = 0;
+  for (const feature of [null, "up", "down", "arena"]) for (let doors = 0; doors < 16; doors++) for (let s = 1; s <= 20; s++) {
+    const list = crackedWalls(doors, null, s * 7919, feature, 0.3);
+    const torches = new Set(torchSlots(doors, null, s * 7919, feature).map(f => f.wall + f.t));
+    list.forEach(c => {
+      assert.ok([0, N - 2].includes(c.t), "Abschnitt " + (c.t + 1) + "–" + (c.t + 2));
+      if (feature) assert.equal(c.t, N - 2, "mit Treppe nur 8–9");
+      assert.ok(!torches.has(c.wall + c.t) && !torches.has(c.wall + (c.t + 1)), "Risswand auf einer Fackelkachel");
+    });
+    if (!feature) { total += list.length * 2; rooms++; }
+  }
+  const share = total / (rooms * 2 * N);
+  assert.ok(Math.abs(share - 0.3) < 0.1, "Anteil " + share.toFixed(2));
+  assert.deepEqual(crackedWalls(15, null, 5, null, 0), []);
 });

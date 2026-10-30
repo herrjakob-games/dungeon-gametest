@@ -12,7 +12,7 @@ import { makeModel, hasModel, setModelTheme, findPart, makeFigureModel } from ".
 import { state } from "./state.js";
 import { buildFigure } from "./figures.js";
 import * as P from "./props.js";
-import { PROPS, planDecor, decorFor, centerFeature, STAIRS_TILES, STAIRS_SIZE, STAIRS_CENTER, torchSlots, pillarTorches, frontTorchLights, mimicChests, floorTilesFor, pickFloorTile } from "./decor.js";
+import { PROPS, planDecor, decorFor, centerFeature, STAIRS_TILES, STAIRS_SIZE, STAIRS_CENTER, torchSlots, pillarTorches, frontTorchLights, mimicChests, floorTilesFor, pickFloorTile, crackedWalls } from "./decor.js";
 import { syncRoom } from "./roomFigures.js";
 import { buildStairs, hasHole } from "./stairs.js";
 import { setMood } from "./sound.js";
@@ -63,7 +63,7 @@ export function buildRoom(id) {
   setModelTheme(state.theme ? state.theme.id : null);
 
   buildFloor(type, hasHole(feature), floorTilesFor(spec, state.theme));
-  buildWalls(room);
+  buildWalls(room, crackedWalls(room.doors, spec, room.seed, feature, state.theme && state.theme.wandRiss));
   DIRKEYS.forEach(d => { if (room.doors & DIR[d].bit) makeDoor(d); });
   placeTorches(room, torch, spec, feature);
   if (feature) makeStairs(feature);
@@ -143,11 +143,14 @@ function buildFloor(type, hole, tiles) {
 }
 
 // Hinten (Norden, Westen) hohe Wände, vorne (Süden, Osten) nur Sockel. Türen hinten bekommen einen Türrahmen
-// über drei Kacheln (Tür mittig), vorne bleibt die Türkachel offen.
-function buildWalls(room) {
+// über drei Kacheln (Tür mittig), vorne bleibt die Türkachel offen. cracked: Risswände (decor.js crackedWalls), je zwei Kacheln.
+function buildWalls(room, cracked) {
   const has = (d) => (room.doors & DIR[d].bit) !== 0;
   const frame = hasModel("tuerrahmen");
-  const skipBack = (d, t) => has(d) && (frame ? Math.abs(t - MID) <= 1 : t === MID);
+  const riss = hasModel("wand_riss") ? cracked : [];
+  const inCrack = (d, t) => riss.some(c => c.wall === d && (t === c.t || t === c.t + 1));
+  const skipBack = (d, t) => (has(d) && (frame ? Math.abs(t - MID) <= 1 : t === MID)) || inCrack(d, t);
+  riss.forEach(c => (c.wall === "N" ? placeAt(makeModel("wand_riss"), tw(c.t + 0.5), -E, 0) : placeAt(makeModel("wand_riss"), -E, tw(c.t + 0.5), Math.PI / 2)));
   if (hasModel("wand") && hasModel("sockel")) {
     for (let t = 0; t < N; t++) {
       if (!skipBack("N", t)) placeAt(makeModel("wand"), tw(t), -E, 0);
