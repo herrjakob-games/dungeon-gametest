@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.49 · Oct 30, 2026 · @Christian
+Version 2.50 · Oct 30, 2026 · @Christian
 
 ## Versionen
 
@@ -8,8 +8,9 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
-| 2.49 | 30.10.2026 | Prozession: Geister ziehen als Reihe durch die Säulenhalle (`procession`); Knochenthron im Bossraum der Katakomben, der Skelett-König sitzt darauf |
-| 2.48 | 30.10.2026 | Katakomben Paket 3: Events für Gruft, Säulenhalle und Bossraum (Skelett-König mit Audienz und Rückkehr); Flags gelten weiter nur pro Ebene |
+| 2.50 | 30.10.2026 | Prozession: Geister ziehen als Reihe durch die Säulenhalle (`procession`); Knochenthron im Bossraum der Katakomben, der Skelett-König sitzt darauf |
+| 2.49 | 30.10.2026 | Katakomben Paket 3: Events für Gruft, Säulenhalle und Bossraum (Skelett-König mit Audienz und Rückkehr); Flags gelten weiter nur pro Ebene |
+| 2.48 | 30.10.2026 | Durchblick auch durch Gitterwände (`zellgitter`, `zellgitter_ecke`); Gitter zählen mit ihrer ganzen Fläche als verdeckend |
 | 2.47 | 30.10.2026 | Gruft darf in den Katakomben direkt neben dem Start stehen; große Zelle im Kerker mit schmalen Eckpfeilern (`zellecke`) statt Gitterecken |
 | 2.46 | 30.10.2026 | Kerker in den Katakomben mit zwei Varianten: vier Eckzellen (3×3) oder eine große Zelle (5×5); Zellwände aus KayKit-Gittern, Torbögen und Steinpfeilern auf Kachelkanten; Wegfindung sperrt Kanten; in jeder Zelle entweder ein Strohlager oder Knochen; Rückwände in allen Räumen der Katakomben zu etwa 30 % gesprungen (`wand_riss`); Innenwände und Säulen werden um verdeckte Figuren herum durchsichtig (Durchblick) |
 | 2.45 | 30.10.2026 | Katakomben Paket 1 und 2: Monster Skelettkrieger, Geist, Poltergeist, Skelett-König; Begegnungen; Events für Kerker und Schrein; Skelett-König als Warrior 1,3-fach mit goldener Krone; Kerker auch in den Katakomben höchstens 2 |
@@ -407,7 +408,7 @@ Die Grafik besteht aus einem modularen Low-Poly-Baukasten auf dem Kachelraster, 
 - **Quellen:** eine Mischung aus fertigen CC0-Paketen (etwa KayKit, Quaternius, Kenney) für Boden, Wände und Requisiten und einem KI-3D-Generator für Figuren, die es nicht fertig gibt. Was noch fehlt, bleibt Platzhalter aus Grundformen.
 - **Reihenfolge:** zuerst die Themenwelt Keller, dann die weiteren Themen. Meilenstein 6a bringt Umgebung und Requisiten, 6b Figuren und Animationen.
 - **Lizenzen:** Jede fremde Datei kommt mit Quelle und Lizenz in eine Credits-Liste im Repository.
-- **Durchblick:** Stehen Innenwände (Zellwände) oder Säulen zwischen Kamera und Spielfigur oder einem Gegner, werden sie nur an dieser Stelle durchsichtig: ein Kreis um die Figur auf dem Bildschirm, etwa 0,7 Kacheln Radius, mit weichem Rand. Darin hat das Objekt die Deckkraft `seeThroughOpacity` aus `data/themes.json` (Startwert 0,4), außerhalb bleibt es voll deckend. Der Übergang dauert etwa 0,2 Sekunden. Gilt nur, wenn das Objekt die Figur wirklich verdeckt; Gitter, Requisiten, Raumwände an Nord und West und friedliche Figuren lösen keinen Durchblick aus.
+- **Durchblick:** Stehen Innenwände (Zellwände) oder Säulen zwischen Kamera und Spielfigur oder einem Gegner, werden sie nur an dieser Stelle durchsichtig: ein Kreis um die Figur auf dem Bildschirm, etwa 0,7 Kacheln Radius, mit weichem Rand. Darin hat das Objekt die Deckkraft `seeThroughOpacity` aus `data/themes.json` (Startwert 0,4), außerhalb bleibt es voll deckend. Der Übergang dauert etwa 0,2 Sekunden. Gilt nur, wenn das Objekt die Figur wirklich verdeckt. Gitterwände gehören dazu: Bei ihnen zählt die ganze Fläche als verdeckend, auch die Lücken zwischen den Stäben, und im Kreis werden Stäbe und Rahmen durchsichtig. Requisiten, Raumwände an Nord und West und friedliche Figuren lösen keinen Durchblick aus.
 
 ### Inszenierung der Figuren
 
@@ -896,6 +897,7 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Durchblick statt Ausblenden: Innenwände und Säulen werden nur im Kreis um eine verdeckte Spielfigur oder einen verdeckten Gegner durchsichtig (Startwert Deckkraft 0,4, im Spiel testen)
 - [x] Gruft darf in den Katakomben direkt neben dem Start stehen (Ausnahme `overrides` in `data/themes.json`)
 - [x] Große Zelle im Kerker: an den Ecken schmale Eckpfeiler (`zellecke`) statt Gitterecken
+- [x] Durchblick auch durch Gitterwände: Gitter zählen mit ihrer ganzen Fläche als verdeckend und werden im Kreis um die Figur durchsichtig
 - [x] Katakomben Paket 3: Event-Tabellen der Katakomben für Gruft (feindlich), Säulenhalle (gemischt) und Bossraum (Skelett-König); Totenwache steht am Sarkophag auf
 - [x] Flags gelten weiter nur pro Ebene; die Kerze der Ewigen Flamme wirkt beim Skelett-König nur, wenn der Schrein auf der Bossebene steht
 - [x] Prozession: die Geister ziehen als Reihe durch die Säulenhalle

@@ -368,13 +368,13 @@ function placeDecor(spec, room, feature, id, torch) {
   state.decorPlan = plan; // für Figuren mit near:<prop>
   state.edges = plan.edges; // Zellwände sperren Kanten für die Wegfindung
   // Zellwände (Kerker der Katakomben): Teile auf Kachelkanten, Lage in Kachelkoordinaten
-  // Durchblick: Torbögen, Pfeiler und Ecken werden um verdeckte Figuren durchsichtig, Gitter nicht
+  // Durchblick: Torbögen, Pfeiler, Ecken und Gitter werden um verdeckte Figuren durchsichtig
   if (plan.cells) plan.cells.pieces.forEach(pc => {
     const m = makeModel(pc.prop);
     const o = m ? placeAt(m, tw(pc.x), tw(pc.z), pc.rot)
       : add(box(pc.prop === "zellecke" ? 0.3 : 1, WALL_H, 0.3, stone(), tw(pc.x), WALL_H / 2, tw(pc.z)));
     if (!m) o.rotation.y = pc.rot;
-    if (pc.prop !== "zellgitter") addOccluder(o);
+    addOccluder(o, { grate: pc.prop === "zellgitter" || pc.prop === "zellgitter_ecke" });
   });
   plan.torchSpots.forEach(s => makePillarTorch(s, torch));
   // Truhen: eine echt, die übrigen Mimiken, wenn die Einrichtung es will (Schatzkammer)

@@ -1,7 +1,8 @@
 // Durchblick (docs/GDD.md, Grafik und Animation): Innenwände (Zellwände) und Säulen, die die Spielfigur oder einen Gegner
 // verdecken, werden nur in einem Kreis um die Figur durchsichtig (etwa 0,7 Kacheln Radius, weicher Rand, Deckkraft
 // seeThroughOpacity des Themas). Nur Teile vor der Figur werden durchsichtig; der Übergang dauert etwa 0,2 Sekunden.
-// Gitter, Requisiten, Raumwände und friedliche Figuren lösen keinen Durchblick aus.
+// Gitterwände gehören dazu: Weil man zwischen den Stäben hindurchsieht, prüft der Code bei ihnen die ganze Fläche
+// (Hüllquader) statt einzelner Stäbe. Requisiten, Raumwände und friedliche Figuren lösen keinen Durchblick aus.
 import { camera, renderer } from "./scene.js";
 const THREE = window.THREE;
 
@@ -19,6 +20,7 @@ const uniforms = {
 };
 
 let occluders = [];       // Meshes der Innenwände und Säulen im aktuellen Raum
+let boxes = [];           // Hüllquader der Gitterwände (Welt), damit Lücken zwischen den Stäben mitzählen
 const strength = new Map(); // Figur → Stärke 0 bis 1 (für den weichen Übergang)
 
 // Material so ändern, dass es im Kreis um eine verdeckte Figur durchsichtig wird
@@ -43,24 +45,28 @@ function patch(material) {
   return m;
 }
 
-// Objekt (Modell oder Grundform) als Innenwand oder Säule anmelden
-export function addOccluder(obj) {
+// Objekt (Modell oder Grundform) als Innenwand, Säule oder Gitter anmelden.
+// opts.grate: Gitterwand; verdeckt mit ihrer ganzen Fläche, nicht nur mit den Stäben.
+export function addOccluder(obj, opts = {}) {
+  obj.updateWorldMatrix(true, true);
   obj.traverse(n => {
     if (!n.isMesh) return;
     n.material = Array.isArray(n.material) ? n.material.map(patch) : patch(n.material);
-    occluders.push(n);
+    if (opts.grate) boxes.push(new THREE.Box3().setFromObject(n));
+    else occluders.push(n);
   });
 }
 
 // Beim Raumwechsel; opacity: seeThroughOpacity des Themas
 export function resetOccluders(opacity) {
   occluders = [];
+  boxes = [];
   strength.clear();
   uniforms.uSeeOpacity.value = typeof opacity === "number" ? opacity : DEFAULT_OPACITY;
 }
 
 const ray = new THREE.Raycaster();
-const v = new THREE.Vector3(), ndc = new THREE.Vector3(), size = new THREE.Vector2();
+const v = new THREE.Vector3(), ndc = new THREE.Vector3(), size = new THREE.Vector2(), hitPoint = new THREE.Vector3();
 
 // Verdeckt eine Innenwand oder Säule den Punkt p (Welt)? Strahl von der Kamera durch p
 function hidden(p) {
@@ -68,7 +74,9 @@ function hidden(p) {
   ray.setFromCamera({ x: ndc.x, y: ndc.y }, camera);
   const d = ray.ray.origin.distanceTo(p);
   const hit = ray.intersectObjects(occluders, false)[0];
-  return !!hit && hit.distance < d - 0.05;
+  if (hit && hit.distance < d - 0.05) return true;
+  return boxes.some(b => !b.containsPoint(p) && ray.ray.intersectBox(b, hitPoint) &&
+    ray.ray.origin.distanceTo(hitPoint) < d - 0.05);
 }
 
 /**
@@ -77,7 +85,7 @@ function hidden(p) {
 export function updateSeeThrough(dt, targets) {
   const slots = uniforms.uSee.value;
   slots.forEach(s => s.set(0, 0, 0, 0));
-  if (!occluders.length) return;
+  if (!occluders.length && !boxes.length) return;
   renderer.getDrawingBufferSize(size);
   // Radius in Pixeln: 0,7 Kacheln quer zur Blickrichtung
   const right = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
