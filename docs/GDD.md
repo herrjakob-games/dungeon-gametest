@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.37 · Oct 30, 2026 · @Christian
+Version 2.38 · Oct 30, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.38 | 30.10.2026 | Bodenplatten: Keller `boden`, `boden_bruch_a`, `boden_bruch_b`; Gruft und Brunnenraum `boden_unkraut_a`, `boden_unkraut_b`; Katakomben `boden_bruch_a`, `boden_bruch_b`, `boden_unkraut_a`, `boden_unkraut_b` |
 | 2.37 | 30.10.2026 | Event-Tabellen (`themeEvents`) und Bewertung (`themeRating`) pro Thema für alle Raumtypen; Begegnungen ab den Katakomben: Monster stehen per Zufall im Raum, der Kampf beginnt ohne Event (`encounters` in `data/themes.json`); Bodenplatten pro Thema und Raumtyp aus KayKit-Varianten (`floorTiles`) |
 | 2.36 | 30.10.2026 | Eigener Sound für den Tod der Spielfigur: `tod_<volk>`, sonst `tod_spieler`, sonst `tod` |
 | 2.35 | 29.10.2026 | Rastplatz: zwei Kacheln frei um das Feuer; 2 bis 3 Schlaflager (`bed_floor`) nie neben Türen, daneben dünne Kerzen; 2 bis 3 Flaschen und 2 bis 3 Fässer statt Säcken |
@@ -461,6 +462,7 @@ Gruft und Brunnen sind im Keller die düsteren Räume: kälteres Grundlicht, Ker
 - Nur Platten, die genau eine Kachel decken. Keine Platten mit Gittern, Löchern oder Stacheln: Sie würden wie Fallen oder Hindernisse wirken.
 - Ein Raum mischt die Varianten gewichtet nach Raum-Seed, etwa meist glatte Platten mit wenigen gesprungenen. Feld `floorTiles`: `"floorTiles": [ { "tile": "boden", "weight": 8 }, { "tile": "boden_gesprungen", "weight": 1 } ]`.
 - Reihenfolge: `floorTiles` in der Einrichtung des Raumtyps (`themeDecor` vor `decor`), sonst `floorTiles` des Themas in `data/themes.json`, sonst `boden`.
+- Heute: Keller `boden` (86), `boden_bruch_a` (7) und `boden_bruch_b` (7); Gruft und Brunnenraum `boden_unkraut_a` und `boden_unkraut_b` je zur Hälfte, in jedem Thema; Katakomben `boden_bruch_a`, `boden_bruch_b`, `boden_unkraut_a` und `boden_unkraut_b` zu gleichen Teilen. Die verzierte Platte `boden_deko` liegt derzeit nirgends.
 - Die Farbe bleibt Sache der Paletten-Textur des Themas, die Variante bestimmt nur die Form. Der Boden bleibt ruhig: Er ist Bühne, nicht Requisit.
 - Der Schrittklang bleibt ein eigenes Feld (`floor` unter `sound`) und soll zur Variante passen, etwa Holzdielen mit `wood`, Erde mit `mud` oder `gravel`.
 
@@ -845,3 +847,4 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Event-Tabellen pro Thema für alle Raumtypen (`themeEvents`), sie ersetzen `events` im jeweiligen Thema; Bewertung pro Thema (`themeRating`), ohne Eintrag gilt die Bewertung des Raumtyps
 - [x] Begegnungen ab den Katakomben: Monster stehen per Zufall in feindlichen und gemischten Räumen, der Kampf beginnt ohne Event; Chance, Monster und Siegbeute pro Thema in `data/themes.json` (`encounters`)
 - [x] Bodenplatten pro Thema und Raumtyp aus KayKit-Varianten (`floorTiles`), nur 1×1, ohne Gitter, Löcher und Stacheln
+- [x] Bodenplatten: Keller `boden`, `boden_bruch_a`, `boden_bruch_b`; Gruft und Brunnenraum `boden_unkraut_a`, `boden_unkraut_b`; Katakomben `boden_bruch_a`, `boden_bruch_b`, `boden_unkraut_a`, `boden_unkraut_b`
