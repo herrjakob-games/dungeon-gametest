@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.50 · Oct 30, 2026 · @Christian
+Version 2.51 · Oct 31, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.51 | 31.10.2026 | Sounds: Stimmungen `kerker` und `schrein` für Kerker und Schrein; gemeinsamer Tod-Ton der Skelette; Mimik mit eigenem Klang `mimik`; Stufenaufstieg; neue Dateien für Schweben und Tod des Geists |
 | 2.50 | 30.10.2026 | Prozession: Geister ziehen als Reihe durch die Säulenhalle (`procession`); Knochenthron im Bossraum der Katakomben, der Skelett-König sitzt darauf |
 | 2.49 | 30.10.2026 | Katakomben Paket 3: Events für Gruft, Säulenhalle und Bossraum (Skelett-König mit Audienz und Rückkehr); Flags gelten weiter nur pro Ebene |
 | 2.48 | 30.10.2026 | Durchblick auch durch Gitterwände (`zellgitter`, `zellgitter_ecke`); Gitter zählen mit ihrer ganzen Fläche als verdeckend |
@@ -659,7 +660,7 @@ Geräusche kommen als MP3-Dateien. Welche Datei wann spielt, steht in den Daten,
 
 Waffen in `data/items.json` und Monster in `data/monsters.json` nennen im Feld `sound` ihren Angriffsklang. Gespielt wird `angriff_<klang>_treffer` oder `angriff_<klang>_fehl`, je nach Ergebnis des Wurfs.
 
-- **Klänge:** `holz`, `schwert`, `axt`, `hammer`, `faust`, `biss`, `kralle`. Magische Waffen haben einen eigenen Klang mit ihrem Namen.
+- **Klänge:** `holz`, `schwert`, `axt`, `hammer`, `faust`, `biss`, `kralle`, `geist`, `mimik`. Magische Waffen haben einen eigenen Klang mit ihrem Namen.
 - **Ohne Waffe** gilt `faust`.
 - **Gruppen:** Jede Figur einer Gruppe spielt ihren Angriff, wenn sie dran ist.
 
@@ -675,8 +676,9 @@ Waffen in `data/items.json` und Monster in `data/monsters.json` nennen im Feld `
 | Monster | Klang |
 | --- | --- |
 | Riesenratte, Küchenchef, Monsterratte | biss |
-| Mimik | biss |
-| Skelett | schwert |
+| Mimik | mimik (Treffer wie `biss`, eigener Fehlschlag) |
+| Skelett, Skelettkrieger, Skelett-König | schwert |
+| Geist, Poltergeist | geist |
 | Goblin-Wache | schwert |
 
 ### Verbrauchsgegenstände
@@ -695,7 +697,7 @@ Verbrauchsgegenstände nennen im Feld `sound` eine Sound-id, die beim Benutzen s
 
 Jeder Raumtyp hat in `data/room-types.json` das Feld `sound` mit `mood` und `floor`. Für einzelne Themen ersetzt `themeSound` es, etwa `"themeSound": { "katakomben": { "mood": "spooky", "floor": "gravel" } }`. Raumtypen ohne beides bleiben still, auch ohne Schritte.
 
-- **`mood`:** `cozy`, `wet`, `spooky`, `empty` oder `kitchen`. Gespielt werden der Loop `raum_<mood>_loop` und Zufallsgeräusche `raum_<mood>_zufall` im Abstand von 8 bis 20 Sekunden, mit leicht wechselnder Lautstärke und Richtung.
+- **`mood`:** `cozy`, `wet`, `spooky`, `empty`, `kitchen`, `kerker` oder `schrein`. Gespielt werden der Loop `raum_<mood>_loop` und Zufallsgeräusche `raum_<mood>_zufall` im Abstand von 8 bis 20 Sekunden, mit leicht wechselnder Lautstärke und Richtung.
 - **`floor`:** `wood`, `hall`, `mud`, `gravel` oder `stone` (trockener Stein), bestimmt die Schritte.
 - **Raumwechsel:** Der Hintergrund blendet mit dem Bild über, etwa 1 Sekunde, auch bei der Schnellreise.
 - **Events und Kämpfe:** Der Hintergrund läuft mit halber Lautstärke weiter.
@@ -709,6 +711,8 @@ Jeder Raumtyp hat in `data/room-types.json` das Feld `sound` mit `mood` und `flo
 | Bossraum, Schatzkammer | spooky | stone |
 | Säulenhalle | empty | hall |
 | Wachstube, Abstieg | empty | stone |
+
+Kerker (`kerker`, `stone`) und Schrein (`schrein`, `hall`) haben eigene Stimmungen, in jedem Thema: im Kerker Tropfen und Ketten, im Schrein leises Summen.
 
 Im Keller (Ebene 1 bis 3) ist der Boden einheitlich `stone`, nur Gruft, Brunnenraum und Säulenhalle klingen mit Hall (`hall`).
 
@@ -746,7 +750,8 @@ Feste Sound-ids, die der Code an diesen Stellen spielt:
 Für die Spielfigur gilt als Figur-id das Volk (`zwerg`, `elf`, `mensch`).
 
 Geist: Angriffsklang `geist` (`angriff_geist_treffer`, `angriff_geist_fehl`), `treffer_geist`, `tod_geist`, Bewegung `schritt_schweben`.
-Poltergeist: dieselben Töne wie der Geist. `treffer_poltergeist` und `tod_poltergeist` nutzen in `data/sounds.json` dieselben Dateien; sobald der Poltergeist in `data/monsters.json` steht, bekommt er `"sound": "geist"` und in `data/staging.json` `"steps": "schweben"`.
+Poltergeist: dieselben Töne wie der Geist. `treffer_poltergeist` und `tod_poltergeist` nutzen in `data/sounds.json` dieselben Dateien, dazu `"sound": "geist"` und `"steps": "schweben"`.
+Skelette (Skelett, Skelettkrieger, Skelett-König): ein gemeinsamer Tod-Ton, `tod_skeleton`, `tod_skelett_krieger` und `tod_skelettkoenig` nutzen dieselbe Datei `spiel/tod_skeleton.mp3`.
 
 ## Meilensteine
 
@@ -902,3 +907,4 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Flags gelten weiter nur pro Ebene; die Kerze der Ewigen Flamme wirkt beim Skelett-König nur, wenn der Schrein auf der Bossebene steht
 - [x] Prozession: die Geister ziehen als Reihe durch die Säulenhalle
 - [x] Bossraum der Katakomben mit Knochenthron (Pflichtstück an der Wand, Kerzen und Knochen), der Skelett-König sitzt darauf und blickt in den Raum
+- [x] Sound-Stimmungen `kerker` (Kerker) und `schrein` (Schrein); alle Skelette teilen sich einen Tod-Ton; Mimik mit eigenem Klang `mimik` (Biss beim Treffer, eigener Fehlschlag)

@@ -1809,6 +1809,10 @@
           "rating": "hostile"
         }
       ]
+    },
+    "sound": {
+      "mood": "schrein",
+      "floor": "hall"
     }
   },
   {
@@ -1865,6 +1869,10 @@
       "katakomben": {
         "cells": true
       }
+    },
+    "sound": {
+      "mood": "kerker",
+      "floor": "stone"
     }
   },
   {

@@ -83,8 +83,7 @@
   "angriff_biss_treffer": {
     "files": [
       "angriff/biss_treffer_1.mp3",
-      "angriff/biss_treffer_2.mp3",
-      "angriff/biss_treffer_3.mp3"
+      "angriff/biss_treffer_2.mp3"
     ],
     "volume": 0.8
   },
@@ -414,5 +413,70 @@
       "schritte/schweben_1.mp3"
     ],
     "volume": 0.5
+  },
+  "angriff_mimik_treffer": {
+    "files": [
+      "angriff/biss_treffer_1.mp3",
+      "angriff/biss_treffer_2.mp3"
+    ],
+    "volume": 0.8
+  },
+  "angriff_mimik_fehl": {
+    "files": [
+      "angriff/mimik_fehl_1.mp3",
+      "angriff/mimik_fehl_2.mp3"
+    ],
+    "volume": 0.8
+  },
+  "tod_skeleton": {
+    "files": [
+      "spiel/tod_skeleton.mp3"
+    ],
+    "volume": 0.7
+  },
+  "tod_skelett_krieger": {
+    "files": [
+      "spiel/tod_skeleton.mp3"
+    ],
+    "volume": 0.7
+  },
+  "tod_skelettkoenig": {
+    "files": [
+      "spiel/tod_skeleton.mp3"
+    ],
+    "volume": 0.7
+  },
+  "raum_kerker_loop": {
+    "files": [
+      "raum/kerker_loop.mp3"
+    ],
+    "volume": 0.5,
+    "loopStart": 0.5,
+    "loopEnd": 9.55
+  },
+  "raum_kerker_zufall": {
+    "files": [
+      "raum/kerker_zufall_1.mp3",
+      "raum/kerker_zufall_2.mp3",
+      "raum/kerker_zufall_3.mp3",
+      "raum/kerker_zufall_4.mp3"
+    ],
+    "volume": 0.4
+  },
+  "raum_schrein_loop": {
+    "files": [
+      "raum/schrein_loop.mp3"
+    ],
+    "volume": 0.5,
+    "loopStart": 0.17,
+    "loopEnd": 30.0
+  },
+  "raum_schrein_zufall": {
+    "files": [
+      "raum/schrein_zufall_1.mp3",
+      "raum/schrein_zufall_2.mp3",
+      "raum/schrein_zufall_3.mp3"
+    ],
+    "volume": 0.4
   }
 }
