@@ -2,7 +2,7 @@
   {"id": "skeleton", "name": "Skelett", "hp": 6, "armor": 11, "attack": 1, "damage": "W6", "deathText": "Von einem Skelett erschlagen, das eigentlich nur seine Ruhe wollte. Es hat jetzt Gesellschaft.", "sound": "schwert"},
   {"id": "rat", "name": "Riesenratte", "hp": 4, "armor": 9, "attack": 0, "damage": "W4", "deathText": "Von einer Ratte besiegt. Die Ratte erzählt es heute noch auf jeder Party.", "sound": "biss"},
   {"id": "goblin", "name": "Goblin-Wache", "hp": 6, "armor": 11, "attack": 1, "damage": "W4+1", "deathText": "Von einer Goblin-Wache erledigt, kurz vor ihrer Mittagspause. Sie macht jetzt Überstunden für den Papierkram.", "sound": "schwert"},
-  {"id": "mimic", "name": "Mimik", "hp": 10, "armor": 12, "attack": 2, "damage": "W6", "deathText": "Von einer Truhe gefressen. Die Truhe war hinterher sehr zufrieden und ein bisschen voller.", "sound": "biss"},
+  {"id": "mimic", "name": "Mimik", "hp": 10, "armor": 12, "attack": 2, "damage": "W6", "deathText": "Von einer Truhe gefressen. Die Truhe war hinterher sehr zufrieden und ein bisschen voller.", "sound": "mimik"},
   {"id": "geist", "name": "Geist", "hp": 8, "armor": 14, "attack": 3, "damage": "W6", "sound": "geist", "deathText": "Ein Geist hat dich erwischt. Jetzt habt ihr endlich etwas gemeinsam."},
   {"id": "poltergeist", "name": "Poltergeist", "hp": 6, "armor": 12, "attack": 2, "damage": "W6", "sound": "geist", "deathText": "Erschlagen von einem fliegenden Oberschenkelknochen. Er gehörte nicht mal dem Poltergeist."},
   {"id": "skelett_krieger", "name": "Skelettkrieger", "hp": 9, "armor": 13, "attack": 3, "damage": "W8", "sound": "schwert", "deathText": "Ein Skelettkrieger hat dich erschlagen. Er hat 300 Jahre auf diesen Moment trainiert und nichts anderes gelernt."},

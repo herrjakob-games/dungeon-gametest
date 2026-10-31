@@ -45,18 +45,29 @@ EFFECTS = {
     # Geist: Angriff, Treffer, Tod und Schweben (Bewegung statt Schritten, gekürzt mit MAXLEN)
     "angriff/geist_treffer_1.mp3": "angriff/geist_treffer_1.mp3", "spiel/treffer_geist.mp3": "spiel/treffer_geist.mp3",
     "spiel/tod_geist.mp3": "spiel/tod_geist.mp3", "schritte/schweben_1.mp3": "schritte/schweben_1.mp3",
+    # Biss (Ratten, Mimik), Fehlschlag der Mimik, Stufenaufstieg, Tod der Skelette, Kerker und Schrein
+    "angriff/biss_treffer_1.mp3": "angriff/biss_treffer_1.mp3", "angriff/biss_treffer_2.mp3": "angriff/biss_treffer_2.mp3",
+    "angriff/mimik_fehl_1.mp3": "angriff/mimik_fehl_1.mp3", "angriff/mimik_fehl_2.mp3": "angriff/mimik_fehl_2.mp3",
+    "spiel/stufe.mp3": "spiel/stufe.mp3", "spiel/tod_skeleton.mp3": "spiel/tod_skeleton.mp3",
+    "raum/kerker_zufall_1.mp3": "raum/kerker_zufall_1.mp3", "raum/kerker_zufall_2.mp3": "raum/kerker_zufall_2.mp3",
+    "raum/kerker_zufall_3.mp3": "raum/kerker_zufall_3.mp3", "raum/kerker_zufall_4.mp3": "raum/kerker_zufall_4.mp3",
+    "raum/schrein_zufall_1.mp3": "raum/schrein_zufall_1.mp3", "raum/schrein_zufall_2.mp3": "raum/schrein_zufall_2.mp3",
+    "raum/schrein_zufall_3.mp3": "raum/schrein_zufall_3.mp3",
 }
 # Zu leise Aufnahmen: Verstärkung in dB
 GAIN = {"spiel/tuer_1.mp3": 20, "spiel/tuer_3.mp3": 6, "spiel/treppe.mp3": 4, "raum/cozy_zufall_2.mp3": 12,
         "raum/spooky_zufall_5.mp3": 18, "raum/spooky_zufall_6.mp3": 6, "spiel/tuer_verschlossen.mp3": 6,
-        "schritte/trippeln_1.mp3": 20, "schritte/trippeln_2.mp3": 6, "schritte/trippeln_3.mp3": 14}
+        "schritte/trippeln_1.mp3": 20, "schritte/trippeln_2.mp3": 6, "schritte/trippeln_3.mp3": 14,
+        "raum/kerker_zufall_4.mp3": 8, "raum/schrein_zufall_1.mp3": 16, "raum/schrein_zufall_2.mp3": 12,
+        "raum/schrein_zufall_3.mp3": 14}
 # Höchstlänge in Sekunden nach dem Abschneiden der Stille (ein Schritt soll kurz sein)
 MAXLEN = {"schritte/trippeln_1.mp3": 0.6, "schritte/trippeln_2.mp3": 0.6, "schritte/trippeln_3.mp3": 0.6,
           "schritte/schweben_1.mp3": 1.2}
 STEPS = ["wood", "hall", "mud", "gravel", "stone"]
-LOOPS = ["raum/cozy_loop.mp3", "raum/kitchen_loop.mp3", "raum/spooky_loop.mp3", "raum/wet_loop.mp3", "raum/empty_loop.mp3"]
+LOOPS = ["raum/cozy_loop.mp3", "raum/kitchen_loop.mp3", "raum/spooky_loop.mp3", "raum/wet_loop.mp3", "raum/empty_loop.mp3",
+         "raum/kerker_loop.mp3", "raum/schrein_loop.mp3"]
 # Zu leise Loops: Verstärkung in dB (sonst unverändert übernommen)
-LOOP_GAIN = {"raum/empty_loop.mp3": 12}
+LOOP_GAIN = {"raum/empty_loop.mp3": 12, "raum/kerker_loop.mp3": 12}
 
 
 def ffmpeg(args, capture=False):
