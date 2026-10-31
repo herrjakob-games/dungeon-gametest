@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.51 · Oct 31, 2026 · @Christian
+Version 2.52 · Oct 31, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.52 | 31.10.2026 | Proben im Textfenster zeigen nur den fertigen SG, ohne Aufschlüsselung des Zuschlags |
 | 2.51 | 31.10.2026 | Sounds: Stimmungen `kerker` und `schrein` für Kerker und Schrein; gemeinsamer Tod-Ton der Skelette; Mimik mit eigenem Klang `mimik`; Stufenaufstieg; neue Dateien für Schweben und Tod des Geists |
 | 2.50 | 30.10.2026 | Prozession: Geister ziehen als Reihe durch die Säulenhalle (`procession`); Knochenthron im Bossraum der Katakomben, der Skelett-König sitzt darauf |
 | 2.49 | 30.10.2026 | Katakomben Paket 3: Events für Gruft, Säulenhalle und Bossraum (Skelett-König mit Audienz und Rückkehr); Flags gelten weiter nur pro Ebene |
@@ -343,7 +344,7 @@ Der Dungeon führt durch Themen, die alle drei Ebenen wechseln. Das Thema bestim
 ### Ebenen
 
 - **Größe:** Ebene 1 hat 8 bis 12 Räume, jede weitere Ebene 2 mehr. Ab Ebene 9 bleibt es bei 24 bis 28 Räumen.
-- **Proben:** Pro Thema +2 auf jede Schwierigkeit: Keller ±0, Katakomben +2, Zwergenminen +4, Goblin-Höhlen +6, Ork-Lager +8, auch im endlosen Ork-Lager. Der Zuschlag hält mit den Attributen Schritt, die über Stufenaufstiege bis +10 wachsen (Werte im Spiel testen). In den Event-Daten bleiben die Werte 8, 12 und 16, der Zuschlag kommt automatisch dazu und wird im Textfenster angezeigt.
+- **Proben:** Pro Thema +2 auf jede Schwierigkeit: Keller ±0, Katakomben +2, Zwergenminen +4, Goblin-Höhlen +6, Ork-Lager +8, auch im endlosen Ork-Lager. Der Zuschlag hält mit den Attributen Schritt, die über Stufenaufstiege bis +10 wachsen (Werte im Spiel testen). In den Event-Daten bleiben die Werte 8, 12 und 16, der Zuschlag kommt automatisch dazu. Das Textfenster zeigt nur den fertigen SG (etwa „SG 14“ in den Katakomben), ohne Aufschlüsselung.
 - **Monster:** Jedes Thema hat eigene Monster. Innerhalb eines Themas bekommen Gegner +1 Lebenspunkt pro Ebene (erste Ebene des Themas +0, zweite +1, dritte +2), im endlosen Ork-Lager wächst das weiter. Das ersetzt das bisherige Wachstum von +2 Lebenspunkten und +1 Angriff je Ebene. Richtwert für neue Monster: pro Thema tiefer etwa +3 Lebenspunkte, +2 Rüstung, +2 Angriff und eine Würfelstufe mehr Schaden, damit sie gegen Attribute bis +10 und Rüstungen bis +10 bestehen (im Spiel testen).
 - **Beute:** Die Beutestufen verschieben sich mit dem Thema. `tier1` ergibt Gegenstände vom Rang der Stufe des Themas (Keller 1 bis Ork-Lager 5), `tier2` einen Rang höher. Dafür braucht `data/items.json` Gegenstände bis Rang 6; solange ein Rang leer ist, gilt der höchste Rang darunter.
 - **Ergebnis:** Der Endbildschirm zeigt die erreichte Ebene als Ergebnis.
@@ -908,3 +909,4 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Prozession: die Geister ziehen als Reihe durch die Säulenhalle
 - [x] Bossraum der Katakomben mit Knochenthron (Pflichtstück an der Wand, Kerzen und Knochen), der Skelett-König sitzt darauf und blickt in den Raum
 - [x] Sound-Stimmungen `kerker` (Kerker) und `schrein` (Schrein); alle Skelette teilen sich einen Tod-Ton; Mimik mit eigenem Klang `mimik` (Biss beim Treffer, eigener Fehlschlag)
+- [x] Proben zeigen nur den fertigen SG, der Zuschlag des Themas steht nicht mehr in Klammern dabei

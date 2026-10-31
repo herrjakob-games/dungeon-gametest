@@ -37,7 +37,7 @@ function lineHtml(l) {
 
 // Proben-Zuschlag des Themas: In den Daten stehen 8, 12 oder 16, dazu kommt +0 bis +4
 const dcBonus = () => state.theme.dcBonus;
-const dcText = (dc) => "SG " + (dc + dcBonus()) + (dcBonus() ? " (" + dc + " +" + dcBonus() + " " + state.theme.name + ")" : "");
+const dcText = (dc) => "SG " + (dc + dcBonus()); // nur der fertige SG, der Zuschlag des Themas ist schon eingerechnet
 
 const optionLabel = (o) => {
   if (!o.check) return o.label;
