@@ -2,6 +2,7 @@
   {
     "id": "start",
     "name": "Die Vorkammer",
+    "mapIcon": "eingang",
     "floor": {
       "h": 0.07,
       "s": 0.12
@@ -79,6 +80,7 @@
   {
     "id": "exit",
     "name": "Der Abstieg",
+    "mapIcon": "abgang",
     "floor": {
       "h": 0.58,
       "s": 0.08
@@ -153,6 +155,8 @@
   {
     "id": "boss",
     "name": "Der Bossraum",
+    "mapIcon": "abgang",
+    "mapIconWhen": "bossDefeated",
     "floor": {
       "h": 0.0,
       "s": 0.18
@@ -488,6 +492,7 @@
   {
     "id": "rast",
     "name": "Der Rastplatz",
+    "mapIcon": "rastplatz",
     "floor": {
       "h": 0.1,
       "s": 0.14
@@ -601,6 +606,7 @@
   {
     "id": "haendler",
     "name": "Der Händler",
+    "mapIcon": "haendler",
     "floor": {
       "h": 0.13,
       "s": 0.16

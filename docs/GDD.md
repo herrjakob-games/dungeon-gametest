@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.57 · Nov 5, 2026 · @Christian
+Version 2.58 · Nov 5, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.58 | 05.11.2026 | Minimap: weiße Outline-Icons für Eingang, Abgang, Händler und Rastplatz (`mapIcon`, `mapIconWhen`), sobald der Raum besucht wurde |
 | 2.57 | 05.11.2026 | Abstieg: `treppe` gekürzt und zum Ende leiser, Bild beim Abstieg 2 Sekunden schwarz |
 | 2.56 | 05.11.2026 | Sitzende Figuren sitzen auf der Sitzfläche von Hocker und Stuhl (`seatY` am Anker), statt im Möbel zu stecken; Stühle stehen mit der Lehne vom Tisch weg |
 | 2.55 | 05.11.2026 | Neue Figuren ohne Kampfwerte: Ritter (`knight`) und Kobold (`kobold`, Goblin-Modell mit roter Haut); Event-Requisiten (`props` in der Event-Inszenierung) erscheinen nur, wenn das Event auslöst; Figuren für `halle_saeule`, `wache_karten`, `gruft_grabraeuber`, `schatz_steuer` und `exit_souvenir` |
@@ -126,6 +127,7 @@ Das Spiel kennt zwei Modi: freie Erkundung in Echtzeit und rundenbasierte Events
 - **Kamera:** Zentriert auf den aktuellen Raum. Die vorderen Wände sind ausgeblendet, damit nichts die Figur verdeckt.
 - **Modus-Wechsel:** Löst ein Event aus, stoppt die Bewegung und das Textfenster übernimmt. Events gibt es nur beim ersten Betreten eines Raums, danach durchläuft der Spieler ihn ohne neues Event. Eine Begegnung (siehe Begegnungen) startet statt eines Events direkt den Kampf.
 - **Minimap:** Zeigt besuchte Räume und bekannte Türen. Ein Klick auf einen besuchten Raum reist sofort mit Abblende dorthin, ohne Kosten. Die Figur erscheint in der Raummitte, ist diese blockiert, auf dem nächsten freien Feld. Unbesuchte Räume sind kein Reiseziel. Während eines Events oder Kampfes ist die Schnellreise gesperrt.
+- **Icons auf der Minimap:** Ein Raumtyp kann in `data/room-types.json` im Feld `mapIcon` ein Icon nennen, das auf der Minimap erscheint, sobald der Raum besucht wurde. Alle Icons sind reine weiße Outlines ohne Füllung. Heute: Vorkammer `eingang` (Torbogen, darin Stufen nach oben), Abstieg und Bossraum `abgang` (rechteckiges Bodenfeld, darin Stufen nach unten), Händler `haendler` (Beutel), Rastplatz `rastplatz` (Flamme). Im Bossraum gilt `"mapIconWhen": "bossDefeated"`: Das Icon erscheint erst nach dem Sieg, wenn die Treppe da ist. Der Rastplatz behält sein Icon auch nach dem Benutzen des Lagerfeuers. Das Icon bleibt sichtbar, wenn die Spielfigur im Raum steht, und nimmt der Schnellreise keine Klickfläche weg.
 
 ## Regelwerk
 
@@ -927,3 +929,4 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Türsteher: tritt nach „Ich kenne den Boss“ zur Seite, bleibt nach „Einfach vorbeigehen“ als Knochenhaufen liegen
 - [x] Personen in Events bekommen sichtbare Figuren: Ritter für den Mann an der Säule und die Kartenwachen, liegendes Skelett für den Grabräuber, Kobold als Goblin mit roter Haut, Goblin am Andenkenstand; Stand und Kobold-Kiste erscheinen als Event-Requisiten nur mit ihrem Event
 - [x] Abstieg: `treppe` gekürzt und zum Ende leiser; das Bild bleibt 2 Sekunden schwarz, das Geräusch endet mit der Aufblende, das Begrüßungs-Event geht erst danach auf
+- [x] Minimap: weiße Outline-Icons für Eingang, Abgang, Händler und Rastplatz, sobald der Raum besucht wurde; im Bossraum erscheint der Abgang erst nach dem Sieg; kein eigener Zustand für das erloschene Lagerfeuer

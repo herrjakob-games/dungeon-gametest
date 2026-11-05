@@ -1,6 +1,6 @@
 // Infotafel und Minimap.
 import { DIR, DIRKEYS, key, tileName } from "./config.js";
-import { TYPES } from "./roomTypes.js";
+import { TYPES, mapIconFor } from "./roomTypes.js";
 import { state } from "./state.js";
 import { ATTRS, ATTR_NAMES, xpForLevel } from "./character.js";
 
@@ -25,6 +25,47 @@ export const minimap = document.getElementById("minimap");
 const mctx = minimap.getContext("2d");
 const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 let layout = null; // Lage der Räume auf der Minimap, für Klicks
+
+// Icons der Minimap (docs/GDD.md, „Icons auf der Minimap“): weiße Outlines aus assets/ui/karte_<id>.svg (viewBox -10 -10 20 20).
+// Die Pfade werden als Path2D nachgezeichnet, damit die Linie auf dem Bildschirm etwa 1,5 px breit bleibt.
+const ICON_SIZE = 0.6;  // Anteil der Raumkachel
+const ICON_LINE = 1.5;  // Strichstärke in Bildschirm-Pixeln
+const icons = {};       // id → [Path2D] oder null (lädt noch oder fehlt)
+function icon(id) {
+  if (id in icons) return icons[id];
+  icons[id] = null;
+  fetch("assets/ui/karte_" + id + ".svg")
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
+    .then(text => {
+      const svg = new DOMParser().parseFromString(text, "image/svg+xml");
+      const paths = [];
+      svg.querySelectorAll("path").forEach(p => paths.push(new Path2D(p.getAttribute("d"))));
+      svg.querySelectorAll("rect").forEach(r => {
+        const p = new Path2D();
+        p.rect(+r.getAttribute("x"), +r.getAttribute("y"), +r.getAttribute("width"), +r.getAttribute("height"));
+        paths.push(p);
+      });
+      icons[id] = paths;
+      if (state.dungeon) drawMinimap();
+    })
+    .catch(() => console.info("Icon fehlt: assets/ui/karte_" + id + ".svg"));
+  return null;
+}
+
+function drawIcon(paths, cx, cz, size) {
+  const px = size * ICON_SIZE;
+  const s = px / 20;
+  const ratio = minimap.width / (minimap.clientWidth || minimap.width); // Canvas-Pixel pro Bildschirm-Pixel
+  mctx.save();
+  mctx.translate(cx, cz);
+  mctx.scale(s, s);
+  mctx.strokeStyle = "#FFFFFF";
+  mctx.lineWidth = ICON_LINE * ratio / s;
+  mctx.lineCap = "round";
+  mctx.lineJoin = "round";
+  paths.forEach(p => mctx.stroke(p));
+  mctx.restore();
+}
 
 export function setSteps(n) { ui.steps.textContent = n ? n + " Kacheln" : "–"; }
 export function setHover(text) { ui.hover.textContent = text || "–"; }
@@ -123,10 +164,15 @@ export function drawMinimap() {
       mctx.font = "600 " + Math.round(size * 0.5) + "px " + css("--body");
       mctx.fillText("?", cx, cz + 1);
     }
-    if (seen && (k === dungeon.exit || k === dungeon.start)) {
-      mctx.fillStyle = k === current ? css("--bg") : (k === dungeon.exit ? css("--exit") : css("--fg"));
+    // Icon nur bei besuchten Räumen; über der Markierung des aktuellen Raums, ohne eigene Klickfläche
+    const id = visited.has(k) ? mapIconFor(TYPES[r.type], state.roomState[k]) : null;
+    const paths = id && icon(id);
+    if (paths) drawIcon(paths, cx, cz, size);
+    else if (seen && k === dungeon.exit && dungeon.boss && !(state.roomState[k] || {}).bossDefeated) {
+      // Bossraum vor dem Sieg: weiter mit B markiert
+      mctx.fillStyle = k === current ? css("--bg") : css("--exit");
       mctx.font = "700 " + Math.round(size * 0.55) + "px " + css("--body");
-      mctx.fillText(k === dungeon.start ? "S" : (dungeon.boss && !(state.roomState[k] || {}).bossDefeated ? "B" : "A"), cx, cz + 1);
+      mctx.fillText("B", cx, cz + 1);
     }
   });
 }
