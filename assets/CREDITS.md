@@ -21,6 +21,7 @@ Quelle und Lizenz jeder fremden Datei (docs/GDD.md, Asset-Spezifikation).
   sowie (für den Rastplatz aus GDD 2.35) candle_thin, candle_thin_lit
   sowie (Bodenvarianten aus GDD 2.37) floor_dirt_small_A, floor_dirt_small_B, floor_dirt_small_C, floor_dirt_small_D,
   floor_dirt_small_corner, floor_dirt_small_weeds, floor_tile_small_weeds_A, floor_tile_small_weeds_B, floor_wood_small, floor_wood_small_dark
+  sowie (Event-Requisiten aus GDD 2.55) table_small, box_small_decorated
 - Daraus gebaut (`npm run build:assets`): alle Dateien in `tiles/` und `props/`.
 - `textures/keller/dungeon_texture.png` ist eine umgefärbte Fassung der Paletten-Textur (`tools/palette-texture.py`).
 
@@ -30,7 +31,7 @@ Quelle und Lizenz jeder fremden Datei (docs/GDD.md, Asset-Spezifikation).
 - Lizenz: CC0 1.0 (Creative Commons Zero), siehe `source/kaykit-adventurers/LICENSE.txt`
 - Quelle: https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0, Commit `672074b73ba276876a19e8816ecdc5241817ab47`
 - Übernommene Dateien (in `source/kaykit-adventurers/`, aus `Characters/gltf/`): Knight, Mage, Rogue_Hooded, Rogue, rogue_texture.png
-- Daraus gebaut (`npm run build:assets`): `figures/zwerg.glb`, `figures/elf.glb`, `figures/mensch.glb`, `figures/haendlerfigur.glb` (Händler)
+- Daraus gebaut (`npm run build:assets`): `figures/zwerg.glb`, `figures/elf.glb`, `figures/mensch.glb`, `figures/haendlerfigur.glb` (Händler), `figures/knight.glb` (Ritter ohne Waffen)
 - `textures/figures/haendler/haendler_texture.png` ist die Rogue-Textur mit dunkelblauem statt grünem Outfit (`tools/merchant-texture.py`)
 
 ## KayKit Character Pack: Skeletons 1.0 (und 1.1 FREE)
@@ -65,6 +66,7 @@ Quelle und Lizenz jeder fremden Datei (docs/GDD.md, Asset-Spezifikation).
 - Quelle: https://standout7.itch.io/goblin-lowpoly-assets
 - Übernommene Dateien (in `source/goblin-lowpoly/`, aus `GLB/`): Basic_Goblin.glb, Goblin_Rusty_Shiv.glb
 - Daraus gebaut: `source/goblin-lowpoly/Goblin_KayKit.glb` (`tools/goblin-rig.py`, Goblin auf dem KayKit-Rig), daraus `figures/goblin.glb` (`npm run build:assets`)
+- `textures/figures/kobold/kobold_texture.png` ist die Goblin-Textur mit roter statt grüner Haut (`tools/kobold-texture.py`)
 
 ## three.js GLTFLoader und SkeletonUtils (r128)
 

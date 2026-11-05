@@ -209,3 +209,89 @@ test("Zur Seite treten: freie Nachbarkachel, Türen, Treppe und Wege bleiben fre
   const t = stepAsideTile([STAIRS_FOOT[0] + 1, STAIRS_FOOT[1]], { blocked: new Set(STAIRS_TILES.map(s => key(...s))), doors: 15, stairsFoot: STAIRS_FOOT });
   assert.ok(t && key(...t) !== key(...STAIRS_FOOT));
 });
+
+test("Event-Requisiten: vor und neben der ersten Figur, belegte Kacheln und Wege", async () => {
+  const { placeEventProps } = await import("../src/figurePlan.js");
+  const { reachable } = await import("../src/decor.js");
+  const blocks = (id) => !!(PROPS[id] && PROPS[id].blocks);
+  const base = (extra) => Object.assign({ blocked: new Set(["4,4"]), occupied: new Set(), edges: new Set(), doors: 15, player: [4, 7], clickables: [], extra: [], blocks }, extra);
+  // Figur auf 4|4 (gezählt ab 0), Blick nach Süden (+z): vor ihr 4,5, rechts von ihr 3,4
+  const fig = { tiles: [[4, 4]], rot: 0 };
+  let out = placeEventProps([{ prop: "tisch_klein", place: "vor_figur" }, { prop: "kistenberg", place: "neben_figur" }], fig, base());
+  assert.deepEqual(out.map(p => p.tile), [[4, 5], [3, 4]]);
+  // Blick nach Osten (+x): vor ihr 5,4
+  out = placeEventProps([{ prop: "tisch_klein", place: "vor_figur" }], { tiles: [[4, 4]], rot: Math.PI / 2 }, base());
+  assert.deepEqual(out[0].tile, [5, 4]);
+  // Belegt (auch durch ein nicht blockierendes Requisit wie den Goldhaufen): nächste freie Nachbarkachel
+  out = placeEventProps([{ prop: "tisch_klein", place: "vor_figur" }], fig, base({ occupied: new Set(["4,5"]) }));
+  assert.equal(Math.max(Math.abs(out[0].tile[0] - 4), Math.abs(out[0].tile[1] - 5)), 1);
+  assert.notEqual(key(...out[0].tile), "4,4");
+  // Neben der Figur: rechts belegt, dann links
+  out = placeEventProps([{ prop: "kistenberg", place: "neben_figur" }], fig, base({ blocked: new Set(["4,4", "3,4"]) }));
+  assert.deepEqual(out[0].tile, [5, 4]);
+  // Nie auf Türen, der Kachel davor, der Spielfigur oder reservierten Kacheln; kein Weg wird versperrt
+  for (const doors of [1, 2, 4, 8, 5, 10, 15]) {
+    for (const t of [[4, 0], [0, 4], [8, 4], [4, 8], [4, 2], [6, 6]]) {
+      for (const rot of [0, Math.PI / 2, Math.PI, -Math.PI / 2]) {
+        const ctx = base({ blocked: new Set([key(...t)].concat(STAIRS_TILES.map(s => key(...s)))), doors, player: [7, 7], clickables: [STAIRS_TILES], reserved: STAIRS_TILES });
+        if (!reachable(ctx.blocked, doors, [STAIRS_TILES], [[7, 7]], ctx.edges)) continue; // Figur steht selbst im Weg
+        const res = placeEventProps([{ prop: "tisch_klein", place: "vor_figur" }, { prop: "kistenberg", place: "neben_figur" }], { tiles: [t], rot }, ctx);
+        const test = new Set(ctx.blocked);
+        res.forEach(p => {
+          const k = key(...p.tile);
+          assert.ok(inBounds(...p.tile), "im Raum");
+          assert.ok(!doorTiles(doors).some(d => key(...d) === k), "nicht auf einer Tür: " + k);
+          assert.ok(k !== "7,7" && !STAIRS_TILES.some(s => key(...s) === k), "nicht auf Spielfigur oder Treppe: " + k);
+          assert.ok(!test.has(k), "nicht doppelt belegt: " + k);
+          test.add(k);
+        });
+        assert.ok(reachable(test, doors, [STAIRS_TILES], [[7, 7]], ctx.edges), "alle Wege frei");
+      }
+    }
+  }
+  // Passt keine Kachel, fehlt das Requisit
+  const full = new Set();
+  for (let z = 0; z < 9; z++) for (let x = 0; x < 9; x++) full.add(key(x, z));
+  assert.deepEqual(placeEventProps([{ prop: "tisch_klein", place: "vor_figur" }], fig, base({ occupied: full })), []);
+});
+
+test("Event-Requisiten: gleiche Lage bei gleichem Raum, gemerkte Requisiten belegen ihre Kachel", async () => {
+  const { placeEventProps } = await import("../src/figurePlan.js");
+  const { eventProps } = await import("../src/staging.js");
+  const blocks = (id) => !!(PROPS[id] && PROPS[id].blocks);
+  const list = eventProps(STAGING, "exit_souvenir");
+  assert.deepEqual(list.map(p => p.prop), ["tisch_klein", "kistenberg"]);
+  assert.deepEqual(eventProps(STAGING, "halle_saeule"), []);
+  const ctx = () => ({ blocked: new Set(["2,5"]), occupied: new Set(), edges: new Set(), doors: 6, player: [5, 7], clickables: [], extra: [], blocks });
+  const a = placeEventProps(list, { tiles: [[2, 5]], rot: 0 }, ctx());
+  const b = placeEventProps(list, { tiles: [[2, 5]], rot: 0 }, ctx());
+  assert.deepEqual(a, b);
+  // Beim erneuten Betreten stehen die gemerkten Requisiten im Weg: eine neue Planung legt nichts darauf
+  const again = ctx();
+  a.forEach(p => again.blocked.add(key(...p.tile)));
+  placeEventProps(list, { tiles: [[2, 5]], rot: 0 }, again).forEach(p => assert.ok(!a.some(q => key(...q.tile) === key(...p.tile))));
+});
+
+test("Datenprüfung der Event-Requisiten (props)", () => {
+  const errs = [];
+  const st = { anchors: {}, figures: {}, events: {
+    halle_saeule: { props: "tisch_klein" },
+    wache_karten: { props: [{ prop: "gibtsnicht", place: "vor_figur" }, { prop: "tisch_klein", place: "hinter_figur" }] }
+  } };
+  checkStaging(st, DATA, PROP_IDS, (w, t) => errs.push(t));
+  const has = (s) => assert.ok(errs.some(e => e.includes(s)), s + " fehlt in: " + errs.join(" / "));
+  has("halle_saeule: props muss eine Liste sein");
+  has("unbekannte Requisite gibtsnicht");
+  has("place muss vor_figur oder neben_figur sein");
+});
+
+test("Neue Figuren: Ritter und Kobold ohne Kampfwerte, der Kobold ist keine Goblin-Variante", async () => {
+  const { FIGURE_INFO } = await import("../src/figurePlan.js");
+  assert.ok(FIGURE_INFO.knight.noCombat && FIGURE_INFO.kobold.noCombat);
+  assert.ok(!DATA.monsters.knight && !DATA.monsters.kobold);
+  assert.ok(!(STAGING.figures.goblin && STAGING.figures.goblin.variants));
+  const models = read("models.json");
+  for (const id of ["knight", "kobold", "tisch_klein", "kiste_klein_verziert"]) assert.ok(models[id], "Modell " + id);
+  assert.equal(models.kobold.file, models.goblin.file);
+  assert.ok(models.kobold.texture);
+});

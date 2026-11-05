@@ -7,9 +7,10 @@ import { state, walkable } from "./state.js";
 import { scene } from "./scene.js";
 import { DATA } from "./data.js";
 import { mulberry32 } from "./rng.js";
-import { planFigures, combatSpot, figureInfo, processionRoute, stepAsideTile } from "./figurePlan.js";
-import { eventFigures, endFor, isHidden } from "./staging.js";
-import { STAIRS_FOOT, STAIRS_TILES } from "./decor.js";
+import { planFigures, combatSpot, figureInfo, processionRoute, stepAsideTile, placeEventProps } from "./figurePlan.js";
+import { eventFigures, endFor, isHidden, eventProps } from "./staging.js";
+import { STAIRS_FOOT, STAIRS_TILES, PROPS } from "./decor.js";
+import { placeEventProp } from "./roomBuilder.js";
 import { buildMonsterFigure } from "./monsterFigures.js";
 import { makeFigureModel, hasAnimation } from "./models.js";
 import { findPath } from "./pathfinding.js";
@@ -26,6 +27,7 @@ let roomKey = null;
 let fighter = null;   // Gegner, der gerade dran ist
 let fighters = [];    // alle Gegner des Kampfs (laufen gemeinsam an, sterben gemeinsam)
 let turn = 0;         // reihum, wer angreift
+let growing = [];     // Event-Requisiten, die gerade aufwachsen
 
 const SPEED = 2.6;        // Kacheln pro Sekunde
 const PROCESSION_SPEED = 0.9; // Prozession: langsam, im Gänsemarsch
@@ -109,6 +111,7 @@ export function syncRoom(id) {
     figs.slice().forEach(remove);
     fighter = null;
     fighters = [];
+    growing = [];
     roomKey = where;
     const rs = state.roomState[id] || {};
     (rs.deadFigures || []).forEach(p => make(p, null, false, true));
@@ -146,7 +149,43 @@ export function showEventFigures(ev, opts) {
     return f;
   });
   if (((DATA.staging || {}).events || {})[ev.id] && DATA.staging.events[ev.id].procession) startProcession(made);
+  if (made.length) showEventProps(ev, made[0], room);
   return plan.length;
+}
+
+/**
+ * Event-Requisiten (props der Inszenierung): neben oder vor der ersten Figur, nur wenn das Event auslöst. Sie bleiben im
+ * Raumzustand (eventProps), solange der Spieler auf dieser Ebene ist; roomBuilder baut sie beim Betreten wieder auf.
+ */
+function showEventProps(ev, first, room) {
+  const list = eventProps(DATA.staging, ev.id);
+  const rs = roomState();
+  if (!list.length || !rs || (rs.eventProps || []).some(p => p.eventId === ev.id)) return;
+  const dp = state.decorPlan;
+  const occupied = tilesOf(figs.filter(f => !f.sink));
+  // Kacheln der Einrichtung, auch nicht blockierende (Goldhaufen, Münzen); Wandrequisiten ohne Boden zählen nicht
+  if (dp) dp.placements.forEach(pl => {
+    const d = PROPS[pl.prop];
+    if (!d || d.floor === false) return;
+    pl.tiles.forEach(t => occupied.add(key(...t)));
+  });
+  const feature = state.stairsFeature;
+  const reserved = feature ? STAIRS_TILES.slice() : [];
+  if (feature === "up") reserved.push(STAIRS_FOOT);
+  // Figur auf einem Requisit (onProp, etwa der Kobold auf dem Goldhaufen) hat keine eigene Kachel: die Kachel darunter
+  const tiles = first.tiles.length ? first.tiles : [[Math.round(first.pl.cx), Math.round(first.pl.cz)]];
+  const placed = placeEventProps(list, { tiles, rot: first.pl.rot || 0 }, {
+    blocked: state.blocked, occupied, edges: state.edges, doors: room.doors, player: state.pTile,
+    clickables: dp ? dp.clickables : (feature === "down" || feature === "arena" ? [STAIRS_TILES] : []),
+    extra: dp ? dp.extra : (feature === "up" ? [STAIRS_FOOT] : []),
+    reserved, blocks: (id) => !!(PROPS[id] && PROPS[id].blocks)
+  });
+  placed.forEach(p => {
+    const saved = { eventId: ev.id, prop: p.prop, tile: p.tile, rot: p.rot };
+    rs.eventProps = (rs.eventProps || []).concat([saved]);
+    const o = placeEventProp(saved, !reduceMotion);
+    if (!reduceMotion) growing.push(o);
+  });
 }
 
 /**
@@ -404,6 +443,10 @@ function figureSteps(f, dt) {
 // Pro Frame aus der Spielschleife
 export function updateFigures(dt, t) {
   let nearest = null;
+  growing = growing.filter(o => {
+    o.scale.setScalar(Math.min(1, o.scale.x + dt * 4));
+    return o.scale.x < 1;
+  });
   for (const f of figs.slice()) {
     if (f.grow) {
       const s = Math.min(1, f.outer.scale.x + dt * 4);

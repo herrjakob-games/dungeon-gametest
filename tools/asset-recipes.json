@@ -846,6 +846,14 @@
           ]
         }
       ]
+    },
+    "tisch_klein": {
+      "dir": "props",
+      "file": "table_small.gltf.glb"
+    },
+    "kiste_klein_verziert": {
+      "dir": "props",
+      "file": "box_small_decorated.gltf.glb"
     }
   },
   "figureSource": "assets/source/kaykit-adventurers/",
@@ -1056,6 +1064,28 @@
         "Interact"
       ],
       "stripTexture": true,
+      "maxTris": 4000
+    },
+    "knight": {
+      "file": "Knight.glb",
+      "remove": [
+        "1H_Sword",
+        "1H_Sword_Offhand",
+        "2H_Sword",
+        "Badge_Shield",
+        "Rectangle_Shield",
+        "Round_Shield",
+        "Spike_Shield"
+      ],
+      "animations": [
+        "Idle",
+        "Walking_A",
+        "1H_Melee_Attack_Chop",
+        "Hit_A",
+        "Death_A",
+        "Interact",
+        "Sit_Chair_Idle"
+      ],
       "maxTris": 4000
     }
   },

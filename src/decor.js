@@ -56,6 +56,8 @@ export const PROPS = {
   zapffass: { w: 1, d: 1, blocks: true },
   zapffass_verziert: { w: 2, d: 1, blocks: true },
   kistenberg: { w: 1, d: 1, blocks: true },
+  tisch_klein: { w: 1, d: 1, blocks: true },
+  kiste_klein_verziert: { w: 1, d: 1, blocks: true },
   muenzen: { w: 1, d: 1, blocks: false, spread: 2 },
   saeule_verziert: { w: 1, d: 1, blocks: true },
   geroell_gross: { w: 2, d: 1, blocks: true },

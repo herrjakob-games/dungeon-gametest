@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.54 · Nov 5, 2026 · @Christian
+Version 2.55 · Nov 5, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.55 | 05.11.2026 | Neue Figuren ohne Kampfwerte: Ritter (`knight`) und Kobold (`kobold`, Goblin-Modell mit roter Haut); Event-Requisiten (`props` in der Event-Inszenierung) erscheinen nur, wenn das Event auslöst; Figuren für `halle_saeule`, `wache_karten`, `gruft_grabraeuber`, `schatz_steuer` und `exit_souvenir` |
 | 2.54 | 05.11.2026 | Friedliche Figuren bleiben nach dem Event an ihrem Platz; wer geht, zur Seite tritt oder zusammenfällt, steht pro Ende in `data/staging.json` (`ends`); Figuren können bis zum Kampf verborgen sein (`hidden`) |
 | 2.53 | 05.11.2026 | Goblin auf das KayKit-Rig `Rig_Medium` gesetzt, mit Animationen aus KayKit Character Animations 1.1 (Idle, Laufen, Stich, Treffer, Tod, Interagieren, Sitzen, Liegen) |
 | 2.52 | 31.10.2026 | Proben im Textfenster zeigen nur den fertigen SG, ohne Aufschlüsselung des Zuschlags |
@@ -423,6 +424,7 @@ Figuren aus Events stehen sichtbar im Raum. Wo sie stehen, wohin sie blicken und
 - **Rückfall:** Fehlt die Requisite im Raum, steht die Figur auf einer freien Kachel, nie in Wänden, Türen oder auf Requisiten. Hat das Modell die Animation nicht (etwa der Goblin kein Sitzen), steht die Figur mit Idle neben dem Anker.
 - **Liegen ohne Animation:** Ein Anker mit `flat` legt eine Figur ohne Liege-Animation starr auf den Rücken, statt sie stehen zu lassen (heute keine Figur, seit der Goblin die Liege-Animation hat). `front` wählt zuerst die Kachel auf der Seite zur Kamera, damit das Requisit die Figur nicht verdeckt.
 - **Figuren (`figures`):** Modell-Varianten (Skelett: Minion, Warrior, Rogue, Mage; ohne Festlegung immer Minion; ein Event kann eine festlegen) und `stays` (bleibt nach dem Event stehen). Eine Event-Inszenierung kann `stay` auch für einzelne Figuren setzen. Eigene Skelett-Monster haben ihre eigene Figur, etwa der Skelettkrieger als Warrior.
+- **Event-Requisiten (`props`):** Eine Event-Inszenierung kann Requisiten nennen, die nur erscheinen, wenn das Event auslöst, etwa `"props": [ { "prop": "tisch_klein", "place": "vor_figur" } ]`. Sie stehen zusammen mit den Figuren da, bevor das Event-Fenster aufgeht, und bleiben danach stehen, solange der Spieler auf dieser Ebene ist, auch beim erneuten Betreten. `place` bezieht sich auf die erste Figur des Events: `vor_figur` ist die Kachel in ihrer Blickrichtung, `neben_figur` eine Kachel seitlich von ihr. Ist die Kachel belegt oder würde sie einen Weg versperren, gilt die nächste freie Nachbarkachel; passt keine, fehlt das Requisit. Die Einrichtung des Raums ändert sich dadurch nicht, ohne das Event bleibt das Requisit weg.
 - **Ablauf:** Die Figuren stehen schon da, bevor das Event-Fenster aufgeht, außer sie sind verborgen (`hidden`). Beim Kampfbeginn laufen alle Figuren des Gegners mit Walk auf freie Nachbarkacheln der Spielfigur, ohne durch Wände, Türen oder Requisiten zu gehen; die Spielfigur bleibt stehen und dreht sich zum nächsten laufenden Gegner. Im Kampf blickt die Spielfigur zum Gegner, der gerade dran ist; bei mehreren wechselt er reihum mit jedem Zug. Gegner blicken immer zur Spielfigur. Attack beim eigenen Zug, Hit bei einem Treffer, Death beim Sieg. Nach dem Kampf behält die Spielfigur ihre Blickrichtung, bis der Spieler sie bewegt.
 - **Prozession (`procession`):** Eine Event-Inszenierung mit `"procession": true` lässt ihre Figuren hintereinander auf einem Rundweg eine Kachel vor den Wänden (2|2, 8|2, 8|8, 2|8) durch den Raum ziehen, um Hindernisse herum, langsam und mit zwei Kacheln Abstand, bis das Event endet. Sie blockieren dabei keine Kachel und gehen auch durch die Spielfigur hindurch. Heute: „Die Prozession“ in der Säulenhalle der Katakomben (drei Geister).
 - **Verborgen (`hidden`):** Eine Event-Inszenierung mit `"hidden": true` zeigt ihre Figuren nicht beim Event-Start, sondern erst beim Kampfbeginn. Sie erscheinen an ihrem Anker mit dessen Animation, ohne Anker auf einer freien Kachel, und laufen dann an. Endet das Event ohne Kampf, erscheinen sie nie. Heute: „Der Sarkophag“, „Die Zellentür“, „Das Familiengrab“.
@@ -645,6 +647,8 @@ Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kan
 | kuechenratte | Der Küchenchef, Ratte mit Kochmütze | Monster | 1 | – |
 | monsterratte | Die Monsterratte, ponygroß mit Gabelkrone | Boss Keller | 2×2 | – |
 | kroete | Die Kröte, mit Krone | Figur ohne Kampfwerte | Deko | – |
+| knight | Ritter in Rüstung, ohne Waffen (Säulenhalle, Kartenrunde) | Figur ohne Kampfwerte | 1 | – |
+| kobold | Kobold, Goblin-Modell mit roter Haut (Steuerprüfung) | Figur ohne Kampfwerte | 1 | – |
 
 Jede Monster-id hat eine Figur mit derselben id. Figuren ohne Modell baut der Code aus Grundformen. Figuren ohne Animation atmen im Stand leicht, die Füße bleiben dabei am Boden.
 
@@ -918,3 +922,4 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Friedliche Figuren bleiben nach dem Event an ihrem Platz; Abgänge nur, wo der Text sie verlangt (`ends`)
 - [x] Figuren, die laut Text verborgen sind, erscheinen erst beim Kampf (`hidden`): Sarkophag, Zellentür (1 Skelettkrieger), Familiengrab (3 Skelettkrieger)
 - [x] Türsteher: tritt nach „Ich kenne den Boss“ zur Seite, bleibt nach „Einfach vorbeigehen“ als Knochenhaufen liegen
+- [x] Personen in Events bekommen sichtbare Figuren: Ritter für den Mann an der Säule und die Kartenwachen, liegendes Skelett für den Grabräuber, Kobold als Goblin mit roter Haut, Goblin am Andenkenstand; Stand und Kobold-Kiste erscheinen als Event-Requisiten nur mit ihrem Event
