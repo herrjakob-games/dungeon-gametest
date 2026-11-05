@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.58 · Nov 5, 2026 · @Christian
+Version 2.59 · Nov 5, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.59 | 05.11.2026 | Brunnenraum vereinheitlicht: eine feste Einrichtung mit Brunnen in der Raummitte und vier Säulen auf 2\|2, 8\|2, 2\|8 und 8\|8; Fackeln an den Säulen, keine Wanddekoration |
 | 2.58 | 05.11.2026 | Minimap: weiße Outline-Icons für Eingang, Abgang, Händler und Rastplatz (`mapIcon`, `mapIconWhen`), sobald der Raum besucht wurde |
 | 2.57 | 05.11.2026 | Abstieg: `treppe` gekürzt und zum Ende leiser, Bild beim Abstieg 2 Sekunden schwarz |
 | 2.56 | 05.11.2026 | Sitzende Figuren sitzen auf der Sitzfläche von Hocker und Stuhl (`seatY` am Anker), statt im Möbel zu stecken; Stühle stehen mit der Lehne vom Tisch weg |
@@ -480,7 +481,7 @@ Ein Dungeon wie aus warmem Ton geknetet: weiche, blockige Formen, gedeckte Erdt�
 | Goblin-Höhlen | #4A4A32 | #5E5A3E | #A6E05A | #E8B840 | #22301E |
 | Ork-Lager | #5A3E30 | #6E4A38 | #B0B8C0 | #FF5A28 | #3A2420 |
 
-Gruft und Brunnen sind im Keller die düsteren Räume: kälteres Grundlicht, Kerzen statt Fackeln. In der Gruft hängen höchstens zwei Fackeln mit blauem Licht und blauer Flamme, damit der Raum düster und kühl wirkt. Im Ork-Lager wird das Gefahr-Rot vor den rötlichen Wänden geprüft und bei Bedarf nachgeschärft.
+Gruft und Brunnen sind im Keller die düsteren Räume mit kälterem Grundlicht. In der Gruft hängen höchstens zwei Fackeln mit blauem Licht und blauer Flamme, damit der Raum düster und kühl wirkt. Im Brunnenraum tragen die vier Säulen je eine Fackel. Im Ork-Lager wird das Gefahr-Rot vor den rötlichen Wänden geprüft und bei Bedarf nachgeschärft.
 
 **Böden**
 
@@ -516,7 +517,7 @@ Gruft und Brunnen sind im Keller die düsteren Räume: kälteres Grundlicht, Ker
 **Lesbarkeit**
 
 - Spielfigur mit hellem Bodenring, Gegner mit rotem Akzent und im Kampf rotem Ring.
-- Türrahmen eine Stufe heller als die Wand, neben jeder Tür eine Fackel (Ausnahme: in der Schatzkammer hängt an jeder Säule eine Fackel). Verschlossene Tür: rotes Schloss.
+- Türrahmen eine Stufe heller als die Wand, neben jeder Tür eine Fackel (Ausnahme: In Schatzkammer und Brunnenraum hängt an jeder Säule eine Fackel). Verschlossene Tür: rotes Schloss.
 - Anklickbare Objekte (Truhe, Lagerfeuer, Händler, Treppe nach unten): goldene Umrisslinie beim Überfahren mit der Maus, leichtes Aufhellen.
 - Bodendeko (Sack, Moos, Pfütze, Geröll) flach und dunkel, damit sie nie wie ein Hindernis wirkt.
 
@@ -565,8 +566,9 @@ Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kan
 
 - **Varianten:** `layouts` enthält eine oder mehrere Varianten. Der Raum-Seed wählt eine davon, gleicher Seed ergibt gleiche Einrichtung.
 - **Platzierung (`place`):** `center` (Raummitte), `wall-back` (an der Nord- oder Westwand, weil die vorderen Wände nur Sockel sind), `corner` (in einer Ecke, bei `count` über 1 in verschiedenen Ecken), `free` (beliebige freie Kachel), `around:<prop>` (um ein anderes Requisit herum, etwa Stühle um die Tafel), `above:<prop>` (über einem anderen Requisit, etwa der Kronleuchter über der Tafel), `tile:x|y` (genau diese Kachel, etwa die Säulen der Schatzkammer; ohne Korrektur, passt sie nicht, fällt das Requisit weg), `door-sides` (Wandschmuck links und rechts jeder Tür in Nord- und Westwand, eine Kachel Abstand zum Türrahmen, an der Nordwand also 3|1 und 7|1; alle in derselben Variante; an Süd- und Osttüren nicht, weil die vorderen Wände nur Sockel sind).
-- **Fackeln an Säulen (`torches`):** Mit `"torches": "saeulen"` in der Einrichtung hängen keine Fackeln an den Wänden, und die Lichter der vorderen Fackeln fallen weg. Stattdessen trägt jede Säule eine leuchtende Fackel auf der Seite zur Raummitte; Säulen in Reihen (Säulengang) tragen sie auf der Seite zum Gang. Heute so in der Schatzkammer (alle Säulen) und in der Säulenhalle (3 bis 4 zufällige Säulen).
+- **Fackeln an Säulen (`torches`):** Mit `"torches": "saeulen"` in der Einrichtung hängen keine Fackeln an den Wänden, und die Lichter der vorderen Fackeln fallen weg. Stattdessen trägt jede Säule eine leuchtende Fackel auf der Seite zur Raummitte; Säulen in Reihen (Säulengang) tragen sie auf der Seite zum Gang. Heute so in der Schatzkammer und im Brunnenraum (alle Säulen) sowie in der Säulenhalle (3 bis 4 zufällige Säulen).
 - **Anzahl der Fackeln (`torchCount`):** Zahl oder Bereich `[von, bis]`. Mit `torches: "saeulen"` zählt es die Säulen mit Fackel, sonst die Wandfackeln an Nord- und Westwand (Auswahl nach Raum-Seed); dann fallen auch die Lichter der vorderen Fackeln weg. `torchFlame` (Farbe) legt eine eigene Flamme über die des Modells. Heute: Gruft mit zwei Fackeln, Licht `#5d86e0`, Flamme `#8fb4ff`.
+- **Brunnenraum:** Es gibt nur eine Variante. Der Brunnen steht als Pflichtstück in der Raummitte (5|5), Säulen stehen fest auf 2|2, 8|2, 2|8 und 8|8. An jeder Säule hängt eine leuchtende Fackel zur Raummitte, an den Wänden gibt es weder Fackeln noch Wanddekoration. Dazu kommen flach Moos, Pfütze und Geröll, aber keine blockierenden Requisiten.
 - **Zellen (`cells`):** Im Kerker der Katakomben (`themeDecor.katakomben`) baut der Code Zellen aus Wandteilen auf Kachelkanten. Die Zellen stehen nicht in `layouts`, der Raum-Seed wählt eine von zwei Varianten:
   - **A, vier Eckzellen:** je 3×3 Kacheln (1|1–3|3, 7|1–9|3, 1|7–3|9, 7|7–9|9). Jede Zelle hat zwei Innenseiten: eine Gitterwand (`zellgitter`) und einen offenen Torbogen (`zelltor`), beide mittig auf der Seite; die Lücken an den Enden schließen Endstücke (`wand_ecke`), die Innenecke `zellecke`. Der Durchgang liegt auf der mittleren Kachel der Seite. Torbogen: Nordwest Südseite, Nordost Südseite, Südwest Ostseite, Südost Westseite; die übrigen Innenseiten sind Gitter.
   - **B, große Zelle:** 5×5 Kacheln (3|3–7|7). Jede Seite besteht aus zwei Gitterwänden mit einem Steinpfeiler (`wand`, 1 Kachel) dazwischen, an den Ecken schmale Eckpfeiler (`zellecke`); die Gitterecke wäre mit ihren 1 Kachel langen Armen zu lang. Auf einer Seite, nach Raum-Seed, fehlt der Pfeiler: Die mittlere Kachel ist die Öffnung (5|3, 7|5, 5|7 oder 3|5).
@@ -930,3 +932,4 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Personen in Events bekommen sichtbare Figuren: Ritter für den Mann an der Säule und die Kartenwachen, liegendes Skelett für den Grabräuber, Kobold als Goblin mit roter Haut, Goblin am Andenkenstand; Stand und Kobold-Kiste erscheinen als Event-Requisiten nur mit ihrem Event
 - [x] Abstieg: `treppe` gekürzt und zum Ende leiser; das Bild bleibt 2 Sekunden schwarz, das Geräusch endet mit der Aufblende, das Begrüßungs-Event geht erst danach auf
 - [x] Minimap: weiße Outline-Icons für Eingang, Abgang, Händler und Rastplatz, sobald der Raum besucht wurde; im Bossraum erscheint der Abgang erst nach dem Sieg, vorher wird er nicht hervorgehoben; kein eigener Zustand für das erloschene Lagerfeuer
+- [x] Brunnenraum mit nur einer Einrichtung: Brunnen auf 5|5, Säulen auf 2|2, 8|2, 2|8 und 8|8, Fackeln an den Säulen zur Raummitte, keine Wanddekoration

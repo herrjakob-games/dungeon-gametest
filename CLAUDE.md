@@ -123,7 +123,7 @@ Die Liste aller Meilensteine steht im GDD.
 - Grafik nach Stilguide „Knetkeller“ (GDD): Teile mit Modell kommen aus `data/models.json`, alle anderen bleiben
   Platzhalter aus Grundformen. Neues Modell einbinden: Datei nach `assets/props/<id>.glb`, Eintrag in `data/models.json`.
 - Licht: Halbkugellicht mit dem Grundlicht der Palette (`data/themes.json`, `palette`, `roomPalettes`), Fackeln neben
-  jeder Tür (an Süd- und Ostwand ausgeblendet, nur Licht; Schatzkammer und Säulenhalle: an den Säulen; Gruft: zwei blaue), höchstens zwei schattenwerfende Lichter pro Raum (heute nur das schwache Licht von oben). Werte heute: Halbkugellicht 0,32, Licht von oben 0,12,
+  jeder Tür (an Süd- und Ostwand ausgeblendet, nur Licht; Schatzkammer, Brunnenraum und Säulenhalle: an den Säulen; Gruft: zwei blaue), höchstens zwei schattenwerfende Lichter pro Raum (heute nur das schwache Licht von oben). Werte heute: Halbkugellicht 0,32, Licht von oben 0,12,
   Fackeln 1,8 mit 6 Kacheln Reichweite; die Ecken liegen damit bei etwa 15 bis 35 % der hellsten Stelle am Boden.
 
 ## Zusammenarbeit mit Christian

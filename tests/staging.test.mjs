@@ -295,3 +295,19 @@ test("Neue Figuren: Ritter und Kobold ohne Kampfwerte, der Kobold ist keine Gobl
   assert.equal(models.kobold.file, models.goblin.file);
   assert.ok(models.kobold.texture);
 });
+
+test("Brunnenraum: die Kröte sitzt bei jeder Türkombination auf dem Brunnenrand (5|5)", () => {
+  const rt = DATA.roomTypes.brunnen;
+  const spec = decorFor(rt, "keller");
+  for (let doors = 0; doors < 16; doors++) for (let seed = 1; seed <= 6; seed++) {
+    const plan = planDecor(spec, { seed: seed * 101, doors });
+    const list = eventFigures(DATA.events.brunnen_kroete, STAGING, seed * 101);
+    const figs = planFigures(list, { placements: plan.placements, blocked: new Set(plan.blocked), doors, player: doorTiles(doors)[0] || [4, 8],
+      rand: () => (seed * 0.137) % 1, anchors: STAGING.anchors, canPose: () => true });
+    assert.equal(figs.length, 1);
+    const k = figs[0];
+    assert.equal(k.figure, "kroete");
+    assert.ok(k.onProp, "Türen " + doors + ": nicht auf dem Brunnen");
+    assert.ok(Math.abs(k.cx - 4) < 0.5 && Math.abs(k.cz - 4) < 0.5, "Türen " + doors + ": am Brunnen auf 5|5");
+  }
+});

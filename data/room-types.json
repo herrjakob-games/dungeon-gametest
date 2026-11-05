@@ -1675,6 +1675,7 @@
           "weight": 15
         }
       ],
+      "torches": "saeulen",
       "layouts": [
         {
           "id": "A",
@@ -1683,6 +1684,22 @@
               "prop": "brunnen",
               "place": "center",
               "required": true
+            },
+            {
+              "prop": "saeule",
+              "place": "tile:2|2"
+            },
+            {
+              "prop": "saeule",
+              "place": "tile:8|2"
+            },
+            {
+              "prop": "saeule",
+              "place": "tile:2|8"
+            },
+            {
+              "prop": "saeule",
+              "place": "tile:8|8"
             },
             {
               "prop": "moos",
@@ -1695,31 +1712,8 @@
               "count": 2
             },
             {
-              "prop": "fass",
-              "place": "corner"
-            }
-          ]
-        },
-        {
-          "id": "B",
-          "props": [
-            {
-              "prop": "brunnen",
+              "prop": "geroell",
               "place": "free",
-              "required": true
-            },
-            {
-              "prop": "moos",
-              "place": "corner",
-              "count": 2
-            },
-            {
-              "prop": "pfuetze",
-              "place": "free"
-            },
-            {
-              "prop": "saeule",
-              "place": "corner",
               "count": 2
             }
           ]
