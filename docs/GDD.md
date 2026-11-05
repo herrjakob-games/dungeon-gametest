@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.55 · Nov 5, 2026 · @Christian
+Version 2.56 · Nov 5, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.56 | 05.11.2026 | Abstieg: `treppe` gekürzt und zum Ende leiser, Bild beim Abstieg 2 Sekunden schwarz |
 | 2.55 | 05.11.2026 | Neue Figuren ohne Kampfwerte: Ritter (`knight`) und Kobold (`kobold`, Goblin-Modell mit roter Haut); Event-Requisiten (`props` in der Event-Inszenierung) erscheinen nur, wenn das Event auslöst; Figuren für `halle_saeule`, `wache_karten`, `gruft_grabraeuber`, `schatz_steuer` und `exit_souvenir` |
 | 2.54 | 05.11.2026 | Friedliche Figuren bleiben nach dem Event an ihrem Platz; wer geht, zur Seite tritt oder zusammenfällt, steht pro Ende in `data/staging.json` (`ends`); Figuren können bis zum Kampf verborgen sein (`hidden`) |
 | 2.53 | 05.11.2026 | Goblin auf das KayKit-Rig `Rig_Medium` gesetzt, mit Animationen aus KayKit Character Animations 1.1 (Idle, Laufen, Stich, Treffer, Tod, Interagieren, Sitzen, Liegen) |
@@ -732,6 +733,7 @@ Im Keller (Ebene 1 bis 3) ist der Boden einheitlich `stone`, nur Gruft, Brunnenr
 - **Takt:** Schritte folgen der Laufanimation. Figuren ohne Laufanimation (Goblin, Platzhalter) machen alle 0,35 Sekunden einen Schritt.
 - **Variation:** Jeder Schritt bekommt eine um bis zu 5 % andere Tonhöhe.
 - **Lautstärke:** Gegner leiser als die Spielfigur, Figuren der Größe 2×2 tiefer. Höchstens zwei Gegner-Schritte gleichzeitig.
+- **Abstieg:** Die Schritte stecken in `treppe`. Das Geräusch beginnt mit der Abblende und endet mit der Aufblende. Das Bild bleibt dazwischen 2 Sekunden schwarz, die Schritte werden zum Ende hin leiser. Werte im Spiel testen.
 
 ### Events
 
@@ -751,7 +753,7 @@ Feste Sound-ids, die der Code an diesen Stellen spielt:
 | gold | Gold erhalten |
 | gold_zahlen | Kaufen beim Händler, `loseGold` |
 | stufe | Stufenaufstieg |
-| treppe | Klick auf die Treppe nach unten |
+| treppe | Figur erreicht die Treppe nach unten |
 | treffer_<figur-id>, sonst treffer | Figur wird getroffen, zusammen mit dem Angriffsklang |
 | tod_<figur-id>, sonst tod | Figur stirbt; bei einer Gruppe einmal |
 | tod_<volk>, sonst tod_spieler, sonst tod | Spielfigur stirbt (im Kampf oder durch ein Event) |
@@ -923,3 +925,4 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Figuren, die laut Text verborgen sind, erscheinen erst beim Kampf (`hidden`): Sarkophag, Zellentür (1 Skelettkrieger), Familiengrab (3 Skelettkrieger)
 - [x] Türsteher: tritt nach „Ich kenne den Boss“ zur Seite, bleibt nach „Einfach vorbeigehen“ als Knochenhaufen liegen
 - [x] Personen in Events bekommen sichtbare Figuren: Ritter für den Mann an der Säule und die Kartenwachen, liegendes Skelett für den Grabräuber, Kobold als Goblin mit roter Haut, Goblin am Andenkenstand; Stand und Kobold-Kiste erscheinen als Event-Requisiten nur mit ihrem Event
+- [x] Abstieg: `treppe` gekürzt und zum Ende leiser; das Bild bleibt 2 Sekunden schwarz, das Geräusch endet mit der Aufblende, das Begrüßungs-Event geht erst danach auf
