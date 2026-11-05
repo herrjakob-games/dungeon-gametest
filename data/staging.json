@@ -1,5 +1,5 @@
 {
-  "_info": "Inszenierung der Event-Figuren (docs/GDD.md, Grafik und Animation, „Inszenierung der Figuren“): wo Figuren stehen, wohin sie blicken, welche Animation sie zeigen. Spielregeln, Texte und Ergebnisse stehen weiter in data/events.json. defaults: Standard ohne eigene Inszenierung; anchors: Anker an Requisiten (props, offset [x, y, z] in Kacheln gedreht wie das Requisit, face player|target|prop|random, animation idle|sit|sit_floor|lie|awaken, seat: sitzt auf dem Requisit, onProp: steht auf dem Requisit, world: Versatz ohne Drehung des Requisits, front: zuerst die Seite zur Kamera, flat: ohne Liege-Animation liegt die Figur starr auf dem Rücken statt zu stehen); figures: Modell-Varianten (variants, nach Raum-Seed), stays (bleibt nach dem Event stehen) und steps (eigene Schritte, Sound schritt_<steps>); events: eigene Inszenierung pro Event (figure, count, anchor, variant, stay: bleibt nach dem Event). Fehlt die Animation im Modell, steht die Figur mit idle neben dem Anker.",
+  "_info": "Inszenierung der Event-Figuren (docs/GDD.md, Grafik und Animation, „Inszenierung der Figuren“): wo Figuren stehen, wohin sie blicken, welche Animation sie zeigen. Spielregeln, Texte und Ergebnisse stehen weiter in data/events.json. defaults: Standard ohne eigene Inszenierung; anchors: Anker an Requisiten (props, offset [x, y, z] in Kacheln gedreht wie das Requisit, face player|target|prop|random, animation idle|sit|sit_floor|lie|awaken, seat: sitzt auf dem Requisit, onProp: steht auf dem Requisit, world: Versatz ohne Drehung des Requisits, front: zuerst die Seite zur Kamera, flat: ohne Liege-Animation liegt die Figur starr auf dem Rücken statt zu stehen); figures: Modell-Varianten (variants, nach Raum-Seed), stays (bleibt nach dem Event stehen) und steps (eigene Schritte, Sound schritt_<steps>); events: eigene Inszenierung pro Event (figure, count, anchor, variant, stay: bleibt nach dem Event). Fehlt die Animation im Modell, steht die Figur mit idle neben dem Anker. Eigene Inszenierung pro Event zusätzlich: hidden (Figuren erscheinen erst beim Kampfbeginn), ends (pro Ende: option, result success|failure bei Optionen mit Probe, do leave|step_aside|collapse; ohne Eintrag bleibt die Figur nach dem Event stehen); figures darf fehlen, dann gilt die Figurenliste des Events.",
   "defaults": {
     "place": "free",
     "face": "player",
@@ -226,7 +226,8 @@
           "figure": "skeleton",
           "anchor": "am_sarkophag"
         }
-      ]
+      ],
+      "hidden": true
     },
     "gruft_ruecken": {
       "figures": [
@@ -270,6 +271,13 @@
           "figure": "rat",
           "anchor": "im_mehlsack"
         }
+      ],
+      "ends": [
+        {
+          "option": "Mit Käse ablenken",
+          "result": "success",
+          "do": "leave"
+        }
       ]
     },
     "schatz_mimik": {
@@ -277,6 +285,17 @@
         {
           "figure": "mimic",
           "anchor": "mitten_im_raum"
+        }
+      ],
+      "ends": [
+        {
+          "option": "Zurücklächeln",
+          "result": "failure",
+          "do": "leave"
+        },
+        {
+          "option": "Langsam rückwärts gehen",
+          "do": "leave"
         }
       ]
     },
@@ -286,6 +305,18 @@
           "figure": "skeleton",
           "variant": "warrior",
           "anchor": "vor_der_treppe"
+        }
+      ],
+      "ends": [
+        {
+          "option": "»Ich kenne den Boss.«",
+          "result": "success",
+          "do": "step_aside"
+        },
+        {
+          "option": "Einfach vorbeigehen",
+          "result": "success",
+          "do": "collapse"
         }
       ]
     },
@@ -363,7 +394,27 @@
           "count": 3
         }
       ],
-      "procession": true
+      "procession": true,
+      "ends": [
+        {
+          "option": "Mitlaufen",
+          "do": "leave"
+        },
+        {
+          "option": "Vordrängeln",
+          "result": "success",
+          "do": "leave"
+        },
+        {
+          "option": "Vordrängeln",
+          "result": "failure",
+          "do": "leave"
+        },
+        {
+          "option": "Platz machen",
+          "do": "leave"
+        }
+      ]
     },
     "boss_skelettkoenig": {
       "figures": [
@@ -378,6 +429,56 @@
         {
           "figure": "skelettkoenig",
           "anchor": "auf_knochenthron"
+        }
+      ]
+    },
+    "kerker_zellentuer": {
+      "hidden": true,
+      "figures": [
+        {
+          "figure": "skelett_krieger",
+          "count": 1
+        }
+      ]
+    },
+    "gruft_familiengrab": {
+      "hidden": true,
+      "figures": [
+        {
+          "figure": "skelett_krieger",
+          "count": 3
+        }
+      ]
+    },
+    "kerker_mitgefangener": {
+      "ends": [
+        {
+          "option": "Das Schloss knacken",
+          "result": "success",
+          "do": "leave"
+        },
+        {
+          "option": "Die Kette aus der Wand reißen",
+          "result": "success",
+          "do": "leave"
+        }
+      ]
+    },
+    "kerker_schluesselgeist": {
+      "ends": [
+        {
+          "option": "Ihn zum Feierabend überreden",
+          "result": "success",
+          "do": "leave"
+        }
+      ]
+    },
+    "halle_skelettkrieger": {
+      "ends": [
+        {
+          "option": "Fliehen",
+          "result": "success",
+          "do": "leave"
         }
       ]
     }

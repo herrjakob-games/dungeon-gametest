@@ -29,6 +29,23 @@ function hash(seed, text) {
   return h;
 }
 
+// Enden der Inszenierung (ends): was eine Figur nach dem Event tut
+export const END_ACTIONS = ["leave", "step_aside", "collapse"];
+
+/**
+ * Was tun die Figuren eines Events, wenn es endet? choice: { option (Text der gewählten Option), result ("success",
+ * "failure" oder null ohne Probe) }. Ergebnis: "leave", "step_aside", "collapse" oder "stay" (Standard: bleibt am Platz).
+ */
+export function endFor(staging, eventId, choice) {
+  const e = ((staging || {}).events || {})[eventId];
+  if (!e || !e.ends || !choice) return "stay";
+  const hit = e.ends.find(x => x.option === choice.option && (x.result === undefined || x.result === choice.result));
+  return hit ? hit.do : "stay";
+}
+
+// Verborgen (hidden): Figuren erscheinen erst beim Kampfbeginn
+export const isHidden = (staging, eventId) => !!(((staging || {}).events || {})[eventId] || {}).hidden;
+
 /**
  * Figurenliste eines Events für planFigures.
  * Reihenfolge: eigene Inszenierung in staging.events, sonst das Feld figures des Events, sonst der Gegner aus dem
@@ -39,7 +56,7 @@ export function eventFigures(ev, staging, seed) {
   const st = staging || {};
   const own = (st.events || {})[ev.id];
   let list;
-  if (own) list = own.figures.map(f => Object.assign({}, f));
+  if (own && own.figures) list = own.figures.map(f => Object.assign({}, f)); // ohne figures gilt die Liste des Event
   else if (ev.figures) list = ev.figures.map(f => ({ figure: f.figure, count: f.count, place: f.place, stay: f.stay }));
   else {
     const m = combatMonsterOf(ev);
@@ -96,9 +113,23 @@ export function checkStaging(staging, data, props, err) {
   }
   for (const [id, e] of Object.entries(staging.events || {})) {
     if (e.procession !== undefined && typeof e.procession !== "boolean") err(w, id + ": procession muss true oder false sein");
+    if (e.hidden !== undefined && typeof e.hidden !== "boolean") err(w, id + ": hidden muss true oder false sein");
+    const ev = data.events[id];
+    if (!ev || e.ends === undefined) continue;
+    if (!Array.isArray(e.ends)) { err(w, id + ": ends muss eine Liste sein"); continue; }
+    e.ends.forEach(x => {
+      const o = (ev.options || []).find(op => op.label === x.option);
+      if (!o) { err(w, id + ": ends nennt die Option „" + x.option + "“, die es im Event nicht gibt"); return; }
+      if (!END_ACTIONS.includes(x.do)) err(w, id + ": ends „" + x.option + "“: do muss leave, step_aside oder collapse sein");
+      if (o.check && !["success", "failure"].includes(x.result)) err(w, id + ": ends „" + x.option + "“: die Option hat eine Probe, result muss success oder failure sein");
+      if (!o.check && x.result !== undefined) err(w, id + ": ends „" + x.option + "“: die Option hat keine Probe, result fällt weg");
+      const outcome = o.check ? o[x.result] : o;
+      if (outcome && combatMonsterOf({ options: [outcome] })) err(w, id + ": ends „" + x.option + "“ endet mit einem Kampf und gehört nicht in ends");
+    });
   }
   for (const [id, e] of Object.entries(staging.events || {})) {
     if (!data.events[id]) { err(w, "unbekanntes Event " + id); continue; }
+    if (e.figures === undefined) continue; // ohne figures gilt die Figurenliste des Events
     if (!Array.isArray(e.figures) || !e.figures.length) { err(w, id + ": figures muss eine Liste sein"); continue; }
     e.figures.forEach(f => {
       if (!isFigure(f.figure, data.monsters)) err(w, id + ": unbekannte Figur " + f.figure);

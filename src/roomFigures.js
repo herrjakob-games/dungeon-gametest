@@ -7,15 +7,16 @@ import { state, walkable } from "./state.js";
 import { scene } from "./scene.js";
 import { DATA } from "./data.js";
 import { mulberry32 } from "./rng.js";
-import { planFigures, combatSpot, figureInfo, processionRoute } from "./figurePlan.js";
-import { eventFigures } from "./staging.js";
+import { planFigures, combatSpot, figureInfo, processionRoute, stepAsideTile } from "./figurePlan.js";
+import { eventFigures, endFor, isHidden } from "./staging.js";
+import { STAIRS_FOOT, STAIRS_TILES } from "./decor.js";
 import { buildMonsterFigure } from "./monsterFigures.js";
 import { makeFigureModel, hasAnimation } from "./models.js";
 import { findPath } from "./pathfinding.js";
 import { moveTo } from "./movement.js";
 import { player, turnToward } from "./player.js";
-import { step } from "./sound.js";
-import { stepKind } from "./soundLogic.js";
+import { step, playFirst } from "./sound.js";
+import { stepKind, deathSounds } from "./soundLogic.js";
 const THREE = window.THREE;
 
 const group = new THREE.Group(); // eigene Gruppe: Figuren überleben den Neuaufbau des Raums (etwa nach dem Bosssieg)
@@ -121,8 +122,10 @@ export function syncRoom(id) {
  * (der Event-Ablauf wartet dann kurz, damit man sie sieht, bevor das Fenster aufgeht).
  */
 // opts.awayFrom [x, z] und opts.dist: Figuren stehen mindestens so viele Kacheln davon entfernt (Begegnungen: Eingangstür)
+// Verborgene Figuren (hidden) erscheinen erst beim Kampfbeginn (opts.reveal, aus combatFigure)
 export function showEventFigures(ev, opts) {
   if (!roomKey || alive().some(f => f.eventId === ev.id)) return 0;
+  if (isHidden(DATA.staging, ev.id) && !(opts && opts.reveal)) return 0;
   const room = state.dungeon.rooms[state.current];
   const list = eventFigures(ev, DATA.staging, room.seed);
   if (!list.length) return 0;
@@ -137,6 +140,8 @@ export function showEventFigures(ev, opts) {
   });
   const made = plan.map(pl => {
     const f = make(pl, ev.id, true);
+    // Aufgedeckt beim Kampfbeginn: erst die Animation des Ankers (Skelett steht auf), dann loslaufen
+    if (opts && opts.reveal) f.wait = f.anim && pl.anim === "awaken" ? f.anim.duration("awaken") : 0.4;
     if (pl.stay) saveStay(f);
     return f;
   });
@@ -175,7 +180,8 @@ function saveStay(f) {
   if (f.saved) return;
   const rs = roomState();
   f.stay = true;
-  f.saved = Object.assign({}, f.pl, { stay: true, rot: f.outer.rotation.y });
+  // Aufstehen (awaken) nur beim ersten Mal; danach steht die Figur einfach da
+  f.saved = Object.assign({}, f.pl, { stay: true, rot: f.outer.rotation.y }, f.pl.anim === "awaken" ? { anim: "idle" } : {});
   rs.stayFigures = (rs.stayFigures || []).concat([f.saved]);
 }
 
@@ -192,15 +198,64 @@ function doorExit(from) {
 }
 
 /**
- * Event zu Ende (friedlich oder nach einem Sieg): Figuren mit stay (data/staging.json, etwa Kröte und Händler) bleiben
- * an ihrem Platz, solange der Spieler auf dieser Ebene ist. Alle anderen gehen zur nächsten Tür und verschwinden.
+ * Event zu Ende (friedlich oder nach einem Sieg): Figuren bleiben an ihrem Platz, solange der Spieler auf dieser Ebene
+ * ist (wie stay). Ausnahmen stehen pro Ende in der Inszenierung (ends in data/staging.json): leave (zur nächsten Tür
+ * hinaus), step_aside (auf eine freie Nachbarkachel, die keinen Weg versperrt), collapse (fällt zusammen, bleibt liegen).
+ * choices: pro Event-id die gewählte Option { option, result }.
  */
-export function endEventFigures() {
+export function endEventFigures(choices) {
   if (!roomState()) return;
   alive().filter(f => !fighters.includes(f)).forEach(f => {
-    if (f.stay) { saveStay(f); return; }
-    leave(f);
+    const action = f.eventId ? endFor(DATA.staging, f.eventId, (choices || {})[f.eventId]) : "stay";
+    if (action === "leave") { forgetStay(f); leave(f); return; }
+    if (action === "collapse") { collapse(f); return; }
+    if (action === "step_aside") stepAside(f);
+    saveStay(f);
   });
+}
+
+// Ende collapse: Death ohne Kampf, Tod-Ton der Figur, bleibt wie ein Besiegter liegen (deadFigures) und blockiert nichts
+function collapse(f) {
+  forgetStay(f);
+  playFirst(deathSounds(f.id));
+  die(f);
+}
+
+// Ende step_aside: auf eine freie Nachbarkachel; Treppe und Türen bleiben frei, kein Weg wird versperrt
+function stepAside(f) {
+  if (f.tiles.length !== 1) return;
+  forgetStay(f);
+  unblock(f);
+  const others = new Set([...state.blocked]);
+  const t = stepAsideTile(f.tiles[0], {
+    blocked: others, edges: state.edges, doors: state.dungeon.rooms[state.current].doors, player: state.pTile,
+    stairsFoot: state.stairsFeature === "up" ? STAIRS_FOOT : null,
+    stairsTiles: state.stairsFeature === "down" ? STAIRS_TILES : null
+  });
+  const tile = t || f.tiles[0];
+  f.pose = null;
+  if (f.flat) layFlat(f, false);
+  walkTo(f, { tiles: [tile], cx: tile[0], cz: tile[1] });
+  f.tiles = [tile];
+  f.blocks = figureInfo(f.id).blocks;
+  if (f.blocks) state.blocked.add(key(...tile));
+  f.pl = Object.assign({}, f.pl, { tiles: [tile], cx: tile[0], cz: tile[1], y: 0, anim: "idle", blocks: f.blocks });
+}
+
+// Figur stirbt und bleibt liegen, auch beim erneuten Betreten (Raumzustand deadFigures)
+function die(f) {
+  const rs = roomState();
+  unblock(f);
+  f.stay = false;
+  f.fighting = false;
+  f.path = [];
+  f.procession = null;
+  if (f.ring) f.ring.visible = false;
+  f.dead = true;
+  if (f.anim) f.anim.once("death");
+  else f.dying = 0.5;
+  rs.deadFigures = (rs.deadFigures || []).concat([{ figure: f.id, variant: f.variant, tiles: f.tiles, cx: f.outer.position.x + MID,
+    cz: f.outer.position.z + MID, y: f.outer.position.y, rot: f.outer.rotation.y, blocks: false }]);
 }
 
 function leave(f) {
@@ -246,9 +301,11 @@ function addRing(f) {
  * Kampfstart: Alle Figuren dieses Gegners laufen mit Walk auf freie Nachbarkacheln der Spielfigur (im Bossraum
  * trifft man sich in der Raummitte). Gekämpft wird gegen einen Gegner; die Gruppe greift reihum an und stirbt gemeinsam.
  */
-export function combatFigure(monsterId) {
+export function combatFigure(monsterId, ev) {
   const room = state.dungeon.rooms[state.current];
   const boss = room.type === "boss";
+  // Verborgene Figuren des Events (hidden) erscheinen jetzt am Anker und laufen dann an
+  if (ev && isHidden(DATA.staging, ev.id)) showEventFigures(ev, { reveal: true });
   let list = alive().filter(f => f.id === monsterId);
   if (!list.length) {
     // Kein Event zeigt den Gegner (Testmodus, Boss ohne Event): er erscheint direkt neben der Spielfigur
@@ -314,19 +371,9 @@ export function attackCombatFigure() {
  * deadFigures). Figuren ohne Death-Animation kippen um.
  */
 export function killCombatFigure() {
-  const rs = roomState();
   fighters.forEach(f => {
-    unblock(f);
     forgetStay(f);
-    f.stay = false;
-    f.fighting = false;
-    f.path = [];
-    if (f.ring) f.ring.visible = false;
-    f.dead = true;
-    if (f.anim) f.anim.once("death");
-    else f.dying = 0.5;
-    rs.deadFigures = (rs.deadFigures || []).concat([{ figure: f.id, variant: f.variant, tiles: f.tiles, cx: f.outer.position.x + MID,
-      cz: f.outer.position.z + MID, y: f.outer.position.y, rot: f.outer.rotation.y, blocks: false }]);
+    die(f);
   });
   fighters = [];
   fighter = null;
@@ -365,13 +412,14 @@ export function updateFigures(dt, t) {
     }
     // Laufen; die Blickrichtung folgt dem Weg, im Stand schaut die Figur zur Spielfigur (Kampf) oder bleibt
     let want = f.rot;
+    if (f.wait > 0) f.wait -= dt; // erst die Animation des Ankers (etwa aufstehen), dann laufen
     if (f.procession && !f.path.length) {
       // Prozession: nächste Kachel des Rundwegs
       const pr = f.procession;
       pr.i = (pr.i + 1) % pr.world.length;
       f.path = [pr.world[pr.i]];
     }
-    if (f.path.length) {
+    if (f.path.length && !(f.wait > 0)) {
       const [x, y, z] = f.path[0];
       const p = f.outer.position;
       const dx = x - p.x, dz = z - p.z, dy = y - p.y;
@@ -393,7 +441,7 @@ export function updateFigures(dt, t) {
       f.outer.rotation.y += angleDiff(f.outer.rotation.y, want) * Math.min(1, dt * TURN);
     }
     if (f.anim && !f.frozen) {
-      if (!f.dead && !f.sink) f.anim.loop(f.path.length ? "walk" : (f.pose || "idle"));
+      if (!f.dead && !f.sink) f.anim.loop(f.path.length && !(f.wait > 0) ? "walk" : (f.pose || "idle"));
       f.anim.update(dt);
     }
     figureSteps(f, dt);

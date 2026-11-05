@@ -136,3 +136,76 @@ test("Prozession: Rundweg vor den Wänden, um Säulen herum, ohne gesperrte Kach
   }
   assert.equal(STAGING.events.halle_prozession.procession, true);
 });
+
+test("Nach dem Event: Figuren bleiben (Standard), Enden leave, step_aside und collapse aus ends", async () => {
+  const { endFor, END_ACTIONS } = await import("../src/staging.js");
+  assert.deepEqual(END_ACTIONS, ["leave", "step_aside", "collapse"]);
+  // Standard: ohne Eintrag bleibt die Figur
+  assert.equal(endFor(STAGING, "wache_goblin", { option: "Schleichen", result: "success" }), "stay");
+  assert.equal(endFor(STAGING, "exit_tuersteher", { option: "»Ich kenne den Boss.«", result: "failure" }), "stay", "Fehlschlag führt in den Kampf");
+  assert.equal(endFor(STAGING, "exit_tuersteher", null), "stay");
+  // Die drei Enden
+  assert.equal(endFor(STAGING, "exit_tuersteher", { option: "»Ich kenne den Boss.«", result: "success" }), "step_aside");
+  assert.equal(endFor(STAGING, "exit_tuersteher", { option: "Einfach vorbeigehen", result: "success" }), "collapse");
+  assert.equal(endFor(STAGING, "halle_prozession", { option: "Mitlaufen", result: null }), "leave");
+  assert.equal(endFor(STAGING, "schatz_mimik", { option: "Langsam rückwärts gehen", result: null }), "leave");
+  assert.equal(endFor(STAGING, "schatz_mimik", { option: "Zurücklächeln", result: "success" }), "stay");
+});
+
+test("Verborgene Figuren (hidden) und Inszenierung ohne figures", async () => {
+  const { isHidden } = await import("../src/staging.js");
+  ["gruft_sarkophag", "kerker_zellentuer", "gruft_familiengrab"].forEach(id => assert.ok(isHidden(STAGING, id), id));
+  assert.ok(!isHidden(STAGING, "exit_tuersteher"));
+  assert.deepEqual(eventFigures(DATA.events.kerker_zellentuer, STAGING, 1).map(f => [f.figure, f.count || 1]), [["skelett_krieger", 1]]);
+  assert.equal(eventFigures(DATA.events.gruft_familiengrab, STAGING, 1).reduce((n, f) => n + (f.count || 1), 0), 3);
+  // Inszenierung ohne figures: es gilt die Figurenliste des Events
+  const ev = DATA.events.kerker_mitgefangener;
+  assert.deepEqual(eventFigures(ev, { events: { [ev.id]: { ends: [] } } }, 1).map(f => f.figure), ev.figures.map(f => f.figure));
+});
+
+test("checkStaging prüft ends: Option, Ergebnis, Aktion, kein Ende mit Kampf", () => {
+  const errs = [];
+  const st = { events: {
+    exit_tuersteher: { ends: [
+      { option: "Gibt es nicht", do: "leave" },
+      { option: "»Ich kenne den Boss.«", do: "leave" },
+      { option: "»Ich kenne den Boss.«", result: "failure", do: "leave" },
+      { option: "Einfach vorbeigehen", result: "success", do: "tanzen" }
+    ] },
+    halle_prozession: { ends: [{ option: "Mitlaufen", result: "success", do: "leave" }] },
+    gruft_sarkophag: { hidden: "ja" }
+  } };
+  checkStaging(st, DATA, PROP_IDS, (w, t) => errs.push(t));
+  const has = (s) => assert.ok(errs.some(e => e.includes(s)), s + " fehlt in: " + errs.join(" / "));
+  has("„Gibt es nicht“, die es im Event nicht gibt");
+  has("result muss success oder failure sein");
+  has("endet mit einem Kampf");
+  has("do muss leave, step_aside oder collapse sein");
+  has("die Option hat keine Probe, result fällt weg");
+  has("hidden muss true oder false sein");
+  const ok = [];
+  checkStaging(STAGING, DATA, PROP_IDS, (w, t) => ok.push(t));
+  assert.deepEqual(ok, []);
+});
+
+test("Zur Seite treten: freie Nachbarkachel, Türen, Treppe und Wege bleiben frei", async () => {
+  const { stepAsideTile } = await import("../src/figurePlan.js");
+  const { STAIRS_FOOT, reachable } = await import("../src/decor.js");
+  for (const doors of [1, 5, 10, 15]) {
+    for (const from of [[1, 3], [4, 4], [4, 1], [7, 4]]) {
+      const ctx = { blocked: new Set(), doors, player: [4, 7], stairsTiles: STAIRS_TILES, edges: new Set() };
+      STAIRS_TILES.forEach(t => ctx.blocked.add(key(...t)));
+      const t = stepAsideTile(from, ctx);
+      assert.ok(t, "Platz neben " + from);
+      assert.equal(Math.max(Math.abs(t[0] - from[0]), Math.abs(t[1] - from[1])), 1, "Nachbarkachel");
+      const k = key(...t);
+      assert.ok(!doorTiles(doors).some(d => key(...d) === k), "nicht auf einer Tür");
+      assert.ok(!STAIRS_TILES.some(s => key(...s) === k), "nicht auf der Treppe");
+      const test = new Set(ctx.blocked); test.add(k);
+      assert.ok(reachable(test, doors, [STAIRS_TILES], [ctx.player], ctx.edges), "versperrt keinen Weg");
+    }
+  }
+  // Vorkammer: der Fuß der Treppe bleibt frei
+  const t = stepAsideTile([STAIRS_FOOT[0] + 1, STAIRS_FOOT[1]], { blocked: new Set(STAIRS_TILES.map(s => key(...s))), doors: 15, stairsFoot: STAIRS_FOOT });
+  assert.ok(t && key(...t) !== key(...STAIRS_FOOT));
+});
