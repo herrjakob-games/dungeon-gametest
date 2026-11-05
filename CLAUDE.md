@@ -99,6 +99,8 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/movement.js` | Laufbewegung entlang des Weges |
 | `src/events.js` | Event-Ablauf im Textfenster, Begegnungen (Kampf ohne Event), Proben-Zuschlag, Fundstücke, Stufenaufstieg, Tod, Truhe, Boss, Rastplatz, Abstieg |
 | `src/combatUI.js` | Kampf im Textfenster |
+| `src/combatHud.js` | Lebenspunkte über den Köpfen im Kampf, Schadens- und Heilzahlen; HTML über der 3D-Szene, unter dem Textfenster, Farben aus `--bad`/`--good` |
+| `src/combatNumbers.js` | Regeln dazu: Text aktuell/maximal, tatsächliche Änderung, Aufsteigen und Ausblenden, Plätze ohne Überdecken; rein logisch |
 | `src/checkUI.js` | Würfelzeile und Angebot der Volks-Fähigkeit |
 | `src/inventory.js` | Ausrüstungs- und Rucksack-Feld oben rechts |
 | `src/shopUI.js` | Händler im Textfenster |

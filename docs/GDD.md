@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.59 · Nov 5, 2026 · @Christian
+Version 2.60 · Nov 5, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.60 | 05.11.2026 | Kampf: Lebenspunkte über den Köpfen von Spielfigur und Gegner; Schaden als rote Minuszahl, Heilung als grüne Pluszahl, in den Farbwerten des Textfensters |
 | 2.59 | 05.11.2026 | Brunnenraum vereinheitlicht: eine feste Einrichtung mit Brunnen in der Raummitte und vier Säulen auf 2\|2, 8\|2, 2\|8 und 8\|8; Fackeln an den Säulen, keine Wanddekoration |
 | 2.58 | 05.11.2026 | Minimap: weiße Outline-Icons für Eingang, Abgang, Händler und Rastplatz (`mapIcon`, `mapIconWhen`), sobald der Raum besucht wurde |
 | 2.57 | 05.11.2026 | Abstieg: `treppe` gekürzt und zum Ende leiser, Bild beim Abstieg 2 Sekunden schwarz |
@@ -436,6 +437,9 @@ Figuren aus Events stehen sichtbar im Raum. Wo sie stehen, wohin sie blicken und
 - **Enden (`ends`):** Liste in einer Event-Inszenierung, pro Eintrag `option` (Text der Option), `result` (`success` oder `failure`, nur bei Optionen mit Probe) und `do`: `leave` (geht zur nächsten Tür und verschwindet), `step_aside` (tritt auf eine freie Nachbarkachel, die den Weg nicht versperrt, und bleibt dort), `collapse` (spielt Death ohne Kampf, bleibt wie ein Besiegter liegen und blockiert nichts). Ohne Eintrag bleibt die Figur. Eine Inszenierung darf `figures` weglassen, dann gilt die Figurenliste des Events.
 - **Drehungen:** weich über etwa 0,25 Sekunden, immer auf dem kürzeren Weg.
 - **Lesbarkeit:** Gegner mit rotem Akzent und im Kampf mit rotem Bodenring.
+- **Lebenspunkte im Kampf:** Vom Kampfbeginn bis zum Kampfende stehen über dem Kopf der Spielfigur und des Gegners die Lebenspunkte als Zahl (aktuell/maximal, etwa `8/14`). Die Anzeige folgt der Figur und richtet sich nach ihrer Modellhöhe, auch bei großen Figuren wie der Monsterratte. Bei einer Gruppe teilen sich alle Figuren einen Lebenspunkte-Wert, deshalb gibt es nur eine Anzeige: Sie steht über der Figur, die gerade dran ist, und wandert mit dem Zug weiter. Mit dem Tod der Figur, der Flucht oder dem Sieg verschwindet die Anzeige. Außerhalb von Kämpfen gibt es keine Anzeige.
+- **Schadens- und Heilzahlen:** Im Kampf erscheint jeder Schaden als rote Minuszahl (`-4`) und jede Heilung als grüne Pluszahl (`+5`) über der betroffenen Figur, gleichzeitig mit der Änderung der Lebenspunkte. Die Zahl steigt etwa 0,5 Kacheln auf und blendet in etwa 1 Sekunde aus. Bei einer Gruppe steht sie über der Figur, die den Treffer zeigt. Rot und Grün sind dieselben Farbwerte wie für Schaden und Heilung im Textfenster, die Schrift ist die des Textfensters. Das gilt auch für Schaden durch Schriftrollen und Heilung durch Tränke. Die Zahl nennt den tatsächlich verlorenen oder geheilten Wert; Heilung über das Maximum zählt nicht mit. Fehlschläge, Schild und Einfrieren zeigen keine Zahl. Zahlen, die kurz nacheinander erscheinen, überdecken sich nicht.
+- **Ebene der Anzeige:** Lebenspunkte und Zahlen gehören zur Text-UI und liegen als HTML über der 3D-Szene, aber unter dem Textfenster.
 - **Leistung:** höchstens 6 animierte Figuren pro Raum, weitere stehen still.
 
 ### Stilguide „Knetkeller“
@@ -469,6 +473,7 @@ Ein Dungeon wie aus warmem Ton geknetet: weiche, blockige Formen, gedeckte Erdt�
 **Farbregeln**
 
 - Gold nur für Wertvolles und Anklickbares, Gefahr-Rot nur für Gegner, Fallen und verschlossene Türen. Beide bleiben in allen Themen gleich.
+- Die Farben der Text-UI gehören nicht zu dieser Regel. Rote Schadenszahlen erscheinen deshalb auch über der Spielfigur.
 - Deko nutzt nie Akzentfarben.
 - Pro Thema wechseln Boden, Wand, Akzent, Fackel und Grundlicht. Technisch wechselt der Code dafür die Paletten-Textur (`assets/textures/<thema>/`).
 
@@ -933,3 +938,5 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Abstieg: `treppe` gekürzt und zum Ende leiser; das Bild bleibt 2 Sekunden schwarz, das Geräusch endet mit der Aufblende, das Begrüßungs-Event geht erst danach auf
 - [x] Minimap: weiße Outline-Icons für Eingang, Abgang, Händler und Rastplatz, sobald der Raum besucht wurde; im Bossraum erscheint der Abgang erst nach dem Sieg, vorher wird er nicht hervorgehoben; kein eigener Zustand für das erloschene Lagerfeuer
 - [x] Brunnenraum mit nur einer Einrichtung: Brunnen auf 5|5, Säulen auf 2|2, 8|2, 2|8 und 8|8, Fackeln an den Säulen zur Raummitte, keine Wanddekoration
+- [x] Kampf: Lebenspunkte über den Köpfen von Spielfigur und Gegner (aktuell/maximal); eine Gruppe hat eine gemeinsame Anzeige über der Figur, die gerade dran ist
+- [x] Kampf: Schaden als rote Minuszahl, Heilung als grüne Pluszahl über der Figur, in den Farbwerten und der Schrift des Textfensters; keine Zahl bei Fehlschlag, Schild und Einfrieren

@@ -14,6 +14,8 @@ import { rollHtml, maybeRescue, signShort } from "./checkUI.js";
 import { hitCombatFigure, attackCombatFigure, focusCombatFigure } from "./roomFigures.js";
 import { playerAction } from "./player.js";
 import { play, playFirst } from "./sound.js";
+import { showDelta } from "./combatHud.js";
+import { hpDelta } from "./combatNumbers.js";
 import { attackSound, monsterAttackSound, hitSounds } from "./soundLogic.js";
 
 let h = null; // { onWin(lines), onFlee(), onDeath(monster) }
@@ -62,7 +64,9 @@ function attack() {
     const lines = [];
     play(attackSound(weaponOf(state.player, DATA.items).sound, r.ok)); // ohne Waffe faust
     if (r.ok) {
+      const before = c.monster.hp;
       const n = hitMonster(state.player, DATA.items, c, Math.random);
+      showDelta("enemy", hpDelta(before, c.monster.hp, c.monster.maxHp));
       playFirst(hitSounds(c.monster.id));
       hitCombatFigure();
       lines.push('Treffer: <span class="good">−' + n + " LP</span> für " + c.monster.name);
@@ -87,7 +91,11 @@ function itemMenu() {
 function useItem(e) {
   const p = state.player;
   p.pack.splice(e.index, 1);
+  const m = state.combat.monster, hpBefore = p.hp, monsterBefore = m.hp;
   const res = useInCombat(p, e.item, state.combat, Math.random);
+  // Zahlen über den Köpfen: der tatsächlich geheilte oder verlorene Wert; Schild und Einfrieren zeigen keine Zahl
+  if (res.type === "heal") showDelta("player", hpDelta(hpBefore, p.hp, p.maxHp));
+  if (res.type === "damage") showDelta("enemy", hpDelta(monsterBefore, m.hp, m.maxHp));
   play(e.item.sound);
   if (res.type === "damage") { playFirst(hitSounds(state.combat.monster.id)); hitCombatFigure(); }
   renderInventory();
@@ -122,8 +130,10 @@ function afterPlayer(lines, roll) {
     return;
   }
   const p = state.player;
+  const hpBefore = p.hp;
   const t = monsterTurn(p, DATA.items, c, Math.random);
   if (!t.frozen) { attackCombatFigure(); play(monsterAttackSound(DATA.monsters[c.monster.id], t.hit)); }
+  if (t.hit) showDelta("player", hpDelta(hpBefore, p.hp, p.maxHp));
   if (t.hit) { playerAction("hit"); playFirst(hitSounds(p.volk)); }
   updateStats();
   const enemyRoll = t.frozen
