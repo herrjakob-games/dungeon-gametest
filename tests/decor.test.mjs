@@ -253,6 +253,29 @@ test("Wandrequisiten (Regale, Fahnen, Herd …) verdecken oder überlagern keine
   }
 });
 
+test("Brunnenraum: eine Variante, Brunnen auf 5|5, Säulen auf 2|2, 8|2, 2|8 und 8|8, Fackeln zur Raummitte", () => {
+  const rt = ROOM_TYPES.find(t => t.id === "brunnen");
+  const spec = decorFor(rt, "keller");
+  assert.equal(spec.layouts.length, 1);
+  assert.equal(spec.torches, "saeulen");
+  assert.deepEqual(torchSlots(0, spec), []);
+  for (let doors = 0; doors < 16; doors++) for (let s = 1; s <= 10; s++) {
+    const plan = planDecor(spec, { seed: s * 7919, doors });
+    const at = (id) => plan.placements.filter(p => p.prop === id).map(p => tileName(...p.tiles[0])).sort();
+    assert.deepEqual(at("brunnen"), ["5|5"], "Türen " + doors);
+    assert.deepEqual(at("saeule"), ["2|2", "2|8", "8|2", "8|8"], "Türen " + doors);
+    // nur Brunnen und Säulen blockieren, keine Wandrequisiten
+    assert.ok(plan.placements.every(p => ["brunnen", "saeule"].includes(p.prop) || !PROPS[p.prop].blocks), "Türen " + doors);
+    assert.ok(plan.placements.every(p => !PROPS[p.prop].wall && PROPS[p.prop].floor !== false), "Türen " + doors);
+    // jede Säule trägt eine Fackel, die zur Raummitte zeigt
+    assert.equal(plan.torchSpots.length, 4);
+    plan.torchSpots.forEach(t => {
+      assert.ok(Math.hypot(t.cx + t.dx - MID, t.cz + t.dz - MID) < Math.hypot(t.cx - MID, t.cz - MID), "Fackel zeigt zur Raummitte");
+      assert.ok(Math.abs(Math.abs(t.dx) - Math.abs(t.dz)) < 1e-9, "schräg zur Mitte");
+    });
+  }
+});
+
 test("Schatzkammer: Säulen immer auf 2|2, 8|2, 2|8 und 8|8, keine Fackeln an den Wänden", () => {
   const spec = decorFor(ROOM_TYPES.find(t => t.id === "schatz"), "keller");
   assert.equal(spec.torches, "saeulen");
