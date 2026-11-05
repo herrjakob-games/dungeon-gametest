@@ -111,7 +111,7 @@ test("Sitz-Anker: mit Sitz-Animation auf dem Hocker, ohne daneben stehend", () =
   const blocked = new Set(["4,3", "4,4", "4,5", "3,5"]);
   const ctx = { placements, blocked, doors: 15, player: [4, 8], rand: () => 0.3, anchors: STAGING.anchors };
   const sit = planFigures([{ figure: "skeleton", anchor: "am_tisch_sitzend" }], Object.assign({ canPose: () => true }, ctx))[0];
-  assert.deepEqual([sit.tiles, sit.seat, sit.anim], [[[3, 5]], true, "sit"]);
+  assert.deepEqual([sit.tiles, sit.seat, sit.anim, sit.seatY], [[[3, 5]], true, "sit", 0.25]);
   assert.ok(Math.abs(sit.rot - Math.atan2(4 - 3, 4 - 5)) < 1e-9, "Blick zum Tisch");
   const stand = planFigures([{ figure: "goblin", anchor: "am_tisch_sitzend" }], Object.assign({ canPose: () => false }, ctx))[0];
   assert.equal(stand.seat, false);

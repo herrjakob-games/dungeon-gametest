@@ -200,6 +200,11 @@
   "stuhl": {
     "file": "assets/props/stuhl.glb",
     "scale": 0.5,
+    "rotation": [
+      0,
+      90,
+      0
+    ],
     "palette": true
   },
   "waffenstaender": {

@@ -17,6 +17,7 @@
         "tafel"
       ],
       "seat": true,
+      "seatY": 0.25,
       "offset": [
         0,
         0,
@@ -95,6 +96,7 @@
         "hocker"
       ],
       "seat": true,
+      "seatY": 0.25,
       "offset": [
         0,
         0,

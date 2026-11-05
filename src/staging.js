@@ -105,6 +105,7 @@ export function checkStaging(staging, data, props, err) {
     if (!Array.isArray(a.props) || !a.props.length) err(w, "Anker " + id + ": props fehlt");
     else a.props.forEach(p => { if (!props.includes(p)) err(w, "Anker " + id + ": unbekannte Requisite " + p); });
     if (a.animation !== undefined && !POSES.includes(a.animation)) err(w, "Anker " + id + ": unbekannte Animation " + a.animation);
+    if (a.seatY !== undefined && !(Number.isFinite(a.seatY) && a.seatY >= 0)) err(w, "Anker " + id + ": seatY muss eine Höhe in Kacheln sein");
     if (a.offset !== undefined && !(Array.isArray(a.offset) && a.offset.length === 3 && a.offset.every(Number.isFinite))) err(w, "Anker " + id + ": offset muss [x, y, z] sein");
     if (a.flat !== undefined && typeof a.flat !== "boolean") err(w, "Anker " + id + ": flat muss true oder false sein");
     if (a.face !== undefined && !["player", "target", "prop", "random", "forward"].includes(a.face)) err(w, "Anker " + id + ": unbekannte Blickrichtung " + a.face);

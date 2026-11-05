@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.56 · Nov 5, 2026 · @Christian
+Version 2.57 · Nov 5, 2026 · @Christian
 
 ## Versionen
 
@@ -8,7 +8,8 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
-| 2.56 | 05.11.2026 | Abstieg: `treppe` gekürzt und zum Ende leiser, Bild beim Abstieg 2 Sekunden schwarz |
+| 2.57 | 05.11.2026 | Abstieg: `treppe` gekürzt und zum Ende leiser, Bild beim Abstieg 2 Sekunden schwarz |
+| 2.56 | 05.11.2026 | Sitzende Figuren sitzen auf der Sitzfläche von Hocker und Stuhl (`seatY` am Anker), statt im Möbel zu stecken; Stühle stehen mit der Lehne vom Tisch weg |
 | 2.55 | 05.11.2026 | Neue Figuren ohne Kampfwerte: Ritter (`knight`) und Kobold (`kobold`, Goblin-Modell mit roter Haut); Event-Requisiten (`props` in der Event-Inszenierung) erscheinen nur, wenn das Event auslöst; Figuren für `halle_saeule`, `wache_karten`, `gruft_grabraeuber`, `schatz_steuer` und `exit_souvenir` |
 | 2.54 | 05.11.2026 | Friedliche Figuren bleiben nach dem Event an ihrem Platz; wer geht, zur Seite tritt oder zusammenfällt, steht pro Ende in `data/staging.json` (`ends`); Figuren können bis zum Kampf verborgen sein (`hidden`) |
 | 2.53 | 05.11.2026 | Goblin auf das KayKit-Rig `Rig_Medium` gesetzt, mit Animationen aus KayKit Character Animations 1.1 (Idle, Laufen, Stich, Treffer, Tod, Interagieren, Sitzen, Liegen) |
@@ -421,7 +422,7 @@ Die Grafik besteht aus einem modularen Low-Poly-Baukasten auf dem Kachelraster, 
 Figuren aus Events stehen sichtbar im Raum. Wo sie stehen, wohin sie blicken und welche Animation sie zeigen, steht in `data/staging.json`, getrennt von den Events; Spielregeln, Texte und Ergebnisse ändert die Inszenierung nicht.
 
 - **Standard:** freie Kachel, Blick zur Spielfigur, Idle. Welche Figuren ein Event zeigt: zuerst eine eigene Inszenierung (`events`), sonst das Feld `figures` des Events, sonst der Gegner aus dem Kampf. Nennt das Event keine Anzahl, sind es 1 bis 3 Figuren nach Raum-Seed.
-- **Anker an Requisiten (`anchors`):** Requisiten-ids (`props`), Versatz in Kacheln (gedreht wie das Requisit, `world`: ungedreht), Blickrichtung (`player`, `target` = der Tisch zum Sitz, `prop`, `random`, `forward` = wie das Requisit, etwa vom Thron in den Raum), Animation (`idle`, `sit`, `sit_floor`, `lie`, `awaken`). `seat`: die Figur sitzt auf dem Hocker oder Stuhl, `onProp`: sie steht auf dem Requisit (Monsterratte auf dem Käseberg, Kröte auf dem Brunnenrand). Anker heute: am Tisch sitzend, auf dem Hocker schlafend, am Herd, am Sarkophag (Skelett steht auf), am Lagerfeuer, zwischen Knochen liegend, auf dem Käseberg, im Mehlsack, vor der Treppe, mitten im Raum, am Brunnen.
+- **Anker an Requisiten (`anchors`):** Requisiten-ids (`props`), Versatz in Kacheln (gedreht wie das Requisit, `world`: ungedreht), Blickrichtung (`player`, `target` = der Tisch zum Sitz, `prop`, `random`, `forward` = wie das Requisit, etwa vom Thron in den Raum), Animation (`idle`, `sit`, `sit_floor`, `lie`, `awaken`). `seat`: die Figur sitzt auf dem Hocker oder Stuhl (`seatY`: Höhe der Sitzfläche in Kacheln; die Hüfte liegt mittig darauf, die Beine hängen nach vorn), `onProp`: sie steht auf dem Requisit (Monsterratte auf dem Käseberg, Kröte auf dem Brunnenrand). Anker heute: am Tisch sitzend, auf dem Hocker schlafend, am Herd, am Sarkophag (Skelett steht auf), am Lagerfeuer, zwischen Knochen liegend, auf dem Käseberg, im Mehlsack, vor der Treppe, mitten im Raum, am Brunnen.
 - **Rückfall:** Fehlt die Requisite im Raum, steht die Figur auf einer freien Kachel, nie in Wänden, Türen oder auf Requisiten. Hat das Modell die Animation nicht (etwa der Goblin kein Sitzen), steht die Figur mit Idle neben dem Anker.
 - **Liegen ohne Animation:** Ein Anker mit `flat` legt eine Figur ohne Liege-Animation starr auf den Rücken, statt sie stehen zu lassen (heute keine Figur, seit der Goblin die Liege-Animation hat). `front` wählt zuerst die Kachel auf der Seite zur Kamera, damit das Requisit die Figur nicht verdeckt.
 - **Figuren (`figures`):** Modell-Varianten (Skelett: Minion, Warrior, Rogue, Mage; ohne Festlegung immer Minion; ein Event kann eine festlegen) und `stays` (bleibt nach dem Event stehen). Eine Event-Inszenierung kann `stay` auch für einzelne Figuren setzen. Eigene Skelett-Monster haben ihre eigene Figur, etwa der Skelettkrieger als Warrior.
