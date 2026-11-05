@@ -169,7 +169,7 @@
       "face": "prop",
       "animation": "lie",
       "flat": true,
-      "_": "Liegt flach neben dem Tisch, Füße zum Tisch; ohne Liege-Animation (Goblin) liegt die Figur starr auf dem Rücken",
+      "_": "Liegt neben dem Tisch, Füße zum Tisch; ohne Liege-Animation läge die Figur starr auf dem Rücken (flat)",
       "front": true
     },
     "auf_knochenthron": {

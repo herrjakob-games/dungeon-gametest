@@ -943,12 +943,22 @@
     },
     "goblin": {
       "source": "assets/source/goblin-lowpoly/",
-      "file": "Basic_Goblin.glb",
-      "animations": [],
+      "file": "Goblin_KayKit.glb",
+      "animations": [
+        "Idle_A",
+        "Walking_A",
+        "Melee_1H_Attack_Stab",
+        "Hit_A",
+        "Death_A",
+        "Interact",
+        "Sit_Chair_Idle",
+        "Sit_Floor_Idle",
+        "Lie_Idle"
+      ],
       "attach": [
         {
           "file": "Goblin_Rusty_Shiv.glb",
-          "bone": "hand.R"
+          "bone": "handslot.r"
         }
       ]
     },
