@@ -51,13 +51,20 @@ Quelle und Lizenz jeder fremden Datei (docs/GDD.md, Asset-Spezifikation).
 - Übernommene Dateien (in `source/quaternius-easy-enemies/`, aus `FBX/`): Rat.fbx, Frog.fbx
 - Daraus gebaut (`npm run build:assets`): `figures/rat.glb` (Riesenratte, Küchenchef, Monsterratte), `figures/kroete.glb`
 
+## KayKit Character Animations 1.1
+
+- Autor: Kay Lousberg (www.kaylousberg.com)
+- Lizenz: CC0 1.0, siehe `source/kaykit-character-animations/License.txt` (aus dem Paket)
+- Übernommene Dateien (in `source/kaykit-character-animations/`, aus `Animations/gltf/Rig_Medium/`): Rig_Medium_General.glb, Rig_Medium_MovementBasic.glb, Rig_Medium_CombatMelee.glb, Rig_Medium_Simulation.glb
+- Daraus gebaut (`tools/goblin-rig.py`): Rig und Animationen des Goblins in `source/goblin-lowpoly/Goblin_KayKit.glb`
+
 ## Goblin Lowpoly Assets (GoblinPack_Free)
 
 - Autor: standout7
 - Lizenz: CC0 1.0 (laut Download-Seite: „Goblin Pack Asset license: Creative Commons Zero v1.0 Universal“; das Paket enthält keine Lizenzdatei), siehe `source/goblin-lowpoly/LICENSE.txt`
 - Quelle: https://standout7.itch.io/goblin-lowpoly-assets
 - Übernommene Dateien (in `source/goblin-lowpoly/`, aus `GLB/`): Basic_Goblin.glb, Goblin_Rusty_Shiv.glb
-- Daraus gebaut (`npm run build:assets`): `figures/goblin.glb`
+- Daraus gebaut: `source/goblin-lowpoly/Goblin_KayKit.glb` (`tools/goblin-rig.py`, Goblin auf dem KayKit-Rig), daraus `figures/goblin.glb` (`npm run build:assets`)
 
 ## three.js GLTFLoader und SkeletonUtils (r128)
 

@@ -464,7 +464,18 @@
       0,
       -0.02,
       0
-    ]
+    ],
+    "animations": {
+      "idle": "Idle_A",
+      "walk": "Walking_A",
+      "attack": "Melee_1H_Attack_Stab",
+      "hit": "Hit_A",
+      "death": "Death_A",
+      "interact": "Interact",
+      "sit": "Sit_Chair_Idle",
+      "sit_floor": "Sit_Floor_Idle",
+      "lie": "Lie_Idle"
+    }
   },
   "skeleton_minion": {
     "file": "assets/figures/skeleton_minion.glb",
