@@ -63,6 +63,14 @@ function load(file) {
   return p;
 }
 
+// Dateien einer Sound-id vorab laden (etwa treppe im Raum mit der Treppe nach unten), damit sie beim Abspielen
+// sofort startet; ohne Audio-Kontext (vor dem ersten Klick) passiert nichts
+export function preload(id) {
+  const d = DEFS[id];
+  if (!ctx || !d || !d.files) return;
+  d.files.filter(f => !present || present.has(f)).forEach(load);
+}
+
 // Gibt es die Sound-id (mit mindestens einer möglichen Datei)?
 export function hasSound(id) {
   const d = DEFS[id];

@@ -30,19 +30,25 @@ const THREE = window.THREE;
 const fade = document.getElementById("fade");
 
 // ---------- Übergänge ----------
-function withFade(fn) {
+// opts.hold: so lange (ms) bleibt das Bild nach der Abblende schwarz, bevor fn läuft (Abstieg, entfällt bei reduceMotion);
+// opts.after: läuft nach der Aufblende (Begrüßungs-Event nach dem Abstieg). Die Eingabe bleibt die ganze Zeit gesperrt.
+function withFade(fn, opts) {
   state.transitioning = true;
   closeDialog();
   stopMoving();
   const wait = reduceMotion ? 0 : 300;
+  const hold = reduceMotion ? 0 : (opts && opts.hold) || 0;
   fade.style.opacity = "1";
   setTimeout(() => {
     fn();
     hoverMesh.visible = false;
     updateHud();
     fade.style.opacity = "0";
-    setTimeout(() => { state.transitioning = false; }, wait);
-  }, wait);
+    setTimeout(() => {
+      state.transitioning = false;
+      if (opts && opts.after) opts.after();
+    }, wait);
+  }, wait + hold);
 }
 
 // Kurze Abblende ohne Sperre und ohne das Textfenster zu schließen: ms abblenden, fn, ms aufblenden
@@ -57,7 +63,8 @@ function shortFade(fn, ms) {
   }, ms);
 }
 
-// Neuer Dungeon auf der aktuellen Ebene. quiet: ohne Begrüßungs-Event (Hintergrund der Volkswahl)
+// Neuer Dungeon auf der aktuellen Ebene. quiet: ohne Begrüßungs-Event (Hintergrund der Volkswahl; beim Abstieg startet
+// descend() es selbst nach der Aufblende)
 function startDungeon(dSeed, quiet) {
   state.dungeon = generate(dSeed, state.depth, { themes: DATA.themes, roomTypes: DATA.roomTypes });
   state.theme = themeFor(DATA.themes, state.depth);
@@ -87,11 +94,16 @@ function chooseCharacter() {
   });
 }
 
-// Abstieg über die Treppe: eine Ebene tiefer, Werte und Ausrüstung bleiben
+// Abstieg über die Treppe: eine Ebene tiefer, Werte und Ausrüstung bleiben (docs/GDD.md, Schritte): treppe beginnt mit
+// der Abblende, das Bild bleibt 2 Sekunden schwarz, das Geräusch endet mit der Aufblende; erst danach das Begrüßungs-Event
+const DESCEND_HOLD = 2000;
 function descend() {
   play("treppe");
   state.depth += 1;
-  withFade(() => startDungeon(randomSeed()));
+  withFade(() => startDungeon(randomSeed(), true), {
+    hold: DESCEND_HOLD,
+    after: () => { state.stats.rooms += 1; startRoomEvent(); }
+  });
 }
 
 initEvents({

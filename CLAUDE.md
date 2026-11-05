@@ -46,7 +46,7 @@ Die Liste aller Meilensteine steht im GDD.
 - Sounds: MP3s in `assets/sounds/` (Ordner laut GDD), Zuordnung in `data/sounds.json`. Nach dem Hinzufügen oder Entfernen von
   MP3s `npm run sounds` ausführen: Das schreibt `assets/sounds/files.json`, und das Spiel lädt nur Dateien aus dieser Liste.
   `npm test` listet fehlende MP3s auf (kein Fehler). Gelieferte Rohdateien liegen in `assets/source/sounds-freepik/`;
-  `python3 tools/sound-prepare.py` (braucht ffmpeg) schneidet Stille ab und teilt Schritt-Aufnahmen in einzelne Schritte.
+  `python3 tools/sound-prepare.py` (braucht ffmpeg) schneidet Stille ab, teilt Schritt-Aufnahmen in einzelne Schritte und schneidet feste Ausschnitte (`SECTION`, etwa `treppe`).
 - Lokal starten: `npm start` und dann http://localhost:8000 öffnen (Module brauchen einen Server).
 - Testmodus, lokal und auf GitHub Pages: `?event=<id>` startet das Event im ersten passenden Raum, `?room=<raumtyp-id>` betritt
   den ersten passenden Raum (Bossraum mit `&sieg=1` nach dem Sieg), `?grid=1` zeigt die Kachelnamen x|y, `?fight=<monster-id>` einen Kampf
@@ -66,7 +66,7 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/rng.js` | Seed-basierte Zufallszahlen und Würfel |
 | `src/state.js` | gemeinsamer Spielzustand |
 | `data/themes.json` | Themen: Name, Stufe, Proben-Zuschlag, Raumtypen, Nachbar des Starts, Monster, Boss, Regel-Ausnahmen (`overrides`), Palette (`palette`, `roomPalettes`, dort optional `brightness` für hellere Räume), Begegnungen (`encounters`), Bodenvarianten (`floorTiles`), Anteil der Risswände (`wandRiss`), Deckkraft beim Durchblick (`seeThroughOpacity`) |
-| `data/room-types.json` | Raumtypen: Name, Farben, Einrichtung als Daten (`decor`, `themeDecor`, dort `mimics` für Mimik-Truhen) oder altes Muster (`layout`), Bewertung und Bewertung pro Thema (`themeRating`), Lage- und Anzahlregeln (`themeLevel`: Ebene im Thema), Event-Chance, Event-Tabelle (`events`) und Tabellen pro Thema (`themeEvents`, ersetzen `events` im Thema), Bodenvarianten in der Einrichtung (`floorTiles`) |
+| `data/room-types.json` | Raumtypen: Name, Farben, Einrichtung als Daten (`decor`, `themeDecor`, dort `mimics` für Mimik-Truhen) oder altes Muster (`layout`), Bewertung und Bewertung pro Thema (`themeRating`), Lage- und Anzahlregeln (`themeLevel`: Ebene im Thema), Event-Chance, Event-Tabelle (`events`) und Tabellen pro Thema (`themeEvents`, ersetzen `events` im Thema), Bodenvarianten in der Einrichtung (`floorTiles`), Icon auf der Minimap (`mapIcon`, Bedingung `mapIconWhen`) |
 | `data/events.json` | alle Events (auch die Truhe), Figuren beim Event-Start (`figures`) |
 | `data/staging.json` | Inszenierung der Event-Figuren: Standard, Anker an Requisiten, Modell-Varianten und `stays`, eigene Inszenierung pro Event, Prozession (`procession`), verborgene Figuren bis zum Kampf (`hidden`), Abgänge pro Ende (`ends`: `leave`, `step_aside`, `collapse`), Event-Requisiten nur mit ihrem Event (`props`: `vor_figur`, `neben_figur`) |
 | `data/monsters.json` | Monster und Bosse mit Lebenspunkten, Rüstung, Angriff, Schaden, Satz zur Todesursache, Angriffsklang (`sound`) |
@@ -76,12 +76,12 @@ Die Liste aller Meilensteine steht im GDD.
 | `data/gegenstaende.csv` | Gegenstandsliste als Tabelle (Quelle für `items.json`) |
 | `data/texts.json` | Sätze zur Todesursache bei Events, eigene Sätze pro Event unter `death.events` |
 | `src/data.js` | lädt `data/*.json` und prüft die Daten |
-| `src/sound.js` | Sound über die Web Audio API: Kanäle, Raum-Stimmung mit Überblendung und Zufallsgeräuschen, Schritte, Dämpfen bei Events; fehlende Sounds bleiben still |
+| `src/sound.js` | Sound über die Web Audio API: Kanäle, Raum-Stimmung mit Überblendung und Zufallsgeräuschen, Schritte, Dämpfen bei Events, Vorladen (`preload`, etwa `treppe` im Raum mit der Treppe nach unten); fehlende Sounds bleiben still |
 | `src/soundLogic.js` | Sound-Regeln: Angriffsklang, Treffer und Tod, Raum-Sound (`themeSound` vor `sound`), Schritte, Datenprüfung; rein logisch |
 | `src/eventLogic.js` | Event-Regeln: Proben-Kategorien, Tabelle und Bewertung pro Thema (`inTheme`), Auswahl, Begegnungen (`pickEncounter`), Effekte, Beute, Bedingungen, Datenprüfung; rein logisch |
 | `src/character.js` | Figur: Volk, Inventar, Anlegen, Stufenaufstieg, Fähigkeit; rein logisch |
 | `src/combat.js` | Rundenkampf: Angriff, Gegnerzug, Verteidigen, Gegenstände, Flucht, Tiefe; rein logisch |
-| `src/roomTypes.js` | Raumtypen-Tabelle, befüllt aus `data/room-types.json` |
+| `src/roomTypes.js` | Raumtypen-Tabelle, befüllt aus `data/room-types.json`; Icon eines Raums auf der Minimap (`mapIconFor`) |
 | `src/decor.js` | Einrichtung als Daten: Requisiten-Größen, Platzierung (`center`, `wall-back`, `corner`, `free`, `around:`, `above:`, `tile:x|y`, `door-sides`), Fackeln an Säulen (`torches`) und ihre Anzahl (`torchCount`), Abstand zur Wand (`wallGap`), Freiraum (`clear`), Abstand zu Türen (`doorGap`), Bodenvarianten (`floorTiles`), Zellen im Kerker (`cells`, `planCells`) mit gesperrten Kanten (`edgeKey`, `stepOpen`), Treppenfläche und Startkachel, Erreichbarkeit, Datenprüfung; rein logisch |
 | `src/props.js` | Requisiten aus Grundformen (Platzhalter, wenn ein Modell fehlt) |
 | `src/stairs.js` | Treppen in der Nordwest-Ecke: KayKit `stairs` (`treppe_hoch`, `treppe_runter`), Loch mit Steinkante und kühlem Licht, Gitter im Bossraum, Verlauf zur Schattenfarbe; Rückfall aus Grundformen |
@@ -104,7 +104,7 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/shopUI.js` | Händler im Textfenster |
 | `src/screens.js` | Volkswahl und Endbildschirm |
 | `src/dialog.js` | Textfenster mit Optionen, Würfelergebnis und Effektzeilen |
-| `src/hud.js` | Infotafel (Werte der Figur) und Minimap |
+| `src/hud.js` | Infotafel (Werte der Figur) und Minimap (Canvas), Icons aus `assets/ui/karte_<id>.svg` als weiße Outlines |
 | `src/gridOverlay.js` | Testhilfe `?grid=1`: Kachelnamen x\|y auf dem Boden |
 | `src/main.js` | Ablauf, Raumwechsel, Schnellreise, Eingabe, Spielschleife, Testmodus |
 

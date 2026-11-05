@@ -63,6 +63,9 @@ GAIN = {"spiel/tuer_1.mp3": 20, "spiel/tuer_3.mp3": 6, "spiel/treppe.mp3": 4, "r
 # Höchstlänge in Sekunden nach dem Abschneiden der Stille (ein Schritt soll kurz sein)
 MAXLEN = {"schritte/trippeln_1.mp3": 0.6, "schritte/trippeln_2.mp3": 0.6, "schritte/trippeln_3.mp3": 0.6,
           "schritte/schweben_1.mp3": 1.2}
+# Ausschnitt nach dem Abschneiden der Stille: Start und Ende in Sekunden, Ausblenden am Ende (docs/GDD.md, Schritte):
+# der Abstieg (treppe) läuft mit Abblende, 2 Sekunden Schwarz und Aufblende und wird zum Ende hin leiser
+SECTION = {"spiel/treppe.mp3": (0.5, 3.1, 0.8)}
 STEPS = ["wood", "hall", "mud", "gravel", "stone"]
 LOOPS = ["raum/cozy_loop.mp3", "raum/kitchen_loop.mp3", "raum/spooky_loop.mp3", "raum/wet_loop.mp3", "raum/empty_loop.mp3",
          "raum/kerker_loop.mp3", "raum/schrein_loop.mp3"]
@@ -97,9 +100,9 @@ def parts(path, below_peak):
     return out
 
 
-def cut(src, dst, a, b, gain=0):
+def cut(src, dst, a, b, gain=0, fade=None):
     dst.parent.mkdir(parents=True, exist_ok=True)
-    fade = min(0.04, (b - a) / 4)
+    fade = fade or min(0.04, (b - a) / 4)
     af = "atrim=%.3f:%.3f,asetpts=PTS-STARTPTS,afade=t=in:d=0.005,afade=t=out:st=%.3f:d=%.3f" % (a, b, b - a - fade, fade)
     if gain:
         af += ",volume=%ddB" % gain
@@ -111,7 +114,11 @@ for s, d in EFFECTS.items():
     a, b = max(0, p[0][0] - 0.01), p[-1][1] + 0.05
     if s in MAXLEN:
         b = min(b, a + MAXLEN[s])
-    cut(SRC / s, OUT / d, a, min(b, duration(SRC / s)), GAIN.get(s, 0))
+    fade = None
+    if s in SECTION:
+        start, end, fade = SECTION[s]
+        a, b = a + start, a + end
+    cut(SRC / s, OUT / d, a, min(b, duration(SRC / s)), GAIN.get(s, 0), fade)
     print("%-34s %.2f bis %.2f s" % (d, a, b))
 
 for f in STEPS:

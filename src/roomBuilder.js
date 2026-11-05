@@ -15,7 +15,7 @@ import * as P from "./props.js";
 import { PROPS, planDecor, decorFor, centerFeature, STAIRS_TILES, STAIRS_SIZE, STAIRS_CENTER, torchSlots, pillarTorches, frontTorchLights, mimicChests, floorTilesFor, pickFloorTile, crackedWalls } from "./decor.js";
 import { syncRoom } from "./roomFigures.js";
 import { buildStairs, hasHole } from "./stairs.js";
-import { setMood } from "./sound.js";
+import { setMood, preload } from "./sound.js";
 import { roomSound } from "./soundLogic.js";
 import { addOccluder, resetOccluders } from "./seeThrough.js";
 const THREE = window.THREE;
@@ -69,6 +69,7 @@ export function buildRoom(id) {
   DIRKEYS.forEach(d => { if (room.doors & DIR[d].bit) makeDoor(d); });
   placeTorches(room, torch, spec, feature);
   if (feature) makeStairs(feature);
+  if (feature === "down") preload("treppe"); // Abstieg: das Geräusch startet sofort mit der Abblende
   state.decorPlan = null;
   if (spec) placeDecor(spec, room, feature, id, torch);
   else furnish(type.layout, id);
