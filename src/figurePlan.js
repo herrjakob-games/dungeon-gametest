@@ -134,7 +134,7 @@ export function planFigures(list, ctx) {
         if (seatsUsed.has(k) || used.has(k)) continue;
         seatsUsed.add(k);
         used.add(k);
-        return result([t.tiles[0]], t.tiles[0][0], t.tiles[0][1], 0, t, { blocks: false, seat: true });
+        return result([t.tiles[0]], t.tiles[0][0], t.tiles[0][1], 0, t, { blocks: false, seat: true, seatY: a.seatY || 0 });
       }
       // Kachel mit Versatz, gedreht wie das Requisit; sonst eine freie Kachel direkt daneben
       const first = t.foot ? t.tiles[0] : [Math.round(t.cx + off[0] * c + off[2] * sn), Math.round(t.cz - off[0] * sn + off[2] * c)];
