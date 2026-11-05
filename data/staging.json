@@ -1,5 +1,5 @@
 {
-  "_info": "Inszenierung der Event-Figuren (docs/GDD.md, Grafik und Animation, „Inszenierung der Figuren“): wo Figuren stehen, wohin sie blicken, welche Animation sie zeigen. Spielregeln, Texte und Ergebnisse stehen weiter in data/events.json. defaults: Standard ohne eigene Inszenierung; anchors: Anker an Requisiten (props, offset [x, y, z] in Kacheln gedreht wie das Requisit, face player|target|prop|random, animation idle|sit|sit_floor|lie|awaken, seat: sitzt auf dem Requisit, onProp: steht auf dem Requisit, world: Versatz ohne Drehung des Requisits, front: zuerst die Seite zur Kamera, flat: ohne Liege-Animation liegt die Figur starr auf dem Rücken statt zu stehen); figures: Modell-Varianten (variants, nach Raum-Seed), stays (bleibt nach dem Event stehen) und steps (eigene Schritte, Sound schritt_<steps>); events: eigene Inszenierung pro Event (figure, count, anchor, variant, stay: bleibt nach dem Event). Fehlt die Animation im Modell, steht die Figur mit idle neben dem Anker. Eigene Inszenierung pro Event zusätzlich: hidden (Figuren erscheinen erst beim Kampfbeginn), ends (pro Ende: option, result success|failure bei Optionen mit Probe, do leave|step_aside|collapse; ohne Eintrag bleibt die Figur nach dem Event stehen); figures darf fehlen, dann gilt die Figurenliste des Events.",
+  "_info": "Inszenierung der Event-Figuren (docs/GDD.md, Grafik und Animation, „Inszenierung der Figuren“): wo Figuren stehen, wohin sie blicken, welche Animation sie zeigen. Spielregeln, Texte und Ergebnisse stehen weiter in data/events.json. defaults: Standard ohne eigene Inszenierung; anchors: Anker an Requisiten (props, offset [x, y, z] in Kacheln gedreht wie das Requisit, face player|target|prop|random, animation idle|sit|sit_floor|lie|awaken, seat: sitzt auf dem Requisit, onProp: steht auf dem Requisit, world: Versatz ohne Drehung des Requisits, front: zuerst die Seite zur Kamera, flat: ohne Liege-Animation liegt die Figur starr auf dem Rücken statt zu stehen); figures: Modell-Varianten (variants, nach Raum-Seed), stays (bleibt nach dem Event stehen) und steps (eigene Schritte, Sound schritt_<steps>); events: eigene Inszenierung pro Event (figure, count, anchor, variant, stay: bleibt nach dem Event). Fehlt die Animation im Modell, steht die Figur mit idle neben dem Anker. Eigene Inszenierung pro Event zusätzlich: hidden (Figuren erscheinen erst beim Kampfbeginn), ends (pro Ende: option, result success|failure bei Optionen mit Probe, do leave|step_aside|collapse; ohne Eintrag bleibt die Figur nach dem Event stehen); figures darf fehlen, dann gilt die Figurenliste des Events. props: Event-Requisiten, die nur erscheinen, wenn das Event auslöst (prop: Requisiten-id, place vor_figur = Kachel in Blickrichtung der ersten Figur, neben_figur = Kachel seitlich von ihr; belegt oder im Weg: nächste freie Nachbarkachel); sie bleiben stehen, solange der Spieler auf dieser Ebene ist.",
   "defaults": {
     "place": "free",
     "face": "player",
@@ -185,6 +185,60 @@
       "animation": "sit",
       "onProp": true,
       "_": "Der Skelett-König sitzt auf seinem Thron und blickt in den Raum"
+    },
+    "an_der_saeule": {
+      "props": [
+        "saeule"
+      ],
+      "offset": [
+        1,
+        0,
+        0
+      ],
+      "face": "prop",
+      "animation": "idle",
+      "_": "Stemmt sich gegen die Säule"
+    },
+    "vor_sarkophag_liegend": {
+      "props": [
+        "sarkophag"
+      ],
+      "offset": [
+        1,
+        0,
+        0
+      ],
+      "face": "random",
+      "animation": "lie",
+      "_": "Toter Grabräuber vor der Grabnische, steht nicht auf"
+    },
+    "auf_goldhaufen": {
+      "props": [
+        "goldhaufen"
+      ],
+      "offset": [
+        0,
+        0.5,
+        0
+      ],
+      "onProp": true,
+      "world": true,
+      "face": "player",
+      "animation": "sit_floor",
+      "_": "Kobold sitzt auf dem Gold"
+    },
+    "am_andenkenstand": {
+      "props": [
+        "souvenirkiste"
+      ],
+      "offset": [
+        1,
+        0,
+        0
+      ],
+      "face": "player",
+      "animation": "idle",
+      "_": "Goblin an seinem Stand"
     }
   },
   "figures": {
@@ -479,6 +533,71 @@
           "option": "Fliehen",
           "result": "success",
           "do": "leave"
+        }
+      ]
+    },
+    "halle_saeule": {
+      "figures": [
+        {
+          "figure": "knight",
+          "anchor": "an_der_saeule"
+        }
+      ]
+    },
+    "wache_karten": {
+      "figures": [
+        {
+          "figure": "knight",
+          "count": 2,
+          "anchor": "am_tisch_sitzend"
+        }
+      ]
+    },
+    "gruft_grabraeuber": {
+      "figures": [
+        {
+          "figure": "skeleton",
+          "variant": "rogue",
+          "anchor": "vor_sarkophag_liegend"
+        }
+      ]
+    },
+    "schatz_steuer": {
+      "figures": [
+        {
+          "figure": "kobold",
+          "anchor": "auf_goldhaufen"
+        }
+      ],
+      "props": [
+        {
+          "prop": "kiste_klein_verziert",
+          "place": "neben_figur"
+        }
+      ],
+      "ends": [
+        {
+          "option": "Mit Paragrafen argumentieren",
+          "result": "success",
+          "do": "leave"
+        }
+      ]
+    },
+    "exit_souvenir": {
+      "figures": [
+        {
+          "figure": "goblin",
+          "anchor": "am_andenkenstand"
+        }
+      ],
+      "props": [
+        {
+          "prop": "tisch_klein",
+          "place": "vor_figur"
+        },
+        {
+          "prop": "kistenberg",
+          "place": "neben_figur"
         }
       ]
     }

@@ -15,7 +15,9 @@ export const FIGURE_INFO = {
   mimic: { size: 1, blocks: true, variants: [] },
   kuechenratte: { size: 1, blocks: true, variants: [] },
   monsterratte: { size: 2, blocks: true, variants: [] },
-  kroete: { size: 1, blocks: false, variants: [], noCombat: true } // Figur ohne Kampfwerte, Deko
+  kroete: { size: 1, blocks: false, variants: [], noCombat: true }, // Figur ohne Kampfwerte, Deko
+  knight: { size: 1, blocks: true, variants: [], noCombat: true },  // Ritter ohne Waffen (Säulenhalle, Kartenrunde)
+  kobold: { size: 1, blocks: true, variants: [], noCombat: true }   // Goblin-Modell mit roter Haut (Steuerprüfung)
 };
 const FALLBACK = { size: 1, blocks: true, variants: [] };
 
@@ -236,6 +238,58 @@ export function stepAsideTile(from, ctx) {
     if (reachable(test, ctx.doors, clickables, extra, ctx.edges)) return t;
   }
   return null;
+}
+
+/**
+ * Event-Requisiten (GDD, „Inszenierung der Figuren“, `props`): Kachel für jedes Requisit, bezogen auf die erste Figur.
+ * vor_figur: Kachel in ihrer Blickrichtung, neben_figur: Kachel seitlich von ihr (rechts, sonst links). Ist die Kachel
+ * belegt oder versperrt sie einen Weg, gilt die nächste freie Nachbarkachel (gerade Nachbarn zuerst, nahe an der Figur);
+ * passt keine, fehlt das Requisit.
+ * list: [{ prop, place }]; fig: { tiles, rot } (rot: Blickrichtung wie in planFigures, 0 = nach Süden, +z);
+ * ctx: { blocked (Set "x,z", mit Figuren), occupied (Set "x,z": Kacheln nicht blockierender Requisiten), edges, doors,
+ *        player, clickables, extra (wie reachable), reserved (Kacheln, die frei bleiben: Treppe, Startkachel),
+ *        blocks(prop) (steht das Requisit im Weg?) }
+ * Ergebnis: [{ prop, tile: [x, z], rot }]; rot: Blickrichtung der Figur auf 90° gerundet.
+ */
+export function placeEventProps(list, fig, ctx) {
+  if (!fig || !fig.tiles || !fig.tiles.length) return [];
+  const blocked = new Set(ctx.blocked || []);
+  const occupied = new Set(ctx.occupied || []);
+  const no = new Set(doorTiles(ctx.doors).map(t => key(...t)));
+  (ctx.reserved || []).forEach(t => no.add(key(...t)));
+  if (ctx.player) no.add(key(...ctx.player));
+  fig.tiles.forEach(t => no.add(key(...t)));
+  const clickables = ctx.clickables || [], extra = (ctx.extra || []).concat(ctx.player ? [ctx.player] : []);
+  const [fx, fz] = centerOf(fig.tiles);
+  // Blickrichtung auf eine der vier Achsen
+  const sx = Math.sin(fig.rot || 0), sz = Math.cos(fig.rot || 0);
+  const fwd = Math.abs(sx) > Math.abs(sz) ? [Math.sign(sx), 0] : [0, Math.sign(sz) || 1];
+  const rot = Math.atan2(fwd[0], fwd[1]);
+  const right = [-fwd[1], fwd[0]];
+  const base = fig.tiles[0];
+  const out = [];
+  for (const p of list) {
+    const firsts = p.place === "vor_figur"
+      ? [[base[0] + fwd[0], base[1] + fwd[1]]]
+      : [[base[0] + right[0], base[1] + right[1]], [base[0] - right[0], base[1] - right[1]]];
+    const near = (t) => N8.map(([dx, dz]) => [t[0] + dx, t[1] + dz])
+      .sort((a, b) => (Math.abs(a[0] - t[0]) + Math.abs(a[1] - t[1])) - (Math.abs(b[0] - t[0]) + Math.abs(b[1] - t[1])) ||
+        Math.hypot(a[0] - fx, a[1] - fz) - Math.hypot(b[0] - fx, b[1] - fz));
+    const cands = firsts.concat(near(firsts[0]));
+    const isBlocking = ctx.blocks ? ctx.blocks(p.prop) : true;
+    const tile = cands.find(t => {
+      const k = key(...t);
+      if (!inBounds(...t) || blocked.has(k) || occupied.has(k) || no.has(k)) return false;
+      if (!isBlocking) return true;
+      const test = new Set(blocked);
+      test.add(k);
+      return reachable(test, ctx.doors, clickables, extra, ctx.edges);
+    });
+    if (!tile) continue;
+    (isBlocking ? blocked : occupied).add(key(...tile));
+    out.push({ prop: p.prop, tile, rot });
+  }
+  return out;
 }
 
 /**

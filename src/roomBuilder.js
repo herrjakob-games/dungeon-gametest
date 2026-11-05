@@ -74,7 +74,21 @@ export function buildRoom(id) {
   else furnish(type.layout, id);
   scatterRubble(!!feature);
   refreshLocks();
+  (state.roomState[id].eventProps || []).forEach(p => placeEventProp(p)); // Event-Requisiten, die schon aufgestellt wurden
   syncRoom(id); // Figuren im Raum (roomFigures.js)
+}
+
+/**
+ * Event-Requisit aufstellen (GDD, „Inszenierung der Figuren“, `props`): p = { prop, tile: [x, z], rot }. Die Kachel
+ * plant placeEventProps in figurePlan.js; blockierende Requisiten kommen in state.blocked (Wegfindung, Kampf-Anlauf).
+ * popIn: wächst kurz auf (beim Event-Start), sonst steht es gleich da (erneutes Betreten).
+ */
+export function placeEventProp(p, popIn) {
+  const [x, z] = p.tile;
+  if (PROPS[p.prop] && PROPS[p.prop].blocks) block(x, z);
+  const o = at(propMesh(p.prop), x, z, p.rot);
+  if (popIn) o.scale.setScalar(0.01);
+  return o;
 }
 
 // Palette des Themas (data/themes.json), mit Abwandlung für einzelne Raumtypen (roomPalettes)

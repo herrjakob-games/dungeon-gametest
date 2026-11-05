@@ -43,6 +43,10 @@ export function endFor(staging, eventId, choice) {
   return hit ? hit.do : "stay";
 }
 
+// Event-Requisiten (props): erscheinen nur, wenn das Event auslöst; place bezieht sich auf die erste Figur des Events
+export const PROP_PLACES = ["vor_figur", "neben_figur"];
+export const eventProps = (staging, eventId) => ((((staging || {}).events || {})[eventId] || {}).props) || [];
+
 // Verborgen (hidden): Figuren erscheinen erst beim Kampfbeginn
 export const isHidden = (staging, eventId) => !!(((staging || {}).events || {})[eventId] || {}).hidden;
 
@@ -114,6 +118,13 @@ export function checkStaging(staging, data, props, err) {
   for (const [id, e] of Object.entries(staging.events || {})) {
     if (e.procession !== undefined && typeof e.procession !== "boolean") err(w, id + ": procession muss true oder false sein");
     if (e.hidden !== undefined && typeof e.hidden !== "boolean") err(w, id + ": hidden muss true oder false sein");
+    if (e.props !== undefined) {
+      if (!Array.isArray(e.props)) err(w, id + ": props muss eine Liste sein");
+      else e.props.forEach(x => {
+        if (!x || !props.includes(x.prop)) err(w, id + ": unbekannte Requisite " + (x && x.prop));
+        if (!x || !PROP_PLACES.includes(x.place)) err(w, id + ": props " + (x && x.prop) + ": place muss vor_figur oder neben_figur sein");
+      });
+    }
     const ev = data.events[id];
     if (!ev || e.ends === undefined) continue;
     if (!Array.isArray(e.ends)) { err(w, id + ": ends muss eine Liste sein"); continue; }

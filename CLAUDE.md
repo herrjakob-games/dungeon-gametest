@@ -26,7 +26,7 @@ Events der neuen Raumtypen sind Platzhalter (`"placeholder": true` bzw. Text „
 Content-Projekt ersetzt. Meilenstein 6a (echte Modelle für Umgebung und Requisiten des Kellers, Licht nach Stilguide)
 ist umgesetzt; was noch kein Modell hat, bleibt Platzhalter. Meilenstein 6b (Figuren und Animationen) läuft: Die Spielfiguren der drei Völker kommen aus KayKit Adventurers,
 Ratten, Küchenchef, Monsterratte und Kröte aus dem Easy Animated Enemy Pack (Quaternius), der Goblin aus Goblin Lowpoly
-Assets (auf das KayKit-Rig gesetzt, Animationen aus KayKit Character Animations 1.1), die Skelette aus KayKit Skeletons 1.0, Geist und Poltergeist aus KayKit Rogue (hellblau, durchscheinend).
+Assets (auf das KayKit-Rig gesetzt, Animationen aus KayKit Character Animations 1.1), die Skelette aus KayKit Skeletons 1.0, Geist und Poltergeist aus KayKit Rogue (hellblau, durchscheinend), der Ritter (`knight`) aus KayKit Knight ohne Waffen, der Kobold aus dem Goblin-Modell mit roter Haut.
 Die Katakomben haben echte Inhalte für Kerker und Schrein (Monster, Begegnungen, Events). Die Mimik ist noch Grundform. Wie Event-Figuren im Raum
 stehen und sich bewegen, regelt die Inszenierung in `data/staging.json`.
 Meilenstein 6c (Sound) ist gebaut: `data/sounds.json`, Modul `src/sound.js`; erste Sounds von Freepik sind eingebaut, was fehlt, bleibt still.
@@ -41,7 +41,7 @@ Die Liste aller Meilensteine steht im GDD.
   baut aus `tools/asset-recipes.json` die Dateien in `assets/tiles/`, `assets/props/` und `assets/figures/` (braucht einmal `npm install`; FBX wandelt das npm-Paket `fbx2gltf` um, `meshoptimizer` vereinfacht);
   das Spiel selbst braucht keinen Build-Schritt. Zuordnung in `data/models.json`. `tools/palette-texture.py` erzeugt
   die erste Fassung der Paletten-Textur, `tools/skeleton-texture.py` die Skelett-Textur,
-  `tools/merchant-texture.py` die Textur des Händlers, `tools/ghost-texture.py` die der Geister (Händler-Modell in Hellblau, Haut weiß, Haare grau), `tools/dwarf-texture.py` die des Zwergs (Haare in Bartfarbe), `tools/goblin-rig.py` setzt den Goblin auf das KayKit-Rig (braucht Blender als Python-Modul: `pip install bpy`; danach `npm run build:assets`).
+  `tools/merchant-texture.py` die Textur des Händlers, `tools/ghost-texture.py` die der Geister (Händler-Modell in Hellblau, Haut weiß, Haare grau), `tools/dwarf-texture.py` die des Zwergs (Haare in Bartfarbe), `tools/kobold-texture.py` die des Kobolds (Goblin-Textur mit roter Haut, nach `npm run build:assets`), `tools/goblin-rig.py` setzt den Goblin auf das KayKit-Rig (braucht Blender als Python-Modul: `pip install bpy`; danach `npm run build:assets`).
   Die Spiellogik besteht aus ES-Modulen in `src/`, Einstieg ist `src/main.js`.
 - Sounds: MP3s in `assets/sounds/` (Ordner laut GDD), Zuordnung in `data/sounds.json`. Nach dem Hinzufügen oder Entfernen von
   MP3s `npm run sounds` ausführen: Das schreibt `assets/sounds/files.json`, und das Spiel lädt nur Dateien aus dieser Liste.
@@ -68,7 +68,7 @@ Die Liste aller Meilensteine steht im GDD.
 | `data/themes.json` | Themen: Name, Stufe, Proben-Zuschlag, Raumtypen, Nachbar des Starts, Monster, Boss, Regel-Ausnahmen (`overrides`), Palette (`palette`, `roomPalettes`, dort optional `brightness` für hellere Räume), Begegnungen (`encounters`), Bodenvarianten (`floorTiles`), Anteil der Risswände (`wandRiss`), Deckkraft beim Durchblick (`seeThroughOpacity`) |
 | `data/room-types.json` | Raumtypen: Name, Farben, Einrichtung als Daten (`decor`, `themeDecor`, dort `mimics` für Mimik-Truhen) oder altes Muster (`layout`), Bewertung und Bewertung pro Thema (`themeRating`), Lage- und Anzahlregeln (`themeLevel`: Ebene im Thema), Event-Chance, Event-Tabelle (`events`) und Tabellen pro Thema (`themeEvents`, ersetzen `events` im Thema), Bodenvarianten in der Einrichtung (`floorTiles`) |
 | `data/events.json` | alle Events (auch die Truhe), Figuren beim Event-Start (`figures`) |
-| `data/staging.json` | Inszenierung der Event-Figuren: Standard, Anker an Requisiten, Modell-Varianten und `stays`, eigene Inszenierung pro Event, Prozession (`procession`), verborgene Figuren bis zum Kampf (`hidden`), Abgänge pro Ende (`ends`: `leave`, `step_aside`, `collapse`) |
+| `data/staging.json` | Inszenierung der Event-Figuren: Standard, Anker an Requisiten, Modell-Varianten und `stays`, eigene Inszenierung pro Event, Prozession (`procession`), verborgene Figuren bis zum Kampf (`hidden`), Abgänge pro Ende (`ends`: `leave`, `step_aside`, `collapse`), Event-Requisiten nur mit ihrem Event (`props`: `vor_figur`, `neben_figur`) |
 | `data/monsters.json` | Monster und Bosse mit Lebenspunkten, Rüstung, Angriff, Schaden, Satz zur Todesursache, Angriffsklang (`sound`) |
 | `data/sounds.json` | Sounds: pro Sound-id Dateien unter `assets/sounds/`, Lautstärke, `loopStart`/`loopEnd` |
 | `data/characters.json` | Völker: Attribute, Lebenspunkte, LP je Stufe, Fähigkeit, Startausrüstung, Modell |
@@ -89,11 +89,11 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/seeThrough.js` | Durchblick: Innenwände (Zellwände, auch Gitter mit ganzer Fläche) und Säulen werden im Kreis um eine verdeckte Spielfigur oder einen Gegner durchsichtig |
 | `src/outline.js` | goldene Umrisslinie für anklickbare Objekte beim Überfahren mit der Maus |
 | `data/models.json` | Zuordnung der Modelle: Datei, Maßstab, Drehung, Versatz, Einfärbung (`tint`), eine Farbe statt Textur (`color`), Lichtpunkte, Deckkraft (`opacity`, durchscheinende Figur), Animationen, Zubehör an Knochen (`accessories`) |
-| `src/figurePlan.js` | Figuren im Raum: Figurenliste (Größe, Varianten), Platzierung für `figures` (inkl. `near:`) und Anker der Inszenierung, Platz im Kampf, Datenprüfung; rein logisch |
+| `src/figurePlan.js` | Figuren im Raum: Figurenliste (Größe, Varianten), Platzierung für `figures` (inkl. `near:`) und Anker der Inszenierung, Platz im Kampf, Kacheln der Event-Requisiten (`placeEventProps`), Datenprüfung; rein logisch |
 | `src/monsterFigures.js` | Figuren der Monster und der Kröte aus Grundformen (Rückfall ohne Modell), Ersatzfigur für Monster ohne eigene Figur, Zubehör für Modelle (`ACCESSORIES`) |
-| `src/staging.js` | Inszenierung: welche Figuren ein Event zeigt (Anzahl, Variante, Anker), Datenprüfung; rein logisch |
-| `src/roomFigures.js` | Figuren im Raum: erscheinen an Ankern (verborgene erst beim Kampf), laufen im Kampf gemeinsam an, greifen reihum an, sterben und bleiben liegen, bleiben nach dem Event an ihrem Platz oder führen das Ende aus `ends` aus; höchstens 6 animiert |
-| `src/roomBuilder.js` | baut einen Raum als 3D-Szene: Boden, Wände, Türen, Fackeln, Treppe, Einrichtung (aus `decor.js` oder altes Muster) |
+| `src/staging.js` | Inszenierung: welche Figuren ein Event zeigt (Anzahl, Variante, Anker), Event-Requisiten (`eventProps`), Datenprüfung; rein logisch |
+| `src/roomFigures.js` | Figuren im Raum: erscheinen an Ankern (verborgene erst beim Kampf), laufen im Kampf gemeinsam an, greifen reihum an, sterben und bleiben liegen, bleiben nach dem Event an ihrem Platz oder führen das Ende aus `ends` aus; stellt die Event-Requisiten auf (`eventProps` im Raumzustand); höchstens 6 animiert |
+| `src/roomBuilder.js` | baut einen Raum als 3D-Szene: Boden, Wände, Türen, Fackeln, Treppe, Einrichtung (aus `decor.js` oder altes Muster), Event-Requisiten (`placeEventProp`, beim Betreten aus dem Raumzustand) |
 | `src/player.js` | Spielfigur, Platzierung; `setFigure(volk)` tauscht das Modell (KayKit-Figur oder Platzhalter), `animateFigure` wechselt Stehen und Laufen |
 | `src/figures.js` | Platzhalterfiguren der Völker aus Grundformen (Rückfall, wenn ein Modell fehlt) |
 | `src/movement.js` | Laufbewegung entlang des Weges |
