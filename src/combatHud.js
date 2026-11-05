@@ -19,6 +19,16 @@ const heights = new WeakMap();
 const box = new THREE.Box3(), v = new THREE.Vector3();
 const now = () => performance.now() / 1000;
 const HEAD = 0.2;  // Abstand über dem Kopf (Kacheln)
+let frozen = null;     // angehaltene Werte, solange ein Würfel rollt: { p, m }
+
+/**
+ * Während ein Schadens- oder Heilwurf rollt, zeigt die Anzeige die Lebenspunkte von vorher; mit holdHp(false) springt
+ * sie auf die neuen Werte, gleichzeitig mit der Zahl über der Figur (docs/GDD.md, Würfelanzeige, Ablauf).
+ */
+export function holdHp(on) {
+  const c = state.combat, p = state.player;
+  frozen = on && c && p ? { p: p.hp, m: c.monster.hp } : null;
+}
 
 // Höhe des Modells über seinem Fußpunkt (einmal pro Figur gemessen, auch für große Figuren wie die Monsterratte)
 function heightOf(obj) {
@@ -70,14 +80,16 @@ export function showDelta(target, d) {
 // Pro Frame: Lebenspunkte nur im Kampf; Zahlen laufen auch nach dem Kampfende aus (Sieg, Tod)
 export function updateCombatHud() {
   const c = state.combat, p = state.player;
-  if (c && p && p.hp > 0) {
-    playerLabel.textContent = hpText(p.hp, p.maxHp);
+  if (!c) frozen = null;
+  const php = frozen ? frozen.p : p && p.hp, mhp = frozen ? frozen.m : c && c.monster.hp;
+  if (c && p && php > 0) {
+    playerLabel.textContent = hpText(php, p.maxHp);
     place(playerLabel, player, 0);
   } else playerLabel.hidden = true;
-  const enemy = c && c.monster.hp > 0 ? combatFigureObject() : null;
+  const enemy = c && mhp > 0 ? combatFigureObject() : null;
   if (enemy) {
     lastEnemy = enemy;
-    enemyLabel.textContent = hpText(c.monster.hp, c.monster.maxHp);
+    enemyLabel.textContent = hpText(mhp, c.monster.maxHp);
     place(enemyLabel, enemy, 0);
   } else enemyLabel.hidden = true;
   const t = now();

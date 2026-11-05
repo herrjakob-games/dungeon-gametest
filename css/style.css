@@ -22,6 +22,8 @@ body { background: var(--bg); color: var(--fg); font-family: var(--body); font-s
 #stage canvas { display: block; width: 100%; height: 100%; cursor: pointer; }
 /* Lebenspunkte und Zahlen im Kampf (combatHud.js): über der 3D-Szene, unter Abblende, Infotafeln und Textfenster.
    Farben und Schrift wie im Textfenster: --bad für Schaden, --good für Heilung, --body */
+/* Würfelfeld (diceView.js): durchsichtig über dem Raum, unter Textfenster, Infotafel und Inventar; keine Klicks */
+#diceField { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 #combatHud { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
 .hp-label, .hp-number { position: absolute; left: 0; top: 0; font-family: var(--body); white-space: nowrap; will-change: transform; }
 .hp-label { font-size: 14px; font-weight: 700; color: var(--fg); background: var(--panel); border: 1px solid var(--line);

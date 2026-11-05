@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.60 · Nov 5, 2026 · @Christian
+Version 2.61 · Nov 5, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.61 | 05.11.2026 | Würfelanzeige: Spielerwürfe rollen als große 3D-Würfel auf einem unsichtbaren Würfelfeld über dem Raum; aufgezeichnete Physik, das Ergebnis legt der Regelcode fest; neue Sounds `wuerfel_rollen` und `wuerfel_landen` |
 | 2.60 | 05.11.2026 | Kampf: Lebenspunkte über den Köpfen von Spielfigur und Gegner; Schaden als rote Minuszahl, Heilung als grüne Pluszahl, in den Farbwerten des Textfensters |
 | 2.59 | 05.11.2026 | Brunnenraum vereinheitlicht: eine feste Einrichtung mit Brunnen in der Raummitte und vier Säulen auf 2\|2, 8\|2, 2\|8 und 8\|8; Fackeln an den Säulen, keine Wanddekoration |
 | 2.58 | 05.11.2026 | Minimap: weiße Outline-Icons für Eingang, Abgang, Händler und Rastplatz (`mapIcon`, `mapIconWhen`), sobald der Raum besucht wurde |
@@ -160,7 +161,7 @@ Der Spieler wählt vor dem ersten Dungeon ein Volk. Das Volk legt Attribute, Leb
 
 ### Proben, Kampf und Fortschritt
 
-- **Probe:** W20 + Attribut gegen Schwierigkeit. Leicht 8, mittel 12, schwer 16. Jede Probe nennt ihre Kategorie. Der Wurf wird im Textfenster angezeigt.
+- **Probe:** W20 + Attribut gegen Schwierigkeit. Leicht 8, mittel 12, schwer 16. Jede Probe nennt ihre Kategorie. Der Wurf rollt als 3D-Würfel (siehe Würfelanzeige) und steht danach im Textfenster.
 - **Lebenspunkte:** Startwert je nach Volk, Heilung höchstens bis zum Maximum. Bei 0 Lebenspunkten ist der Durchlauf vorbei, es folgt die Volkswahl und ein neuer Dungeon. Tränke und Rasten heilen.
 - **Ausrüstung:** Waffen, Rüstungen und Zauber-Schriftrollen können ein Mindestattribut und ein Volk verlangen. Wer eine Anforderung nicht erfüllt, kann den Gegenstand tragen, aber nicht anlegen oder benutzen. Die Werte stehen in `data/items.json` (siehe Tabelle unten).
 - **Volks-Anforderung:** In `data/items.json` als `"volk"` im Feld `req`, mit dem Wert `zwerg`, `elf` oder `mensch`, zum Beispiel `"req": { "kraft": 2, "volk": "zwerg" }`. Ohne `volk` darf jedes Volk den Gegenstand nutzen. Volks-Gegenstände sind für besondere Stücke gedacht; die Grundausrüstung bleibt für alle Völker offen.
@@ -420,6 +421,27 @@ Die Grafik besteht aus einem modularen Low-Poly-Baukasten auf dem Kachelraster, 
 - **Reihenfolge:** zuerst die Themenwelt Keller, dann die weiteren Themen. Meilenstein 6a bringt Umgebung und Requisiten, 6b Figuren und Animationen.
 - **Lizenzen:** Jede fremde Datei kommt mit Quelle und Lizenz in eine Credits-Liste im Repository.
 - **Durchblick:** Stehen Innenwände (Zellwände) oder Säulen zwischen Kamera und Spielfigur oder einem Gegner, werden sie nur an dieser Stelle durchsichtig: ein Kreis um die Figur auf dem Bildschirm, etwa 0,7 Kacheln Radius, mit weichem Rand. Darin hat das Objekt die Deckkraft `seeThroughOpacity` aus `data/themes.json` (Startwert 0,4), außerhalb bleibt es voll deckend. Der Übergang dauert etwa 0,2 Sekunden. Gilt nur, wenn das Objekt die Figur wirklich verdeckt. Gitterwände gehören dazu: Bei ihnen zählt die ganze Fläche als verdeckend, auch die Lücken zwischen den Stäben, und im Kreis werden Stäbe und Rahmen durchsichtig. Requisiten, Raumwände an Nord und West und friedliche Figuren lösen keinen Durchblick aus.
+
+### Würfelanzeige
+
+Spielerwürfe rollen als 3D-Würfel. Die Anzeige ändert keine Regel: Der Regelcode würfelt wie bisher mit `Math.random`, die Würfel landen auf diesem Ergebnis.
+
+- **Was gezeigt wird:** Proben in Events (W20), Angriff (W20), Flucht (W20), Waffenschaden nach einem Treffer und die Würfel von Verbrauchsgegenständen im Kampf und im Rucksack (Heilung, Schaden).
+- **Was Text bleibt:** Würfe der Gegner (Angriff und Schaden) sowie die Würfel aus Event-Effekten (`damage`, `heal`, `gold`, `loot`). Feste Zahlen ohne Würfel, etwa der Schaden ohne Waffe, rollen nicht.
+- **Boni:** Ein Würfel zeigt nur den Würfelwert. Boni wie bei `W10+2` und Attribute stehen in der Würfelzeile im Textfenster.
+- **Gedeckelte Werte:** Der Würfel zeigt den gewürfelten Wert, der Text die tatsächlich abgezogenen oder geheilten Lebenspunkte. Bleiben dem Gegner 3 LP, zeigt eine gewürfelte 6 also die 6, der Text „−3 LP“.
+- **Ablauf:** Option wählen, das Textfenster bleibt ohne Optionen stehen, die Würfel rollen und landen. Nach 0,4 Sekunden Haltezeit erscheint das Ergebnis im Textfenster. Bei einem Treffer folgt zuerst der Schadenswurf. Die Figur schlägt zu, wenn der W20 gelandet ist, und der Gegner reagiert, wenn der Schaden gelandet ist.
+- **Volks-Fähigkeit:** Das Angebot, eine misslungene Probe zu retten, erscheint nach der Landung. Der Würfel bleibt dabei auf dem gewürfelten Wert liegen.
+- **Überspringen:** Ein Klick in den Raum oder eine beliebige Taste setzt die Würfel sofort auf die Endlage. Mit `prefers-reduced-motion` liegen sie ohne Flug gleich dort.
+- **Würfelfeld:** Eine durchsichtige Ebene über dem ganzen Raum, ohne Hintergrund und ohne Rahmen. Die Würfel haben keinen Kontakt zu Figuren, Möbeln oder Wänden. Sie liegen über dem Raum und unter Textfenster, Infotafel und Inventar.
+- **Bewegung:** Die Würfel rollen von rechts herein und blenden dabei in den ersten 0,3 Sekunden ein. Sie bleiben in der Raummitte liegen. Bei der nächsten Auswahl oder beim Schließen des Textfensters blenden sie in 0,2 Sekunden aus. Folgt ein weiterer Wurf, blenden sie zuerst aus.
+- **Größe und Blick:** 200 Pixel pro Einheit, ein W20 ist also rund 200 Pixel groß; in schmalen Browserfenstern wird das kleiner (Breite durch 4). Die Kamera schaut mit 78° steiler als die Raumkamera, damit die obere Seite klar zur Kamera zeigt.
+- **Schatten:** Die Würfel werfen einen weichen Schatten auf die unsichtbare Ebene. Er liegt auch über Figuren und Möbeln. Würfelfeld und Licht sind eine eigene Szene und zählen nicht zu den höchstens zwei schattenwerfenden Lichtern des Raums.
+- **Mehrere Würfel:** Jeder Würfel fliegt einzeln und berührt die anderen nicht. Zwei Würfel liegen nebeneinander, vier als Quadrat, damit sie die Infotafel nicht berühren.
+- **Aussehen:** Würfelkörper aus Grundformen mit flacher Schattierung in `#F0E5D3`, Ziffern in `#2A2230`. Gold und Gefahr-Rot werden nicht benutzt. 6 und 9 sind unterstrichen. Der W10 zeigt 1 bis 10. Der W4 trägt drei Zahlen pro Seite, es gilt die Zahl an der oberen Spitze. Eine gewürfelte 20 oder 1 hat keine eigene Darstellung, weil es keine Regel für kritische Treffer gibt.
+- **Aufzeichnung:** Die Flugbahnen entstehen vorab mit einer Physik-Simulation (`tools/record-dice.mjs`, `npm run build:dice`) und liegen in `data/dice-rolls.json`. Das Spiel braucht zur Laufzeit keine Physik-Engine. Pro Würfelsatz gibt es 8 Aufnahmen, höchstens 1,8 Sekunden lang, das Spiel wählt eine zufällig.
+- **Ergebnis festlegen:** Alle Würfel sind symmetrisch. Der Würfel wird vor dem Abspielen in sich so gedreht, dass die Seite mit dem gewünschten Wert dort liegt, wo die Aufnahme oben endet. Die Flugbahn bleibt dabei gleich. Passen mehrere Drehungen, gilt die, bei der die Zahl am aufrechtesten liegt.
+- **Würfelsätze:** W20, W4, W6, W8, W10 und W12 einzeln, dazu 2W4, 4W4 und 4W6. `npm test` meldet einen Fehler, wenn eine Waffe oder ein Verbrauchsgegenstand einen Würfelsatz ohne Aufnahme nutzt. Fehlt im Spiel eine Aufnahme oder klappt WebGL nicht, bleibt es beim Text, ohne Fehlermeldung.
 
 ### Inszenierung der Figuren
 
@@ -764,6 +786,8 @@ Feste Sound-ids, die der Code an diesen Stellen spielt:
 | gold_zahlen | Kaufen beim Händler, `loseGold` |
 | stufe | Stufenaufstieg |
 | treppe | Figur erreicht die Treppe nach unten |
+| wuerfel_rollen | Würfel rollen herein |
+| wuerfel_landen | Die letzte Bewegung der Würfel endet |
 | treffer_<figur-id>, sonst treffer | Figur wird getroffen, zusammen mit dem Angriffsklang |
 | tod_<figur-id>, sonst tod | Figur stirbt; bei einer Gruppe einmal |
 | tod_<volk>, sonst tod_spieler, sonst tod | Spielfigur stirbt (im Kampf oder durch ein Event) |
@@ -940,3 +964,6 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Brunnenraum mit nur einer Einrichtung: Brunnen auf 5|5, Säulen auf 2|2, 8|2, 2|8 und 8|8, Fackeln an den Säulen zur Raummitte, keine Wanddekoration
 - [x] Kampf: Lebenspunkte über den Köpfen von Spielfigur und Gegner (aktuell/maximal); eine Gruppe hat eine gemeinsame Anzeige über der Figur, die gerade dran ist
 - [x] Kampf: Schaden als rote Minuszahl, Heilung als grüne Pluszahl über der Figur, in den Farbwerten und der Schrift des Textfensters; keine Zahl bei Fehlschlag, Schild und Einfrieren
+- [x] Spielerwürfe rollen als große 3D-Würfel auf einem unsichtbaren Würfelfeld über dem Raum: von rechts herein, leicht eingeblendet, Endlage in der Raummitte, weicher Schatten, kein Kontakt zu Figuren und Objekten; aufgezeichnete Physik, der Regelcode legt das Ergebnis fest
+- [x] Die Würfel bleiben bis zur nächsten Auswahl liegen
+- [x] Gegnerwürfe und Würfel aus Event-Effekten bleiben Text; keine eigene Darstellung für eine gewürfelte 20 oder 1

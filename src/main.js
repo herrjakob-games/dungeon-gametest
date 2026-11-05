@@ -12,6 +12,8 @@ import { initEvents, startRoomEvent, chestEvent, lockedDoorNote, startBoss, rest
 import { updateFigures, enemyObjects } from "./roomFigures.js";
 import { updateSeeThrough } from "./seeThrough.js";
 import { updateCombatHud } from "./combatHud.js";
+import { showRoll, isRolling } from "./diceView.js";
+import { rollKey, sidesOf } from "./diceLogic.js";
 import { showGrid } from "./gridOverlay.js";
 import { loadModels } from "./models.js";
 import { loadSounds, play, setDuck } from "./sound.js";
@@ -320,12 +322,14 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawMinima
 // ---------- Testmodus (lokal und auf GitHub Pages) ----------
 // ?event=<id> startet das Event im ersten passenden Raum, ?fight=<monster-id> einen Kampf in der Vorkammer,
 // ?room=<raumtyp-id> betritt den ersten passenden Raum ohne Event (im Bossraum mit &sieg=1 nach dem Sieg),
-// ?grid=1 zeigt die Kachelnamen x|y. Optional &volk=zwerg|elf|mensch.
+// ?grid=1 zeigt die Kachelnamen x|y, ?wurf=<satz> (etwa 4W6): Taste W würfelt diesen Satz in der Vorkammer mit
+// zufälligen Werten. Optional &volk=zwerg|elf|mensch.
 // Ergebnis: true, wenn der Testmodus übernommen hat.
 function devStart() {
   const q = new URLSearchParams(location.search);
-  const ev = q.get("event"), monster = q.get("fight"), room = q.get("room");
-  if (!ev && !monster && !room) return false;
+  const ev = q.get("event"), monster = q.get("fight"), room = q.get("room"), wurf = q.get("wurf");
+  if (!ev && !monster && !room && !wurf) return false;
+  if (wurf && !rollKey(wurf)) { console.error("Testmodus: unbekannter Würfelsatz " + wurf); return false; }
   if (ev && !DATA.events[ev]) { console.error("Testmodus: unbekanntes Event " + ev); return false; }
   if (monster && !DATA.monsters[monster]) { console.error("Testmodus: unbekanntes Monster " + monster); return false; }
   if (room && !DATA.roomTypes[room]) { console.error("Testmodus: unbekannter Raumtyp " + room); return false; }
@@ -334,7 +338,17 @@ function devStart() {
   state.stats = { rooms: 0 };
   setFigure(def.model);
   renderInventory();
-  if (monster) {
+  if (wurf) {
+    state.depth = 1;
+    startDungeon(randomSeed(), true);
+    const key = rollKey(wurf), count = parseInt(key.split("x")[1], 10), sides = sidesOf(key);
+    console.info("Testmodus: Taste W würfelt " + wurf);
+    window.addEventListener("keydown", (e) => {
+      if (e.key !== "w" && e.key !== "W") return;
+      if (isRolling()) return;
+      showRoll(wurf, Array.from({ length: count }, () => 1 + Math.floor(Math.random() * sides)));
+    });
+  } else if (monster) {
     state.depth = 1;
     startDungeon(randomSeed(), true);
     startFight(monster);

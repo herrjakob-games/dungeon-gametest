@@ -43,6 +43,8 @@ Die Liste aller Meilensteine steht im GDD.
   die erste Fassung der Paletten-Textur, `tools/skeleton-texture.py` die Skelett-Textur,
   `tools/merchant-texture.py` die Textur des Händlers, `tools/ghost-texture.py` die der Geister (Händler-Modell in Hellblau, Haut weiß, Haare grau), `tools/dwarf-texture.py` die des Zwergs (Haare in Bartfarbe), `tools/kobold-texture.py` die des Kobolds (Goblin-Textur mit roter Haut, nach `npm run build:assets`), `tools/goblin-rig.py` setzt den Goblin auf das KayKit-Rig (braucht Blender als Python-Modul: `pip install bpy`; danach `npm run build:assets`).
   Die Spiellogik besteht aus ES-Modulen in `src/`, Einstieg ist `src/main.js`.
+- Würfelanzeige: `npm run build:dice` nimmt mit `tools/record-dice.mjs` die Flugbahnen auf (Physik mit dem npm-Paket `cannon-es`,
+  nur beim Aufnehmen, fester Seed) und schreibt `data/dice-rolls.json`; das Spiel spielt sie ohne Physik ab.
 - Sounds: MP3s in `assets/sounds/` (Ordner laut GDD), Zuordnung in `data/sounds.json`. Nach dem Hinzufügen oder Entfernen von
   MP3s `npm run sounds` ausführen: Das schreibt `assets/sounds/files.json`, und das Spiel lädt nur Dateien aus dieser Liste.
   `npm test` listet fehlende MP3s auf (kein Fehler). Gelieferte Rohdateien liegen in `assets/source/sounds-freepik/`;
@@ -50,7 +52,7 @@ Die Liste aller Meilensteine steht im GDD.
 - Lokal starten: `npm start` und dann http://localhost:8000 öffnen (Module brauchen einen Server).
 - Testmodus, lokal und auf GitHub Pages: `?event=<id>` startet das Event im ersten passenden Raum, `?room=<raumtyp-id>` betritt
   den ersten passenden Raum (Bossraum mit `&sieg=1` nach dem Sieg), `?grid=1` zeigt die Kachelnamen x|y, `?fight=<monster-id>` einen Kampf
-  in der Vorkammer, optional `&volk=zwerg|elf|mensch`.
+  in der Vorkammer, `?wurf=<satz>` (etwa `?wurf=4W6`): Taste W würfelt diesen Satz in der Vorkammer mit zufälligen Werten, optional `&volk=zwerg|elf|mensch`.
 - Tests: `npm test` (Node, ohne Abhängigkeiten). Reine Logik wie Generator und Wegfindung bleibt
   frei von Three.js, damit sie testbar ist. Für neue Logik passende Tests in `tests/` ergänzen.
 
@@ -102,10 +104,13 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/combatHud.js` | Lebenspunkte über den Köpfen im Kampf, Schadens- und Heilzahlen; HTML über der 3D-Szene, unter dem Textfenster, Farben aus `--bad`/`--good` |
 | `src/combatNumbers.js` | Regeln dazu: Text aktuell/maximal, tatsächliche Änderung, Aufsteigen und Ausblenden, Plätze ohne Überdecken; rein logisch |
 | `src/checkUI.js` | Würfelzeile und Angebot der Volks-Fähigkeit |
+| `src/diceLogic.js` | Würfelanzeige, rein logisch: Körper der Würfel, Werte der Seiten, Symmetrie-Drehungen, Drehung für einen Zielwert, `rollKey` (etwa `"W4x2"`), Datenprüfung |
+| `src/diceView.js` | Würfelanzeige: eigener Renderer über dem Raum (`#diceField`), spielt Aufnahmen aus `data/dice-rolls.json` ab, `showRoll(spec, values)`, Überspringen per Klick oder Taste |
+| `data/dice-rolls.json` | Aufnahmen der Würfelwürfe, erzeugt mit `npm run build:dice` |
 | `src/inventory.js` | Ausrüstungs- und Rucksack-Feld oben rechts |
 | `src/shopUI.js` | Händler im Textfenster |
 | `src/screens.js` | Volkswahl und Endbildschirm |
-| `src/dialog.js` | Textfenster mit Optionen, Würfelergebnis und Effektzeilen |
+| `src/dialog.js` | Textfenster mit Optionen, Würfelergebnis und Effektzeilen; während eines Würfelwurfs ohne Optionen (`holdDialog`) |
 | `src/hud.js` | Infotafel (Werte der Figur) und Minimap (Canvas), Icons aus `assets/ui/karte_<id>.svg` als weiße Outlines |
 | `src/gridOverlay.js` | Testhilfe `?grid=1`: Kachelnamen x\|y auf dem Boden |
 | `src/main.js` | Ablauf, Raumwechsel, Schnellreise, Eingabe, Spielschleife, Testmodus |

@@ -25,7 +25,7 @@ export function maybeRescue(title, r, against, decide) {
   if (r.ok || !canUseAbility(state.player, r.attr)) { decide(); return; }
   const a = state.player.ability;
   showDialog(title, "Misslungen! " + a.name + " kann das retten: Die Probe gilt dann als bestanden. Das geht nur einmal pro Dungeon.", [
-    { label: a.name + " einsetzen", pick: () => { r.ok = true; r.rescued = true; state.player.abilityUsed = true; updateStats(); decide(); } },
-    { label: "Nicht einsetzen", pick: decide }
+    { label: a.name + " einsetzen", keepDice: true, pick: () => { r.ok = true; r.rescued = true; state.player.abilityUsed = true; updateStats(); decide(); } },
+    { label: "Nicht einsetzen", keepDice: true, pick: decide }
   ], { roll: rollHtml(r, against), modal: true });
 }

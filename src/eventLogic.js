@@ -49,12 +49,21 @@ export const isDice = (spec) => (typeof spec === "number" && spec >= 0) || (type
 
 // "2W6", "W4", "W6+1" oder eine feste Zahl
 export function rollDice(spec, rand) {
-  if (typeof spec === "number") return spec;
+  return rollDiceDetail(spec, rand).total;
+}
+
+/**
+ * Wie rollDice, mit den Einzelwerten für die Würfelanzeige (docs/GDD.md, Würfelanzeige): { values, mod, total }.
+ * Gleicher Verbrauch an Zufallszahlen wie rollDice. Feste Zahlen haben keine Würfel (values leer).
+ */
+export function rollDiceDetail(spec, rand) {
+  if (typeof spec === "number") return { values: [], mod: spec, total: spec };
   const m = DICE.exec(spec);
   const count = m[1] ? parseInt(m[1], 10) : 1, sides = parseInt(m[2], 10);
-  let sum = m[3] ? parseInt(m[3], 10) : 0;
-  for (let i = 0; i < count; i++) sum += 1 + Math.floor(rand() * sides);
-  return Math.max(0, sum);
+  const mod = m[3] ? parseInt(m[3], 10) : 0;
+  const values = [];
+  for (let i = 0; i < count; i++) values.push(1 + Math.floor(rand() * sides));
+  return { values, mod, total: Math.max(0, values.reduce((s, v) => s + v, mod)) };
 }
 
 // Probe: W20 + Attribut gegen Schwierigkeit. Das Attribut ergibt sich aus der Kategorie,
