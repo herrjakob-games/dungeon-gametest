@@ -167,13 +167,7 @@ export function drawMinimap() {
     // Icon nur bei besuchten Räumen; über der Markierung des aktuellen Raums, ohne eigene Klickfläche
     const id = visited.has(k) ? mapIconFor(TYPES[r.type], state.roomState[k]) : null;
     const paths = id && icon(id);
-    if (paths) drawIcon(paths, cx, cz, size);
-    else if (seen && k === dungeon.exit && dungeon.boss && !(state.roomState[k] || {}).bossDefeated) {
-      // Bossraum vor dem Sieg: weiter mit B markiert
-      mctx.fillStyle = k === current ? css("--bg") : css("--exit");
-      mctx.font = "700 " + Math.round(size * 0.55) + "px " + css("--body");
-      mctx.fillText("B", cx, cz + 1);
-    }
+    if (paths) drawIcon(paths, cx, cz, size); // der Bossraum hat vor dem Sieg keine eigene Markierung
   });
 }
 
