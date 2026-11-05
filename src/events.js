@@ -20,6 +20,8 @@ import { deathSounds, playerDeathSounds } from "./soundLogic.js";
 const FIGURE_DELAY = 700; // ms zwischen dem Erscheinen der Figuren und dem Event-Fenster
 
 let hooks = { onDeath: () => {}, onRetreat: () => {}, onBossDefeated: () => {}, onRested: () => {} };
+// Gewählte Option pro Event (für die Enden der Inszenierung, ends in data/staging.json): { option, result }
+let choices = {};
 export function initEvents(h) { hooks = h; }
 
 function lineHtml(l) {
@@ -85,10 +87,13 @@ export function runEvent(id, onOutcome) {
 }
 
 function choose(ev, option, onOutcome) {
-  if (!option.check) { resolve(ev, option, null, onOutcome); return; }
+  if (!option.check) { choices[ev.id] = { option: option.label, result: null }; resolve(ev, option, null, onOutcome); return; }
   const r = doCheck(state.player, { category: option.check.category, dc: option.check.dc + dcBonus() }, Math.random);
   const against = dcText(option.check.dc);
-  maybeRescue(ev.title, r, against, () => resolve(ev, r.ok ? option.success : option.failure, rollHtml(r, against), onOutcome));
+  maybeRescue(ev.title, r, against, () => {
+    choices[ev.id] = { option: option.label, result: r.ok ? "success" : "failure" };
+    resolve(ev, r.ok ? option.success : option.failure, rollHtml(r, against), onOutcome);
+  });
 }
 
 function resolve(ev, outcome, roll, onOutcome) {
@@ -133,7 +138,7 @@ function fight(ev, outcome, combat, onOutcome) {
   // Kampf gegen den Boss der Ebene im Bossraum: Die Siegbeute vergibt der Code, nicht das Event
   const rs = state.roomState[state.current];
   const isBoss = state.dungeon.rooms[state.current].type === "boss" && combat.monster === state.dungeon.boss;
-  combatFigure(combat.monster); // der Gegner steht neben der Spielfigur, im Bossraum in der Mitte
+  combatFigure(combat.monster, ev); // der Gegner steht neben der Spielfigur, im Bossraum in der Mitte; verborgene erscheinen jetzt
   runCombat(combat.monster, {
     onWin: (lines, roll) => {
       playFirst(deathSounds(combat.monster)); // bei einer Gruppe einmal
@@ -148,6 +153,7 @@ function fight(ev, outcome, combat, onOutcome) {
       show(ev, { text, next: outcome.next }, res, roll, onOutcome, lines);
     },
     onFlee: () => {
+      choices = {}; // nach einer Flucht wird nichts gespeichert
       state.eventActive = false;
       closeDialog();
       hooks.onRetreat();
@@ -173,7 +179,8 @@ function pickUp(list, done) {
 
 function finish() {
   state.eventActive = false;
-  endEventFigures();
+  endEventFigures(choices); // Figuren bleiben, außer die Inszenierung nennt für das Ende etwas anderes (ends)
+  choices = {};
   closeDialog();
   const opened = releaseIfTrapped(roomCtx());
   if (opened) refreshLocks();

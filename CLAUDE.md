@@ -68,7 +68,7 @@ Die Liste aller Meilensteine steht im GDD.
 | `data/themes.json` | Themen: Name, Stufe, Proben-Zuschlag, Raumtypen, Nachbar des Starts, Monster, Boss, Regel-Ausnahmen (`overrides`), Palette (`palette`, `roomPalettes`, dort optional `brightness` für hellere Räume), Begegnungen (`encounters`), Bodenvarianten (`floorTiles`), Anteil der Risswände (`wandRiss`), Deckkraft beim Durchblick (`seeThroughOpacity`) |
 | `data/room-types.json` | Raumtypen: Name, Farben, Einrichtung als Daten (`decor`, `themeDecor`, dort `mimics` für Mimik-Truhen) oder altes Muster (`layout`), Bewertung und Bewertung pro Thema (`themeRating`), Lage- und Anzahlregeln (`themeLevel`: Ebene im Thema), Event-Chance, Event-Tabelle (`events`) und Tabellen pro Thema (`themeEvents`, ersetzen `events` im Thema), Bodenvarianten in der Einrichtung (`floorTiles`) |
 | `data/events.json` | alle Events (auch die Truhe), Figuren beim Event-Start (`figures`) |
-| `data/staging.json` | Inszenierung der Event-Figuren: Standard, Anker an Requisiten, Modell-Varianten und `stays`, eigene Inszenierung pro Event, Prozession (`procession`) |
+| `data/staging.json` | Inszenierung der Event-Figuren: Standard, Anker an Requisiten, Modell-Varianten und `stays`, eigene Inszenierung pro Event, Prozession (`procession`), verborgene Figuren bis zum Kampf (`hidden`), Abgänge pro Ende (`ends`: `leave`, `step_aside`, `collapse`) |
 | `data/monsters.json` | Monster und Bosse mit Lebenspunkten, Rüstung, Angriff, Schaden, Satz zur Todesursache, Angriffsklang (`sound`) |
 | `data/sounds.json` | Sounds: pro Sound-id Dateien unter `assets/sounds/`, Lautstärke, `loopStart`/`loopEnd` |
 | `data/characters.json` | Völker: Attribute, Lebenspunkte, LP je Stufe, Fähigkeit, Startausrüstung, Modell |
@@ -92,7 +92,7 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/figurePlan.js` | Figuren im Raum: Figurenliste (Größe, Varianten), Platzierung für `figures` (inkl. `near:`) und Anker der Inszenierung, Platz im Kampf, Datenprüfung; rein logisch |
 | `src/monsterFigures.js` | Figuren der Monster und der Kröte aus Grundformen (Rückfall ohne Modell), Ersatzfigur für Monster ohne eigene Figur, Zubehör für Modelle (`ACCESSORIES`) |
 | `src/staging.js` | Inszenierung: welche Figuren ein Event zeigt (Anzahl, Variante, Anker), Datenprüfung; rein logisch |
-| `src/roomFigures.js` | Figuren im Raum: erscheinen an Ankern, laufen im Kampf gemeinsam an, greifen reihum an, sterben und bleiben liegen, gehen nach dem Event zur Tür; `stay`; höchstens 6 animiert |
+| `src/roomFigures.js` | Figuren im Raum: erscheinen an Ankern (verborgene erst beim Kampf), laufen im Kampf gemeinsam an, greifen reihum an, sterben und bleiben liegen, bleiben nach dem Event an ihrem Platz oder führen das Ende aus `ends` aus; höchstens 6 animiert |
 | `src/roomBuilder.js` | baut einen Raum als 3D-Szene: Boden, Wände, Türen, Fackeln, Treppe, Einrichtung (aus `decor.js` oder altes Muster) |
 | `src/player.js` | Spielfigur, Platzierung; `setFigure(volk)` tauscht das Modell (KayKit-Figur oder Platzhalter), `animateFigure` wechselt Stehen und Laufen |
 | `src/figures.js` | Platzhalterfiguren der Völker aus Grundformen (Rückfall, wenn ein Modell fehlt) |

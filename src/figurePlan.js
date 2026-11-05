@@ -214,6 +214,31 @@ export function processionRoute(blocked, edges) {
 }
 
 /**
+ * Zur Seite treten (Ende step_aside): freie Nachbarkachel (gerade Nachbarn zuerst), die keine Tür, keine Kachel vor
+ * einer Tür, nicht die Treppe und nicht die Spielfigur belegt und keinen Weg versperrt.
+ * from [x, z]; ctx: { blocked (ohne die Figur selbst), edges, doors, player, stairsFoot (Vorkammer), stairsTiles
+ * (Treppe nach unten, muss erreichbar bleiben) }. Ergebnis: [x, z] oder null (dann bleibt die Figur stehen).
+ */
+export function stepAsideTile(from, ctx) {
+  const blocked = ctx.blocked || new Set();
+  const no = new Set(doorTiles(ctx.doors).map(t => key(...t)));
+  (ctx.stairsTiles || []).forEach(t => no.add(key(...t)));
+  if (ctx.stairsFoot) no.add(key(...ctx.stairsFoot));
+  if (ctx.player) no.add(key(...ctx.player));
+  const extra = [ctx.player, ctx.stairsFoot].filter(Boolean);
+  const clickables = ctx.stairsTiles && ctx.stairsTiles.length ? [ctx.stairsTiles] : [];
+  for (const [dx, dz] of N8) {
+    const t = [from[0] + dx, from[1] + dz], k = key(...t);
+    if (!inBounds(...t) || blocked.has(k) || no.has(k)) continue;
+    if (ctx.edges && ctx.edges.size && !stepOpen(ctx.edges, from[0], from[1], t[0], t[1])) continue;
+    const test = new Set(blocked);
+    test.add(k);
+    if (reachable(test, ctx.doors, clickables, extra, ctx.edges)) return t;
+  }
+  return null;
+}
+
+/**
  * Wo steht der Gegner im Kampf? Neben der Spielfigur, im Bossraum in der Raummitte.
  * ctx: { blocked, doors, player, boss (true im Bossraum), occupied, edges (Zellwände: nicht durch eine Wand hindurch) }
  * Ergebnis: { tiles, cx, cz, meet } – meet: Kachel, auf die die Spielfigur im Bossraum läuft (sonst null)
