@@ -12,7 +12,7 @@ import { eventFigures, endFor, isHidden, eventProps } from "./staging.js";
 import { STAIRS_FOOT, STAIRS_TILES, PROPS } from "./decor.js";
 import { placeEventProp } from "./roomBuilder.js";
 import { buildMonsterFigure } from "./monsterFigures.js";
-import { makeFigureModel, hasAnimation } from "./models.js";
+import { makeFigureModel, hasAnimation, seatOffset } from "./models.js";
 import { findPath } from "./pathfinding.js";
 import { moveTo } from "./movement.js";
 import { player, turnToward } from "./player.js";
@@ -37,6 +37,7 @@ const TURN = 12;          // Drehgeschwindigkeit: nach etwa 0,25 Sekunden ist di
 const tilesOf = (list) => new Set(list.flatMap(f => f.tiles.map(t => key(...t))));
 const alive = () => figs.filter(f => !f.sink && !f.dead && !f.leaving);
 
+const ZERO = new THREE.Vector3();
 // Kürzester Weg zwischen zwei Winkeln
 const angleDiff = (a, b) => Math.atan2(Math.sin(b - a), Math.cos(b - a));
 const toward = (f, x, z) => Math.atan2(x - f.outer.position.x, z - f.outer.position.z);
@@ -60,7 +61,16 @@ function make(pl, eventId, popIn, dead) {
       f.anim.once("death");
       f.anim.update(f.anim.duration("death") + 0.1); // gleich in der Endhaltung
     } else if (pl.anim === "awaken") f.anim.once("awaken"); // Skelett steht beim Event-Start auf
-    else if (pl.anim && pl.anim !== "idle") { f.pose = pl.anim; f.anim.loop(pl.anim); }
+    else if (pl.anim && pl.anim !== "idle") {
+      f.pose = pl.anim;
+      f.anim.loop(pl.anim);
+      if (pl.seat && pl.anim === "sit") {
+        // Auf die Sitzfläche setzen: erst die Sitz-Haltung anwenden, dann messen
+        f.anim.update(0.2);
+        f.seated = seatOffset(mid, anim.object, pl.seatY || 0);
+        if (f.seated) mid.position.set(...f.seated);
+      }
+    }
     if (!animated) { f.anim.update(0.3); f.frozen = true; } // zu viele animierte Figuren: diese steht still
   } else if (dead) {
     mid.rotation.z = Math.PI / 2; // Platzhalter liegen auf der Seite
@@ -488,6 +498,11 @@ export function updateFigures(dt, t) {
       f.anim.update(dt);
     }
     figureSteps(f, dt);
+    // Aufstehen (Kampf, Abgang, Zusammenbruch): vom Sitz zurück auf den Boden
+    if (f.seated && (f.dead || f.pose !== "sit" || f.path.length)) {
+      f.mid.position.lerp(ZERO, Math.min(1, dt * 8));
+      if (f.mid.position.lengthSq() < 1e-5) { f.mid.position.set(0, 0, 0); f.seated = null; }
+    }
     if (f.dying) {
       // Platzhalter ohne Death-Animation kippen um
       f.dying = Math.max(0, f.dying - dt);

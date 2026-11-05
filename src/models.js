@@ -96,6 +96,19 @@ export function hasAnimation(id, variant, name) {
   return (clips.get(v.file) || []).some(c => c.name === v.animations[name]);
 }
 
+/**
+ * Versatz einer sitzenden Figur (Lage in parent, die Sitz-Animation muss angewendet sein): Der Hüftknochen, an dem der
+ * Körper unten endet, kommt mittig auf die Sitzfläche (seatY in Kacheln). Die Sitz-Animation aus dem Paket sitzt sonst
+ * hinter dem Ursprung der Figur und zu tief, also im Sitzmöbel. Ohne Hüftknochen: null.
+ */
+export function seatOffset(parent, object, seatY) {
+  const hips = object.getObjectByName("hips");
+  if (!hips) return null;
+  parent.updateWorldMatrix(true, true);
+  const v = hips.getWorldPosition(new THREE.Vector3()).applyMatrix4(new THREE.Matrix4().copy(parent.matrixWorld).invert());
+  return [-v.x, seatY - v.y, -v.z];
+}
+
 // Zubehör aus Grundformen an einen Knochen hängen (Kochmütze, Krone, Augen): offset und size in Kacheln, gemessen in
 // der Grundhaltung der Figur; der Knochen trägt es beim Animieren mit.
 function attachAccessories(g, inner, list) {
