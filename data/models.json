@@ -86,7 +86,8 @@
   "tuerrahmen": {
     "file": "assets/tiles/tuerrahmen.glb",
     "scale": 0.5,
-    "palette": true
+    "palette": true,
+    "highlight": "wall_doorway_door"
   },
   "fackel": {
     "file": "assets/tiles/fackel.glb",

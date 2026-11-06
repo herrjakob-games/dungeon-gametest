@@ -225,15 +225,18 @@ function setHoverObj(o) {
   const prev = state.hovered;
   if (prev) {
     prev.userData.hoverMats.forEach(m => { m.emissiveIntensity = m === prev.userData.baseGlow ? 0.25 : 0; });
-    setOutline(prev, false);
+    setOutline(outlineOf(prev), false);
   }
   state.hovered = o;
   if (o) {
-    // Leicht aufhellen; anklickbare Objekte (nicht Türen) bekommen dazu die goldene Umrisslinie
+    // Leicht aufhellen und goldene Umrisslinie; bei Türen nur am Türblatt bzw. an der Türkachel (outlineTarget)
     o.userData.hoverMats.forEach(m => { m.emissiveIntensity = m.map ? 0.18 : 0.45; });
-    if (o.userData.kind !== "door") setOutline(o, true);
+    setOutline(outlineOf(o), true);
   }
 }
+
+// Was die Umrisslinie bekommt: bei Türen nur der Teil aus outlineTarget (ohne ihn keine Linie), sonst das ganze Objekt
+const outlineOf = (o) => (o.userData.kind === "door" ? o.userData.outlineTarget || null : o);
 
 const labelFor = (o) => {
   if (o.userData.kind === "door") {

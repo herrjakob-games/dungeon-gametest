@@ -8,7 +8,7 @@ import { setRoomSeed, rnd, pickOne, shuffled } from "./rng.js";
 import { mat, box, stone, WOOD } from "./materials.js";
 import { TYPES } from "./roomTypes.js";
 import { scene, setAmbient } from "./scene.js";
-import { makeModel, hasModel, setModelTheme, findPart, makeFigureModel } from "./models.js";
+import { makeModel, hasModel, setModelTheme, findPart, makeFigureModel, modelEntry } from "./models.js";
 import { state } from "./state.js";
 import { buildFigure } from "./figures.js";
 import * as P from "./props.js";
@@ -203,6 +203,7 @@ function makeDoor(d) {
   const hoverMats = [glowMat];
   const frameMat = mat(0x8a7562); // Türrahmen eine Stufe heller als die Wand
   const model = tall ? makeModel("tuerrahmen", null, { unique: true }) : null;
+  let outlineTarget = null; // bekommt beim Überfahren die goldene Umrisslinie (docs/GDD.md, Lesbarkeit)
   if (model) {
     model.traverse(n => {
       if (!n.isMesh) return;
@@ -212,6 +213,9 @@ function makeDoor(d) {
       hoverMats.push(n.material);
     });
     g.add(model);
+    // Umrisslinie beim Überfahren nur am Türblatt (highlight in data/models.json); fehlt der Knoten, bleibt es beim Aufhellen
+    const entry = modelEntry("tuerrahmen");
+    outlineTarget = entry && entry.highlight ? findPart(model, entry.highlight) : null;
   } else if (tall) {
     g.add(box(0.18, 1.7, 0.6, frameMat, -0.41, 0.85, 0));
     g.add(box(0.18, 1.7, 0.6, frameMat, 0.41, 0.85, 0));
@@ -224,13 +228,15 @@ function makeDoor(d) {
     g.add(box(0.18, 0.55, 0.6, frameMat, -0.41, 0.28, 0));
     g.add(box(0.18, 0.55, 0.6, frameMat, 0.41, 0.28, 0));
   }
-  g.add(box(0.7, 0.05, 0.55, glowMat, 0, 0.03, 0));
-  g.add(makeLock(d, tall, glowMat));
+  const tile = box(0.7, 0.05, 0.55, glowMat, 0, 0.03, 0); // Türkachel am Boden
+  g.add(tile);
+  if (!tall) outlineTarget = tile; // vordere Türen (Süd, Ost) haben nur Sockel: die Türkachel leuchtet auf
+  g.add(makeLock(d, tall, glowMat)); // das Schloss gehört nie zur Umrisslinie
   if (d === "N") g.position.set(0, 0, -E);
   if (d === "S") g.position.set(0, 0, E);
   if (d === "W") { g.position.set(-E, 0, 0); g.rotation.y = Math.PI / 2; }
   if (d === "E") { g.position.set(E, 0, 0); g.rotation.y = Math.PI / 2; }
-  g.userData = { kind: "door", dir: d, name: info.name, approach: info.approach, hoverMats, baseGlow: glowMat };
+  g.userData = { kind: "door", dir: d, name: info.name, approach: info.approach, hoverMats, baseGlow: glowMat, outlineTarget };
   add(g);
   state.interactables.push(g);
 }
