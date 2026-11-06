@@ -1087,6 +1087,28 @@
         "Sit_Chair_Idle"
       ],
       "maxTris": 4000
+    },
+    "zwergenwache": {
+      "file": "Knight.glb",
+      "remove": [
+        "1H_Sword_Offhand",
+        "Badge_Shield",
+        "Rectangle_Shield",
+        "Round_Shield",
+        "Spike_Shield",
+        "2H_Sword"
+      ],
+      "animations": [
+        "Idle",
+        "Walking_A",
+        "1H_Melee_Attack_Chop",
+        "Hit_A",
+        "Death_A",
+        "Interact",
+        "Sit_Chair_Idle",
+        "Sit_Floor_Idle"
+      ],
+      "maxTris": 4000
     }
   },
   "extractNotes": "Requisiten aus Teilen einer Paketfigur: pieces mit node (Name des Teils), position (KayKit-Einheiten, Unterseite des Teils), rotation (Grad [x, y, z]).",

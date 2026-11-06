@@ -241,6 +241,19 @@
       "face": "player",
       "animation": "idle",
       "_": "Goblin an seinem Stand"
+    },
+    "an_saeule_schlafend": {
+      "props": [
+        "saeule"
+      ],
+      "offset": [
+        1,
+        0,
+        0
+      ],
+      "face": "random",
+      "animation": "sit_floor",
+      "_": "Schlafende Wache, sitzt am Boden an einer Säule; ohne Sitz-Animation liegend (flat)"
     }
   },
   "figures": {
@@ -600,6 +613,150 @@
         {
           "prop": "kistenberg",
           "place": "neben_figur"
+        }
+      ]
+    },
+    "kerker_ausbruch_orks": {
+      "figures": [
+        {
+          "figure": "ausbrecher_ork",
+          "count": 2
+        }
+      ],
+      "ends": [
+        {
+          "option": "So tun, als hättest du nichts gesehen",
+          "do": "leave"
+        },
+        {
+          "option": "Sie überzeugen, in die Zellen zurückzugehen",
+          "result": "success",
+          "do": "leave"
+        }
+      ]
+    },
+    "kerker_ausbruch_goblins": {
+      "figures": [
+        {
+          "figure": "ausbrecher_goblin",
+          "count": 3
+        }
+      ],
+      "ends": [
+        {
+          "option": "Bestechungsgeld erpressen",
+          "result": "success",
+          "do": "leave"
+        },
+        {
+          "option": "Sie überzeugen, in die Zellen zurückzugehen",
+          "result": "success",
+          "do": "leave"
+        }
+      ]
+    },
+    "kerker_ausbruch_kobolde": {
+      "figures": [
+        {
+          "figure": "ausbrecher_kobold",
+          "count": 4
+        }
+      ],
+      "ends": [
+        {
+          "option": "Bestechungsgeld erpressen",
+          "result": "success",
+          "do": "leave"
+        },
+        {
+          "option": "Sie überzeugen, in die Zellen zurückzugehen",
+          "result": "success",
+          "do": "leave"
+        }
+      ]
+    },
+    "kerker_schere_stein_pergament": {
+      "figures": [
+        {
+          "figure": "zwergenwache"
+        }
+      ]
+    },
+    "kerker_besucherbuch": {
+      "figures": [
+        {
+          "figure": "zwergenwache"
+        }
+      ]
+    },
+    "kerker_beschwerde": {
+      "figures": [
+        {
+          "figure": "goblin"
+        }
+      ]
+    },
+    "wache_wetttrinken": {
+      "figures": [
+        {
+          "figure": "zwergenwache",
+          "count": 2,
+          "anchor": "am_tisch_sitzend"
+        }
+      ]
+    },
+    "wache_armdruecken": {
+      "figures": [
+        {
+          "figure": "zwergenwache",
+          "anchor": "am_tisch_sitzend"
+        }
+      ]
+    },
+    "halle_schlafwache": {
+      "figures": [
+        {
+          "figure": "zwergenwache",
+          "anchor": "an_saeule_schlafend"
+        }
+      ]
+    },
+    "kueche_koch_kostprobe": {
+      "figures": [
+        {
+          "figure": "zwergenkoch",
+          "anchor": "am_herd"
+        }
+      ]
+    },
+    "kueche_koch_schaelen": {
+      "figures": [
+        {
+          "figure": "zwergenkoch",
+          "anchor": "am_herd"
+        }
+      ]
+    },
+    "kueche_koch_kessel": {
+      "figures": [
+        {
+          "figure": "zwergenkoch",
+          "anchor": "am_herd"
+        }
+      ]
+    },
+    "kueche_koch_braten": {
+      "figures": [
+        {
+          "figure": "zwergenkoch",
+          "anchor": "am_herd"
+        }
+      ]
+    },
+    "kueche_koch_geheimrezept": {
+      "figures": [
+        {
+          "figure": "zwergenkoch"
         }
       ]
     }

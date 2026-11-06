@@ -734,6 +734,18 @@
           "id": "wache_wuerfel",
           "weight": 3
         }
+      ],
+      "zwergenminen": [
+        {
+          "id": "wache_wetttrinken",
+          "weight": 3,
+          "once": true
+        },
+        {
+          "id": "wache_armdruecken",
+          "weight": 3,
+          "once": true
+        }
       ]
     },
     "decor": {
@@ -828,6 +840,9 @@
     "sound": {
       "mood": "empty",
       "floor": "stone"
+    },
+    "themeRating": {
+      "zwergenminen": "neutral"
     }
   },
   {
@@ -1062,6 +1077,13 @@
           "hostile": true,
           "rating": "hostile"
         }
+      ],
+      "zwergenminen": [
+        {
+          "id": "halle_schlafwache",
+          "weight": 3,
+          "once": true
+        }
       ]
     },
     "decor": {
@@ -1143,6 +1165,9 @@
     "sound": {
       "mood": "empty",
       "floor": "hall"
+    },
+    "themeRating": {
+      "zwergenminen": "neutral"
     }
   },
   {
@@ -1358,6 +1383,33 @@
           "hostile": true,
           "rating": "hostile"
         }
+      ],
+      "zwergenminen": [
+        {
+          "id": "kueche_koch_kostprobe",
+          "weight": 3,
+          "once": true
+        },
+        {
+          "id": "kueche_koch_schaelen",
+          "weight": 3,
+          "once": true
+        },
+        {
+          "id": "kueche_koch_kessel",
+          "weight": 3,
+          "once": true
+        },
+        {
+          "id": "kueche_koch_braten",
+          "weight": 2,
+          "once": true
+        },
+        {
+          "id": "kueche_koch_geheimrezept",
+          "weight": 2,
+          "once": true
+        }
       ]
     },
     "decor": {
@@ -1440,6 +1492,9 @@
     "sound": {
       "mood": "kitchen",
       "floor": "stone"
+    },
+    "themeRating": {
+      "zwergenminen": "neutral"
     }
   },
   {
@@ -1495,7 +1550,8 @@
           "hostile": true,
           "rating": "hostile"
         }
-      ]
+      ],
+      "zwergenminen": []
     },
     "decor": {
       "layouts": [
@@ -1606,6 +1662,9 @@
     "sound": {
       "mood": "cozy",
       "floor": "stone"
+    },
+    "themeRating": {
+      "zwergenminen": "neutral"
     }
   },
   {
@@ -1808,11 +1867,20 @@
           "hostile": true,
           "rating": "hostile"
         }
+      ],
+      "zwergenminen": [
+        {
+          "id": "schrein_ruhe",
+          "weight": 1
+        }
       ]
     },
     "sound": {
       "mood": "schrein",
       "floor": "hall"
+    },
+    "themeRating": {
+      "zwergenminen": "neutral"
     }
   },
   {
@@ -1863,10 +1931,42 @@
           "id": "kerker_zellentuer",
           "weight": 3
         }
+      ],
+      "zwergenminen": [
+        {
+          "id": "kerker_ausbruch_orks",
+          "weight": 2
+        },
+        {
+          "id": "kerker_ausbruch_goblins",
+          "weight": 2
+        },
+        {
+          "id": "kerker_ausbruch_kobolde",
+          "weight": 2
+        },
+        {
+          "id": "kerker_schere_stein_pergament",
+          "weight": 2,
+          "once": true
+        },
+        {
+          "id": "kerker_besucherbuch",
+          "weight": 3,
+          "once": true
+        },
+        {
+          "id": "kerker_beschwerde",
+          "weight": 3,
+          "once": true
+        }
       ]
     },
     "themeDecor": {
       "katakomben": {
+        "cells": true
+      },
+      "zwergenminen": {
         "cells": true
       }
     },
@@ -1901,7 +2001,18 @@
         "rating": "hostile",
         "hostile": true
       }
-    ]
+    ],
+    "themeEvents": {
+      "zwergenminen": [
+        {
+          "id": "bibliothek_ruhe",
+          "weight": 1
+        }
+      ]
+    },
+    "themeRating": {
+      "zwergenminen": "neutral"
+    }
   },
   {
     "id": "schmiede",
@@ -1931,7 +2042,18 @@
         "rating": "hostile",
         "hostile": true
       }
-    ]
+    ],
+    "themeEvents": {
+      "zwergenminen": [
+        {
+          "id": "schmiede_ruhe",
+          "weight": 1
+        }
+      ]
+    },
+    "themeRating": {
+      "zwergenminen": "neutral"
+    }
   },
   {
     "id": "folter",

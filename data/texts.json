@@ -20,7 +20,11 @@
       "halle_decke": "Die Decke kam runter, und du warst darunter. Die Säulen halten seitdem eine Schweigeminute.",
       "halle_skelettkrieger": "Auf der Flucht von hinten erwischt. Der Skelettkrieger erzählt die Geschichte trotzdem als großes Duell.",
       "boss_skelettkoenig": "Schon bei der Audienz gestorben. Der König hat dich nicht einmal zu Ende hinrichten müssen.",
-      "boss_skelettkoenig_zurueck": "Zur zweiten Audienz gekommen, zur dritten nicht mehr. Der König vermerkt es im Hofbuch."
+      "boss_skelettkoenig_zurueck": "Zur zweiten Audienz gekommen, zur dritten nicht mehr. Der König vermerkt es im Hofbuch.",
+      "kueche_koch_kostprobe": "An der Gesteinssuppe gestorben. Der Koch hält das für ein Kompliment.",
+      "kueche_koch_schaelen": "Beim Kartoffelschälen verblutet. Die Knollen waren danach ausgezeichnet.",
+      "kueche_koch_kessel": "Vom Kessel überwältigt. Es war ein ungleicher Kampf, und der Kessel hat ihn nie erwähnt.",
+      "kueche_koch_braten": "Beim Löschen eines Sonntagsbratens verbrannt. Es war Donnerstag."
     }
   }
 }

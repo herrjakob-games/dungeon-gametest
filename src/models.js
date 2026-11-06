@@ -111,6 +111,8 @@ export function seatOffset(parent, object, seatY) {
 
 // Zubehör aus Grundformen an einen Knochen hängen (Kochmütze, Krone, Augen): offset und size in Kacheln, gemessen in
 // der Grundhaltung der Figur; der Knochen trägt es beim Animieren mit.
+const vec = (v, d) => (Array.isArray(v) ? v : [v === undefined ? d : v, v === undefined ? d : v, v === undefined ? d : v]);
+
 function attachAccessories(g, inner, list) {
   g.updateMatrixWorld(true);
   list.forEach(a => {
@@ -123,14 +125,14 @@ function attachAccessories(g, inner, list) {
     // das Zubehör auch bei ungleichem Maßstab der Figur (etwa der breitere Zwerg)
     const o = build(a);
     const at = bone.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(...(a.offset || [0, 0, 0])));
-    const world = new THREE.Matrix4().compose(at, new THREE.Quaternion(), new THREE.Vector3().setScalar(a.size || 1));
+    // size: Zahl oder [x, y, z] (etwa die Kochmütze des Zwergenkochs, höher als breit)
+    const world = new THREE.Matrix4().compose(at, new THREE.Quaternion(), new THREE.Vector3(...vec(a.size, 1)));
     new THREE.Matrix4().copy(bone.matrixWorld).invert().multiply(world).decompose(o.position, o.quaternion, o.scale);
     o.traverse(n => { if (n.isMesh) n.castShadow = true; });
     bone.add(o);
   });
 }
 
-const vec = (v, d) => (Array.isArray(v) ? v : [v === undefined ? d : v, v === undefined ? d : v, v === undefined ? d : v]);
 
 /**
  * Klon eines Modells als Gruppe mit Ursprung am Boden; null, wenn es kein Modell gibt (dann Platzhalter bauen).

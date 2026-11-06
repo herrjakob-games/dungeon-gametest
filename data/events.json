@@ -5193,5 +5193,1562 @@
         ]
       }
     ]
+  },
+  {
+    "id": "kerker_ausbruch_orks",
+    "type": "choice",
+    "title": "Der Ausbruch: Orks",
+    "text": "Eine Zellentür hängt schief in den Angeln. Ein paar Orks schleichen auf Zehenspitzen zum Ausgang, was bei Orks nach Viehtrieb klingt. Der vorderste legt den Finger an die Lippen und verfehlt sie knapp.",
+    "options": [
+      {
+        "label": "So tun, als hättest du nichts gesehen",
+        "text": "Du studierst sehr aufmerksam die Decke. Die Orks ziehen vorbei, einer klopft dir anerkennend auf die Schulter.",
+        "effects": []
+      },
+      {
+        "label": "Sie aufhalten und kämpfen",
+        "text": "Du stellst dich in den Gang. Die Orks freuen sich sichtlich über die Abwechslung.",
+        "effects": [
+          {
+            "combat": "ausbrecher_ork"
+          },
+          {
+            "gainXp": 5
+          },
+          {
+            "loot": "tier1"
+          }
+        ]
+      },
+      {
+        "label": "Sie überzeugen, in die Zellen zurückzugehen",
+        "condition": "volk:mensch",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du erwähnst die Wölfe da draußen und dass es gleich Essen gibt. Murrend trotten sie zurück, der letzte zieht sogar die Tür zu.",
+          "effects": [
+            {
+              "gainXp": 4
+            }
+          ]
+        },
+        "failure": {
+          "text": "Deine Rede über Recht und Ordnung rührt sie sehr. Zu Fäusten.",
+          "effects": [
+            {
+              "combat": "ausbrecher_ork"
+            },
+            {
+              "gainXp": 4
+            },
+            {
+              "loot": "tier1"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "kerker_ausbruch_goblins",
+    "type": "choice",
+    "title": "Der Ausbruch: Goblins",
+    "text": "Ein Goblin schraubt das letzte Scharnier einer Zellentür ab, zwei andere stehen Schmiere und haben dich gerade erst bemerkt. Der Kleinste zeigt hektisch auf dich. Der Größte greift nach einem Stuhlbein.",
+    "options": [
+      {
+        "label": "Sie aufhalten und kämpfen",
+        "text": "Du ziehst deine Waffe. Der Größte seufzt und krempelt die Ärmel hoch, soweit er welche hat.",
+        "effects": [
+          {
+            "combat": "ausbrecher_goblin"
+          },
+          {
+            "gainXp": 4
+          },
+          {
+            "loot": "tier1"
+          }
+        ]
+      },
+      {
+        "label": "Bestechungsgeld erpressen",
+        "check": {
+          "category": "kraftakt",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du hebst den Größten am Kragen an und schüttelst. Es regnet Münzen, und keiner der drei verlangt eine Quittung.",
+          "effects": [
+            {
+              "gold": "2W6"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Du packst zu und hast nur seine Jacke in der Hand. Die beiden anderen finden das nicht lustig.",
+          "effects": [
+            {
+              "combat": "ausbrecher_goblin"
+            },
+            {
+              "gainXp": 4
+            },
+            {
+              "loot": "tier1"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Sie überzeugen, in die Zellen zurückzugehen",
+        "condition": "volk:mensch",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du rechnest ihnen vor, wie viele Zwerge zwischen hier und dem Ausgang wohnen. Sie schrauben das Scharnier wortlos wieder an.",
+          "effects": [
+            {
+              "gainXp": 4
+            }
+          ]
+        },
+        "failure": {
+          "text": "Sie hören dir bis zum Ende zu. Dann haut dir der Größte das Stuhlbein auf den Tisch, und der Tisch bist du.",
+          "effects": [
+            {
+              "combat": "ausbrecher_goblin"
+            },
+            {
+              "gainXp": 4
+            },
+            {
+              "loot": "tier1"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "kerker_ausbruch_kobolde",
+    "type": "choice",
+    "title": "Der Ausbruch: Kobolde",
+    "text": "Eine Handvoll Kobolde quetscht sich zwischen den Gitterstäben hindurch, was verdächtig gut klappt. Der erste trägt einen angespitzten Löffel, an dem drei Jahre Arbeit hängen. Als er dich sieht, hebt er ihn drohend.",
+    "options": [
+      {
+        "label": "Sie aufhalten und kämpfen",
+        "text": "Du trittst vor. Der Löffel zittert, aber er bleibt oben.",
+        "effects": [
+          {
+            "combat": "ausbrecher_kobold"
+          },
+          {
+            "gainXp": 3
+          },
+          {
+            "loot": "tier1"
+          }
+        ]
+      },
+      {
+        "label": "Bestechungsgeld erpressen",
+        "check": {
+          "category": "kraftakt",
+          "dc": 8
+        },
+        "success": {
+          "text": "Du knurrst und lässt die Knöchel knacken. Die Kobolde legen ihr Erspartes auf den Boden und bitten höflich um Vergebung.",
+          "effects": [
+            {
+              "gold": "W6"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Dein Griff geht ins Leere, weil Kobolde kleiner sind, als du dachtest. Der Löffel findet dein Knie.",
+          "effects": [
+            {
+              "combat": "ausbrecher_kobold"
+            },
+            {
+              "gainXp": 3
+            },
+            {
+              "loot": "tier1"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Sie überzeugen, in die Zellen zurückzugehen",
+        "condition": "volk:mensch",
+        "check": {
+          "category": "diplomatie",
+          "dc": 8
+        },
+        "success": {
+          "text": "Du fragst, wer denn sonst den Löffel bewundern soll. Gerührt quetschen sie sich zurück durchs Gitter.",
+          "effects": [
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Sie verstehen dich nicht, weil sie alle gleichzeitig schreien. Das Schreien wird zum Angriff.",
+          "effects": [
+            {
+              "combat": "ausbrecher_kobold"
+            },
+            {
+              "gainXp": 3
+            },
+            {
+              "loot": "tier1"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "kerker_schere_stein_pergament",
+    "type": "npc",
+    "title": "Schere, Stein, Pergament",
+    "text": "Eine Zwergen-Wache lehnt gelangweilt am Zellengitter und hält dir die Faust hin: „Schere, Stein, Pergament, um die Ehre.“ An der Wand steht die Strichliste: Stein 412, Rest 0.",
+    "options": [
+      {
+        "label": "Stein",
+        "text": "Stein gegen Stein. Er runzelt die Stirn und sagt: „Das gab's noch nie.“",
+        "effects": []
+      },
+      {
+        "label": "Schere",
+        "text": "Stein zerschlägt Schere. Er nickt, als wäre das eine Überraschung.",
+        "effects": []
+      },
+      {
+        "label": "Pergament",
+        "text": "Du wickelst seinen Stein ein. Er starrt lange auf seine Faust und zahlt, ohne den Blick zu heben.",
+        "effects": [
+          {
+            "gold": "W4"
+          },
+          {
+            "gainXp": 2
+          }
+        ]
+      },
+      {
+        "label": "Fragen, ob er auch etwas anderes kann",
+        "condition": "volk:elf",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "„Kann ich“, sagt er und hält die linke Faust hin. Die Gefangenen johlen, und du hast einen Ruf.",
+          "effects": [
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Er legt die Faust ab und nimmt die andere dazu. Die Partie ist beendet.",
+          "effects": [
+            {
+              "combat": "zwergenwache"
+            },
+            {
+              "gainXp": 4
+            },
+            {
+              "loot": "tier1"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Beim Bart: Stein ist die Waffe der Väter",
+        "condition": "volk:zwerg",
+        "check": {
+          "category": "diplomatie",
+          "dc": 8
+        },
+        "success": {
+          "text": "Er wischt sich etwas aus dem Auge und drückt dir den Einsatz in die Hand. Endlich versteht es mal einer.",
+          "effects": [
+            {
+              "gold": "W4"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "„Das sagt man nicht einfach so“, brummt er. Er spielt nicht mehr mit dir.",
+          "effects": []
+        }
+      },
+      {
+        "label": "Ihn zum ungeschlagenen Meister erklären",
+        "condition": "volk:mensch",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Er richtet sich auf und trägt deinen Vorschlag in die Strichliste ein. Dafür gibt es ein paar Münzen.",
+          "effects": [
+            {
+              "gold": "W4"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "„Schleimer“, sagt er und steckt die Faust ein. Mehr passiert zum Glück nicht.",
+          "effects": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "kerker_besucherbuch",
+    "type": "npc",
+    "title": "Das Besucherbuch",
+    "text": "Eine Zwergen-Wache schiebt dir ein Buch hin, ohne aufzusehen. „Besucher tragen sich ein. Name, Anliegen, Haftgrund, falls zutreffend.“ Die letzte Eintragung ist elf Jahre alt.",
+    "options": [
+      {
+        "label": "Brav eintragen",
+        "text": "Du schreibst deinen Namen. Er prüft die Tinte und nickt fast.",
+        "effects": [
+          {
+            "gainXp": 2
+          }
+        ]
+      },
+      {
+        "label": "Einen falschen Namen erfinden",
+        "check": {
+          "category": "wissen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du unterschreibst als Königlicher Zellenprüfer. Er salutiert und reicht dir das Trinkgeld der letzten elf Jahre.",
+          "effects": [
+            {
+              "gold": "W6"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Der Name steht schon im Buch, unter Haftgrund. Es kostet dich eine Gebühr, ihn wieder durchzustreichen.",
+          "effects": [
+            {
+              "loseGold": 3
+            }
+          ]
+        }
+      },
+      {
+        "label": "Als Anliegen „Befreiung aller“ eintragen",
+        "condition": "volk:elf",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Er liest es zweimal und lacht, bis der Helm wackelt. Solche Witze bekommt er hier unten nicht oft.",
+          "effects": [
+            {
+              "gold": "W6"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Er liest es zweimal. Humor steht nicht in der Dienstanweisung.",
+          "effects": [
+            {
+              "combat": "zwergenwache"
+            },
+            {
+              "gainXp": 4
+            },
+            {
+              "loot": "tier1"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Unter Zwergen: Einen Ahnen als Bürgen nennen",
+        "condition": "volk:zwerg",
+        "check": {
+          "category": "diplomatie",
+          "dc": 8
+        },
+        "success": {
+          "text": "Er kennt den Ahnen und hat bei ihm Schulden. Er begleicht sie bei dir.",
+          "effects": [
+            {
+              "gold": "W6"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Er kennt den Ahnen auch. Du gehst lieber, bevor das weiter besprochen wird.",
+          "effects": []
+        }
+      },
+      {
+        "label": "Höflich nach der Hausordnung fragen",
+        "condition": "volk:mensch",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Niemand hat je danach gefragt. Er erklärt sie dir ausführlich und am Ende ist er dein Freund.",
+          "effects": [
+            {
+              "gold": "W4"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Er erklärt sie dir ausführlich. Das war die ganze Strafe.",
+          "effects": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "kerker_beschwerde",
+    "type": "npc",
+    "title": "Der Beschwerdebrief",
+    "text": "Ein Goblin winkt dich ans Gitter und reicht dir einen fettigen Zettel heraus. Es ist seine 300. Beschwerde über das Essen. Er würde sie gern dem Direktor zukommen lassen, und du siehst aus wie jemand, der Direktoren kennt.",
+    "options": [
+      {
+        "label": "Die Beschwerde lesen und verbessern",
+        "check": {
+          "category": "wissen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du korrigierst die Grammatik und fügst ein „hochachtungsvoll“ ein. Der Goblin bezahlt dich aus seinem Geheimversteck.",
+          "effects": [
+            {
+              "gold": "W6"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Du hast das Wort „Fraß“ falsch korrigiert. Er will sein Geld gar nicht erst suchen.",
+          "effects": []
+        }
+      },
+      {
+        "label": "Sie im Vorbeigehen der Wache zustecken",
+        "check": {
+          "category": "fingerfertigkeit",
+          "dc": 12
+        },
+        "success": {
+          "text": "Sie landet unbemerkt in der Tasche der Wache. Der Goblin zeigt dir beide Daumen, und er hat drei.",
+          "effects": [
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Die Wache hält dir den Zettel hin und verlangt Porto. Du bezahlst das Porto.",
+          "effects": [
+            {
+              "loseGold": 2
+            }
+          ]
+        }
+      },
+      {
+        "label": "Ablehnen",
+        "text": "Du schüttelst den Kopf. Der Goblin beginnt mit Beschwerde 301, Thema: du.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "wache_wetttrinken",
+    "type": "npc",
+    "title": "Das Wetttrinken",
+    "text": "Zwei Zwergen-Wachen schieben dir einen Krug hin, der nach Lampenöl und Stolz riecht. „Fünf Gold Einsatz, und wer zuerst unter dem Tisch liegt, zahlt.“ Der Boden darunter ist schon sauber gewischt, von Bärten.",
+    "options": [
+      {
+        "label": "Mittrinken",
+        "check": {
+          "category": "widerstand",
+          "dc": 12
+        },
+        "success": {
+          "text": "Nach dem siebten Krug liegen beide unterm Tisch, du bist nur noch sehr freundlich. Du nimmst dir den Topf.",
+          "effects": [
+            {
+              "gold": 5
+            },
+            {
+              "loseGold": 5
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Der Boden kommt dir entgegen, ein netter Boden. Beim Aufwachen fehlen dir fünf Gold.",
+          "effects": [
+            {
+              "loseGold": 5
+            }
+          ]
+        }
+      },
+      {
+        "label": "Schummeln und wegschütten",
+        "check": {
+          "category": "fingerfertigkeit",
+          "dc": 12
+        },
+        "success": {
+          "text": "Der Krug geht in den Stiefel, die Grimasse sitzt. Du gewinnst mit einem nassen Fuß und dem Topf.",
+          "effects": [
+            {
+              "gold": 5
+            },
+            {
+              "loseGold": 5
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Der Bodenbelag fängt an zu rauchen, wo du geschüttet hast. Sie kassieren schweigend deine fünf Gold.",
+          "effects": [
+            {
+              "loseGold": 5
+            }
+          ]
+        }
+      },
+      {
+        "label": "Überzeugen, dass Alkohol keine Lösung ist",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Es wird sehr still, dann weint der Ältere. Sie überlassen dir den Topf und ihre Lebensgeschichten.",
+          "effects": [
+            {
+              "gold": 5
+            },
+            {
+              "loseGold": 5
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "„Stimmt“, sagt der Ältere, „aber fünf Gold sind eine.“ Er nimmt sie sich.",
+          "effects": [
+            {
+              "loseGold": 5
+            }
+          ]
+        }
+      },
+      {
+        "label": "Fragen, ob es das auch für Erwachsene gibt",
+        "condition": "volk:elf",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Einen Moment lang ist es still, dann brüllen sie vor Lachen und schieben dir den Topf hin. So frech war lange keiner mehr.",
+          "effects": [
+            {
+              "gold": 5
+            },
+            {
+              "loseGold": 5
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Einen Moment lang ist es still. Dann steht der Ältere auf und krempelt den Bart hoch.",
+          "effects": [
+            {
+              "combat": "zwergenwache"
+            },
+            {
+              "gainXp": 4
+            },
+            {
+              "loot": "tier1"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Ablehnen",
+        "text": "„Wasser, was?“, sagt der Ältere. Du spürst ihre Blicke noch im Nebenraum.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "wache_armdruecken",
+    "type": "npc",
+    "title": "Das Armdrücken",
+    "text": "Eine Zwergen-Wache stellt den Ellbogen auf den Tisch, der Tisch ächzt. „Fünf Gold Einsatz, und der letzte Gegner schreibt seither mit links.“ Neben dem Tisch liegt ein Federkiel, sehr links.",
+    "options": [
+      {
+        "label": "Mitmachen",
+        "check": {
+          "category": "kraftakt",
+          "dc": 12
+        },
+        "success": {
+          "text": "Sein Arm geht langsam zu Boden, sein Stolz schneller. Er schiebt dir den Topf hin, ohne dich anzusehen.",
+          "effects": [
+            {
+              "gold": 5
+            },
+            {
+              "loseGold": 5
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Der Tisch hat jetzt eine neue Delle in Form deiner Hand. Fünf Gold wechseln den Besitzer.",
+          "effects": [
+            {
+              "loseGold": 5
+            }
+          ]
+        }
+      },
+      {
+        "label": "Ablehnen",
+        "text": "Er zuckt mit den Schultern und drückt gegen sich selbst. Er liegt vorn.",
+        "effects": []
+      },
+      {
+        "label": "Vorschlagen, dass sein Bart mitspielt",
+        "condition": "volk:elf",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Er lacht so laut, dass der Krug wandert. Du bekommst den Topf, weil er sich das merken will.",
+          "effects": [
+            {
+              "gold": 5
+            },
+            {
+              "loseGold": 5
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "„Der Bart“, sagt er sehr leise, „spielt nicht.“ Er steht auf.",
+          "effects": [
+            {
+              "combat": "zwergenwache"
+            },
+            {
+              "gainXp": 4
+            },
+            {
+              "loot": "tier1"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Unter Zwergen: Sich aufs Unentschieden einigen",
+        "condition": "volk:zwerg",
+        "check": {
+          "category": "diplomatie",
+          "dc": 8
+        },
+        "success": {
+          "text": "Ihr schlagt beide die Hand auf den Tisch und nennt es Ehre. Das Gold bleibt, wo es war.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "„Unentschieden gibt's bei Elfen“, sagt er. Du zahlst fürs Gerede.",
+          "effects": [
+            {
+              "loseGold": 5
+            }
+          ]
+        }
+      },
+      {
+        "label": "Ihm den Titel kampflos überlassen",
+        "condition": "volk:mensch",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du lobst seinen Arm so lange, bis er dir zum Dank ein Bier ausgibt. Er nennt dich klug, was hier selten vorkommt.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Er findet das feige und nimmt dir den Einsatz als Gebühr fürs Reden ab.",
+          "effects": [
+            {
+              "loseGold": 5
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "halle_schlafwache",
+    "type": "npc",
+    "title": "Die schlafende Wache",
+    "text": "An einer Säule sitzt eine Zwergen-Wache und schnarcht, dass der Staub von der Decke rieselt. Die Axt lehnt neben ihr, der Geldbeutel hängt locker am Gürtel. Auf dem Schild steht: „Wachsam seit 300 Jahren.“",
+    "options": [
+      {
+        "label": "Leise vorbeigehen",
+        "check": {
+          "category": "fingerfertigkeit",
+          "dc": 8
+        },
+        "success": {
+          "text": "Du schleichst vorbei, das Schnarchen deckt dich. Respekt vor dem Handwerk.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Ein Stein knirscht. Das Schnarchen setzt aus, er murmelt „ich hab nicht geschlafen“, und es setzt wieder ein.",
+          "effects": []
+        }
+      },
+      {
+        "label": "Den Geldbeutel erleichtern",
+        "check": {
+          "category": "fingerfertigkeit",
+          "dc": 12
+        },
+        "success": {
+          "text": "Der Beutel wechselt lautlos den Besitzer. Im Schlaf lächelt er, vielleicht träumt er von Reichtum.",
+          "effects": [
+            {
+              "gold": "2W6"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Deine Hand steckt im Beutel, sein Auge ist offen. Das ist nicht der Moment für Erklärungen.",
+          "effects": [
+            {
+              "combat": "zwergenwache"
+            },
+            {
+              "gainXp": 4
+            },
+            {
+              "loot": "tier1"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Seinen Bart an die Säule knoten",
+        "condition": "volk:elf",
+        "check": {
+          "category": "fingerfertigkeit",
+          "dc": 12
+        },
+        "success": {
+          "text": "Ein sauberer Doppelknoten. Du hörst ihn noch zwei Räume weiter fluchen und hast selten so gelacht.",
+          "effects": [
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Beim zweiten Knoten wacht er auf. Der Bart hat noch etwas Spielraum, er auch.",
+          "effects": [
+            {
+              "combat": "zwergenwache"
+            },
+            {
+              "gainXp": 4
+            },
+            {
+              "loot": "tier1"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Unter Zwergen: Ihn vor dem Hauptmann warnen",
+        "condition": "volk:zwerg",
+        "check": {
+          "category": "diplomatie",
+          "dc": 8
+        },
+        "success": {
+          "text": "Er fährt hoch und richtet den Helm. Für dein Schweigen bekommst du, was zwei Zwerge in so einem Fall einander geben.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Er behauptet, er habe nur die Augen ausgeruht. Dann schläft er weiter, sehr beleidigt.",
+          "effects": []
+        }
+      },
+      {
+        "label": "Ihn höflich wecken, bevor es jemand sieht",
+        "condition": "volk:mensch",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Er zwinkert verschlafen und drückt dir etwas in die Hand. Du hast nichts gesehen, das stellt er klar.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "„Ich habe nicht geschlafen“, sagt er. Du nickst, und er ist wieder weg.",
+          "effects": []
+        }
+      },
+      {
+        "label": "Weitergehen",
+        "text": "Du lässt ihn schlafen. Hier unten ist das vielleicht das Klügste, was jemand tun kann.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "kueche_koch_kostprobe",
+    "type": "npc",
+    "title": "Die Kostprobe",
+    "text": "Ein Zwergenkoch rührt in einem Kessel, und der Löffel bleibt dabei stecken. Er zieht ihn mit beiden Händen heraus und hält ihn dir hin. „Gesteinssuppe, probier mal.“",
+    "options": [
+      {
+        "label": "Probieren",
+        "check": {
+          "category": "widerstand",
+          "dc": 12
+        },
+        "success": {
+          "text": "Es schmeckt nach Kies und Heimat, und du fühlst dich seltsam stabil. Er nickt und gibt dir einen Nachschlag.",
+          "effects": [
+            {
+              "heal": "W6"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Der erste Bissen ist noch im Hals, der zweite will schon raus. Der Koch notiert sich „zu mild“.",
+          "effects": [
+            {
+              "damage": "W4"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Ehrlich sagen, was fehlt",
+        "check": {
+          "category": "wahrnehmung",
+          "dc": 12
+        },
+        "success": {
+          "text": "„Salz. Und vielleicht weniger Salz.“ Er starrt dich an, kostet und schenkt dir aus Dank seine Reservemünzen.",
+          "effects": [
+            {
+              "gold": "W6"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "„Mehr Fleisch“, sagst du, was bei Gesteinssuppe falsch ist. Er nimmt dir den Löffel weg und schweigt verletzt.",
+          "effects": []
+        }
+      },
+      {
+        "label": "Fragen, ob das Suppe oder Mörtel ist",
+        "condition": "volk:elf",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Er lacht, bis die Mütze rutscht: „Mörtel ist am Dienstag.“ Du darfst mitessen, und danach geht es dir besser.",
+          "effects": [
+            {
+              "heal": "W6"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Er legt den Löffel beiseite und nimmt die Pfanne. Das Tagesgericht bist jetzt du.",
+          "effects": [
+            {
+              "combat": "zwergenkoch"
+            },
+            {
+              "gainXp": 4
+            },
+            {
+              "loot": "tier1"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Unter Zwergen: Das Rezept der Ahnen loben",
+        "condition": "volk:zwerg",
+        "check": {
+          "category": "diplomatie",
+          "dc": 8
+        },
+        "success": {
+          "text": "Er legt dir eine Hand auf die Schulter und packt dir etwas ein. So schmeckt es nur bei Mutter, und die ist ein Berg.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "„Meine Ahnen haben Kartoffeln gegessen“, sagt er. Er rührt weiter und spricht nicht mehr.",
+          "effects": []
+        }
+      },
+      {
+        "label": "Nach der Herkunft der Zutaten fragen",
+        "condition": "volk:mensch",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du hörst zwanzig Minuten über Stollen 4 und fragst an den richtigen Stellen nach. Er füllt dir dankbar die Taschen.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Er kneift die Augen zusammen und fragt, für wen du arbeitest. Du entschuldigst dich rückwärtsgehend.",
+          "effects": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "kueche_koch_schaelen",
+    "type": "npc",
+    "title": "Der Küchendienst",
+    "text": "Ein Zwergenkoch drückt dir ein Messer und einen Korb Knollen in die Hand, bevor du etwas sagen kannst. „Endlich. Du bist spät dran.“ Du hast keine Ahnung, wofür, aber der Korb ist schwer.",
+    "options": [
+      {
+        "label": "Schälen, bis er zufrieden ist",
+        "check": {
+          "category": "fingerfertigkeit",
+          "dc": 12
+        },
+        "success": {
+          "text": "Die Schalen fallen in einem Stück, der Koch wird beinahe sentimental. Dein Lohn liegt schon auf dem Tisch.",
+          "effects": [
+            {
+              "gold": "2W6"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Du schälst die Knollen und etwas Daumen. Der Koch nennt das „Würze“.",
+          "effects": [
+            {
+              "damage": 2
+            }
+          ]
+        }
+      },
+      {
+        "label": "Den Korb abstellen und gehen",
+        "text": "„Heutige Jugend“, sagt er, obwohl du jünger aussiehst als sein Bart. Er nimmt das Messer zurück.",
+        "effects": []
+      },
+      {
+        "label": "Fragen, ob er das Schälen nie gelernt hat",
+        "condition": "volk:elf",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Er grinst durch den Bart und schält selbst weiter. Für die Frechheit gibt es einen Teller Eintopf.",
+          "effects": [
+            {
+              "heal": "W4"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Er legt das Messer sehr vorsichtig hin. Dann nimmt er ein größeres.",
+          "effects": [
+            {
+              "combat": "zwergenkoch"
+            },
+            {
+              "gainXp": 4
+            },
+            {
+              "loot": "tier1"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Unter Zwergen: Auf die Küchenzunft verweisen",
+        "condition": "volk:zwerg",
+        "check": {
+          "category": "diplomatie",
+          "dc": 8
+        },
+        "success": {
+          "text": "Er nickt streng: Ein Zwerg von Stand schält nicht. Für die Mühe zahlt er dir ein Trinkgeld, wegen der Sitten.",
+          "effects": [
+            {
+              "gold": "W6"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Er zeigt dir die Zunftregel, und die erlaubt das. Du gehst, bevor er weiterblättert.",
+          "effects": []
+        }
+      },
+      {
+        "label": "Das Missverständnis höflich aufklären",
+        "condition": "volk:mensch",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Er errötet bis in den Bart und bietet dir zur Entschuldigung etwas Warmes an. Es ist fast essbar.",
+          "effects": [
+            {
+              "heal": "W4"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "„Das sagen alle“, sagt er und hält dir wieder den Korb hin. Du gehst trotzdem.",
+          "effects": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "kueche_koch_kessel",
+    "type": "npc",
+    "title": "Der große Kessel",
+    "text": "Ein Zwergenkoch versucht, einen Kessel vom Haken zu heben, der größer ist als er selbst. Er schnauft und tut, als hätte er dich nicht bemerkt. „Nicht helfen. Ich hab's gleich.“",
+    "options": [
+      {
+        "label": "Trotzdem mit anpacken",
+        "check": {
+          "category": "kraftakt",
+          "dc": 12
+        },
+        "success": {
+          "text": "Gemeinsam wuchtet ihr den Kessel auf den Tisch, und er tut so, als wäre es seine Idee gewesen. Sein Dank klimpert.",
+          "effects": [
+            {
+              "gold": "2W6"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Der Kessel gibt nach, du auch. Etwas Heißes läuft dir in den Stiefel.",
+          "effects": [
+            {
+              "damage": "W4"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Mit der Kette einen Flaschenzug bauen",
+        "check": {
+          "category": "wissen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Der Kessel schwebt herab wie eine Feder aus Gusseisen. Der Koch nimmt seine Mütze ab.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Der Kessel schwebt hinauf statt herab und bleibt dort. Der Koch sieht dich an und sagt nichts, das ist schlimmer.",
+          "effects": []
+        }
+      },
+      {
+        "label": "Fragen, ob er auf eine Kiste steigen will",
+        "condition": "volk:elf",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Er flucht, dann lacht er, dann holt er tatsächlich eine Kiste. Du bekommst den ersten Teller.",
+          "effects": [
+            {
+              "heal": "W6"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Das Wort „Kiste“ war ein Fehler. Er hat den Kessel jetzt plötzlich los und beide Hände frei.",
+          "effects": [
+            {
+              "combat": "zwergenkoch"
+            },
+            {
+              "gainXp": 4
+            },
+            {
+              "loot": "tier1"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Unter Zwergen: Gemeinsam dem Kessel die Schuld geben",
+        "condition": "volk:zwerg",
+        "check": {
+          "category": "diplomatie",
+          "dc": 8
+        },
+        "success": {
+          "text": "Ihr seid euch einig: Früher waren Kessel leichter. Er schenkt dir etwas für den Weg.",
+          "effects": [
+            {
+              "gold": "W6"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "„Am Kessel liegt's nicht“, sagt er und schaut auf deine Arme. Du gehst.",
+          "effects": []
+        }
+      },
+      {
+        "label": "Ihm wie gewünscht nicht helfen",
+        "text": "Du siehst ihm eine Weile zu. Er schafft es nicht, und ihr sprecht beide nie wieder davon.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "kueche_koch_braten",
+    "type": "npc",
+    "title": "Der Sonntagsbraten",
+    "text": "Über dem Herd schlägt eine Stichflamme aus einem Braten. Der Zwergenkoch betrachtet sie ohne Eile: „Jetzt wird er gut.“ Die Flamme greift nach dem Regal mit dem Schmalz.",
+    "options": [
+      {
+        "label": "Das Schmalz aus dem Regal retten",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du hechtest durchs Feuer, und das Schmalz bleibt heil. Der Koch nennt dich „Lehrling“ und drückt dir etwas aus seiner Schublade in die Hand.",
+          "effects": [
+            {
+              "item": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Das Schmalz ist gerettet, deine Augenbrauen nicht. Es riecht jetzt angenehm nach dir.",
+          "effects": [
+            {
+              "damage": "W4"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Ihn darauf hinweisen, dass es brennt",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "„Danke, ich weiß, ich koche“, sagt er. Dann löscht er doch und schneidet dir aus Dank ein Stück ab.",
+          "effects": [
+            {
+              "heal": "W6"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "„Ich sag dir auch nicht, wie du deine Arbeit machst“, brummt er. Ihr schaut schweigend dem Regal beim Brennen zu.",
+          "effects": []
+        }
+      },
+      {
+        "label": "Nach der Garstufe „Kohle“ fragen",
+        "condition": "volk:elf",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Er prustet in den Bart und tischt dir das Beste von innen auf. Das Außen behält er für Gäste.",
+          "effects": [
+            {
+              "heal": "W6"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Niemand beleidigt seinen Braten. Er zieht den Spieß aus dem Feuer und richtet ihn auf dich.",
+          "effects": [
+            {
+              "combat": "zwergenkoch"
+            },
+            {
+              "gainXp": 4
+            },
+            {
+              "loot": "tier1"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Unter Zwergen: Der Kruste Respekt zollen",
+        "condition": "volk:zwerg",
+        "check": {
+          "category": "diplomatie",
+          "dc": 8
+        },
+        "success": {
+          "text": "Du klopfst dreimal an die Kruste und nickst. Er gibt dir die erste Scheibe und wischt sich die Augen, es kann auch der Rauch sein.",
+          "effects": [
+            {
+              "heal": "W6"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Die Kruste bricht, und eine Stille folgt. Du gehst, bevor sie ein Ende nimmt.",
+          "effects": []
+        }
+      },
+      {
+        "label": "Rückwärts den Raum verlassen",
+        "text": "Hinter dir hörst du: „Jetzt ist er perfekt.“ Es klingt wie eine Tür, die aus dem Rahmen fliegt.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "kueche_koch_geheimrezept",
+    "type": "npc",
+    "title": "Das Geheimrezept",
+    "text": "Der Zwergenkoch schlägt ein Buch zu und baut sich vor dir auf, das heißt, er geht auf Zehenspitzen. „Spion von der Konkurrenz?“ Auf dem Tisch liegt noch ein loser Zettel, und er hat ihn nicht bemerkt.",
+    "options": [
+      {
+        "label": "Den Zettel unbemerkt einstecken",
+        "check": {
+          "category": "fingerfertigkeit",
+          "dc": 12
+        },
+        "success": {
+          "text": "Der Zettel verschwindet im Ärmel. Es ist nur eine Einkaufsliste, aber darin eingewickelt steckt etwas Brauchbares.",
+          "effects": [
+            {
+              "item": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Er legt seine schwere Hand auf deine. Darunter liegt der Zettel und dein weiteres Schicksal.",
+          "effects": [
+            {
+              "combat": "zwergenkoch"
+            },
+            {
+              "gainXp": 4
+            },
+            {
+              "loot": "tier1"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Das Gericht an der Duftspur erraten",
+        "check": {
+          "category": "wahrnehmung",
+          "dc": 12
+        },
+        "success": {
+          "text": "„Pilzragout, und das Geheimnis ist Pilz.“ Er ist erschüttert, kauft dein Schweigen und zählt das Geld zweimal.",
+          "effects": [
+            {
+              "gold": "2W6"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "„Kuchen“, sagst du. Beruhigt lässt er dich gehen, die Konkurrenz ist offenbar nicht gefährlich.",
+          "effects": []
+        }
+      },
+      {
+        "label": "Sagen, dass kein Spion so tief sinken würde",
+        "condition": "volk:elf",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Er lacht dröhnend und schlägt dir auf den Rücken. Wer so frech ist, kann nicht von der Konkurrenz sein.",
+          "effects": [
+            {
+              "gold": "W6"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Er schlägt das Buch wieder auf, trägt deinen Namen ein und nimmt die Pfanne.",
+          "effects": [
+            {
+              "combat": "zwergenkoch"
+            },
+            {
+              "gainXp": 4
+            },
+            {
+              "loot": "tier1"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Unter Zwergen: Beim Bart schwören",
+        "condition": "volk:zwerg",
+        "check": {
+          "category": "diplomatie",
+          "dc": 8
+        },
+        "success": {
+          "text": "Er prüft den Bart und nickt. Unter Zwergen reicht das, und du bekommst sogar eine Kostprobe.",
+          "effects": [
+            {
+              "heal": "W6"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "„Der Bart ist gekämmt, das tut kein ehrlicher Zwerg“, knurrt er. Er schiebt dich zur Tür und behält etwas Kleingeld.",
+          "effects": [
+            {
+              "loseGold": 2
+            }
+          ]
+        }
+      },
+      {
+        "label": "Deine Gegenwart höflich erklären",
+        "condition": "volk:mensch",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du sagst, du hättest dich verlaufen, und das stimmt sogar. Er entspannt sich und gibt dir eine Wegzehrung.",
+          "effects": [
+            {
+              "heal": "W4"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "„Genau das sagen Spione“, stellt er fest. Er verlangt eine Gebühr fürs Nachdenken.",
+          "effects": [
+            {
+              "loseGold": 2
+            }
+          ]
+        }
+      },
+      {
+        "label": "Weitergehen",
+        "text": "Du hebst die Hände und gehst. Er schreibt dein Gesicht in das Buch, mit Kohle und erstaunlich viel Talent.",
+        "effects": []
+      }
+    ]
   }
 ]

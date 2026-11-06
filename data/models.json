@@ -1,5 +1,5 @@
 {
-  "_info": "Zuordnung der Modelle (docs/GDD.md, Asset-Spezifikation). Pro id: file, scale (Zahl oder [x, y, z]), rotation (Grad [x, y, z]), offset ([x, y, z] in Kacheln, vor der Drehung), palette (true = Paletten-Textur des Themas), texture (eigene angepasste Textur einer Figur), tint (Farbe, die das Modell einfärbt), color (eine Farbe statt Textur, etwa der Knochenthron), lights (offset, color, intensity, distance), animations (Figuren: Name im Spiel → Name im Paket: idle, walk, attack, hit, death, interact), accessories (Zubehör aus Grundformen an einem Knochen: shape, bone, offset und size in Kacheln). Varianten heißen <id>_<variante>.",
+  "_info": "Zuordnung der Modelle (docs/GDD.md, Asset-Spezifikation). Pro id: file, scale (Zahl oder [x, y, z]), rotation (Grad [x, y, z]), offset ([x, y, z] in Kacheln, vor der Drehung), palette (true = Paletten-Textur des Themas), texture (eigene angepasste Textur einer Figur), tint (Farbe, die das Modell einfärbt), color (eine Farbe statt Textur, etwa der Knochenthron), lights (offset, color, intensity, distance), animations (Figuren: Name im Spiel → Name im Paket: idle, walk, attack, hit, death, interact), accessories (Zubehör aus Grundformen an einem Knochen: shape, bone, offset und size in Kacheln, size auch als [x, y, z]). Varianten heißen <id>_<variante>.",
   "boden": {
     "file": "assets/tiles/boden.glb",
     "scale": 0.5,
@@ -1154,5 +1154,170 @@
     "file": "assets/props/kiste_klein_verziert.glb",
     "scale": 0.5,
     "palette": true
+  },
+  "zwergenwache": {
+    "file": "assets/figures/zwergenwache.glb",
+    "scale": [
+      0.429,
+      0.2805,
+      0.429
+    ],
+    "palette": false,
+    "texture": "assets/textures/figures/zwerg/zwerg_texture.png",
+    "animations": {
+      "idle": "Idle",
+      "walk": "Walking_A",
+      "attack": "1H_Melee_Attack_Chop",
+      "hit": "Hit_A",
+      "death": "Death_A",
+      "interact": "Interact",
+      "sit": "Sit_Chair_Idle",
+      "sit_floor": "Sit_Floor_Idle"
+    },
+    "accessories": [
+      {
+        "shape": "bart",
+        "part": "kinn",
+        "bone": "head",
+        "offset": [
+          0,
+          0.035,
+          0.2
+        ],
+        "size": 1
+      },
+      {
+        "shape": "bart",
+        "part": "keil",
+        "bone": "chest",
+        "offset": [
+          0,
+          0,
+          0.19
+        ],
+        "size": 1
+      }
+    ]
+  },
+  "zwergenkoch": {
+    "file": "assets/figures/zwerg.glb",
+    "scale": [
+      0.429,
+      0.2805,
+      0.429
+    ],
+    "palette": false,
+    "texture": "assets/textures/figures/zwerg/zwerg_texture.png",
+    "animations": {
+      "idle": "Idle",
+      "walk": "Walking_A",
+      "attack": "1H_Melee_Attack_Chop",
+      "hit": "Hit_A",
+      "death": "Death_A",
+      "interact": "Interact"
+    },
+    "accessories": [
+      {
+        "shape": "bart",
+        "part": "kinn",
+        "bone": "head",
+        "offset": [
+          0,
+          0.035,
+          0.2
+        ],
+        "size": 1
+      },
+      {
+        "shape": "bart",
+        "part": "keil",
+        "bone": "chest",
+        "offset": [
+          0,
+          0,
+          0.19
+        ],
+        "size": 1
+      },
+      {
+        "shape": "kochmuetze",
+        "bone": "head",
+        "offset": [
+          0,
+          0.17,
+          -0.01
+        ],
+        "size": [
+          0.3,
+          0.4,
+          0.3
+        ]
+      }
+    ]
+  },
+  "ausbrecher_goblin": {
+    "file": "assets/figures/goblin.glb",
+    "scale": 0.8,
+    "palette": false,
+    "offset": [
+      0,
+      -0.02,
+      0
+    ],
+    "animations": {
+      "idle": "Idle_A",
+      "walk": "Walking_A",
+      "attack": "Melee_1H_Attack_Stab",
+      "hit": "Hit_A",
+      "death": "Death_A",
+      "interact": "Interact",
+      "sit": "Sit_Chair_Idle",
+      "sit_floor": "Sit_Floor_Idle",
+      "lie": "Lie_Idle"
+    }
+  },
+  "ausbrecher_kobold": {
+    "file": "assets/figures/goblin.glb",
+    "scale": 0.8,
+    "palette": false,
+    "offset": [
+      0,
+      -0.02,
+      0
+    ],
+    "texture": "assets/textures/figures/kobold/kobold_texture.png",
+    "animations": {
+      "idle": "Idle_A",
+      "walk": "Walking_A",
+      "attack": "Melee_1H_Attack_Stab",
+      "hit": "Hit_A",
+      "death": "Death_A",
+      "interact": "Interact",
+      "sit": "Sit_Chair_Idle",
+      "sit_floor": "Sit_Floor_Idle",
+      "lie": "Lie_Idle"
+    }
+  },
+  "ausbrecher_ork": {
+    "file": "assets/figures/goblin.glb",
+    "scale": 1.1,
+    "palette": false,
+    "offset": [
+      0,
+      -0.02,
+      0
+    ],
+    "animations": {
+      "idle": "Idle_A",
+      "walk": "Walking_A",
+      "attack": "Melee_1H_Attack_Stab",
+      "hit": "Hit_A",
+      "death": "Death_A",
+      "interact": "Interact",
+      "sit": "Sit_Chair_Idle",
+      "sit_floor": "Sit_Floor_Idle",
+      "lie": "Lie_Idle"
+    },
+    "texture": "assets/textures/figures/ork/ork_texture.png"
   }
 }

@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.61 · Nov 5, 2026 · @Christian
+Version 2.62 · Nov 6, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.62 | 06.11.2026 | Zwergenminen Paket 1: Küche und Kerker im Thema; alle anderen Räume dort neutral, nur der Kerker feindlich (Gefängnisausbrüche), keine Begegnungen; Monster Entflohener Ork, Goblin und Kobold, Zwergen-Wache, Zwergenkoch; Figuren dazu; Anker `an_saeule_schlafend` |
 | 2.61 | 05.11.2026 | Würfelanzeige: Spielerwürfe rollen als große 3D-Würfel auf einem unsichtbaren Würfelfeld über dem Raum; aufgezeichnete Physik, das Ergebnis legt der Regelcode fest; neue Sounds `wuerfel_rollen` und `wuerfel_landen` |
 | 2.60 | 05.11.2026 | Kampf: Lebenspunkte über den Köpfen von Spielfigur und Gegner; Schaden als rote Minuszahl, Heilung als grüne Pluszahl, in den Farbwerten des Textfensters |
 | 2.59 | 05.11.2026 | Brunnenraum vereinheitlicht: eine feste Einrichtung mit Brunnen in der Raummitte und vier Säulen auf 2\|2, 8\|2, 2\|8 und 8\|8; Fackeln an den Säulen, keine Wanddekoration |
@@ -302,7 +303,7 @@ Der Dungeon führt durch Themen, die alle drei Ebenen wechseln. Das Thema bestim
 | --- | --- | --- | --- |
 | 1–3 | Keller | Vorratskammer, Küche, Speisesaal, Wachstube, Brunnenraum, Säulenhalle, Gruft | Ratten, Skelette |
 | 4–6 | Katakomben | Gruft, Schrein, Säulenhalle, Kerker | Skelette, Geister, Mimik |
-| 7–9 | Zwergenminen | Säulenhalle, Bibliothek, Schrein, Speisesaal, Wachstube, Schmiede | Höhlenspinnen, Steingolems, Eisengolems, Dunkelzwerge |
+| 7–9 | Zwergenminen | Säulenhalle, Bibliothek, Schrein, Speisesaal, Küche, Wachstube, Schmiede, Kerker | Zwergen-Wache, Zwergenkoch, entflohene Orks, Goblins und Kobolde |
 | 10–12 | Goblin-Höhlen | Kerker, Folterkammer, Goblin-Lager, Vorratshöhle, Pilzzucht | Goblins, Goblin-Schamanen, Spinnen |
 | 13–15 | Ork-Lager | Ork-Lager, Folterkammer, Gefangenen-Lager, Friedhof, Wolfs-Höhle | Orks, Wölfe, Ork-Kriegsherr |
 
@@ -340,8 +341,9 @@ Der Dungeon führt durch Themen, die alle drei Ebenen wechseln. Das Thema bestim
 
 - **Lesart der Lage:** „nur“, „nie“ und „direkt neben dem Start“ sind feste Regeln. „Bevorzugt“ und „neben X“ gelten, wenn der Grundriss es zulässt und der andere Raumtyp auf der Ebene vorkommt.
 - **Bewertung pro Thema:** Die Spalte Bewertung ist der Standard. Einzelne Themen können sie über `themeRating` ändern (siehe Event-System).
+- **Zwergenminen:** Die Zwerge sind nicht grundsätzlich feindlich, lassen sich aber leicht verärgern. Säulenhalle, Bibliothek, Schrein, Speisesaal, Küche, Wachstube und Schmiede sind dort neutral (`themeRating`), Kämpfe entstehen in ihnen nur durch die Wahl des Spielers. Feindliche Ereignisse gibt es nur im Kerker: Gefängnisausbrüche von Orks, Goblins oder Kobolden, etwa 30 % beim Betreten des Kerkers (über die Gewichte der Tabelle). Schatzkammer und Bossraum bleiben feindlich.
 - **Feindlich:** Events mit Kämpfen und Fallen. **Neutral:** Rätsel, Gespräche, Fundstücke oder gar kein Event, nur Start, Rastplatz und Händler sind verlässlich sicher. Der Abstieg ist neutral, seine Events dürfen aber kleine Folgen haben (etwas Schaden, Goldverlust) und einen Kampf, etwa mit dem Türsteher. **Gemischt:** Wenn ein Event auslöst, ist es in etwa 30 % der Fälle ein Gegner oder eine Falle, sonst harmlos. Dafür trägt jedes Event in der Tabelle eines Raumtyps, der im jeweiligen Thema gemischt ist, die Markierung feindlich oder neutral, und zwar doppelt: `"hostile": true` oder `false` (Feld des Content-Projekts) und `"rating": "hostile"` oder `"neutral"` (wertet der Code aus). Beide müssen übereinstimmen, `npm test` prüft das. Für den Anteil feindlicher Räume zählen gemischte Räume nicht als feindlich.
-- **Anteil feindlicher Räume:** steigt von etwa 40 % auf Ebene 1 auf 70 % ab Ebene 13.
+- **Anteil feindlicher Räume:** steigt von etwa 40 % auf Ebene 1 auf 70 % ab Ebene 13. Ausnahme: In den Zwergenminen ist nur der Kerker feindlich, der Anteil wird dort nicht erreicht.
 - **Sackgassen:** Sackgassen, die keine Schatzkammer werden, bekommen einen anderen Raumtyp des Themas.
 - **Schatzkammer:** Sie kommt in jedem Thema nur einmal vor, auf der mittleren der drei Ebenen (Feld `"themeLevel": 2` im Raumtyp; im endlosen Ork-Lager auf jeder dritten Ebene, also 14, 17 …). Hat diese Ebene keine Sackgasse, fehlt die Schatzkammer in diesem Thema. Sie hat 2 bis 3 Truhen. Eine davon ist echt und öffnet sich wie jede Truhe (Event `chest`). Die übrigen sind Mimiken. Welche echt ist, sieht man nicht; der Raum-Seed legt es fest. Klickt man eine Mimik an, erwacht sie, und das Event `schatz_mimik` beginnt (Kampf mit Beute tier2, Zurücklächeln oder Rückzug). Danach ist die Truhe weg: Eine besiegte Mimik bleibt liegen, sonst hüpft sie zur Tür hinaus. Das Event `schatz_mimik` steht deshalb nicht mehr in der Event-Tabelle des Raums.
 - **Händler:** bietet 4 zufällige Gegenstände vom Rang der aktuellen Beutestufe an (Rang = Stufe des Themas, Verbrauchsgegenstände eingeschlossen), jeden einmal. Dazu immer die Heiltränke (Kleiner und Großer Heiltrank) in beliebiger Menge; sie zählen nicht zu den 4 Gegenständen. Ist der Rang leer, gilt der höchste Rang darunter. Verkaufen bringt den halben Preis.
@@ -365,7 +367,7 @@ Ab den Katakomben können beim ersten Betreten eines Raums schon Monster im Raum
 
 - **Wo:** nur in Räumen, die im aktuellen Thema feindlich oder gemischt sind. Nie in Vorkammer, Abstieg, Rastplatz, Händler, Schatzkammer und Bossraum.
 - **Ablauf:** Beim ersten Betreten würfelt das Spiel zuerst gegen die Begegnungschance des Themas. Bei Erfolg wählt es gewichtet ein Monster aus der Begegnungstabelle, und der Raum bekommt kein Event. Ohne Begegnung folgt der normale Event-Wurf. Gleicher Raum-Seed ergibt dieselbe Begegnung.
-- **Daten:** `data/themes.json` hält pro Thema das Feld `encounters` mit `chance`, `monsters` (Monster-id und Gewicht) und `reward` (Effekte nach dem Sieg). Ohne `encounters` gibt es im Thema keine Begegnungen, heute im Keller.
+- **Daten:** `data/themes.json` hält pro Thema das Feld `encounters` mit `chance`, `monsters` (Monster-id und Gewicht) und `reward` (Effekte nach dem Sieg). Ohne `encounters` gibt es im Thema keine Begegnungen, heute im Keller und in den Zwergenminen.
 
 ```json
 "katakomben": {
@@ -379,7 +381,7 @@ Ab den Katakomben können beim ersten Betreten eines Raums schon Monster im Raum
 
 - **Figuren:** 1 bis 3 nach Raum-Seed, wie bei Kämpfen ohne Anzahl. Beim Einblenden stehen sie auf freien Kacheln mit mindestens drei Kacheln Abstand zur Eingangstür, Blick zur Spielfigur, und laufen dann zum Kampf an. Das Kampffenster nennt den Gegner wie bei jedem Kampf, einen Event-Text gibt es nicht.
 - **Kampf:** nach den normalen Regeln. Sieg: die Effekte aus `reward`, Besiegte bleiben liegen. Flucht: durch die Rück-Tür, die Begegnung ist danach vorbei wie ein Event. Tod: `deathText` des Monsters.
-- **Richtwerte:** Chance Katakomben 0,15, pro Thema tiefer +0,05 (Zwergenminen 0,2, Goblin-Höhlen 0,25, Ork-Lager 0,3, auch im endlosen Ork-Lager). Siegbeute `tier1` und 3 Erfahrung. Werte im Spiel testen.
+- **Richtwerte:** Chance Katakomben 0,15, pro Thema tiefer +0,05 (Goblin-Höhlen 0,25, Ork-Lager 0,3, auch im endlosen Ork-Lager; die Zwergenminen haben keine Begegnungen). Siegbeute `tier1` und 3 Erfahrung. Werte im Spiel testen.
 - Begegnungen zählen nicht zum Anteil feindlicher Räume.
 
 ### Bosse, Gold und Händler
@@ -682,6 +684,11 @@ Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kan
 | kroete | Die Kröte, mit Krone | Figur ohne Kampfwerte | Deko | – |
 | knight | Ritter in Rüstung, ohne Waffen (Säulenhalle, Kartenrunde) | Figur ohne Kampfwerte | 1 | – |
 | kobold | Kobold, Goblin-Modell mit roter Haut (Steuerprüfung) | Figur ohne Kampfwerte | 1 | – |
+| zwergenwache | Zwergen-Wache, Zwerg mit Helm | Monster | 1 | sitzend |
+| zwergenkoch | Zwergenkoch, Zwerg mit Kochmütze | Monster | 1 | – |
+| ausbrecher_ork | Entflohener Ork | Monster | 1 | – |
+| ausbrecher_goblin | Entflohener Goblin, Goblin-Modell | Monster | 1 | – |
+| ausbrecher_kobold | Entflohener Kobold, Kobold-Modell | Monster | 1 | – |
 
 Jede Monster-id hat eine Figur mit derselben id. Figuren ohne Modell baut der Code aus Grundformen. Figuren ohne Animation atmen im Stand leicht, die Füße bleiben dabei am Boden.
 
@@ -967,3 +974,5 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Spielerwürfe rollen als große 3D-Würfel auf einem unsichtbaren Würfelfeld über dem Raum: von rechts herein, leicht eingeblendet, Endlage in der Raummitte, weicher Schatten, kein Kontakt zu Figuren und Objekten; aufgezeichnete Physik, der Regelcode legt das Ergebnis fest
 - [x] Die Würfel bleiben bis zur nächsten Auswahl liegen
 - [x] Gegnerwürfe und Würfel aus Event-Effekten bleiben Text; keine eigene Darstellung für eine gewürfelte 20 oder 1
+- [x] Zwergenminen: Zwerge sind nicht grundsätzlich feindlich, aber leicht zu verärgern; Küche und Kerker gehören zum Thema; feindliche Ereignisse nur im Kerker (Gefängnisausbrüche, etwa 30 %); alle anderen Räume dort neutral, keine Begegnungen
+- [x] Volks-Optionen in den Zwergenminen: Elfen bekommen freche, Zwerge und Menschen diplomatische Antworten

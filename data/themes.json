@@ -149,7 +149,9 @@
       "schrein",
       "speisesaal",
       "wache",
-      "schmiede"
+      "schmiede",
+      "kueche",
+      "kerker"
     ],
     "monsters": [
       "hoehlenspinne",
