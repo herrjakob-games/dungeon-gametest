@@ -271,6 +271,8 @@ export const ACCESSORIES = {
       part(soft(0.5), hair, 0, -0.02, 0).scale.set(0.18, 0.16, 0.075);  // schmaler, damit die Schwerthand beim Angriff frei bleibt
       [-1, 1].forEach(k => part(soft(0.5), hair, k * 0.042, -0.1, -0.01).scale.set(0.09, 0.1, 0.065)); // Gabel unten
     }
+    // depth: dickerer Bart von der Seite (Dunkelzwerge, damit er neben dem Kinnschutz des Helms nicht flach wirkt)
+    if (a.depth) g.children.forEach(c => { c.scale.z *= a.depth; c.position.z *= a.depth; });
     return g;
   },
   // Weiße Kochmütze: Band und gebauschter Kopf
@@ -332,7 +334,7 @@ export const ACCESSORIES = {
     const g = new THREE.Group();
     const part = maker(g);
     part(boxG(0.08, 0.9, 0.08), mat(0x5e3d22), 0, 0.25, 0);
-    part(boxG(0.2, 0.2, 0.42), mat(0x5a5e66, { metalness: 0.5, roughness: 0.5 }), 0, 0.7, 0);
+    part(boxG(0.32, 0.32, 0.62), mat(0x5a5e66, { metalness: 0.5, roughness: 0.5 }), 0, 0.76, 0); // großer Kopf: gut lesbar aus der Iso-Ansicht
     return g;
   },
   // Messlatte (Vermesser): lange Latte mit abwechselnd hellen und roten Abschnitten

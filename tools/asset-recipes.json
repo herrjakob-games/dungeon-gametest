@@ -1088,28 +1088,6 @@
       ],
       "maxTris": 4000
     },
-    "zwergenwache": {
-      "file": "Knight.glb",
-      "remove": [
-        "1H_Sword_Offhand",
-        "Badge_Shield",
-        "Rectangle_Shield",
-        "Round_Shield",
-        "Spike_Shield",
-        "2H_Sword"
-      ],
-      "animations": [
-        "Idle",
-        "Walking_A",
-        "1H_Melee_Attack_Chop",
-        "Hit_A",
-        "Death_A",
-        "Interact",
-        "Sit_Chair_Idle",
-        "Sit_Floor_Idle"
-      ],
-      "maxTris": 4000
-    },
     "dunkelzwerg": {
       "file": "Knight.glb",
       "remove": [
@@ -1119,8 +1097,57 @@
         "Round_Shield",
         "Spike_Shield",
         "2H_Sword",
-        "Knight_Helmet",
         "1H_Sword"
+      ],
+      "animations": [
+        "Idle",
+        "Walking_A",
+        "1H_Melee_Attack_Chop",
+        "2H_Melee_Idle",
+        "2H_Melee_Attack_Chop",
+        "Hit_A",
+        "Death_A",
+        "Interact",
+        "Sit_Chair_Idle",
+        "Sit_Floor_Idle"
+      ],
+      "maxTris": 4000
+    },
+    "zwergenkoch": {
+      "file": "Knight.glb",
+      "remove": [
+        "1H_Sword_Offhand",
+        "Badge_Shield",
+        "Rectangle_Shield",
+        "Round_Shield",
+        "Spike_Shield",
+        "2H_Sword",
+        "1H_Sword",
+        "Knight_Helmet"
+      ],
+      "animations": [
+        "Idle",
+        "Walking_A",
+        "1H_Melee_Attack_Chop",
+        "2H_Melee_Idle",
+        "2H_Melee_Attack_Chop",
+        "Hit_A",
+        "Death_A",
+        "Interact",
+        "Sit_Chair_Idle",
+        "Sit_Floor_Idle"
+      ],
+      "maxTris": 4000
+    },
+    "zwergenschmied": {
+      "file": "Barbarian.glb",
+      "remove": [
+        "1H_Axe_Offhand",
+        "Barbarian_Round_Shield",
+        "1H_Axe",
+        "2H_Axe",
+        "Mug",
+        "Barbarian_Hat"
       ],
       "animations": [
         "Idle",
@@ -1135,7 +1162,7 @@
       "maxTris": 4000
     }
   },
-  "extractNotes": "Requisiten aus Teilen einer Paketfigur: pieces mit node (Name des Teils), position (KayKit-Einheiten, Unterseite des Teils), rotation (Grad [x, y, z]).",
+  "extractNotes": "Requisiten aus Teilen einer Paketfigur: pieces mit node (Name des Teils), position (KayKit-Einheiten, Unterseite des Teils), rotation (Grad [x, y, z]). keepTexture: eigene Textur bleibt; keepTransform: Teil behält seine Lage aus dem Paket (Griff am Ursprung, für Waffen in der Hand).",
   "extracts": {
     "knochen": {
       "dir": "props",
@@ -1196,6 +1223,18 @@
         }
       ],
       "simplify": 0.75
+    },
+    "grossaxt": {
+      "dir": "props",
+      "source": "assets/source/kaykit-adventurers/",
+      "file": "Barbarian.glb",
+      "keepTexture": true,
+      "pieces": [
+        {
+          "node": "2H_Axe",
+          "keepTransform": true
+        }
+      ]
     }
   }
 }

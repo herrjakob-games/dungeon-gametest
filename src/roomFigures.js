@@ -7,7 +7,7 @@ import { state, walkable } from "./state.js";
 import { scene } from "./scene.js";
 import { DATA } from "./data.js";
 import { mulberry32 } from "./rng.js";
-import { planFigures, combatSpot, figureInfo, processionRoute, stepAsideTile, placeEventProps } from "./figurePlan.js";
+import { planFigures, combatSpot, figureInfo, processionRoute, stepAsideTile, placeEventProps, weaponArmed } from "./figurePlan.js";
 import { eventFigures, endFor, isHidden, eventProps } from "./staging.js";
 import { STAIRS_FOOT, STAIRS_TILES, PROPS } from "./decor.js";
 import { placeEventProp } from "./roomBuilder.js";
@@ -57,6 +57,7 @@ function make(pl, eventId, popIn, dead) {
     outer, mid, eventId, phase: Math.random() * 6, path: [], twitch: 0, sink: 0, grow: popIn && !reduceMotion,
     anim: anim && anim.animated ? anim : null, pose: null, rot: pl.rot || 0, dead: false, dying: 0, leaving: false, pl };
   if (f.anim) {
+    f.anim.setArmed(weaponArmed(f.anim.weaponWhen, { dead, pose: pl.anim }));
     if (dead) {
       f.anim.once("death");
       f.anim.update(f.anim.duration("death") + 0.1); // gleich in der Endhaltung
@@ -496,6 +497,7 @@ export function updateFigures(dt, t) {
       if (f.path.length || f.fighting) f.rot = want;
       f.outer.rotation.y += angleDiff(f.outer.rotation.y, want) * Math.min(1, dt * TURN);
     }
+    if (f.anim) f.anim.setArmed(weaponArmed(f.anim.weaponWhen, f)); // aufstehen oder Kampfbeginn: Waffe in die Hand
     if (f.anim && !f.frozen) {
       if (!f.dead && !f.sink) f.anim.loop(f.path.length && !(f.wait > 0) ? "walk" : (f.pose || "idle"));
       f.anim.update(dt);

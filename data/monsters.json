@@ -25,7 +25,7 @@
   {"id": "ausbrecher_goblin", "name": "Entflohener Goblin", "hp": 11, "armor": 14, "attack": 4, "damage": "W8+1", "sound": "holz", "deathText": "Von einem Stuhlbein erschlagen. Der Stuhl hat es bis heute nicht verwunden."},
   {"id": "ausbrecher_kobold", "name": "Entflohener Kobold", "hp": 8, "armor": 13, "attack": 3, "damage": "W8", "sound": "schwert", "deathText": "Mit einem Löffel erstochen. Drei Jahre Arbeit, und sie haben sich gelohnt."},
   {"id": "zwergenwache", "name": "Zwergen-Wache", "hp": 14, "armor": 16, "attack": 5, "damage": "W10", "sound": "axt", "deathText": "Du hast eine Zwergen-Wache verärgert. Das Protokoll vermerkt: selbst schuld, in dreifacher Ausfertigung."},
-  {"id": "zwergenkoch", "name": "Zwergenkoch", "hp": 14, "armor": 15, "attack": 5, "damage": "W10", "sound": "hammer", "deathText": "Mit der Bratpfanne erledigt. Er hat sie hinterher nicht einmal abgewaschen."},
+  {"id": "zwergenkoch", "name": "Zwergenkoch", "hp": 14, "armor": 15, "attack": 5, "damage": "W10", "sound": "axt", "deathText": "Vom Zwergenkoch filetiert. Er hat die Axt hinterher nicht einmal abgewaschen."},
   {"id": "zwergenschmied", "name": "Dunkelzwerg-Schmied", "hp": 14, "armor": 15, "attack": 5, "damage": "W10", "sound": "hammer", "deathText": "Vom Schmied mit dem Hammer korrigiert. Der Kostenvoranschlag liegt bei."},
   {"id": "monsterratte_rache", "name": "Die Monsterratte", "hp": 22, "armor": 15, "attack": 6, "damage": "W8+1", "sound": "biss", "deathText": "Die Monsterratte hat lange gewartet. Nachtragen lohnt sich eben."}
 ]

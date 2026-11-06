@@ -30,7 +30,7 @@ Assets (auf das KayKit-Rig gesetzt, Animationen aus KayKit Character Animations 
 Die Katakomben haben echte Inhalte für Kerker und Schrein (Monster, Begegnungen, Events). Die Zwergenminen haben Paket 1 und 2
 (Kerker mit Gefängnisausbrüchen ohne Begegnungen, Küche, Wachstube, Vorratskammer mit der Rache der Monsterratte auf Ebene 7, Säulenhalle und Schmiede
 als gemischte verlassene Stollen mit Begegnungen: Höhlenspinne, Stein- und Eisengolem aus Grundformen, abtrünniger Dunkelzwerg). Alle Zwerge dort sind
-Dunkelzwerge (Modell des Zwergs mit eigener Textur, grauweißem Bart und Werkzeug in der Hand); der Ork ist vorläufig ein graues Goblin-Modell. Die Mimik ist noch Grundform. Wie Event-Figuren im Raum
+Dunkelzwerge (Modell des Zwergs mit eigener Textur, Helm außer beim Koch, große Axt im Kampf; der Schmied auf Barbarian-Basis mit Hammer); der Ork ist vorläufig ein graues Goblin-Modell. Die Mimik ist noch Grundform. Wie Event-Figuren im Raum
 stehen und sich bewegen, regelt die Inszenierung in `data/staging.json`.
 Meilenstein 6c (Sound) ist gebaut: `data/sounds.json`, Modul `src/sound.js`; erste Sounds von Freepik sind eingebaut, was fehlt, bleibt still.
 Die Liste aller Meilensteine steht im GDD.
@@ -44,7 +44,7 @@ Die Liste aller Meilensteine steht im GDD.
   baut aus `tools/asset-recipes.json` die Dateien in `assets/tiles/`, `assets/props/` und `assets/figures/` (braucht einmal `npm install`; FBX wandelt das npm-Paket `fbx2gltf` um, `meshoptimizer` vereinfacht);
   das Spiel selbst braucht keinen Build-Schritt. Zuordnung in `data/models.json`. `tools/palette-texture.py` erzeugt
   die erste Fassung der Paletten-Textur, `tools/skeleton-texture.py` die Skelett-Textur,
-  `tools/merchant-texture.py` die Textur des Händlers, `tools/ghost-texture.py` die der Geister (Händler-Modell in Hellblau, Haut weiß, Haare grau), `tools/dwarf-texture.py` die des Zwergs (Haare in Bartfarbe), `tools/dunkelzwerg-texture.py` die der Dunkelzwerge (Haut, Haare, Umhang), `tools/kobold-texture.py` die des Kobolds und des vorläufigen Orks (Goblin-Textur mit roter bzw. grauer Haut, nach `npm run build:assets`), `tools/goblin-rig.py` setzt den Goblin auf das KayKit-Rig (braucht Blender als Python-Modul: `pip install bpy`; danach `npm run build:assets`).
+  `tools/merchant-texture.py` die Textur des Händlers, `tools/ghost-texture.py` die der Geister (Händler-Modell in Hellblau, Haut weiß, Haare grau), `tools/dwarf-texture.py` die des Zwergs (Haare in Bartfarbe), `tools/dunkelzwerg-texture.py` die der Dunkelzwerge und des Schmieds (Haut, Haare, Umhang), `tools/kobold-texture.py` die des Kobolds und des vorläufigen Orks (Goblin-Textur mit roter bzw. grauer Haut, nach `npm run build:assets`), `tools/goblin-rig.py` setzt den Goblin auf das KayKit-Rig (braucht Blender als Python-Modul: `pip install bpy`; danach `npm run build:assets`).
   Die Spiellogik besteht aus ES-Modulen in `src/`, Einstieg ist `src/main.js`.
 - Würfelanzeige: `npm run build:dice` nimmt mit `tools/record-dice.mjs` die Flugbahnen auf (Physik mit dem npm-Paket `cannon-es`,
   nur beim Aufnehmen, fester Seed) und schreibt `data/dice-rolls.json`; das Spiel spielt sie ohne Physik ab.
