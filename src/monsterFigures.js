@@ -334,7 +334,7 @@ export const ACCESSORIES = {
     const g = new THREE.Group();
     const part = maker(g);
     part(boxG(0.08, 0.9, 0.08), mat(0x5e3d22), 0, 0.25, 0);
-    part(boxG(0.32, 0.32, 0.62), mat(0x5a5e66, { metalness: 0.5, roughness: 0.5 }), 0, 0.76, 0); // großer Kopf: gut lesbar aus der Iso-Ansicht
+    part(boxG(0.45, 0.55, 0.36), mat(0x5a5e66, { metalness: 0.5, roughness: 0.5 }), 0, 0.74, 0); // kurzer, hoher Kopf wie ein Schmiedehammer, gut lesbar aus der Iso-Ansicht
     return g;
   },
   // Messlatte (Vermesser): lange Latte mit abwechselnd hellen und roten Abschnitten
