@@ -119,11 +119,14 @@ function attachAccessories(g, inner, list) {
     const name = THREE.PropertyBinding.sanitizeNodeName(a.bone);
     let bone = null;
     inner.traverse(n => { if (!bone && n.name === name) bone = n; });
-    const build = ACCESSORIES[a.shape];
-    if (!bone || !build) { console.warn("Zubehör " + a.shape + " an " + a.bone + " fehlt"); return; }
+    // model: fertiges Modell aus data/models.json (etwa die große Axt), sonst Grundformen (shape)
+    const part = a.model && MODELS[a.model] ? scenes.get(MODELS[a.model].file) : null;
+    const build = part ? () => part.clone(true) : ACCESSORIES[a.shape];
+    if (!bone || !build) { console.warn("Zubehör " + (a.model || a.shape) + " an " + a.bone + " fehlt"); return; }
     // Lage in der Welt (am Knochen plus offset, ungedreht, Größe size) in den Raum des Knochens umrechnen; so stimmt
     // das Zubehör auch bei ungleichem Maßstab der Figur (etwa der breitere Zwerg)
     const o = build(a);
+    if (a.weapon) o.userData.weapon = true; // Waffe mit weaponWhen: makeFigureModel zeigt oder versteckt sie
     if (a.hand) {
       // In der Hand (Werkzeug am Knochen handslot.r): folgt der Hand wie das Schwert des Pakets; size in Kacheln
       const s = bone.getWorldScale(new THREE.Vector3());
@@ -230,6 +233,7 @@ export function findPart(group, name) {
  * - loop(name): Dauerschleife (idle, walk); wird ignoriert, solange eine einmalige Animation läuft.
  * - once(name): spielt einmal (attack, hit), danach wieder die Dauerschleife; death bleibt am Ende stehen.
  * - has(name): gibt es die Animation? duration(name): Länge in Sekunden.
+ * - setArmed(an): Waffe (weapon) zeigen oder verstecken; bewaffnet gelten die Clips aus armedAnimations (Dunkelzwerge).
  * update(dt) pro Frame.
  */
 export function makeFigureModel(id, variant) {
@@ -239,7 +243,12 @@ export function makeFigureModel(id, variant) {
   const mixer = new THREE.AnimationMixer(object);
   const list = clips.get(entry.file) || [];
   const names = entry.animations || {};
-  const clipOf = (name) => (names[name] ? THREE.AnimationClip.findByName(list, names[name]) : null);
+  const weapons = [];
+  object.traverse(n => { if (n.userData.weapon) weapons.push(n); });
+  let armed = !entry.weaponWhen || entry.weaponWhen === "always";
+  weapons.forEach(w => { w.visible = armed; });
+  const clipName = (name) => (armed && entry.armedAnimations && entry.armedAnimations[name]) || names[name];
+  const clipOf = (name) => (clipName(name) ? THREE.AnimationClip.findByName(list, clipName(name)) : null);
   let current = null, loopName = null, busy = false, dead = false;
   function start(name, once) {
     const clip = clipOf(name);
@@ -273,11 +282,17 @@ export function makeFigureModel(id, variant) {
     if (name === "death") dead = true;
     return true;
   }
+  function setArmed(on) {
+    if (on === armed) return;
+    armed = on;
+    weapons.forEach(w => { w.visible = on; });
+    if (loopName === "idle") loopName = null; // die Standhaltung wechselt beim nächsten loop("idle")
+  }
   loop("idle");
   // Stand der Dauerschleife von 0 bis 1 (für Schritte im Takt der Laufanimation), sonst null
   const phase = (name) => (loopName === name && !busy && current ? (current.time % current.getClip().duration) / current.getClip().duration : null);
   return {
-    object, mixer, loop, once, phase,
+    object, mixer, loop, once, phase, setArmed, weaponWhen: entry.weaponWhen || null,
     has: (name) => !!clipOf(name),
     duration: (name) => (clipOf(name) ? clipOf(name).duration : 0),
     animated: list.length > 0,

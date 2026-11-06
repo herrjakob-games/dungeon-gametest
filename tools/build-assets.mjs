@@ -183,11 +183,13 @@ async function buildExtract(id, recipe) {
     mesh.listPrimitives().forEach(p => ["JOINTS_0", "WEIGHTS_0"].forEach(a => p.setAttribute(a, null)));
     const pos = mesh.listPrimitives()[0].getAttribute("POSITION");
     const min = pos.getMin([]), max = pos.getMax([]);
-    const inner = doc.createNode(piece.node).setMesh(mesh).setTranslation([-(min[0] + max[0]) / 2, -min[1], -(min[2] + max[2]) / 2]);
+    const inner = doc.createNode(piece.node).setMesh(mesh);
+    if (!piece.keepTransform) inner.setTranslation([-(min[0] + max[0]) / 2, -min[1], -(min[2] + max[2]) / 2]);
     const r = (piece.rotation || [0, 0, 0]).map(d => d * Math.PI / 360);
     const [cx, cy, cz, sx, sy, sz] = [...r.map(Math.cos), ...r.map(Math.sin)];
     const outer = doc.createNode(piece.node + "_lage").setTranslation(piece.position || [0, 0, 0])
       .setRotation([sx * cy * cz - cx * sy * sz, cx * sy * cz + sx * cy * sz, cx * cy * sz - sx * sy * cz, cx * cy * cz + sx * sy * sz]);
+    if (piece.keepTransform) outer.setTranslation(src.getTranslation()).setRotation(src.getRotation()); // Griff bleibt am Ursprung
     outer.addChild(inner);
     keep.add(outer);
   }
@@ -200,8 +202,10 @@ async function buildExtract(id, recipe) {
     a.dispose();
   });
   root.listSkins().forEach(s => { const m = s.getInverseBindMatrices(); if (m) m.dispose(); s.dispose(); });
-  root.listMaterials().forEach(m => m.setBaseColorTexture(null));
-  root.listTextures().forEach(t => t.dispose());
+  if (!recipe.keepTexture) {
+    root.listMaterials().forEach(m => m.setBaseColorTexture(null));
+    root.listTextures().forEach(t => t.dispose());
+  }
   await doc.transform(prune({ keepAttributes: true }), dedup());
   if (recipe.simplify) {
     await MeshoptSimplifier.ready;

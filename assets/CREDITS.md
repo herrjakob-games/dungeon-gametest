@@ -30,8 +30,9 @@ Quelle und Lizenz jeder fremden Datei (docs/GDD.md, Asset-Spezifikation).
 - Autor: Kay Lousberg (www.kaylousberg.com)
 - Lizenz: CC0 1.0 (Creative Commons Zero), siehe `source/kaykit-adventurers/LICENSE.txt`
 - Quelle: https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0, Commit `672074b73ba276876a19e8816ecdc5241817ab47`
-- Übernommene Dateien (in `source/kaykit-adventurers/`, aus `Characters/gltf/`): Knight, Mage, Rogue_Hooded, Rogue, rogue_texture.png
-- Daraus gebaut (`npm run build:assets`): `figures/zwerg.glb`, `figures/elf.glb`, `figures/mensch.glb`, `figures/haendlerfigur.glb` (Händler), `figures/knight.glb` (Ritter ohne Waffen)
+- Übernommene Dateien (in `source/kaykit-adventurers/`, aus `Characters/gltf/`): Knight, Mage, Rogue_Hooded, Rogue, Barbarian, rogue_texture.png
+- Daraus gebaut (`npm run build:assets`): `figures/zwerg.glb`, `figures/elf.glb`, `figures/mensch.glb`, `figures/haendlerfigur.glb` (Händler), `figures/knight.glb` (Ritter ohne Waffen), `figures/dunkelzwerg.glb`, `figures/zwergenkoch.glb`, `figures/zwergenschmied.glb` (Dunkelzwerge), `props/grossaxt.glb` (große Axt, `2H_Axe` aus Barbarian)
+- `textures/figures/dunkelzwerg/dunkelzwerg_texture.png` und `dunkelschmied_texture.png` sind umgefärbte Fassungen der Knight- und Barbarian-Textur (`tools/dunkelzwerg-texture.py`)
 - `textures/figures/haendler/haendler_texture.png` ist die Rogue-Textur mit dunkelblauem statt grünem Outfit (`tools/merchant-texture.py`)
 
 ## KayKit Character Pack: Skeletons 1.0 (und 1.1 FREE)
@@ -49,8 +50,8 @@ Quelle und Lizenz jeder fremden Datei (docs/GDD.md, Asset-Spezifikation).
 - Autor: Quaternius
 - Lizenz: CC0 1.0 (laut Download-Seite: „FBX, OBJ and Blend formats and CC0 license.“; das Paket enthält keine Lizenzdatei), siehe `source/quaternius-easy-enemies/LICENSE.txt`
 - Quelle: https://quaternius.itch.io/animated-easy-enemies
-- Übernommene Dateien (in `source/quaternius-easy-enemies/`, aus `FBX/`): Rat.fbx, Frog.fbx
-- Daraus gebaut (`npm run build:assets`): `figures/rat.glb` (Riesenratte, Küchenchef, Monsterratte), `figures/kroete.glb`
+- Übernommene Dateien (in `source/quaternius-easy-enemies/`, aus `FBX/`): Rat.fbx, Frog.fbx, Spider.fbx (Spider hochgeladen von Christian)
+- Daraus gebaut (`npm run build:assets`): `figures/rat.glb` (Riesenratte, Küchenchef, Monsterratte), `figures/kroete.glb`, `figures/hoehlenspinne.glb`
 
 ## KayKit Character Animations 1.1
 
