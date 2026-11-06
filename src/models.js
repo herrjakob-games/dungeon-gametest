@@ -111,6 +111,8 @@ export function seatOffset(parent, object, seatY) {
 
 // Zubehör aus Grundformen an einen Knochen hängen (Kochmütze, Krone, Augen): offset und size in Kacheln, gemessen in
 // der Grundhaltung der Figur; der Knochen trägt es beim Animieren mit.
+const vec = (v, d) => (Array.isArray(v) ? v : [v === undefined ? d : v, v === undefined ? d : v, v === undefined ? d : v]);
+
 function attachAccessories(g, inner, list) {
   g.updateMatrixWorld(true);
   list.forEach(a => {
@@ -122,15 +124,25 @@ function attachAccessories(g, inner, list) {
     // Lage in der Welt (am Knochen plus offset, ungedreht, Größe size) in den Raum des Knochens umrechnen; so stimmt
     // das Zubehör auch bei ungleichem Maßstab der Figur (etwa der breitere Zwerg)
     const o = build(a);
+    if (a.hand) {
+      // In der Hand (Werkzeug am Knochen handslot.r): folgt der Hand wie das Schwert des Pakets; size in Kacheln
+      const s = bone.getWorldScale(new THREE.Vector3());
+      const k = vec(a.size, 1);
+      o.scale.set(k[0] / s.x, k[1] / s.y, k[2] / s.z);
+      o.position.set(...(a.offset || [0, 0, 0])).divide(s);
+      o.traverse(n => { if (n.isMesh) n.castShadow = true; });
+      bone.add(o);
+      return;
+    }
     const at = bone.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(...(a.offset || [0, 0, 0])));
-    const world = new THREE.Matrix4().compose(at, new THREE.Quaternion(), new THREE.Vector3().setScalar(a.size || 1));
+    // size: Zahl oder [x, y, z] (etwa die Kochmütze des Zwergenkochs, höher als breit)
+    const world = new THREE.Matrix4().compose(at, new THREE.Quaternion(), new THREE.Vector3(...vec(a.size, 1)));
     new THREE.Matrix4().copy(bone.matrixWorld).invert().multiply(world).decompose(o.position, o.quaternion, o.scale);
     o.traverse(n => { if (n.isMesh) n.castShadow = true; });
     bone.add(o);
   });
 }
 
-const vec = (v, d) => (Array.isArray(v) ? v : [v === undefined ? d : v, v === undefined ? d : v, v === undefined ? d : v]);
 
 /**
  * Klon eines Modells als Gruppe mit Ursprung am Boden; null, wenn es kein Modell gibt (dann Platzhalter bauen).

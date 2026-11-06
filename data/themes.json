@@ -149,7 +149,10 @@
       "schrein",
       "speisesaal",
       "wache",
-      "schmiede"
+      "schmiede",
+      "kueche",
+      "kerker",
+      "vorrat"
     ],
     "monsters": [
       "hoehlenspinne",
@@ -165,7 +168,44 @@
       "torch": "#FF6A2A",
       "ambient": "#2A2228"
     },
-    "seeThroughOpacity": 0.4
+    "seeThroughOpacity": 0.4,
+    "overrides": {
+      "wache": {
+        "max": 9
+      },
+      "halle": {
+        "max": 10
+      }
+    },
+    "encounters": {
+      "chance": 0.2,
+      "monsters": [
+        {
+          "monster": "hoehlenspinne",
+          "weight": 3
+        },
+        {
+          "monster": "steingolem",
+          "weight": 2
+        },
+        {
+          "monster": "eisengolem",
+          "weight": 1
+        },
+        {
+          "monster": "dunkelzwerg",
+          "weight": 3
+        }
+      ],
+      "reward": [
+        {
+          "loot": "tier1"
+        },
+        {
+          "gainXp": 3
+        }
+      ]
+    }
   },
   {
     "id": "goblinhoehlen",

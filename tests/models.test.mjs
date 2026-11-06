@@ -84,7 +84,7 @@ test("Jedes Volk hat eine Figur mit allen Animationen", () => {
 });
 
 // Figuren ohne Modell (bleiben vorerst Grundformen): Mimik aus dem KayKit Dungeon Pack
-const FIGURES_PENDING = ["mimic"];
+const FIGURES_PENDING = ["mimic", "hoehlenspinne", "steingolem", "eisengolem"]; // noch ohne Modell, aus Grundformen
 
 test("Jede Figuren-id hat ein Modell, das lädt", (t) => {
   for (const id of Object.keys(FIGURE_INFO)) {
@@ -100,7 +100,8 @@ test("Jede Figuren-id hat ein Modell, das lädt", (t) => {
     });
     (m.accessories || []).forEach(a => {
       assert.ok(ACCESSORIES[a.shape], id + ": unbekanntes Zubehör " + a.shape);
-      assert.ok(typeof a.bone === "string" && a.size > 0, id + ": Zubehör braucht bone und size");
+      const size = Array.isArray(a.size) ? a.size : [a.size];
+      assert.ok(typeof a.bone === "string" && (size.length === 1 || size.length === 3) && size.every(v => v > 0), id + ": Zubehör braucht bone und size (Zahl oder [x, y, z])");
       if (a.shape === "bart") assert.ok(["kinn", "keil"].includes(a.part), id + ": Bart braucht part kinn oder keil");
       // Knochen muss in der Datei stehen (Namen wie im Paket, etwa head, chest)
       assert.ok(g.nodes.includes(a.bone), id + ": Knochen " + a.bone + " fehlt in " + m.file);

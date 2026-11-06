@@ -9,7 +9,7 @@ import { ATTRS, hasItem, ATTR_MIN, ATTR_MAX, START_ATTR_MAX, VOLK_NAMES } from "
 
 export const DCS = [8, 12, 16]; // leicht, mittel, schwer
 export const EVENT_TYPES = ["combat", "choice", "trap", "treasure", "npc"];
-export const EFFECTS = ["damage", "heal", "loot", "gold", "item", "loseGold", "combat", "gainXp", "lockDoor", "unlockDoor", "setFlag"];
+export const EFFECTS = ["damage", "heal", "loot", "gold", "item", "loseGold", "combat", "gainXp", "lockDoor", "unlockDoor", "setFlag", "flee"];
 
 // Neun Proben-Kategorien, je drei pro Attribut
 export const CATEGORIES = {
@@ -96,8 +96,16 @@ export const FIXED_RATING = { start: "neutral", rast: "neutral", haendler: "neut
 export const eventTable = (rt, themeId) => ((rt.themeEvents || {})[themeId]) || rt.events || [];
 // Bewertung im Thema: themeRating[thema], sonst die Bewertung des Raumtyps
 export const ratingFor = (rt, themeId) => ((rt.themeRating || {})[themeId]) || rt.rating;
-// Raumtyp, wie er im Thema gilt (Tabelle und Bewertung), für pickEvent
-export const inTheme = (rt, themeId) => Object.assign({}, rt, { events: eventTable(rt, themeId), rating: ratingFor(rt, themeId) });
+// Ebenen im Thema für Tabelleneinträge mit themeLevel (docs/GDD.md, Event-System)
+export const THEME_LEVELS = [1, 2, 3];
+/**
+ * Raumtyp, wie er im Thema gilt (Tabelle und Bewertung), für pickEvent. level: Ebene im Thema (levelInTheme, 1 bis 3);
+ * Einträge mit themeLevel gelten nur auf dieser Ebene. Ohne level bleiben alle Einträge (Datenprüfung, Testmodus).
+ */
+export const inTheme = (rt, themeId, level) => Object.assign({}, rt, {
+  events: eventTable(rt, themeId).filter(e => e.themeLevel === undefined || level === undefined || e.themeLevel === level),
+  rating: ratingFor(rt, themeId)
+});
 
 // ---------- Begegnungen (docs/GDD.md, Begegnungen) ----------
 // Nie in diesen Räumen, auch wenn sie im Thema feindlich sind
@@ -190,6 +198,7 @@ export function applyEffects(effects, ctx, rand) {
   const { player, run, room } = ctx;
   const list = effects || [];
   const lines = [], found = [];
+  let flee = false;
   for (let i = 0; i < list.length; i++) {
     const [type, value] = Object.entries(list[i])[0];
     if (type === "damage") {
@@ -231,10 +240,13 @@ export function applyEffects(effects, ctx, rand) {
       lines.push({ type, dir: d });
     } else if (type === "setFlag") {
       run.flags.add(value);
+    } else if (type === "flee") {
+      // Rückzug durch die Rück-Tür; der Ablauf führt ihn nach dem Ergebnistext aus (docs/GDD.md, Event-System, flee)
+      flee = true;
     }
     if (player.hp <= 0) break;
   }
-  return { lines, died: player.hp <= 0, items: found, combat: null };
+  return { lines, died: player.hp <= 0, items: found, combat: null, flee };
 }
 
 // Sicherung gegen Einsperren: Sind am Ende eines Events alle Türen zu, öffnet sich die Rück-Tür.
@@ -297,6 +309,7 @@ export function validateData(data) {
       for (const e of list) {
         if (!data.events[e.id]) err(where, "unbekanntes Event " + e.id);
         if (!(e.weight > 0)) err(where, "Gewicht von " + e.id + " muss größer als 0 sein");
+        if (e.themeLevel !== undefined && !THEME_LEVELS.includes(e.themeLevel)) err(where, e.id + ": themeLevel muss 1, 2 oder 3 sein");
         checkCond(where, e.condition);
         // Markierungspflicht: Ist der Raumtyp im Thema gemischt, tragen alle Einträge hostile und rating
         if (rating === "mixed" && !["hostile", "neutral"].includes(e.rating)) err(where, e.id + " braucht die Markierung rating hostile oder neutral");
@@ -423,6 +436,7 @@ export function validateData(data) {
       else if (type === "gainXp" && !(Number.isInteger(v) && v > 0)) err(w, "gainXp braucht eine positive Zahl");
       else if ((type === "lockDoor" || type === "unlockDoor") && !(v === "back" || DIRKEYS.includes(v))) err(w, type + " braucht N, E, S, W oder back");
       else if (type === "setFlag" && !/^[\w-]+$/.test(v)) err(w, "ungültiger Flag-Name " + v);
+      else if (type === "flee" && v !== true) err(w, "flee braucht den Wert true");
     }
   };
 

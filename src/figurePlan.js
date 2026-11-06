@@ -17,7 +17,21 @@ export const FIGURE_INFO = {
   monsterratte: { size: 2, blocks: true, variants: [] },
   kroete: { size: 1, blocks: false, variants: [], noCombat: true }, // Figur ohne Kampfwerte, Deko
   knight: { size: 1, blocks: true, variants: [], noCombat: true },  // Ritter ohne Waffen (Säulenhalle, Kartenrunde)
-  kobold: { size: 1, blocks: true, variants: [], noCombat: true }   // Goblin-Modell mit roter Haut (Steuerprüfung)
+  kobold: { size: 1, blocks: true, variants: [], noCombat: true },  // Goblin-Modell mit roter Haut (Steuerprüfung)
+  // Zwergenminen (GDD 2.62): Zwerge mit Helm oder Kochmütze, entflohene Gefangene
+  zwergenwache: { size: 1, blocks: true, variants: ["sitzend"] },
+  zwergenkoch: { size: 1, blocks: true, variants: [] },
+  ausbrecher_ork: { size: 1, blocks: true, variants: [] },
+  ausbrecher_goblin: { size: 1, blocks: true, variants: [] },
+  ausbrecher_kobold: { size: 1, blocks: true, variants: [] },
+  // Zwergenminen Paket 2 (GDD 2.63)
+  dunkelzwerg: { size: 1, blocks: true, variants: [] },
+  zwergenschmied: { size: 1, blocks: true, variants: [] },
+  zwergenvermesser: { size: 1, blocks: true, variants: [], noCombat: true }, // Vermesser mit Messlatte
+  hoehlenspinne: { size: 1, blocks: true, variants: [] },
+  steingolem: { size: 1, blocks: true, variants: [] },
+  eisengolem: { size: 1, blocks: true, variants: [] },
+  monsterratte_rache: { size: 2, blocks: true, variants: [] }              // Modell der Monsterratte, normaler Gegner
 };
 const FALLBACK = { size: 1, blocks: true, variants: [] };
 

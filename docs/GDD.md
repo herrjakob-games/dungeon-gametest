@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.61 · Nov 5, 2026 · @Christian
+Version 2.63 · Nov 6, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,8 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.63 | 06.11.2026 | Zwergenminen Paket 2: Säulenhalle und Schmiede dort gemischt, Begegnungen mit Höhlenspinne, Steingolem, Eisengolem und abtrünnigem Dunkelzwerg; höchstens 9 Wachstuben und 10 Säulenhallen; Vorratskammer im Thema; Rache der Monsterratte auf Ebene 7; alle Zwerge in den Zwergenminen als Dunkelzwerge; neuer Effekt `flee`; Feld `themeLevel` in Event-Tabellen |
+| 2.62 | 06.11.2026 | Zwergenminen Paket 1: Küche und Kerker im Thema; alle anderen Räume dort neutral, nur der Kerker feindlich (Gefängnisausbrüche), keine Begegnungen; Monster Entflohener Ork, Goblin und Kobold, Zwergen-Wache, Zwergenkoch; Figuren dazu; Anker `an_saeule_schlafend` |
 | 2.61 | 05.11.2026 | Würfelanzeige: Spielerwürfe rollen als große 3D-Würfel auf einem unsichtbaren Würfelfeld über dem Raum; aufgezeichnete Physik, das Ergebnis legt der Regelcode fest; neue Sounds `wuerfel_rollen` und `wuerfel_landen` |
 | 2.60 | 05.11.2026 | Kampf: Lebenspunkte über den Köpfen von Spielfigur und Gegner; Schaden als rote Minuszahl, Heilung als grüne Pluszahl, in den Farbwerten des Textfensters |
 | 2.59 | 05.11.2026 | Brunnenraum vereinheitlicht: eine feste Einrichtung mit Brunnen in der Raummitte und vier Säulen auf 2\|2, 8\|2, 2\|8 und 8\|8; Fackeln an den Säulen, keine Wanddekoration |
@@ -281,9 +283,11 @@ Jeder Raumtyp hat eine Event-Chance und eine gewichtete Event-Tabelle, auf Wunsc
 - **Dateien:** `data/room-types.json`, `data/events.json`, `data/monsters.json`, `data/characters.json`, `data/items.json`, `data/texts.json` (Sätze zur Todesursache bei Events: allgemeine Sätze und unter `death.events` eigene Sätze für einzelne Events, nach Event-id). Ein Event hat zusätzlich einen `title` für das Textfenster. Ein Ergebnis kann mit `next` ein Folge-Event starten, so laufen Proben Runde für Runde. `data/sounds.json` ordnet Sound-ids den MP3-Dateien zu (siehe Sound). Ein Event kann im Feld `sound` eine Sound-id nennen.
 - **Proben in Events:** Jede Probe nennt ihre Kategorie, zum Beispiel `{ "category": "kraftakt", "dc": 12 }`. Das Attribut ergibt sich aus der Kategorie.
 - **Event-Typen:** combat, choice, trap, treasure, npc. Bossgegner und Artefakte laufen als normale Events über die Tabellen.
-- **Effekte:** damage, heal, loot, gold, item, loseGold, combat, gainXp, lockDoor, unlockDoor, setFlag. Mengen als Zahl oder Würfel, etwa `"W4"` oder `"2W6"`.
+- **Effekte:** damage, heal, loot, gold, item, loseGold, combat, gainXp, lockDoor, unlockDoor, setFlag, flee. Mengen als Zahl oder Würfel, etwa `"W4"` oder `"2W6"`.
 - **Beute-Effekte:** `loot` gibt Gold und eventuell einen Gegenstand (siehe Beute). `gold` gibt nur Gold, der Würfelwert wird wie bei der Beute mit der Stufe des Themas malgenommen, etwa `{ "gold": "2W6" }`. `item` gibt sicher einen Gegenstand ohne Gold: `tier1` vom Rang der Stufe des Themas, `tier2` einen Rang höher. `loseGold` nimmt einen festen Betrag weg, nicht mit der Themenstufe malgenommen, etwa `{ "loseGold": 2 }`; Gold fällt nie unter 0.
 - **once:** Das Event kommt höchstens einmal pro Dungeon vor.
+- **themeLevel:** Ein Tabelleneintrag mit `"themeLevel": 1`, `2` oder `3` kommt nur auf dieser Ebene des Themas vor, etwa `vorrat_rache` nur auf Ebene 7.
+- **flee:** Der Effekt `{ "flee": true }` führt den Spieler nach dem Ergebnistext durch die Rück-Tür in den vorherigen Raum, derselbe Weg wie die Flucht im Kampf. Das Event ist damit vorbei. Im Startraum hat er keine Wirkung.
 - **Bedingungen:** `flag:name` (Flag ist gesetzt), `notFlag:name` (Flag fehlt) und `volk:zwerg`, `volk:elf`, `volk:mensch`. Flags gelten pro Dungeon, also pro Ebene: Beim Abstieg werden sie gelöscht. Die Kerze der Ewigen Flamme (`ewige_flamme`) hilft beim Skelett-König deshalb nur, wenn der Schrein auf derselben Ebene wie der Bossraum steht, ein seltener Glücksfall. `hasItem:id` ist erfüllt, wenn der Gegenstand angelegt ist oder im Rucksack liegt.
 - **Volks-Bedingungen:** Ein ganzes Event kann an ein Volk gebunden sein, dann erscheint es nur für dieses Volk. Bei ausgewählten Events kann auch eine einzelne Option an ein Volk gebunden sein, andere Völker sehen sie nicht.
 - **Türen:** `lockDoor` und `unlockDoor` nennen eine Richtung (`N`, `E`, `S`, `W`) oder `back`, die Tür, durch die der Spieler kam. Eine verschlossene Tür zeigt ein Schloss und lässt sich nicht benutzen, bis `unlockDoor` sie öffnet. Sind am Ende eines Events alle Türen eines Raums zu, öffnet sich die Rück-Tür von selbst.
@@ -302,7 +306,7 @@ Der Dungeon führt durch Themen, die alle drei Ebenen wechseln. Das Thema bestim
 | --- | --- | --- | --- |
 | 1–3 | Keller | Vorratskammer, Küche, Speisesaal, Wachstube, Brunnenraum, Säulenhalle, Gruft | Ratten, Skelette |
 | 4–6 | Katakomben | Gruft, Schrein, Säulenhalle, Kerker | Skelette, Geister, Mimik |
-| 7–9 | Zwergenminen | Säulenhalle, Bibliothek, Schrein, Speisesaal, Wachstube, Schmiede | Höhlenspinnen, Steingolems, Eisengolems, Dunkelzwerge |
+| 7–9 | Zwergenminen | Säulenhalle, Bibliothek, Schrein, Speisesaal, Küche, Vorratskammer, Wachstube, Schmiede, Kerker | Höhlenspinnen, Steingolems, Eisengolems, abtrünnige Dunkelzwerge; friedlich, solange man sie nicht verärgert: Zwergen-Wache, Zwergenkoch, Dunkelzwerg-Schmied; entflohene Orks, Goblins und Kobolde |
 | 10–12 | Goblin-Höhlen | Kerker, Folterkammer, Goblin-Lager, Vorratshöhle, Pilzzucht | Goblins, Goblin-Schamanen, Spinnen |
 | 13–15 | Ork-Lager | Ork-Lager, Folterkammer, Gefangenen-Lager, Friedhof, Wolfs-Höhle | Orks, Wölfe, Ork-Kriegsherr |
 
@@ -318,13 +322,13 @@ Der Dungeon führt durch Themen, die alle drei Ebenen wechseln. Das Thema bestim
 | Schatzkammer | feindlich | nur in Sackgassen, in jedem Thema nur auf der mittleren Ebene (2, 5, 8 …) | höchstens 1 |
 | Rastplatz | neutral | etwa auf halber Strecke zwischen Start und Abstieg, in jedem Thema | 1 auf jeder zweiten Ebene |
 | Händler | neutral | beliebig, in jedem Thema | genau 1 |
-| Wachstube | feindlich | immer direkt neben dem Start (Keller, Zwergenminen) | – |
+| Wachstube | feindlich | immer direkt neben dem Start (Keller, Zwergenminen) | in den Zwergenminen höchstens 9, sonst – |
 | Gruft | feindlich | nie direkt neben dem Start (außer in den Katakomben) | – |
 | Küche | gemischt | neben einem Speisesaal | höchstens 1 |
 | Speisesaal | gemischt | nie in Sackgassen | höchstens 1 |
 | Vorratskammer | gemischt | bevorzugt in Sackgassen, neben einer Küche | höchstens 2 |
 | Brunnenraum | gemischt | – | höchstens 1 |
-| Säulenhalle | gemischt | nie in Sackgassen, bevorzugt an Kreuzungen (3–4 Türen) | höchstens 3 |
+| Säulenhalle | gemischt | nie in Sackgassen, bevorzugt an Kreuzungen (3–4 Türen) | höchstens 3, in den Zwergenminen höchstens 10 |
 | Schrein | gemischt | – | höchstens 1 |
 | Kerker | feindlich | bevorzugt in Sackgassen, neben einer Folterkammer; in den Katakomben direkt neben dem Start | höchstens 2 |
 | Bibliothek | gemischt | bevorzugt in Sackgassen | höchstens 1 |
@@ -340,8 +344,9 @@ Der Dungeon führt durch Themen, die alle drei Ebenen wechseln. Das Thema bestim
 
 - **Lesart der Lage:** „nur“, „nie“ und „direkt neben dem Start“ sind feste Regeln. „Bevorzugt“ und „neben X“ gelten, wenn der Grundriss es zulässt und der andere Raumtyp auf der Ebene vorkommt.
 - **Bewertung pro Thema:** Die Spalte Bewertung ist der Standard. Einzelne Themen können sie über `themeRating` ändern (siehe Event-System).
+- **Zwergenminen:** Die Zwerge sind nicht grundsätzlich feindlich, lassen sich aber leicht verärgern. Säulenhalle und Schmiede sind die verlassenen Stollen, dort gemischt (`themeRating`), mit Begegnungen und feindlichen Events. Wachstube, Küche, Speisesaal und Vorratskammer sind bewohnt und neutral, Kämpfe entstehen dort nur durch die Wahl des Spielers. Bibliothek und Schrein sind bis zu ihren eigenen Inhalten neutral. Der Kerker ist technisch neutral, damit dort keine Begegnungen vorkommen; seine Gefängnisausbrüche von Orks, Goblins oder Kobolden kommen beim Betreten zu etwa 30 % (über die Gewichte der Tabelle). Schatzkammer und Bossraum bleiben feindlich.
 - **Feindlich:** Events mit Kämpfen und Fallen. **Neutral:** Rätsel, Gespräche, Fundstücke oder gar kein Event, nur Start, Rastplatz und Händler sind verlässlich sicher. Der Abstieg ist neutral, seine Events dürfen aber kleine Folgen haben (etwas Schaden, Goldverlust) und einen Kampf, etwa mit dem Türsteher. **Gemischt:** Wenn ein Event auslöst, ist es in etwa 30 % der Fälle ein Gegner oder eine Falle, sonst harmlos. Dafür trägt jedes Event in der Tabelle eines Raumtyps, der im jeweiligen Thema gemischt ist, die Markierung feindlich oder neutral, und zwar doppelt: `"hostile": true` oder `false` (Feld des Content-Projekts) und `"rating": "hostile"` oder `"neutral"` (wertet der Code aus). Beide müssen übereinstimmen, `npm test` prüft das. Für den Anteil feindlicher Räume zählen gemischte Räume nicht als feindlich.
-- **Anteil feindlicher Räume:** steigt von etwa 40 % auf Ebene 1 auf 70 % ab Ebene 13.
+- **Anteil feindlicher Räume:** steigt von etwa 40 % auf Ebene 1 auf 70 % ab Ebene 13. Ausnahme: Die Zwergenminen haben außer Schatzkammer und Bossraum keine feindlichen Räume, ihre Gefahr liegt in den gemischten Räumen.
 - **Sackgassen:** Sackgassen, die keine Schatzkammer werden, bekommen einen anderen Raumtyp des Themas.
 - **Schatzkammer:** Sie kommt in jedem Thema nur einmal vor, auf der mittleren der drei Ebenen (Feld `"themeLevel": 2` im Raumtyp; im endlosen Ork-Lager auf jeder dritten Ebene, also 14, 17 …). Hat diese Ebene keine Sackgasse, fehlt die Schatzkammer in diesem Thema. Sie hat 2 bis 3 Truhen. Eine davon ist echt und öffnet sich wie jede Truhe (Event `chest`). Die übrigen sind Mimiken. Welche echt ist, sieht man nicht; der Raum-Seed legt es fest. Klickt man eine Mimik an, erwacht sie, und das Event `schatz_mimik` beginnt (Kampf mit Beute tier2, Zurücklächeln oder Rückzug). Danach ist die Truhe weg: Eine besiegte Mimik bleibt liegen, sonst hüpft sie zur Tür hinaus. Das Event `schatz_mimik` steht deshalb nicht mehr in der Event-Tabelle des Raums.
 - **Händler:** bietet 4 zufällige Gegenstände vom Rang der aktuellen Beutestufe an (Rang = Stufe des Themas, Verbrauchsgegenstände eingeschlossen), jeden einmal. Dazu immer die Heiltränke (Kleiner und Großer Heiltrank) in beliebiger Menge; sie zählen nicht zu den 4 Gegenständen. Ist der Rang leer, gilt der höchste Rang darunter. Verkaufen bringt den halben Preis.
@@ -565,6 +570,7 @@ Gilt für alle Modelle. Bei Paketteilen gilt sie für das Ergebnis im Spiel; Abw
 - **Zuordnung:** `data/models.json` hält pro id Datei, Maßstab (Zahl oder [x, y, z]), Drehung, Versatz, Einfärbung (`tint`, Farbe, mit der die Paletten-Textur multipliziert wird, etwa Holzton für graue Kisten), Animationszuordnung, Lichtpunkte (Position relativ zum Ursprung, Farbe, Stärke, Reichweite) und Zubehör (`accessories`: Teil aus Grundformen wie Kochmütze, Krone oder rote Augen, an einem Knochen der Figur, mit Versatz und Größe in Kacheln). Mehrere ids dürfen dieselbe Datei nutzen (Riesenratte, Küchenchef und Monsterratte).
 - **Build-Skript:** `tools/build-assets.mjs` setzt Teile aus Paketen zu einer GLB zusammen (Tafel, Regal, Türrahmen) und speckt Paketfiguren ab (nur benötigte Animationen und Zubehörteile, komprimiert). FBX-Dateien wandelt es vorher in GLB um; es kann Materialfarben auf die Palette setzen (matt, ohne Metallglanz), eine Waffe an einen Knochen hängen und Figuren auf höchstens 3.000 Dreiecke vereinfachen. Requisiten kann es aus Teilen einer Paketfigur zusammensetzen (`extracts`), etwa die Knochen aus Schädel, Kiefer und Armen der Skelette.
 - **Platzhalter:** Fehlt eine Datei oder lädt sie nicht, baut der Code das Teil wie bisher aus Grundformen.
+- **Dunkelzwerge:** Alle Zwerge in den Zwergenminen sind Dunkelzwerge, die Spielfigur bleibt der bisherige Zwerg. Grundlage ist das Modell des Zwergs (KayKit `Knight`, gleicher Maßstab, mit Bart), Haut schwarzblau `#1B2333`, Bart und Haare grauweiß `#D4D6D8`, Umhang (`Knight_Cape`) blau `#2F5FA8`. Die Wache trägt zusätzlich den Helm, der Koch die Kochmütze. Die Figuren müssen im Licht der Zwergenminen lesbar bleiben.
 - **Bart des Zwergs:** Zubehör `bart` aus Grundformen, Farbe `#4A3020`, matt und weich, in zwei Teilen: Kinnansatz mit Schnurrbart-Wulst am Kopfknochen (`part: "kinn"`, Knochen `head`) und ein breiter Keil bis zum Bauch, unten leicht gegabelt, am Brustknochen (`part: "keil"`, Knochen `chest`); beide überlappen leicht. Am Kinn etwa 0,27 Kacheln breit, der Keil oben 0,24 (schmaler als geplant, damit die Schwerthand beim Angriff frei bleibt), nach unten schmaler; gesamt etwa 0,34 Kacheln lang, weil der Kopf der Figur groß ist und 0,45 bis zu den Füßen reichen würde. Der Bart schneidet bei Stehen, Laufen und Angriff nicht ins Schwert.
 - **Zubehör der Spielfiguren:** Die Figur trägt das Teil des Pakets, das der Startwaffe am nächsten kommt: Zwerg Schwert (Langschwert), Elf Messer (Dolch), Mensch Zauberstab (das Paket hat keinen Knüppel). Schilde, Zweithand-Waffen und Bücher fallen weg.
 - **Quellen der Figuren im Keller:** Mensch KayKit `Mage`, Elf `Rogue_Hooded`, Zwerg `Knight` ohne Helm, Haare und Augenbrauen in der Bartfarbe (Textur `assets/textures/figures/zwerg/zwerg_texture.png`), ungleich skaliert (Maßstab `[0,429, 0,2805, 0,429]`: breiter und kleiner), mit Bart, Händler `Rogue` ohne Kapuze und Waffen, Outfit dunkelblau statt grün (KayKit Adventurers); Skelett aus KayKit Skeletons 1.0 (Minion, Warrior, Rogue, Mage; die Fassung 1.1 FREE hat kein Sitzen, Liegen und Angreifen, Textur gleich) mit der auf die Palette umgefärbten Textur `assets/textures/figures/skeleton/skeleton_keller.png`; Goblin aus Goblin Lowpoly Assets (standout7, itch.io); Mimik aus der Truhe des KayKit Dungeon Pack (itch.io); Riesenratte, Küchenchef und Monsterratte aus `Rat`, Kröte aus `Frog` (Easy Animated Enemy Pack, Quaternius). Goblin: `Basic_Goblin` mit `Rusty Shiv` an der rechten Hand; die kostenlose Fassung hat keine Animationen, deshalb sitzt er auf dem Rig `Rig_Medium` aus KayKit Character Animations 1.1 (dasselbe Rig wie Adventurers und Skeletons; `tools/goblin-rig.py` schiebt die Gelenke auf die des Goblins und übernimmt seine Gewichte). Clips: `Idle_A`, `Walking_A`, `Melee_1H_Attack_Stab`, `Hit_A`, `Death_A`, `Interact`, `Sit_Chair_Idle`, `Sit_Floor_Idle`, `Lie_Idle`.
@@ -682,6 +688,18 @@ Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kan
 | kroete | Die Kröte, mit Krone | Figur ohne Kampfwerte | Deko | – |
 | knight | Ritter in Rüstung, ohne Waffen (Säulenhalle, Kartenrunde) | Figur ohne Kampfwerte | 1 | – |
 | kobold | Kobold, Goblin-Modell mit roter Haut (Steuerprüfung) | Figur ohne Kampfwerte | 1 | – |
+| dunkelzwerg | Abtrünniger Dunkelzwerg, mit Axt | Monster | 1 | – |
+| zwergenwache | Zwergen-Wache, Dunkelzwerg mit Helm | Monster | 1 | sitzend |
+| zwergenkoch | Zwergenkoch, Dunkelzwerg mit Kochmütze | Monster | 1 | – |
+| zwergenschmied | Dunkelzwerg-Schmied, mit Hammer | Monster | 1 | – |
+| zwergenvermesser | Vermesser, Dunkelzwerg mit Messlatte | Figur ohne Kampfwerte | 1 | – |
+| hoehlenspinne | Höhlenspinne | Monster | 1 | – |
+| steingolem | Steingolem, sieht aus wie eine Säule | Monster | 1 | – |
+| eisengolem | Eisengolem | Monster | 1 | – |
+| monsterratte_rache | Die Monsterratte auf Rachefeldzug, Modell der Monsterratte | Monster | 2×2 | – |
+| ausbrecher_ork | Entflohener Ork | Monster | 1 | – |
+| ausbrecher_goblin | Entflohener Goblin, Goblin-Modell | Monster | 1 | – |
+| ausbrecher_kobold | Entflohener Kobold, Kobold-Modell | Monster | 1 | – |
 
 Jede Monster-id hat eine Figur mit derselben id. Figuren ohne Modell baut der Code aus Grundformen. Figuren ohne Animation atmen im Stand leicht, die Füße bleiben dabei am Boden.
 
@@ -967,3 +985,8 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Spielerwürfe rollen als große 3D-Würfel auf einem unsichtbaren Würfelfeld über dem Raum: von rechts herein, leicht eingeblendet, Endlage in der Raummitte, weicher Schatten, kein Kontakt zu Figuren und Objekten; aufgezeichnete Physik, der Regelcode legt das Ergebnis fest
 - [x] Die Würfel bleiben bis zur nächsten Auswahl liegen
 - [x] Gegnerwürfe und Würfel aus Event-Effekten bleiben Text; keine eigene Darstellung für eine gewürfelte 20 oder 1
+- [x] Zwergenminen: Zwerge sind nicht grundsätzlich feindlich, aber leicht zu verärgern; Küche und Kerker gehören zum Thema; feindliche Ereignisse nur im Kerker (Gefängnisausbrüche, etwa 30 %); alle anderen Räume dort neutral, keine Begegnungen
+- [x] Volks-Optionen in den Zwergenminen: Elfen bekommen freche, Zwerge und Menschen diplomatische Antworten
+- [x] Zwergenminen: Begegnungen und feindliche Events nur in den verlassenen Stollen (Säulenhalle, Schmiede); Kerker ohne Begegnungen; höchstens 9 Wachstuben und 10 Säulenhallen
+- [x] Alle Zwerge in den Zwergenminen sind Dunkelzwerge (schwarzblaue Haut, grauweißer Bart und Haare, blauer Umhang); die Spielfigur Zwerg bleibt unverändert
+- [x] Die Monsterratte kehrt auf Ebene 7 in der Vorratskammer zurück (`vorrat_rache`); Effekt `flee` und Feld `themeLevel` in Event-Tabellen

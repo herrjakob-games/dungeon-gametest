@@ -241,6 +241,19 @@
       "face": "player",
       "animation": "idle",
       "_": "Goblin an seinem Stand"
+    },
+    "an_saeule_schlafend": {
+      "props": [
+        "saeule"
+      ],
+      "offset": [
+        1,
+        0,
+        0
+      ],
+      "face": "random",
+      "animation": "sit_floor",
+      "_": "Schlafende Wache, sitzt am Boden an einer Säule; ohne Sitz-Animation liegend (flat)"
     }
   },
   "figures": {
@@ -600,6 +613,261 @@
         {
           "prop": "kistenberg",
           "place": "neben_figur"
+        }
+      ]
+    },
+    "kerker_ausbruch_orks": {
+      "figures": [
+        {
+          "figure": "ausbrecher_ork",
+          "count": 2
+        }
+      ],
+      "ends": [
+        {
+          "option": "So tun, als hättest du nichts gesehen",
+          "do": "leave"
+        },
+        {
+          "option": "Sie überzeugen, in die Zellen zurückzugehen",
+          "result": "success",
+          "do": "leave"
+        }
+      ]
+    },
+    "kerker_ausbruch_goblins": {
+      "figures": [
+        {
+          "figure": "ausbrecher_goblin",
+          "count": 3
+        }
+      ],
+      "ends": [
+        {
+          "option": "Bestechungsgeld erpressen",
+          "result": "success",
+          "do": "leave"
+        },
+        {
+          "option": "Sie überzeugen, in die Zellen zurückzugehen",
+          "result": "success",
+          "do": "leave"
+        }
+      ]
+    },
+    "kerker_ausbruch_kobolde": {
+      "figures": [
+        {
+          "figure": "ausbrecher_kobold",
+          "count": 4
+        }
+      ],
+      "ends": [
+        {
+          "option": "Bestechungsgeld erpressen",
+          "result": "success",
+          "do": "leave"
+        },
+        {
+          "option": "Sie überzeugen, in die Zellen zurückzugehen",
+          "result": "success",
+          "do": "leave"
+        }
+      ]
+    },
+    "kerker_schere_stein_pergament": {
+      "figures": [
+        {
+          "figure": "zwergenwache"
+        }
+      ]
+    },
+    "kerker_besucherbuch": {
+      "figures": [
+        {
+          "figure": "zwergenwache"
+        }
+      ]
+    },
+    "kerker_beschwerde": {
+      "figures": [
+        {
+          "figure": "goblin"
+        }
+      ]
+    },
+    "wache_wetttrinken": {
+      "figures": [
+        {
+          "figure": "zwergenwache",
+          "count": 2,
+          "anchor": "am_tisch_sitzend"
+        }
+      ]
+    },
+    "wache_armdruecken": {
+      "figures": [
+        {
+          "figure": "zwergenwache",
+          "anchor": "am_tisch_sitzend"
+        }
+      ]
+    },
+    "halle_schlafwache": {
+      "figures": [
+        {
+          "figure": "zwergenwache",
+          "anchor": "an_saeule_schlafend"
+        }
+      ]
+    },
+    "kueche_koch_kostprobe": {
+      "figures": [
+        {
+          "figure": "zwergenkoch",
+          "anchor": "am_herd"
+        }
+      ]
+    },
+    "kueche_koch_schaelen": {
+      "figures": [
+        {
+          "figure": "zwergenkoch",
+          "anchor": "am_herd"
+        }
+      ]
+    },
+    "kueche_koch_kessel": {
+      "figures": [
+        {
+          "figure": "zwergenkoch",
+          "anchor": "am_herd"
+        }
+      ]
+    },
+    "kueche_koch_braten": {
+      "figures": [
+        {
+          "figure": "zwergenkoch",
+          "anchor": "am_herd"
+        }
+      ]
+    },
+    "kueche_koch_geheimrezept": {
+      "figures": [
+        {
+          "figure": "zwergenkoch"
+        }
+      ]
+    },
+    "halle_netz": {
+      "figures": [
+        {
+          "figure": "hoehlenspinne"
+        }
+      ],
+      "hidden": true
+    },
+    "halle_wandernde_saeule": {
+      "figures": [
+        {
+          "figure": "steingolem"
+        }
+      ],
+      "hidden": true
+    },
+    "halle_wegezoll": {
+      "figures": [
+        {
+          "figure": "dunkelzwerg"
+        }
+      ],
+      "ends": [
+        {
+          "option": "Fragen, ob der Zoll auch für große Leute gilt",
+          "result": "success",
+          "do": "leave"
+        },
+        {
+          "option": "Unter Zwergen: Nach seiner Sippe fragen",
+          "result": "success",
+          "do": "leave"
+        },
+        {
+          "option": "Eine Quittung und seine Zollnummer verlangen",
+          "result": "success",
+          "do": "leave"
+        }
+      ]
+    },
+    "halle_vermesser": {
+      "figures": [
+        {
+          "figure": "zwergenvermesser"
+        }
+      ]
+    },
+    "schmiede_golem": {
+      "figures": [
+        {
+          "figure": "eisengolem"
+        }
+      ]
+    },
+    "schmiede_saboteur": {
+      "figures": [
+        {
+          "figure": "dunkelzwerg"
+        }
+      ],
+      "ends": [
+        {
+          "option": "Genauer hinsehen",
+          "result": "success",
+          "do": "leave"
+        },
+        {
+          "option": "Unter Zwergen: Ihn an den Schmiedeeid erinnern",
+          "result": "success",
+          "do": "leave"
+        },
+        {
+          "option": "Ihm anbieten, den Schmied nicht zu rufen",
+          "result": "success",
+          "do": "leave"
+        }
+      ]
+    },
+    "schmiede_meisterprobe": {
+      "figures": [
+        {
+          "figure": "zwergenschmied"
+        }
+      ]
+    },
+    "schmiede_schaerfen": {
+      "figures": [
+        {
+          "figure": "zwergenschmied"
+        }
+      ]
+    },
+    "vorrat_rache": {
+      "figures": [
+        {
+          "figure": "monsterratte_rache"
+        }
+      ],
+      "ends": [
+        {
+          "option": "Sie überreden abzuhauen",
+          "result": "success",
+          "do": "leave"
+        },
+        {
+          "option": "Mit einem Käsestück ablenken und abhauen",
+          "result": "success",
+          "do": "leave"
         }
       ]
     }

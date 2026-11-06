@@ -4,6 +4,7 @@
 import { DIR, reduceMotion } from "./config.js";
 import { state } from "./state.js";
 import { DATA } from "./data.js";
+import { levelInTheme } from "./world.js";
 import { TYPES } from "./roomTypes.js";
 import { CATEGORY_NAMES, CATEGORIES, pickEvent, bossEventTable, inTheme, pickEncounter, doCheck, applyEffects, releaseIfTrapped, visibleOptions } from "./eventLogic.js";
 import { ATTR_NAMES, addItem, levelUp, raisableAttrs, pendingLevelUps } from "./character.js";
@@ -63,7 +64,7 @@ export function startRoomEvent() {
   const type = TYPES[room.type];
   const monster = pickEncounter(state.theme, type, room.seed);
   if (monster) { startEncounter(monster); return true; }
-  const id = pickEvent(inTheme(type, state.theme ? state.theme.id : null), state.run, Math.random, state.player);
+  const id = pickEvent(inTheme(type, state.theme ? state.theme.id : null, levelInTheme(state.depth)), state.run, Math.random, state.player);
   if (!id) return false;
   state.run.usedOnce.add(id);
   runEvent(id);
@@ -118,7 +119,8 @@ function show(ev, outcome, res, roll, onOutcome, before) {
   }
   const next = () => {
     if (res.combat) { fight(ev, outcome, res.combat, onOutcome); return; }
-    pickUp(res.items.slice(), () => (outcome.next ? runEvent(outcome.next, onOutcome) : finish()));
+    // flee: nach dem Ergebnistext durch die Rück-Tür, derselbe Weg wie die Flucht im Kampf (im Startraum ohne Wirkung)
+    pickUp(res.items.slice(), () => (outcome.next ? runEvent(outcome.next, onOutcome) : finish(res.flee ? () => hooks.onRetreat() : null)));
   };
   if (res.combat) {
     showDialog(ev.title, outcome.text, [{ label: "Kämpfen", pick: next }], { roll, fx, modal: true });
@@ -180,7 +182,8 @@ function pickUp(list, done) {
   showDialog("Rucksack voll", "Für " + item.name + " ist kein Platz mehr. Was bleibt hier liegen?", opts, { modal: true });
 }
 
-function finish() {
+// after: läuft nach dem Ende des Events (Rückzug bei flee)
+function finish(after) {
   state.eventActive = false;
   endEventFigures(choices); // Figuren bleiben, außer die Inszenierung nennt für das Ende etwas anderes (ends)
   choices = {};
@@ -188,6 +191,7 @@ function finish() {
   const opened = releaseIfTrapped(roomCtx());
   if (opened) refreshLocks();
   levelUps(() => {
+    if (after) { after(); return; }
     if (opened) {
       showDialog("Glück gehabt", "Die Tür nach " + DIR[opened].name + " knarrt von selbst wieder auf. Eingesperrt wird hier niemand.",
         [{ label: "Weiter", pick: closeDialog }]);
