@@ -17,7 +17,7 @@ import { rollKey, sidesOf } from "./diceLogic.js";
 import { showGrid } from "./gridOverlay.js";
 import { loadModels } from "./models.js";
 import { loadSounds, play, setDuck } from "./sound.js";
-import { setOutline } from "./outline.js";
+import { setOutline, setSilhouette, drawSilhouette } from "./outline.js";
 import { STAIRS_FOOT } from "./decor.js";
 import { openShop } from "./shopUI.js";
 import { themeFor } from "./world.js";
@@ -225,18 +225,18 @@ function setHoverObj(o) {
   const prev = state.hovered;
   if (prev) {
     prev.userData.hoverMats.forEach(m => { m.emissiveIntensity = m === prev.userData.baseGlow ? 0.25 : 0; });
-    setOutline(outlineOf(prev), false);
+    setOutline(prev, false);
+    setSilhouette(null);
   }
   state.hovered = o;
-  if (o) {
-    // Leicht aufhellen und goldene Umrisslinie; bei Türen nur am Türblatt bzw. an der Türkachel (outlineTarget)
-    o.userData.hoverMats.forEach(m => { m.emissiveIntensity = m.map ? 0.18 : 0.45; });
-    setOutline(outlineOf(o), true);
-  }
+  if (!o) return;
+  // Türen (docs/GDD.md, Lesbarkeit): nur die Umrisslinie um das Türblatt bzw. die Türkachel, kein Aufhellen und keine
+  // Füllung; das Schloss gehört nicht dazu. Ohne Teil für die Linie (Modell oder Knoten fehlt) bleibt das alte Aufhellen.
+  if (o.userData.kind === "door" && o.userData.outlineTarget) { setSilhouette(o.userData.outlineTarget); return; }
+  // Andere anklickbare Objekte: leicht aufhellen und goldene Umrisslinie
+  o.userData.hoverMats.forEach(m => { m.emissiveIntensity = m.map ? 0.18 : 0.45; });
+  if (o.userData.kind !== "door") setOutline(o, true);
 }
-
-// Was die Umrisslinie bekommt: bei Türen nur der Teil aus outlineTarget (ohne ihn keine Linie), sonst das ganze Objekt
-const outlineOf = (o) => (o.userData.kind === "door" ? o.userData.outlineTarget || null : o);
 
 const labelFor = (o) => {
   if (o.userData.kind === "door") {
@@ -434,6 +434,7 @@ function loop() {
   }
 
   renderer.render(scene, camera);
+  drawSilhouette(renderer, scene, camera); // goldene Umrisslinie am Türblatt bzw. an der Türkachel beim Überfahren
   requestAnimationFrame(loop);
 }
 loop();

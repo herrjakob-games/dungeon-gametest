@@ -39,7 +39,7 @@ Die Liste aller Meilensteine steht im GDD.
 
 - Kein Build-Schritt. Statische Dateien, direkt über GitHub Pages ausgeliefert.
 - Three.js r128 wird per `<script>` aus cdnjs geladen und ist als `window.THREE` verfügbar, der passende
-  `GLTFLoader` und `SkeletonUtils` liegen in `vendor/three/`.
+  `GLTFLoader`, `SkeletonUtils` und `OutlinePass` (mit `Pass` und `CopyShader`) liegen in `vendor/three/`.
 - Modelle: `assets/` (Rohdateien der Pakete in `assets/source/`, Quellen in `assets/CREDITS.md`). `npm run build:assets`
   baut aus `tools/asset-recipes.json` die Dateien in `assets/tiles/`, `assets/props/` und `assets/figures/` (braucht einmal `npm install`; FBX wandelt das npm-Paket `fbx2gltf` um, `meshoptimizer` vereinfacht);
   das Spiel selbst braucht keinen Build-Schritt. Zuordnung in `data/models.json`. `tools/palette-texture.py` erzeugt
@@ -92,7 +92,7 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/stairs.js` | Treppen in der Nordwest-Ecke: KayKit `stairs` (`treppe_hoch`, `treppe_runter`), Loch mit Steinkante und kühlem Licht, Gitter im Bossraum, Verlauf zur Schattenfarbe; Rückfall aus Grundformen |
 | `src/models.js` | Modell-Lader: `data/models.json`, Paletten-Textur des Themas, Klone pro Instanz, Figuren mit Animationen (`makeFigureModel`), Rückfall auf Platzhalter |
 | `src/seeThrough.js` | Durchblick: Innenwände (Zellwände, auch Gitter mit ganzer Fläche) und Säulen werden im Kreis um eine verdeckte Spielfigur oder einen Gegner durchsichtig |
-| `src/outline.js` | goldene Umrisslinie für anklickbare Objekte beim Überfahren mit der Maus; bei Türen nur das Türblatt (`highlight`), an Süd- und Osttüren die Türkachel am Boden, nie das Schloss |
+| `src/outline.js` | goldene Umrisslinie für anklickbare Objekte beim Überfahren mit der Maus; Türen: Silhouette per OutlinePass (`setSilhouette`, `drawSilhouette` nach dem Zeichnen des Raums), nur das Türblatt (`highlight`), an Süd- und Osttüren die Türkachel, ohne Füllung, nie das Schloss, verdeckte Kanten unsichtbar |
 | `data/models.json` | Zuordnung der Modelle: Datei, Maßstab, Drehung, Versatz, Einfärbung (`tint`), eine Farbe statt Textur (`color`), Lichtpunkte, Deckkraft (`opacity`, durchscheinende Figur), Animationen, Zubehör an Knochen (`accessories`, `size` auch `[x, y, z]`, `color` beim Bart, `hand` für Werkzeuge in der Hand), Knoten mit Umrisslinie beim Überfahren (`highlight`, etwa das Türblatt im `tuerrahmen`) |
 | `src/figurePlan.js` | Figuren im Raum: Figurenliste (Größe, Varianten), Platzierung für `figures` (inkl. `near:`) und Anker der Inszenierung, Platz im Kampf, Kacheln der Event-Requisiten (`placeEventProps`), Datenprüfung; rein logisch |
 | `src/monsterFigures.js` | Figuren der Monster und der Kröte aus Grundformen (Rückfall ohne Modell), Ersatzfigur für Monster ohne eigene Figur, Zubehör für Modelle (`ACCESSORIES`) |
