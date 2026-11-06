@@ -135,6 +135,8 @@ Rohdateien in `source/sounds-freepik/`; geschnitten (Stille, einzelne Schritte) 
 | `sounds/spiel/tuer_3.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
 | `sounds/spiel/tuer_riegel.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
 | `sounds/spiel/tuer_verschlossen.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
+| `sounds/spiel/wuerfel_landen.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
+| `sounds/spiel/wuerfel_rollen.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
 | `sounds/zauber/eis.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
 | `sounds/zauber/feuerball.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
 | `sounds/zauber/feuerpfeil.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |

@@ -66,6 +66,10 @@ MAXLEN = {"schritte/trippeln_1.mp3": 0.6, "schritte/trippeln_2.mp3": 0.6, "schri
 # Ausschnitt nach dem Abschneiden der Stille: Start und Ende in Sekunden, Ausblenden am Ende (docs/GDD.md, Schritte):
 # der Abstieg (treppe) läuft mit Abblende, 2 Sekunden Schwarz und Aufblende und wird zum Ende hin leiser
 SECTION = {"spiel/treppe.mp3": (0.5, 3.1, 0.8)}
+# Eine Aufnahme, mehrere Sounds: Quelle → [(Ziel, Start, Ende in Sekunden der Quelle, Ausblenden, Verstärkung in dB)]
+# Würfel (docs/GDD.md, Würfelanzeige): Aufprall mit Klappern zum Hereinrollen, das letzte Nachklappern zum Liegenbleiben;
+# das Becherrasseln am Anfang (0 bis 1,4 s) bleibt weg
+SPLIT = {"spiel/wuerfel.mp3": [("spiel/wuerfel_rollen.mp3", 1.68, 2.42, 0.08, 0), ("spiel/wuerfel_landen.mp3", 2.42, 2.76, 0.06, 10)]}
 STEPS = ["wood", "hall", "mud", "gravel", "stone"]
 LOOPS = ["raum/cozy_loop.mp3", "raum/kitchen_loop.mp3", "raum/spooky_loop.mp3", "raum/wet_loop.mp3", "raum/empty_loop.mp3",
          "raum/kerker_loop.mp3", "raum/schrein_loop.mp3"]
@@ -120,6 +124,11 @@ for s, d in EFFECTS.items():
         a, b = a + start, a + end
     cut(SRC / s, OUT / d, a, min(b, duration(SRC / s)), GAIN.get(s, 0), fade)
     print("%-34s %.2f bis %.2f s" % (d, a, b))
+
+for s, outs in SPLIT.items():
+    for d, a, b, fade, gain in outs:
+        cut(SRC / s, OUT / d, a, b, gain, fade)
+        print("%-34s %.2f bis %.2f s" % (d, a, b))
 
 for f in STEPS:
     src = SRC / ("schritte/%s.mp3" % f)
