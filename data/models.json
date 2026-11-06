@@ -1571,5 +1571,16 @@
   "grossaxt": {
     "file": "assets/props/grossaxt.glb",
     "palette": false
+  },
+  "hoehlenspinne": {
+    "file": "assets/figures/hoehlenspinne.glb",
+    "scale": 0.16,
+    "palette": false,
+    "animations": {
+      "idle": "HumanArmature|Spider_Idle",
+      "walk": "HumanArmature|Spider_Walk",
+      "attack": "HumanArmature|Spider_Attack",
+      "death": "HumanArmature|Spider_Death"
+    }
   }
 }

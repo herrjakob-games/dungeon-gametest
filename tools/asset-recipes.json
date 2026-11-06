@@ -949,6 +949,21 @@
       "simplify": 0.6,
       "flat": true
     },
+    "hoehlenspinne": {
+      "source": "assets/source/quaternius-easy-enemies/",
+      "file": "Spider.fbx",
+      "animations": [
+        "HumanArmature|Spider_Idle",
+        "HumanArmature|Spider_Walk",
+        "HumanArmature|Spider_Attack",
+        "HumanArmature|Spider_Death"
+      ],
+      "colors": {
+        "Material": "#3E3640",
+        "Material.001": "#C8432F"
+      },
+      "flat": true
+    },
     "goblin": {
       "source": "assets/source/goblin-lowpoly/",
       "file": "Goblin_KayKit.glb",

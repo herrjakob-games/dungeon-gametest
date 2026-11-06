@@ -25,11 +25,11 @@ Lage- und Anzahlregeln, Bosse, Rastplatz und Händler. Monster, Bosse, Gegenstä
 Events der neuen Raumtypen sind Platzhalter (`"placeholder": true` bzw. Text „[Platzhalter]“), die das
 Content-Projekt ersetzt. Meilenstein 6a (echte Modelle für Umgebung und Requisiten des Kellers, Licht nach Stilguide)
 ist umgesetzt; was noch kein Modell hat, bleibt Platzhalter. Meilenstein 6b (Figuren und Animationen) läuft: Die Spielfiguren der drei Völker kommen aus KayKit Adventurers,
-Ratten, Küchenchef, Monsterratte und Kröte aus dem Easy Animated Enemy Pack (Quaternius), der Goblin aus Goblin Lowpoly
+Ratten, Küchenchef, Monsterratte, Kröte und Höhlenspinne aus dem Easy Animated Enemy Pack (Quaternius), der Goblin aus Goblin Lowpoly
 Assets (auf das KayKit-Rig gesetzt, Animationen aus KayKit Character Animations 1.1), die Skelette aus KayKit Skeletons 1.0, Geist und Poltergeist aus KayKit Rogue (hellblau, durchscheinend), der Ritter (`knight`) aus KayKit Knight ohne Waffen, der Kobold aus dem Goblin-Modell mit roter Haut.
 Die Katakomben haben echte Inhalte für Kerker und Schrein (Monster, Begegnungen, Events). Die Zwergenminen haben Paket 1 und 2
 (Kerker mit Gefängnisausbrüchen ohne Begegnungen, Küche, Wachstube, Vorratskammer mit der Rache der Monsterratte auf Ebene 7, Säulenhalle und Schmiede
-als gemischte verlassene Stollen mit Begegnungen: Höhlenspinne, Stein- und Eisengolem aus Grundformen, abtrünniger Dunkelzwerg). Alle Zwerge dort sind
+als gemischte verlassene Stollen mit Begegnungen: Höhlenspinne (Modell), Stein- und Eisengolem aus Grundformen, abtrünniger Dunkelzwerg). Alle Zwerge dort sind
 Dunkelzwerge (Modell des Zwergs mit eigener Textur, Helm außer beim Koch, große Axt im Kampf; der Schmied auf Barbarian-Basis mit Hammer); der Ork ist vorläufig ein graues Goblin-Modell. Die Mimik ist noch Grundform. Wie Event-Figuren im Raum
 stehen und sich bewegen, regelt die Inszenierung in `data/staging.json`.
 Meilenstein 6c (Sound) ist gebaut: `data/sounds.json`, Modul `src/sound.js`; erste Sounds von Freepik sind eingebaut, was fehlt, bleibt still.
