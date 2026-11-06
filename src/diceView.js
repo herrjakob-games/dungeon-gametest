@@ -12,6 +12,7 @@ const THREE = window.THREE;
 
 const BODY = "#F0E5D3", INK = "#2A2230";
 const FADE_IN = 0.3, FADE_OUT = 0.2, HOLD = 0.4;
+const LINGER = 0.8; // Sekunden nach der Haltezeit, bis die Würfel von selbst ausblenden (zusammen 1,2 ab Landung)
 const PX_PER_UNIT = 200, FOV = 30, TILT = 78 * Math.PI / 180;
 
 let renderer = null, scene = null, camera = null, failed = false;
@@ -19,6 +20,7 @@ let dice = [];          // { group, mats }
 let anim = null;        // laufender Wurf: { frames, fps, S, t, duration, landed, holdLeft, resolve }
 let fading = null;      // Ausblenden: { t, resolve, promise }
 let raf = 0, last = 0;
+let lingerTimer = 0;     // läuft, solange gelandete Würfel auf das Ausblenden warten
 const textures = {};
 
 function canvasEl() {
@@ -171,7 +173,7 @@ function tick(now) {
       more = true;
     } else {
       a.holdLeft -= dt;
-      if (a.holdLeft <= 0) { anim = null; a.resolve(); } else more = true;
+      if (a.holdLeft <= 0) { anim = null; releaseDice(); a.resolve(); } else more = true;
     }
   }
   if (fading) {
@@ -200,11 +202,24 @@ window.addEventListener("keydown", (e) => { if (anim && !anim.landed) skip(e); }
 
 export const isRolling = () => !!anim;
 
+// Gelandete Würfel bleiben liegen, bis releaseDice kommt (Angebot der Volks-Fähigkeit)
+export function holdDice() {
+  clearTimeout(lingerTimer);
+  lingerTimer = 0;
+}
+
+// Gelandete Würfel blenden nach der Nachlaufzeit von selbst aus
+export function releaseDice() {
+  holdDice();
+  lingerTimer = setTimeout(hideDice, LINGER * 1000);
+}
+
 /**
- * Würfel ausblenden (in 0,2 Sekunden); bei der nächsten Auswahl und beim Schließen des Textfensters.
- * Ergebnis: Promise, das nach dem Ausblenden erfüllt ist.
+ * Würfel ausblenden (in 0,2 Sekunden): von selbst kurz nach der Landung, vor dem nächsten Wurf, bei der nächsten Auswahl
+ * und beim Schließen des Textfensters. Ergebnis: Promise, das nach dem Ausblenden erfüllt ist.
  */
 export function hideDice() {
+  holdDice();
   if (fading) return fading.promise;
   if (!dice.length || anim) return Promise.resolve();
   let resolve;
@@ -217,7 +232,7 @@ export function hideDice() {
 
 /**
  * Würfelsatz spec (etwa "W20", "2W4+2") mit den Werten values rollen lassen. Ergebnis: Promise, erfüllt 0,4 Sekunden
- * nach der Landung. Ohne Aufnahme, ohne Würfel (feste Zahl) oder ohne WebGL sofort.
+ * nach der Landung; 0,8 Sekunden später blenden die Würfel von selbst aus. Ohne Aufnahme, ohne Würfel (feste Zahl) oder ohne WebGL sofort.
  */
 export async function showRoll(spec, values) {
   const key = rollKey(spec);

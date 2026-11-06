@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.61 · Nov 5, 2026 · @Christian
+Version 2.62 · Nov 6, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.62 | 06.11.2026 | Würfelanzeige: Würfel liegen auf der obersten Ebene über allen Anzeigen und blenden 1,2 Sekunden nach der Landung von selbst aus |
 | 2.61 | 05.11.2026 | Würfelanzeige: Spielerwürfe rollen als große 3D-Würfel auf einem unsichtbaren Würfelfeld über dem Raum; aufgezeichnete Physik, das Ergebnis legt der Regelcode fest; neue Sounds `wuerfel_rollen` und `wuerfel_landen` |
 | 2.60 | 05.11.2026 | Kampf: Lebenspunkte über den Köpfen von Spielfigur und Gegner; Schaden als rote Minuszahl, Heilung als grüne Pluszahl, in den Farbwerten des Textfensters |
 | 2.59 | 05.11.2026 | Brunnenraum vereinheitlicht: eine feste Einrichtung mit Brunnen in der Raummitte und vier Säulen auf 2\|2, 8\|2, 2\|8 und 8\|8; Fackeln an den Säulen, keine Wanddekoration |
@@ -430,11 +431,11 @@ Spielerwürfe rollen als 3D-Würfel. Die Anzeige ändert keine Regel: Der Regelc
 - **Was Text bleibt:** Würfe der Gegner (Angriff und Schaden) sowie die Würfel aus Event-Effekten (`damage`, `heal`, `gold`, `loot`). Feste Zahlen ohne Würfel, etwa der Schaden ohne Waffe, rollen nicht.
 - **Boni:** Ein Würfel zeigt nur den Würfelwert. Boni wie bei `W10+2` und Attribute stehen in der Würfelzeile im Textfenster.
 - **Gedeckelte Werte:** Der Würfel zeigt den gewürfelten Wert, der Text die tatsächlich abgezogenen oder geheilten Lebenspunkte. Bleiben dem Gegner 3 LP, zeigt eine gewürfelte 6 also die 6, der Text „−3 LP“.
-- **Ablauf:** Option wählen, das Textfenster bleibt ohne Optionen stehen, die Würfel rollen und landen. Nach 0,4 Sekunden Haltezeit erscheint das Ergebnis im Textfenster. Bei einem Treffer folgt zuerst der Schadenswurf. Die Figur schlägt zu, wenn der W20 gelandet ist, und der Gegner reagiert, wenn der Schaden gelandet ist.
-- **Volks-Fähigkeit:** Das Angebot, eine misslungene Probe zu retten, erscheint nach der Landung. Der Würfel bleibt dabei auf dem gewürfelten Wert liegen.
+- **Ablauf:** Option wählen, das Textfenster bleibt ohne Optionen stehen, die Würfel rollen und landen. Nach 0,4 Sekunden Haltezeit erscheint das Ergebnis im Textfenster. Bei einem Treffer folgt zuerst der Schadenswurf: Nach der Haltezeit blendet der W20 in 0,2 Sekunden aus, dann rollt der Schaden. Die Figur schlägt zu, wenn der W20 gelandet ist, und der Gegner reagiert, wenn der Schaden gelandet ist.
+- **Volks-Fähigkeit:** Das Angebot, eine misslungene Probe zu retten, erscheint nach der Landung. Der Würfel bleibt dabei auf dem gewürfelten Wert liegen, bis die Entscheidung gefallen ist.
 - **Überspringen:** Ein Klick in den Raum oder eine beliebige Taste setzt die Würfel sofort auf die Endlage. Mit `prefers-reduced-motion` liegen sie ohne Flug gleich dort.
-- **Würfelfeld:** Eine durchsichtige Ebene über dem ganzen Raum, ohne Hintergrund und ohne Rahmen. Die Würfel haben keinen Kontakt zu Figuren, Möbeln oder Wänden. Sie liegen über dem Raum und unter Textfenster, Infotafel und Inventar.
-- **Bewegung:** Die Würfel rollen von rechts herein und blenden dabei in den ersten 0,3 Sekunden ein. Sie bleiben in der Raummitte liegen. Bei der nächsten Auswahl oder beim Schließen des Textfensters blenden sie in 0,2 Sekunden aus. Folgt ein weiterer Wurf, blenden sie zuerst aus.
+- **Würfelfeld:** Eine durchsichtige Ebene über dem ganzen Raum, ohne Hintergrund und ohne Rahmen. Die Würfel haben keinen Kontakt zu Figuren, Möbeln oder Wänden. Sie liegen auf der obersten Ebene, über dem Raum und über allen Anzeigen (Lebenspunkte, Schadenszahlen, Textfenster, Infotafel, Inventar). Klicks gehen durch sie hindurch.
+- **Bewegung:** Die Würfel rollen von rechts herein und blenden dabei in den ersten 0,3 Sekunden ein. Sie bleiben in der Raummitte liegen. 1,2 Sekunden nach der Landung blenden sie von selbst in 0,2 Sekunden aus, das gilt für jeden letzten Wurf einer Aktion. Früher blenden sie bei der nächsten Auswahl oder beim Schließen des Textfensters aus. Folgt ein weiterer Wurf, blenden sie zuerst aus.
 - **Größe und Blick:** 200 Pixel pro Einheit, ein W20 ist also rund 200 Pixel groß; in schmalen Browserfenstern wird das kleiner (Breite durch 4). Die Kamera schaut mit 78° steiler als die Raumkamera, damit die obere Seite klar zur Kamera zeigt.
 - **Schatten:** Die Würfel werfen einen weichen Schatten auf die unsichtbare Ebene. Er liegt auch über Figuren und Möbeln. Würfelfeld und Licht sind eine eigene Szene und zählen nicht zu den höchstens zwei schattenwerfenden Lichtern des Raums.
 - **Mehrere Würfel:** Jeder Würfel fliegt einzeln und berührt die anderen nicht. Zwei Würfel liegen nebeneinander, vier als Quadrat, damit sie die Infotafel nicht berühren.
@@ -965,5 +966,6 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Kampf: Lebenspunkte über den Köpfen von Spielfigur und Gegner (aktuell/maximal); eine Gruppe hat eine gemeinsame Anzeige über der Figur, die gerade dran ist
 - [x] Kampf: Schaden als rote Minuszahl, Heilung als grüne Pluszahl über der Figur, in den Farbwerten und der Schrift des Textfensters; keine Zahl bei Fehlschlag, Schild und Einfrieren
 - [x] Spielerwürfe rollen als große 3D-Würfel auf einem unsichtbaren Würfelfeld über dem Raum: von rechts herein, leicht eingeblendet, Endlage in der Raummitte, weicher Schatten, kein Kontakt zu Figuren und Objekten; aufgezeichnete Physik, der Regelcode legt das Ergebnis fest
-- [x] Die Würfel bleiben bis zur nächsten Auswahl liegen
+- [x] Die Würfel blenden 1,2 Sekunden nach der Landung von selbst aus (ersetzt: bis zur nächsten Auswahl liegen bleiben)
+- [x] Die Würfel liegen auf der obersten Ebene über allen Anzeigen
 - [x] Gegnerwürfe und Würfel aus Event-Effekten bleiben Text; keine eigene Darstellung für eine gewürfelte 20 oder 1

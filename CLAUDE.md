@@ -105,7 +105,7 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/combatNumbers.js` | Regeln dazu: Text aktuell/maximal, tatsächliche Änderung, Aufsteigen und Ausblenden, Plätze ohne Überdecken; rein logisch |
 | `src/checkUI.js` | Würfelzeile und Angebot der Volks-Fähigkeit |
 | `src/diceLogic.js` | Würfelanzeige, rein logisch: Körper der Würfel, Werte der Seiten, Symmetrie-Drehungen, Drehung für einen Zielwert, `rollKey` (etwa `"W4x2"`), Datenprüfung |
-| `src/diceView.js` | Würfelanzeige: eigener Renderer über dem Raum (`#diceField`), spielt Aufnahmen aus `data/dice-rolls.json` ab, `showRoll(spec, values)`, Überspringen per Klick oder Taste |
+| `src/diceView.js` | Würfelanzeige: eigener Renderer auf der obersten Ebene (`#diceField`), spielt Aufnahmen aus `data/dice-rolls.json` ab, `showRoll(spec, values)`, Überspringen per Klick oder Taste, blendet nach der Landung selbst aus (`holdDice`, `releaseDice`) |
 | `data/dice-rolls.json` | Aufnahmen der Würfelwürfe, erzeugt mit `npm run build:dice` |
 | `src/inventory.js` | Ausrüstungs- und Rucksack-Feld oben rechts |
 | `src/shopUI.js` | Händler im Textfenster |
