@@ -1156,52 +1156,6 @@
     "palette": true
   },
   "zwergenwache": {
-    "file": "assets/figures/zwergenwache.glb",
-    "scale": [
-      0.429,
-      0.2805,
-      0.429
-    ],
-    "palette": false,
-    "texture": "assets/textures/figures/dunkelzwerg/dunkelzwerg_texture.png",
-    "animations": {
-      "idle": "Idle",
-      "walk": "Walking_A",
-      "attack": "1H_Melee_Attack_Chop",
-      "hit": "Hit_A",
-      "death": "Death_A",
-      "interact": "Interact",
-      "sit": "Sit_Chair_Idle",
-      "sit_floor": "Sit_Floor_Idle"
-    },
-    "accessories": [
-      {
-        "shape": "bart",
-        "part": "kinn",
-        "bone": "head",
-        "offset": [
-          0,
-          0.035,
-          0.2
-        ],
-        "size": 1,
-        "color": "#D4D6D8"
-      },
-      {
-        "shape": "bart",
-        "part": "keil",
-        "bone": "chest",
-        "offset": [
-          0,
-          0,
-          0.19
-        ],
-        "size": 1,
-        "color": "#D4D6D8"
-      }
-    ]
-  },
-  "zwergenkoch": {
     "file": "assets/figures/dunkelzwerg.glb",
     "scale": [
       0.429,
@@ -1228,10 +1182,11 @@
         "offset": [
           0,
           0.035,
-          0.2
+          0.19
         ],
         "size": 1,
-        "color": "#D4D6D8"
+        "color": "#A0A8AB",
+        "depth": 1.5
       },
       {
         "shape": "bart",
@@ -1240,10 +1195,76 @@
         "offset": [
           0,
           0,
+          0.17
+        ],
+        "size": 1,
+        "color": "#A0A8AB",
+        "depth": 1.5
+      },
+      {
+        "model": "grossaxt",
+        "weapon": true,
+        "bone": "handslot.r",
+        "hand": true,
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "size": 0.28
+      }
+    ],
+    "weaponWhen": "standing",
+    "armedAnimations": {
+      "idle": "2H_Melee_Idle",
+      "attack": "2H_Melee_Attack_Chop"
+    }
+  },
+  "zwergenkoch": {
+    "file": "assets/figures/zwergenkoch.glb",
+    "scale": [
+      0.429,
+      0.2805,
+      0.429
+    ],
+    "palette": false,
+    "texture": "assets/textures/figures/dunkelzwerg/dunkelzwerg_texture.png",
+    "animations": {
+      "idle": "Idle",
+      "walk": "Walking_A",
+      "attack": "1H_Melee_Attack_Chop",
+      "hit": "Hit_A",
+      "death": "Death_A",
+      "interact": "Interact",
+      "sit": "Sit_Chair_Idle",
+      "sit_floor": "Sit_Floor_Idle"
+    },
+    "accessories": [
+      {
+        "shape": "bart",
+        "part": "kinn",
+        "bone": "head",
+        "offset": [
+          0,
+          0.035,
           0.19
         ],
         "size": 1,
-        "color": "#D4D6D8"
+        "color": "#A0A8AB",
+        "depth": 1.5
+      },
+      {
+        "shape": "bart",
+        "part": "keil",
+        "bone": "chest",
+        "offset": [
+          0,
+          0,
+          0.17
+        ],
+        "size": 1,
+        "color": "#A0A8AB",
+        "depth": 1.5
       },
       {
         "shape": "kochmuetze",
@@ -1258,8 +1279,25 @@
           0.4,
           0.3
         ]
+      },
+      {
+        "model": "grossaxt",
+        "weapon": true,
+        "bone": "handslot.r",
+        "hand": true,
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "size": 0.28
       }
-    ]
+    ],
+    "weaponWhen": "combat",
+    "armedAnimations": {
+      "idle": "2H_Melee_Idle",
+      "attack": "2H_Melee_Attack_Chop"
+    }
   },
   "ausbrecher_goblin": {
     "file": "assets/figures/goblin.glb",
@@ -1353,10 +1391,11 @@
         "offset": [
           0,
           0.035,
-          0.2
+          0.19
         ],
         "size": 1,
-        "color": "#D4D6D8"
+        "color": "#A0A8AB",
+        "depth": 1.5
       },
       {
         "shape": "bart",
@@ -1365,13 +1404,15 @@
         "offset": [
           0,
           0,
-          0.19
+          0.17
         ],
         "size": 1,
-        "color": "#D4D6D8"
+        "color": "#A0A8AB",
+        "depth": 1.5
       },
       {
-        "shape": "axt",
+        "model": "grossaxt",
+        "weapon": true,
         "bone": "handslot.r",
         "hand": true,
         "offset": [
@@ -1379,19 +1420,24 @@
           0,
           0
         ],
-        "size": 0.5
+        "size": 0.28
       }
-    ]
+    ],
+    "weaponWhen": "always",
+    "armedAnimations": {
+      "idle": "2H_Melee_Idle",
+      "attack": "2H_Melee_Attack_Chop"
+    }
   },
   "zwergenschmied": {
-    "file": "assets/figures/dunkelzwerg.glb",
+    "file": "assets/figures/zwergenschmied.glb",
     "scale": [
       0.429,
       0.2805,
       0.429
     ],
     "palette": false,
-    "texture": "assets/textures/figures/dunkelzwerg/dunkelzwerg_texture.png",
+    "texture": "assets/textures/figures/dunkelzwerg/dunkelschmied_texture.png",
     "animations": {
       "idle": "Idle",
       "walk": "Walking_A",
@@ -1405,27 +1451,16 @@
     "accessories": [
       {
         "shape": "bart",
-        "part": "kinn",
-        "bone": "head",
-        "offset": [
-          0,
-          0.035,
-          0.2
-        ],
-        "size": 1,
-        "color": "#D4D6D8"
-      },
-      {
-        "shape": "bart",
         "part": "keil",
         "bone": "chest",
         "offset": [
           0,
           0,
-          0.19
+          0.17
         ],
         "size": 1,
-        "color": "#D4D6D8"
+        "color": "#A0A8AB",
+        "depth": 1.5
       },
       {
         "shape": "hammer",
@@ -1467,10 +1502,11 @@
         "offset": [
           0,
           0.035,
-          0.2
+          0.19
         ],
         "size": 1,
-        "color": "#D4D6D8"
+        "color": "#A0A8AB",
+        "depth": 1.5
       },
       {
         "shape": "bart",
@@ -1479,10 +1515,11 @@
         "offset": [
           0,
           0,
-          0.19
+          0.17
         ],
         "size": 1,
-        "color": "#D4D6D8"
+        "color": "#A0A8AB",
+        "depth": 1.5
       },
       {
         "shape": "messlatte",
@@ -1530,5 +1567,20 @@
         "size": 0.28
       }
     ]
+  },
+  "grossaxt": {
+    "file": "assets/props/grossaxt.glb",
+    "palette": false
+  },
+  "hoehlenspinne": {
+    "file": "assets/figures/hoehlenspinne.glb",
+    "scale": 0.16,
+    "palette": false,
+    "animations": {
+      "idle": "HumanArmature|Spider_Idle",
+      "walk": "HumanArmature|Spider_Walk",
+      "attack": "HumanArmature|Spider_Attack",
+      "death": "HumanArmature|Spider_Death"
+    }
   }
 }

@@ -35,6 +35,17 @@ export const FIGURE_INFO = {
 };
 const FALLBACK = { size: 1, blocks: true, variants: [] };
 
+/**
+ * Hält die Figur ihre Waffe (weaponWhen in data/models.json)? "standing": außer im Sitzen und Liegen (Zwergen-Wache),
+ * "combat": nur im Kampf und als Besiegte (Zwergenkoch), "always" oder ohne Angabe: immer.
+ */
+export function weaponArmed(when, { fighting, dead, pose } = {}) {
+  if (fighting || dead) return true;
+  if (when === "combat") return false;
+  if (when === "standing") return !["sit", "sit_floor", "lie"].includes(pose);
+  return true;
+}
+
 export const figureInfo = (id) => FIGURE_INFO[id] || FALLBACK;
 // Gibt es diese Figur? Monster-ids und Figuren ohne Kampfwerte aus der Figurenliste
 export const isFigure = (id, monsters) => !!(FIGURE_INFO[id] || (monsters && monsters[id]));

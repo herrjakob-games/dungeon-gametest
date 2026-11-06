@@ -84,7 +84,7 @@ test("Jedes Volk hat eine Figur mit allen Animationen", () => {
 });
 
 // Figuren ohne Modell (bleiben vorerst Grundformen): Mimik aus dem KayKit Dungeon Pack
-const FIGURES_PENDING = ["mimic", "hoehlenspinne", "steingolem", "eisengolem"]; // noch ohne Modell, aus Grundformen
+const FIGURES_PENDING = ["mimic", "steingolem", "eisengolem"]; // noch ohne Modell, aus Grundformen
 
 test("Jede Figuren-id hat ein Modell, das lädt", (t) => {
   for (const id of Object.keys(FIGURE_INFO)) {
@@ -98,8 +98,13 @@ test("Jede Figuren-id hat ein Modell, das lädt", (t) => {
       assert.ok(FIGURE_ANIMS.includes(name), id + ": unbekannte Animation " + name);
       assert.ok(g.animations.includes(clip), id + ": Animation " + clip + " fehlt in " + m.file);
     });
+    Object.entries(m.armedAnimations || {}).forEach(([name, clip]) => {
+      assert.ok(FIGURE_ANIMS.includes(name), id + ": unbekannte Animation " + name);
+      assert.ok(g.animations.includes(clip), id + ": Animation " + clip + " fehlt in " + m.file);
+    });
     (m.accessories || []).forEach(a => {
-      assert.ok(ACCESSORIES[a.shape], id + ": unbekanntes Zubehör " + a.shape);
+      if (a.model) assert.ok(MODELS[a.model], id + ": Modell " + a.model + " fehlt in data/models.json");
+      else assert.ok(ACCESSORIES[a.shape], id + ": unbekanntes Zubehör " + a.shape);
       const size = Array.isArray(a.size) ? a.size : [a.size];
       assert.ok(typeof a.bone === "string" && (size.length === 1 || size.length === 3) && size.every(v => v > 0), id + ": Zubehör braucht bone und size (Zahl oder [x, y, z])");
       if (a.shape === "bart") assert.ok(["kinn", "keil"].includes(a.part), id + ": Bart braucht part kinn oder keil");
@@ -135,4 +140,27 @@ test("Jede Bodenvariante in floorTiles steht in data/models.json", async () => {
   lists.forEach(([where, l]) => l.forEach(t => assert.ok(MODELS[t.tile], where + ": " + t.tile + " fehlt in data/models.json")));
   // Alle Bodenvarianten decken genau eine Kachel (Maßstab 0,5 auf Paketplatten von 2 Einheiten)
   Object.keys(MODELS).filter(k => k === "boden" || k.startsWith("boden_")).forEach(k => assert.equal(MODELS[k].scale, 0.5, k));
+});
+
+test("Dunkelzwerge: Waffe und Haltung", async () => {
+  const { weaponArmed } = await import("../src/figurePlan.js");
+  // Wache: Axt auch im Stehen, nicht im Sitzen; beim Aufstehen zum Kampf wieder in der Hand
+  assert.equal(weaponArmed("standing", {}), true);
+  assert.equal(weaponArmed("standing", { pose: "sit" }), false);
+  assert.equal(weaponArmed("standing", { pose: "sit_floor" }), false);
+  assert.equal(weaponArmed("standing", { pose: "sit", fighting: true }), true);
+  // Koch: Axt nur im Kampf und als Besiegter
+  assert.equal(weaponArmed("combat", {}), false);
+  assert.equal(weaponArmed("combat", { fighting: true }), true);
+  assert.equal(weaponArmed("combat", { dead: true }), true);
+  // Abtrünniger Dunkelzwerg: immer
+  assert.equal(weaponArmed("always", {}), true);
+  assert.equal(weaponArmed(null, {}), true);
+  // Helm für alle außer dem Koch (eigene Datei ohne Helm), der Schmied kommt vom Barbarian und behält den Hammer
+  for (const id of ["zwergenwache", "dunkelzwerg", "zwergenvermesser"]) assert.equal(MODELS[id].file, "assets/figures/dunkelzwerg.glb", id);
+  assert.equal(MODELS.zwergenkoch.file, "assets/figures/zwergenkoch.glb");
+  assert.equal(RECIPES.figures.zwergenschmied.file, "Barbarian.glb");
+  assert.ok(!MODELS.zwergenschmied.accessories.some(a => a.model === "grossaxt"));
+  assert.ok(MODELS.zwergenschmied.accessories.some(a => a.shape === "hammer"));
+  for (const id of ["zwergenwache", "dunkelzwerg", "zwergenkoch"]) assert.ok(MODELS[id].accessories.some(a => a.model === "grossaxt"), id);
 });
