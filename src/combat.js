@@ -1,6 +1,6 @@
 // Rundenkampf (docs/GDD.md, Abschnitt Proben, Kampf und Fortschritt).
 // Reine Logik ohne Grafik und Textfenster. Ablauf einer Runde: Der Spieler handelt, danach der Gegner.
-import { doCheck, rollDice } from "./eventLogic.js";
+import { doCheck, rollDice, rollDiceDetail } from "./eventLogic.js";
 import { weaponOf, armorBonusOf } from "./character.js";
 
 export const BASE_ARMOR = 10;   // Rüstung der Spielfigur ohne Rüstungsteil
@@ -26,9 +26,13 @@ export function attackRoll(player, items, c, rand) {
   return doCheck(player, { attr: w.hit, category: "nahkampf", dc: c.monster.armor }, rand);
 }
 
-// Treffer: Schaden der Waffe abziehen. Ergebnis: Schaden.
-export function hitMonster(player, items, c, rand) {
-  const n = Math.min(c.monster.hp, rollDice(weaponOf(player, items).damage, rand));
+// Treffer: Schaden der Waffe abziehen. Ergebnis: abgezogener Schaden. out (optional) bekommt die Würfel für die
+// Würfelanzeige: { spec, values } (values leer bei festem Schaden ohne Würfel)
+export function hitMonster(player, items, c, rand, out) {
+  const spec = weaponOf(player, items).damage;
+  const r = rollDiceDetail(spec, rand);
+  if (out) Object.assign(out, { spec, values: r.values });
+  const n = Math.min(c.monster.hp, r.total);
   c.monster.hp -= n;
   return n;
 }
@@ -44,14 +48,16 @@ export function defend(c) { c.defending = true; }
 export function useInCombat(player, item, c, rand) {
   const [type, value] = Object.entries(item.use)[0];
   if (type === "heal") {
-    const n = Math.min(player.maxHp - player.hp, rollDice(value, rand));
+    const r = rollDiceDetail(value, rand);
+    const n = Math.min(player.maxHp - player.hp, r.total);
     player.hp += n;
-    return { type, amount: n };
+    return { type, amount: n, spec: value, values: r.values };
   }
   if (type === "damage") {
-    const n = Math.min(c.monster.hp, rollDice(value, rand));
+    const r = rollDiceDetail(value, rand);
+    const n = Math.min(c.monster.hp, r.total);
     c.monster.hp -= n;
-    return { type, amount: n };
+    return { type, amount: n, spec: value, values: r.values };
   }
   if (type === "freeze") {
     c.frozen = value; // Gegner setzt so viele Runden aus; ein neuer freeze setzt die Runden neu

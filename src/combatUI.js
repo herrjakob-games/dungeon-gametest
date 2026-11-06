@@ -6,7 +6,7 @@ import { ATTR_NAMES, weaponOf, meetsReq } from "./character.js";
 import {
   startCombat, playerArmor, attackRoll, hitMonster, monsterTurn, defend, useInCombat, fleeRoll, DEFEND_BONUS, FLEE_DC
 } from "./combat.js";
-import { showDialog } from "./dialog.js";
+import { showDialog, holdDialog } from "./dialog.js";
 import { monsterHpBonus } from "./world.js";
 import { updateStats } from "./hud.js";
 import { renderInventory } from "./inventory.js";
@@ -14,6 +14,9 @@ import { rollHtml, maybeRescue, signShort } from "./checkUI.js";
 import { hitCombatFigure, attackCombatFigure, focusCombatFigure } from "./roomFigures.js";
 import { playerAction } from "./player.js";
 import { play, playFirst } from "./sound.js";
+import { showDelta, holdHp } from "./combatHud.js";
+import { showRoll } from "./diceView.js";
+import { hpDelta } from "./combatNumbers.js";
 import { attackSound, monsterAttackSound, hitSounds } from "./soundLogic.js";
 
 let h = null; // { onWin(lines), onFlee(), onDeath(monster) }
@@ -52,24 +55,34 @@ function menu(text, lines, roll) {
   showDialog(title(), text, opts, { roll, fx: [status()].concat(lines), modal: true });
 }
 
+// Angriff (docs/GDD.md, Würfelanzeige, Ablauf): der W20 rollt, nach der Landung schlägt die Figur zu; bei einem
+// Treffer rollt der Schaden, nach dessen Landung reagiert der Gegner (Treffer-Klang, Zucken, Zahl über dem Kopf)
 function attack() {
   const c = state.combat;
   const r = attackRoll(state.player, DATA.items, c, Math.random);
   focusCombatFigure();
-  playerAction("attack");
   const against = "Rüstung " + c.monster.armor;
-  maybeRescue(title(), r, against, () => {
-    const lines = [];
-    play(attackSound(weaponOf(state.player, DATA.items).sound, r.ok)); // ohne Waffe faust
-    if (r.ok) {
-      const n = hitMonster(state.player, DATA.items, c, Math.random);
-      playFirst(hitSounds(c.monster.id));
-      hitCombatFigure();
+  holdDialog();
+  showRoll("W20", [r.d]).then(() => {
+    playerAction("attack");
+    maybeRescue(title(), r, against, () => {
+      const lines = [];
+      play(attackSound(weaponOf(state.player, DATA.items).sound, r.ok)); // ohne Waffe faust
+      const roll = rollHtml(r, against, "Treffer", "Daneben");
+      if (!r.ok) { lines.push("Daneben."); afterPlayer(lines, roll); return; }
+      const before = c.monster.hp, dice = {};
+      holdHp(true);
+      const n = hitMonster(state.player, DATA.items, c, Math.random, dice);
       lines.push('Treffer: <span class="good">−' + n + " LP</span> für " + c.monster.name);
-    } else {
-      lines.push("Daneben.");
-    }
-    afterPlayer(lines, rollHtml(r, against, "Treffer", "Daneben"));
+      holdDialog();
+      showRoll(dice.spec, dice.values).then(() => {
+        holdHp(false);
+        showDelta("enemy", hpDelta(before, c.monster.hp, c.monster.maxHp));
+        playFirst(hitSounds(c.monster.id));
+        hitCombatFigure();
+        afterPlayer(lines, roll);
+      });
+    });
   });
 }
 
@@ -87,10 +100,23 @@ function itemMenu() {
 function useItem(e) {
   const p = state.player;
   p.pack.splice(e.index, 1);
+  const m = state.combat.monster, hpBefore = p.hp, monsterBefore = m.hp;
+  holdHp(true);
   const res = useInCombat(p, e.item, state.combat, Math.random);
+  renderInventory();
+  holdDialog();
+  // Würfel des Gegenstands rollen (Heilung, Schaden); Schild und Einfrieren haben keine
+  showRoll(res.spec, res.values).then(() => itemDone(e, res, hpBefore, monsterBefore));
+}
+
+function itemDone(e, res, hpBefore, monsterBefore) {
+  const p = state.player, m = state.combat.monster;
+  holdHp(false);
+  // Zahlen über den Köpfen: der tatsächlich geheilte oder verlorene Wert; Schild und Einfrieren zeigen keine Zahl
+  if (res.type === "heal") showDelta("player", hpDelta(hpBefore, p.hp, p.maxHp));
+  if (res.type === "damage") showDelta("enemy", hpDelta(monsterBefore, m.hp, m.maxHp));
   play(e.item.sound);
   if (res.type === "damage") { playFirst(hitSounds(state.combat.monster.id)); hitCombatFigure(); }
-  renderInventory();
   updateStats();
   const lines = [e.item.name + ": " + (
     res.type === "heal" ? '<span class="good">+' + res.amount + " LP</span>" :
@@ -102,7 +128,8 @@ function useItem(e) {
 
 function flee() {
   const r = fleeRoll(state.player, Math.random, state.theme.dcBonus);
-  maybeRescue(title(), r, null, () => {
+  holdDialog();
+  showRoll("W20", [r.d]).then(() => maybeRescue(title(), r, null, () => {
     const roll = rollHtml(r, null, "Entkommen", "Misslungen");
     if (r.ok) {
       showDialog(title(), "Du rennst, so schnell dich deine Beine tragen. Würde ist überbewertet.",
@@ -110,7 +137,7 @@ function flee() {
     } else {
       afterPlayer(["Flucht misslungen. Der Gegner steht im Weg."], roll);
     }
-  });
+  }));
 }
 
 // Nach der Aktion des Spielers: Gegner tot? Sonst handelt der Gegner.
@@ -122,8 +149,10 @@ function afterPlayer(lines, roll) {
     return;
   }
   const p = state.player;
+  const hpBefore = p.hp;
   const t = monsterTurn(p, DATA.items, c, Math.random);
   if (!t.frozen) { attackCombatFigure(); play(monsterAttackSound(DATA.monsters[c.monster.id], t.hit)); }
+  if (t.hit) showDelta("player", hpDelta(hpBefore, p.hp, p.maxHp));
   if (t.hit) { playerAction("hit"); playFirst(hitSounds(p.volk)); }
   updateStats();
   const enemyRoll = t.frozen

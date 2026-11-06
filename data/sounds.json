@@ -223,6 +223,16 @@
     ],
     "volume": 0.7
   },
+  "wuerfel_rollen": {
+    "files": [
+      "spiel/wuerfel_rollen.mp3"
+    ]
+  },
+  "wuerfel_landen": {
+    "files": [
+      "spiel/wuerfel_landen.mp3"
+    ]
+  },
   "treffer": {
     "files": [
       "spiel/treffer.mp3"

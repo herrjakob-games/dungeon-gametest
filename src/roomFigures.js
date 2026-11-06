@@ -415,6 +415,9 @@ export function attackCombatFigure() {
   focusCombatFigure();
 }
 
+// Figur des Gegners, der gerade dran ist (Lebenspunkte und Zahlen im Kampf, combatHud.js); null ohne Figur
+export const combatFigureObject = () => (fighter && !fighter.dead && !fighter.sink ? fighter.outer : null);
+
 /**
  * Sieg: Alle Gegner der Gruppe spielen Death und bleiben liegen, auch beim erneuten Betreten (Raumzustand
  * deadFigures). Figuren ohne Death-Animation kippen um.

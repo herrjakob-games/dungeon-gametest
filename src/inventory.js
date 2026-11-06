@@ -3,8 +3,9 @@
 import { state } from "./state.js";
 import { DATA } from "./data.js";
 import { ATTR_NAMES, PACK_SIZE, meetsReq, reqText, equip, unequip, removeFromPack } from "./character.js";
-import { rollDice } from "./eventLogic.js";
-import { showDialog, closeDialog, isDialogModal } from "./dialog.js";
+import { rollDiceDetail } from "./eventLogic.js";
+import { showDialog, closeDialog, isDialogModal, holdDialog } from "./dialog.js";
+import { showRoll } from "./diceView.js";
 import { updateStats } from "./hud.js";
 import { play } from "./sound.js";
 
@@ -88,15 +89,17 @@ function openPack(i) {
     opts.push({ label: "Benutzen", pick: () => {
       if (!meetsReq(p, item)) { done("Dafür brauchst du " + reqText(item) + "."); return; }
       const [t, v] = Object.entries(item.use)[0];
-      let msg = "";
+      let msg = "", dice = null;
       if (t === "heal") {
-        const n = Math.min(p.maxHp - p.hp, rollDice(v, Math.random));
+        dice = rollDiceDetail(v, Math.random);
+        const n = Math.min(p.maxHp - p.hp, dice.total);
         p.hp += n;
         msg = n ? item.name + ": +" + n + " LP." : "Du fühlst dich schon kerngesund. Der Trank war trotzdem lecker.";
       }
-      play(item.sound);
       removeFromPack(p, i);
-      done(msg);
+      // Die Würfel rollen, das Textfenster bleibt dabei ohne Optionen stehen (docs/GDD.md, Würfelanzeige)
+      holdDialog();
+      showRoll(v, dice ? dice.values : []).then(() => { play(item.sound); done(msg); });
     } });
   }
   opts.push({ label: "Wegwerfen", pick: () => { removeFromPack(p, i); done(item.name + " bleibt hier liegen. Irgendein Goblin freut sich."); } });

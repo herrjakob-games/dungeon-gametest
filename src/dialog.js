@@ -8,11 +8,15 @@ const rollEl = document.getElementById("dlgRoll");
 const fxEl = document.getElementById("dlgFx");
 const optsEl = document.getElementById("dlgOpts");
 let modal = false;
+let hooks = {}; // Würfelanzeige (diceView.js): pick() bei jeder Auswahl, close() beim Schließen
+
+// Rückrufe der Würfelanzeige anmelden (ohne Import-Kreis)
+export function setDialogHooks(h) { hooks = h || {}; }
 
 /**
  * @param {string} title
  * @param {string} text
- * @param {Array<{label:string, pick:()=>void}>} options
+ * @param {Array<{label:string, pick:()=>void, keepDice?:boolean}>} options (keepDice: die Würfel bleiben liegen)
  * @param {object} [more]
  * @param {string} [more.roll] Ergebnis eines Würfelwurfs, z. B. "W20: 9 + 1 = 10 gegen 12 · Misslungen"
  * @param {string[]} [more.fx] Effektzeilen als HTML, z. B. "−3 LP"
@@ -35,7 +39,7 @@ export function showDialog(title, text, options, more = {}) {
     b.id = "opt" + idx;
     b.innerHTML = '<span class="key">' + (idx + 1) + "</span>";
     b.appendChild(document.createTextNode(o.label));
-    b.addEventListener("click", o.pick);
+    b.addEventListener("click", () => { if (!o.keepDice && hooks.pick) hooks.pick(); o.pick(); });
     optsEl.appendChild(b);
   });
   el.hidden = false;
@@ -43,7 +47,15 @@ export function showDialog(title, text, options, more = {}) {
   if (first) first.focus({ preventScroll: true });
 }
 
-export function closeDialog() { el.hidden = true; modal = false; }
+export function closeDialog() { el.hidden = true; modal = false; if (hooks.close) hooks.close(); }
+
+// Während eines Würfelwurfs: Das Textfenster bleibt mit Titel, Text und Zeilen stehen, aber ohne Optionen, und lässt
+// sich nicht schließen (docs/GDD.md, Würfelanzeige, Ablauf)
+export function holdDialog() {
+  optsEl.innerHTML = "";
+  modal = true;
+  el.hidden = false;
+}
 
 // Solange das Textfenster offen ist, läuft ein Event (Schnellreise ist dann gesperrt)
 export const isDialogOpen = () => !el.hidden;

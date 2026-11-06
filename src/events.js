@@ -7,7 +7,8 @@ import { DATA } from "./data.js";
 import { TYPES } from "./roomTypes.js";
 import { CATEGORY_NAMES, CATEGORIES, pickEvent, bossEventTable, inTheme, pickEncounter, doCheck, applyEffects, releaseIfTrapped, visibleOptions } from "./eventLogic.js";
 import { ATTR_NAMES, addItem, levelUp, raisableAttrs, pendingLevelUps } from "./character.js";
-import { showDialog, closeDialog } from "./dialog.js";
+import { showDialog, closeDialog, holdDialog } from "./dialog.js";
+import { showRoll } from "./diceView.js";
 import { refreshLocks, chestState, removeChest } from "./roomBuilder.js";
 import { updateStats } from "./hud.js";
 import { renderInventory } from "./inventory.js";
@@ -90,10 +91,12 @@ function choose(ev, option, onOutcome) {
   if (!option.check) { choices[ev.id] = { option: option.label, result: null }; resolve(ev, option, null, onOutcome); return; }
   const r = doCheck(state.player, { category: option.check.category, dc: option.check.dc + dcBonus() }, Math.random);
   const against = dcText(option.check.dc);
-  maybeRescue(ev.title, r, against, () => {
+  // Der W20 rollt (docs/GDD.md, Würfelanzeige), danach Angebot der Volks-Fähigkeit und Ergebnis
+  holdDialog();
+  showRoll("W20", [r.d]).then(() => maybeRescue(ev.title, r, against, () => {
     choices[ev.id] = { option: option.label, result: r.ok ? "success" : "failure" };
     resolve(ev, r.ok ? option.success : option.failure, rollHtml(r, against), onOutcome);
-  });
+  }));
 }
 
 function resolve(ev, outcome, roll, onOutcome) {
