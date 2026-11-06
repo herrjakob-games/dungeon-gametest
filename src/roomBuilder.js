@@ -8,7 +8,7 @@ import { setRoomSeed, rnd, pickOne, shuffled } from "./rng.js";
 import { mat, box, stone, WOOD } from "./materials.js";
 import { TYPES } from "./roomTypes.js";
 import { scene, setAmbient } from "./scene.js";
-import { makeModel, hasModel, setModelTheme, findPart, makeFigureModel } from "./models.js";
+import { makeModel, hasModel, setModelTheme, findPart, makeFigureModel, modelEntry } from "./models.js";
 import { state } from "./state.js";
 import { buildFigure } from "./figures.js";
 import * as P from "./props.js";
@@ -195,6 +195,9 @@ function buildWalls(room, cracked) {
   add(box(0.5, PLINTH_H, 0.5, stone(), E, PLINTH_H / 2, E));
 }
 
+const warned = new Set();
+const warnOnce = (msg) => { if (!warned.has(msg)) { warned.add(msg); console.warn(msg); } };
+
 function makeDoor(d) {
   const info = DIR[d];
   const g = new THREE.Group();
@@ -203,6 +206,7 @@ function makeDoor(d) {
   const hoverMats = [glowMat];
   const frameMat = mat(0x8a7562); // Türrahmen eine Stufe heller als die Wand
   const model = tall ? makeModel("tuerrahmen", null, { unique: true }) : null;
+  let outlineTarget = null; // bekommt beim Überfahren die goldene Umrisslinie (docs/GDD.md, Lesbarkeit)
   if (model) {
     model.traverse(n => {
       if (!n.isMesh) return;
@@ -212,25 +216,35 @@ function makeDoor(d) {
       hoverMats.push(n.material);
     });
     g.add(model);
+    // Umrisslinie beim Überfahren nur am Türblatt (highlight in data/models.json); fehlt der Knoten, bleibt es beim Aufhellen
+    const entry = modelEntry("tuerrahmen");
+    outlineTarget = entry && entry.highlight ? findPart(model, entry.highlight) : null;
+    // Im Paket hängt das Türblatt unter dem Rahmen-Mesh. Der OutlinePass blendet alle anderen Meshes samt ihren Kindern aus,
+    // daher kommt das Türblatt an derselben Stelle direkt unter das Modell.
+    if (outlineTarget && outlineTarget.parent && outlineTarget.parent.isMesh) { model.updateMatrixWorld(true); model.attach(outlineTarget); }
+    if (!outlineTarget) warnOnce("tuerrahmen: Knoten für highlight " + (entry && entry.highlight ? "„" + entry.highlight + "“ nicht gefunden" : "fehlt in data/models.json") + "; die Tür wird beim Überfahren nur aufgehellt");
   } else if (tall) {
     g.add(box(0.18, 1.7, 0.6, frameMat, -0.41, 0.85, 0));
     g.add(box(0.18, 1.7, 0.6, frameMat, 0.41, 0.85, 0));
     g.add(box(1, 0.3, 0.6, frameMat, 0, 1.85, 0));
     const slabMat = mat(WOOD, { emissive: 0xe9a640, emissiveIntensity: 0 });
     hoverMats.push(slabMat);
-    g.add(box(0.64, 1.55, 0.12, slabMat, 0, 0.78, -0.12));
+    outlineTarget = box(0.64, 1.55, 0.12, slabMat, 0, 0.78, -0.12); // Türblatt des Platzhalters
+    g.add(outlineTarget);
     g.add(box(0.08, 0.08, 0.06, mat(0xd8b56a), 0.2, 0.75, -0.04));
   } else {
     g.add(box(0.18, 0.55, 0.6, frameMat, -0.41, 0.28, 0));
     g.add(box(0.18, 0.55, 0.6, frameMat, 0.41, 0.28, 0));
   }
-  g.add(box(0.7, 0.05, 0.55, glowMat, 0, 0.03, 0));
-  g.add(makeLock(d, tall, glowMat));
+  const tile = box(0.7, 0.05, 0.55, glowMat, 0, 0.03, 0); // Türkachel am Boden
+  g.add(tile);
+  if (!tall) outlineTarget = tile; // vordere Türen (Süd, Ost) haben nur Sockel: die Türkachel leuchtet auf
+  g.add(makeLock(d, tall, glowMat)); // das Schloss gehört nie zur Umrisslinie
   if (d === "N") g.position.set(0, 0, -E);
   if (d === "S") g.position.set(0, 0, E);
   if (d === "W") { g.position.set(-E, 0, 0); g.rotation.y = Math.PI / 2; }
   if (d === "E") { g.position.set(E, 0, 0); g.rotation.y = Math.PI / 2; }
-  g.userData = { kind: "door", dir: d, name: info.name, approach: info.approach, hoverMats, baseGlow: glowMat };
+  g.userData = { kind: "door", dir: d, name: info.name, approach: info.approach, hoverMats, baseGlow: glowMat, outlineTarget };
   add(g);
   state.interactables.push(g);
 }

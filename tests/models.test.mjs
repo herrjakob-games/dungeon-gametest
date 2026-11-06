@@ -49,6 +49,16 @@ test("Jede Datei in data/models.json existiert und ist eine gültige GLB", () =>
   assert.ok(existsSync(new URL("assets/textures/keller/dungeon_texture.png", root)), "Paletten-Textur des Kellers fehlt");
 });
 
+// Hervorhebung (docs/GDD.md, Asset-Spezifikation): highlight nennt einen Knoten, der in der Datei steht
+test("highlight nennt einen Knoten der Datei", () => {
+  const withHighlight = Object.entries(MODELS).filter(([, m]) => m.highlight !== undefined);
+  assert.ok(withHighlight.some(([id]) => id === "tuerrahmen"), "tuerrahmen braucht highlight (Türblatt)");
+  for (const [id, m] of withHighlight) {
+    assert.ok(typeof m.highlight === "string", id + ": highlight muss ein Knotenname sein");
+    assert.ok(glbTriangles(new URL(m.file, root)).nodes.includes(m.highlight), id + ": Knoten " + m.highlight + " fehlt in " + m.file);
+  }
+});
+
 test("Bauteile der Räume haben ein Modell", () => {
   ["boden", "wand", "wand_ecke", "sockel", "sockel_ecke", "tuerrahmen", "fackel"].forEach(id => assert.ok(MODELS[id], id + " fehlt in data/models.json"));
 });

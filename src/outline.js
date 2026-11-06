@@ -37,3 +37,36 @@ export function setOutline(obj, on) {
   }
   obj.userData.outline.forEach(o => { o.visible = on; });
 }
+
+// Umrisslinie um die Silhouette eines Teils (docs/GDD.md, Lesbarkeit: Türen). OutlinePass aus three.js r128
+// (vendor/three/OutlinePass.js): Kanten nur außen um das gewählte Teil, keine Linien über Flächen. Wo andere Teile
+// (etwa der Türrahmen) es verdecken, bleibt die Linie unsichtbar (hiddenEdgeColor schwarz, additiv gemischt).
+// Der Raum wird wie bisher direkt gezeichnet; die Linie kommt danach obendrauf (drawSilhouette in der Spielschleife).
+let pass = null;
+let silhouette = null;
+const passSize = new THREE.Vector2();
+
+export function setSilhouette(obj) { silhouette = obj || null; }
+
+export function drawSilhouette(renderer, scene, camera) {
+  if (!silhouette || !THREE.OutlinePass) return;
+  renderer.getDrawingBufferSize(passSize);
+  if (!pass) {
+    pass = new THREE.OutlinePass(passSize.clone(), scene, camera);
+    pass.visibleEdgeColor.setHex(GOLD);
+    pass.hiddenEdgeColor.setHex(0x000000);
+    pass.edgeStrength = 4;
+    pass.edgeThickness = 1;
+    pass.edgeGlow = 0;
+    pass.pulsePeriod = 0;
+    pass.size = passSize.clone();
+  } else if (!pass.size.equals(passSize)) {
+    pass.setSize(passSize.x, passSize.y);
+    pass.size.copy(passSize);
+  }
+  pass.renderCamera = camera;
+  pass.selectedObjects = [silhouette];
+  // readBuffer null: die Linie wird additiv direkt auf das fertige Bild gezeichnet
+  pass.render(renderer, null, null, 0, false);
+  renderer.setRenderTarget(null);
+}

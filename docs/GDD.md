@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.63 · Nov 6, 2026 · @Christian
+Version 2.65 · Nov 6, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.65 | 06.11.2026 | Mouseover an Türen: goldene Umrisslinie nur am Türblatt, nicht am Rahmen; an Süd- und Osttüren an der Türkachel am Boden; Schloss ohne Umrisslinie; Feld `highlight` in `data/models.json` |
 | 2.64 | 06.11.2026 | Dunkelzwerge neu: Haut `#415158`, Bart und Haare `#A0A8AB`, Bart dicker; Helm für alle außer dem Koch (Kochmütze); große Axt aus KayKit Adventurers (`2H_Axe` des Barbarian) im Kampf, Wachen auch im Stehen, nicht im Sitzen; Schmied auf Grundlage des KayKit `Barbarian`, ohne Kopfbedeckung, kämpft mit seinem Hammer (größerer, kurzer und hoher Hammerkopf); Todestext des Kochs an die Axt angepasst; Höhlenspinne aus `Spider` (Easy Animated Enemy Pack, Quaternius) statt Grundformen |
 | 2.63 | 06.11.2026 | Zwergenminen Paket 2: Säulenhalle und Schmiede dort gemischt, Begegnungen mit Höhlenspinne, Steingolem, Eisengolem und abtrünnigem Dunkelzwerg; höchstens 9 Wachstuben und 10 Säulenhallen; Vorratskammer im Thema; Rache der Monsterratte auf Ebene 7; alle Zwerge in den Zwergenminen als Dunkelzwerge; neuer Effekt `flee`; Feld `themeLevel` in Event-Tabellen |
 | 2.62 | 06.11.2026 | Zwergenminen Paket 1: Küche und Kerker im Thema; alle anderen Räume dort neutral, nur der Kerker feindlich (Gefängnisausbrüche), keine Begegnungen; Monster Entflohener Ork, Goblin und Kobold, Zwergen-Wache, Zwergenkoch; Figuren dazu; Anker `an_saeule_schlafend` |
@@ -552,6 +553,7 @@ Gruft und Brunnen sind im Keller die düsteren Räume mit kälterem Grundlicht. 
 - Spielfigur mit hellem Bodenring, Gegner mit rotem Akzent und im Kampf rotem Ring.
 - Türrahmen eine Stufe heller als die Wand, neben jeder Tür eine Fackel (Ausnahme: In Schatzkammer und Brunnenraum hängt an jeder Säule eine Fackel). Verschlossene Tür: rotes Schloss.
 - Anklickbare Objekte (Truhe, Lagerfeuer, Händler, Treppe nach unten): goldene Umrisslinie beim Überfahren mit der Maus, leichtes Aufhellen.
+  - Türen: Beim Überfahren mit der Maus bekommt nur das Türblatt die goldene Umrisslinie, nicht der Türrahmen. Anklickbar bleibt die ganze Tür mit Rahmen und Türkachel. An den vorderen Türen (Süd, Ost), die nur Sockel haben, leuchtet stattdessen die Türkachel am Boden mit goldener Umrisslinie auf. Auch verschlossene Türen werden hervorgehoben; ihr Schloss bleibt rot und wird nicht mit umrandet. Wo der Rahmen das Türblatt verdeckt, ist keine Linie zu sehen.
 - Bodendeko (Sack, Moos, Pfütze, Geröll) flach und dunkel, damit sie nie wie ein Hindernis wirkt.
 
 ### Asset-Spezifikation
@@ -568,7 +570,7 @@ Gilt für alle Modelle. Bei Paketteilen gilt sie für das Ergebnis im Spiel; Abw
 - **Dateinamen:** id aus dem GDD; Varianten als `id_variante.glb`, etwa `fass_gruppe.glb`. Fehlt die Variante, gilt die Grunddatei. Eine Variante kann auch nur eine andere Animation sein (Skelett sitzend).
 - **Ordner:** `assets/tiles/` (Boden, Wand, Sockel, Ecken, Türrahmen), `assets/props/`, `assets/figures/`, `assets/textures/`, `assets/sounds/`. Rohdateien der Pakete in `assets/source/`.
 - **Bauteile:** `boden`, Bodenvarianten `boden_<name>` (siehe Stilguide, Böden), `wand`, `wand_riss` (2 Kacheln breit, siehe Stilguide, Wände), `wand_ecke`, `sockel`, `sockel_ecke`, `tuerrahmen`, `fackel`, `schloss`. Der Türrahmen hinten deckt drei Kacheln (Tür mittig). Neben jeder Tür hängt eine Fackel. In der Vorkammer hängt keine Fackel hinter oder neben der Treppe, also nicht auf den Kacheln 1 bis 4 von Nord- und Westwand; die Fackel dort fällt weg. An den vorderen Türen (Süd, Ost) ist sie wie die vorderen Wände ausgeblendet: kein Modell und kein Pfosten, nur ihr Licht bleibt, damit der Raum gleich hell bleibt.
-- **Zuordnung:** `data/models.json` hält pro id Datei, Maßstab (Zahl oder [x, y, z]), Drehung, Versatz, Einfärbung (`tint`, Farbe, mit der die Paletten-Textur multipliziert wird, etwa Holzton für graue Kisten), Animationszuordnung, Lichtpunkte (Position relativ zum Ursprung, Farbe, Stärke, Reichweite) und Zubehör (`accessories`: Teil aus Grundformen wie Kochmütze, Krone oder rote Augen, an einem Knochen der Figur, mit Versatz und Größe in Kacheln). Mehrere ids dürfen dieselbe Datei nutzen (Riesenratte, Küchenchef und Monsterratte).
+- **Zuordnung:** `data/models.json` hält pro id Datei, Maßstab (Zahl oder [x, y, z]), Drehung, Versatz, Einfärbung (`tint`, Farbe, mit der die Paletten-Textur multipliziert wird, etwa Holzton für graue Kisten), Animationszuordnung, Lichtpunkte (Position relativ zum Ursprung, Farbe, Stärke, Reichweite) und Zubehör (`accessories`: Teil aus Grundformen wie Kochmütze, Krone oder rote Augen, an einem Knochen der Figur, mit Versatz und Größe in Kacheln), Hervorhebung (`highlight`: Name des Knotens, der beim Überfahren die Umrisslinie bekommt, etwa das Türblatt `wall_doorway_door` im `tuerrahmen`; ohne Eintrag das ganze Modell). Mehrere ids dürfen dieselbe Datei nutzen (Riesenratte, Küchenchef und Monsterratte).
 - **Build-Skript:** `tools/build-assets.mjs` setzt Teile aus Paketen zu einer GLB zusammen (Tafel, Regal, Türrahmen) und speckt Paketfiguren ab (nur benötigte Animationen und Zubehörteile, komprimiert). FBX-Dateien wandelt es vorher in GLB um; es kann Materialfarben auf die Palette setzen (matt, ohne Metallglanz), eine Waffe an einen Knochen hängen und Figuren auf höchstens 3.000 Dreiecke vereinfachen. Requisiten kann es aus Teilen einer Paketfigur zusammensetzen (`extracts`), etwa die Knochen aus Schädel, Kiefer und Armen der Skelette.
 - **Platzhalter:** Fehlt eine Datei oder lädt sie nicht, baut der Code das Teil wie bisher aus Grundformen.
 - **Dunkelzwerge:** Alle Zwerge in den Zwergenminen sind Dunkelzwerge, die Spielfigur bleibt der bisherige Zwerg. Grundlage ist das Modell des Zwergs (KayKit `Knight`, gleicher Maßstab, mit Bart), Haut `#415158`, Bart und Haare `#A0A8AB`, Umhang (`Knight_Cape`) blau `#2F5FA8`. Alle tragen den Helm (`Knight_Helmet`), der Bart liegt auf dem Kinnschutz; nur der Koch trägt die Kochmütze statt des Helms. Der Schmied hat als einziger den KayKit `Barbarian` als Grundlage (gleicher Maßstab, ohne Bärenfell, mit Bartkeil, eigene Kleidung und Textur `dunkelschmied_texture.png`). **Waffen:** Im Kampf halten Zwerge die große Axt (`2H_Axe` des KayKit `Barbarian`, zweihändig: `2H_Melee_Idle`, `2H_Melee_Attack_Chop`). Wachen halten sie auch im Stehen, im Sitzen nicht; der abtrünnige Dunkelzwerg hält sie immer, der Koch nur im Kampf. Der Schmied trägt keine Kopfbedeckung, kämpft mit seinem Hammer (kurzer, hoher Kopf wie ein Schmiedehammer, damit er aus der Iso-Ansicht lesbar ist) und behält ihn immer in der Hand, der Vermesser hält seine Messlatte. Die Figuren müssen im Licht der Zwergenminen lesbar bleiben.
@@ -993,3 +995,4 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Höhlenspinne aus dem Easy Animated Enemy Pack (`Spider`)
 - [x] Zwerge kämpfen mit der großen Axt, Wachen halten sie auch im Stehen; der Schmied kämpft mit seinem Hammer und nutzt den KayKit `Barbarian` als Grundlage
 - [x] Die Monsterratte kehrt auf Ebene 7 in der Vorratskammer zurück (`vorrat_rache`); Effekt `flee` und Feld `themeLevel` in Event-Tabellen
+- [x] Mouseover an Türen nur am Türblatt; vordere Türen über die Türkachel am Boden; verschlossene Türen werden ebenfalls hervorgehoben, das Schloss nicht; die Klickfläche bleibt die ganze Tür
