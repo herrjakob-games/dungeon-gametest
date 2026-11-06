@@ -4,6 +4,7 @@ import { ATTR_NAMES, canUseAbility } from "./character.js";
 import { CATEGORY_NAMES } from "./eventLogic.js";
 import { showDialog } from "./dialog.js";
 import { updateStats } from "./hud.js";
+import { holdDice, releaseDice } from "./diceView.js";
 
 export const sign = (n) => (n < 0 ? "− " + Math.abs(n) : "+ " + n);
 export const signShort = (n) => (n < 0 ? "−" + Math.abs(n) : "+" + n);
@@ -24,8 +25,9 @@ export function rollHtml(r, against, okText = "Erfolg", failText = "Misslungen")
 export function maybeRescue(title, r, against, decide) {
   if (r.ok || !canUseAbility(state.player, r.attr)) { decide(); return; }
   const a = state.player.ability;
+  holdDice(); // der Würfel bleibt liegen, bis die Entscheidung gefallen ist
   showDialog(title, "Misslungen! " + a.name + " kann das retten: Die Probe gilt dann als bestanden. Das geht nur einmal pro Dungeon.", [
-    { label: a.name + " einsetzen", keepDice: true, pick: () => { r.ok = true; r.rescued = true; state.player.abilityUsed = true; updateStats(); decide(); } },
-    { label: "Nicht einsetzen", keepDice: true, pick: decide }
+    { label: a.name + " einsetzen", keepDice: true, pick: () => { releaseDice(); r.ok = true; r.rescued = true; state.player.abilityUsed = true; updateStats(); decide(); } },
+    { label: "Nicht einsetzen", keepDice: true, pick: () => { releaseDice(); decide(); } }
   ], { roll: rollHtml(r, against), modal: true });
 }
