@@ -314,3 +314,47 @@ test("Begegnungen: Monster existieren, nur feindliche und gemischte Räume, glei
   data.themes.find(t => t.id === "katakomben").encounters = { chance: 0.15, monsters: [{ monster: "geist_gibts_nicht", weight: 2 }], reward: [{ loot: "tier1" }] };
   assert.ok(validateData(data).some(e => e.includes("encounters: unbekanntes Monster geist_gibts_nicht")));
 });
+
+test("Effekt flee: meldet den Rückzug, Effekte davor gelten; nur true ist erlaubt", () => {
+  const p = newPlayer();
+  const xp = p.xp;
+  const res = applyEffects([{ gainXp: 2 }, { flee: true }], ctx(p), Math.random);
+  assert.equal(res.flee, true);
+  assert.equal(p.xp, xp + 2);
+  assert.equal(applyEffects([{ gainXp: 1 }], ctx(p), Math.random).flee, false);
+  // vorrat_rache nutzt flee beim gelungenen Ablenken
+  const opt = DATA.events.vorrat_rache.options.find(o => o.label.startsWith("Mit einem Käsestück"));
+  assert.ok(opt.success.effects.some(e => e.flee === true));
+  const bad = structuredClone({ roomTypes: {}, monsters: DATA.monsters, events: {}, items: DATA.items, characters: DATA.characters });
+  bad.events.x = { id: "x", type: "trap", title: "X", text: "X", options: [{ label: "A", effects: [{ flee: "ja" }] }] };
+  assert.ok(validateData(bad).some(e => e.includes("flee braucht den Wert true")));
+});
+
+test("themeLevel: Einträge gelten nur auf ihrer Ebene im Thema", () => {
+  const vorrat = DATA.roomTypes.vorrat;
+  const ids = (level) => inTheme(vorrat, "zwergenminen", level).events.map(e => e.id);
+  assert.ok(ids(1).includes("vorrat_rache"));
+  assert.ok(!ids(2).includes("vorrat_rache"));
+  assert.ok(!ids(3).includes("vorrat_rache"));
+  assert.ok(ids(2).includes("vorrat_kaese"));
+  assert.ok(ids(undefined).includes("vorrat_rache")); // ohne Ebene (Datenprüfung, Testmodus) bleibt alles
+  // Auf Ebene 1 des Themas kann die Rache gewählt werden, auf Ebene 2 nie
+  const run = newRun();
+  assert.equal(pickEvent(Object.assign(inTheme(vorrat, "zwergenminen", 1), { eventChance: 1, events: [{ id: "vorrat_rache", weight: 1, themeLevel: 1 }] }), run, () => 0), "vorrat_rache");
+  assert.equal(pickEvent(Object.assign({}, vorrat, { eventChance: 1, events: inTheme({ events: [{ id: "vorrat_rache", weight: 1, themeLevel: 1 }] }, null, 2).events }), run, () => 0), null);
+  const bad = structuredClone({ roomTypes: { vorrat: Object.assign({}, vorrat, { themeEvents: {}, events: [{ id: "vorrat_kaese", weight: 1, themeLevel: 4 }] }) },
+    monsters: DATA.monsters, events: DATA.events, items: DATA.items, characters: DATA.characters, themes: DATA.themes });
+  assert.ok(validateData(bad).some(e => e.includes("themeLevel muss 1, 2 oder 3 sein")));
+});
+
+test("Zwergenminen: höchstens 9 Wachstuben und 10 Säulenhallen, keine Begegnungen im Kerker", () => {
+  const zm = DATA.themes.find(t => t.id === "zwergenminen");
+  for (let depth = 7; depth <= 9; depth++) for (let s = 1; s <= 40; s++) {
+    const d = generate(s, depth, { themes: DATA.themes, roomTypes: DATA.roomTypes });
+    const count = (t) => Object.values(d.rooms).filter(r => r.type === t).length;
+    assert.ok(count("wache") <= 9, "Ebene " + depth + " Seed " + s + ": " + count("wache") + " Wachstuben");
+    assert.ok(count("halle") <= 10, "Ebene " + depth + " Seed " + s + ": " + count("halle") + " Säulenhallen");
+  }
+  for (let seed = 1; seed <= 200; seed++) assert.equal(pickEncounter(zm, DATA.roomTypes.kerker, seed), null);
+  assert.ok(Array.from({ length: 200 }, (_, s) => pickEncounter(zm, DATA.roomTypes.halle, s + 1)).some(Boolean), "Säulenhalle hat Begegnungen");
+});

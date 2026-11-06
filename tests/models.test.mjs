@@ -84,7 +84,7 @@ test("Jedes Volk hat eine Figur mit allen Animationen", () => {
 });
 
 // Figuren ohne Modell (bleiben vorerst Grundformen): Mimik aus dem KayKit Dungeon Pack
-const FIGURES_PENDING = ["mimic"];
+const FIGURES_PENDING = ["mimic", "hoehlenspinne", "steingolem", "eisengolem"]; // noch ohne Modell, aus Grundformen
 
 test("Jede Figuren-id hat ein Modell, das lädt", (t) => {
   for (const id of Object.keys(FIGURE_INFO)) {

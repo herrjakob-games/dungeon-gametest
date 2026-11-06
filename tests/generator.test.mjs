@@ -117,7 +117,8 @@ test("Katakomben: Kerker neben dem Start und höchstens 2, Gruft darf neben den 
 });
 
 test("Anteil feindlicher Räume steigt mit der Tiefe", () => {
-  for (const depth of [1, 7, 13, 20]) {
+  // Ebene 4 statt 7: In den Zwergenminen (7 bis 9) gilt der Anteil nicht (docs/GDD.md, Zwergenminen)
+  for (const depth of [1, 4, 13, 20]) {
     let hostile = 0, total = 0;
     for (let s = 1; s <= SEEDS; s++) {
       const d = generate(s, depth, WORLD);

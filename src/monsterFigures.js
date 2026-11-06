@@ -192,7 +192,55 @@ function fallback(id) {
   return g;
 }
 
-const BUILDERS = { rat, skeleton, goblin, mimic, kuechenratte, monsterratte, kroete };
+// Höhlenspinne (Zwergenminen, bis es ein Modell gibt): dunkler Körper, acht geknickte Beine, rote Augen
+function hoehlenspinne() {
+  const g = new THREE.Group();
+  const part = maker(g);
+  const skin = mat(0x2e2a30);
+  part(sph(0.2), skin, 0, 0.28, -0.12).scale.set(1, 0.85, 1.2);   // Hinterleib
+  part(sph(0.12), skin, 0, 0.26, 0.14);                            // Kopf und Brust
+  for (let i = 0; i < 4; i++) [-1, 1].forEach(k => {
+    const z = 0.18 - i * 0.1;
+    const up = part(cylG(0.018, 0.018, 0.26, 5), skin, k * 0.2, 0.36, z);
+    up.rotation.z = k * 1.0;
+    const down = part(cylG(0.016, 0.012, 0.32, 5), skin, k * 0.36, 0.18, z);
+    down.rotation.z = k * -0.35;
+  });
+  [-1, 1].forEach(k => part(sph(0.025), eyeMat(), k * 0.05, 0.3, 0.24));
+  return g;
+}
+
+// Steingolem (bis es ein Modell gibt): sieht aus wie eine Säule, mit groben Armen und glimmenden Augen
+function steingolem() {
+  const g = new THREE.Group();
+  const part = maker(g);
+  const stone = mat(0x7a756c, { roughness: 1 });
+  part(cylG(0.24, 0.28, 0.9, 8), stone, 0, 0.45, 0);              // Säulenschaft
+  part(boxG(0.62, 0.12, 0.62), stone, 0, 0.06, 0);                 // Sockel
+  part(boxG(0.58, 0.12, 0.58), stone, 0, 0.96, 0);                 // Kapitell
+  [-1, 1].forEach(k => {
+    part(boxG(0.14, 0.42, 0.14), stone, k * 0.36, 0.55, 0.04).rotation.z = k * 0.15;
+    part(sph(0.03), eyeMat(), k * 0.08, 0.78, 0.25);
+  });
+  return g;
+}
+
+// Eisengolem (bis es ein Modell gibt): kantiger Körper aus Eisen, schwere Arme
+function eisengolem() {
+  const g = new THREE.Group();
+  const part = maker(g);
+  const iron = mat(0x55595f, { metalness: 0.5, roughness: 0.5 });
+  part(boxG(0.5, 0.45, 0.32), iron, 0, 0.62, 0);                   // Rumpf
+  part(boxG(0.26, 0.22, 0.24), iron, 0, 0.96, 0.02);               // Kopf
+  [-1, 1].forEach(k => {
+    part(boxG(0.16, 0.36, 0.16), iron, k * 0.12, 0.2, 0);          // Beine
+    part(boxG(0.16, 0.5, 0.16), iron, k * 0.36, 0.55, 0.04);       // Arme
+    part(sph(0.03), mat(0xff9a3a), k * 0.06, 0.98, 0.15);          // glühende Augen
+  });
+  return g;
+}
+
+const BUILDERS = { rat, skeleton, goblin, mimic, kuechenratte, monsterratte, kroete, hoehlenspinne, steingolem, eisengolem };
 
 export function buildMonsterFigure(id, variant) {
   return BUILDERS[id] ? BUILDERS[id](variant) : fallback(id);
@@ -207,7 +255,8 @@ export const ACCESSORIES = {
   bart(a) {
     const g = new THREE.Group();
     const part = maker(g);
-    const hair = mat(0x4a3020, { roughness: 1, flatShading: false });
+    // color: Farbe des Barts (Dunkelzwerge grauweiß #D4D6D8), ohne Angabe das Braun des Zwergs
+    const hair = mat(a.color ? parseInt(a.color.slice(1), 16) : 0x4a3020, { roughness: 1, flatShading: false });
     const soft = (r) => new THREE.SphereGeometry(r, 12, 8);
     if (a.part === "kinn") {
       part(soft(0.5), hair, 0, 0, 0).scale.set(0.27, 0.13, 0.09);          // Kinnansatz
@@ -267,6 +316,30 @@ export const ACCESSORIES = {
       e.position.x = k * d;
       g.add(e);
     });
+    return g;
+  },
+  // Werkzeuge der Dunkelzwerge (in der Hand, hand: true): Stiel entlang +y, Länge 1 bei size 1
+  // Axt (abtrünniger Dunkelzwerg): Holzstiel, Klinge auf einer Seite
+  axt() {
+    const g = new THREE.Group();
+    const part = maker(g);
+    part(boxG(0.08, 1, 0.08), mat(0x5e3d22), 0, 0.3, 0);
+    part(boxG(0.06, 0.28, 0.32), mat(0x8c9096, { metalness: 0.5, roughness: 0.5 }), 0, 0.68, 0.16);
+    return g;
+  },
+  // Schmiedehammer (Dunkelzwerg-Schmied): Holzstiel, schwerer Kopf quer
+  hammer() {
+    const g = new THREE.Group();
+    const part = maker(g);
+    part(boxG(0.08, 0.9, 0.08), mat(0x5e3d22), 0, 0.25, 0);
+    part(boxG(0.2, 0.2, 0.42), mat(0x5a5e66, { metalness: 0.5, roughness: 0.5 }), 0, 0.7, 0);
+    return g;
+  },
+  // Messlatte (Vermesser): lange Latte mit abwechselnd hellen und roten Abschnitten
+  messlatte() {
+    const g = new THREE.Group();
+    const part = maker(g);
+    for (let i = 0; i < 6; i++) part(boxG(0.06, 0.25, 0.03), mat(i % 2 ? 0xc8432f : 0xe8dcc0), 0, -0.2 + i * 0.25, 0);
     return g;
   },
   // Fleischerbeil (Küchenchef)

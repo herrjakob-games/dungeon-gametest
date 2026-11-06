@@ -124,6 +124,16 @@ function attachAccessories(g, inner, list) {
     // Lage in der Welt (am Knochen plus offset, ungedreht, Größe size) in den Raum des Knochens umrechnen; so stimmt
     // das Zubehör auch bei ungleichem Maßstab der Figur (etwa der breitere Zwerg)
     const o = build(a);
+    if (a.hand) {
+      // In der Hand (Werkzeug am Knochen handslot.r): folgt der Hand wie das Schwert des Pakets; size in Kacheln
+      const s = bone.getWorldScale(new THREE.Vector3());
+      const k = vec(a.size, 1);
+      o.scale.set(k[0] / s.x, k[1] / s.y, k[2] / s.z);
+      o.position.set(...(a.offset || [0, 0, 0])).divide(s);
+      o.traverse(n => { if (n.isMesh) n.castShadow = true; });
+      bone.add(o);
+      return;
+    }
     const at = bone.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(...(a.offset || [0, 0, 0])));
     // size: Zahl oder [x, y, z] (etwa die Kochmütze des Zwergenkochs, höher als breit)
     const world = new THREE.Matrix4().compose(at, new THREE.Quaternion(), new THREE.Vector3(...vec(a.size, 1)));

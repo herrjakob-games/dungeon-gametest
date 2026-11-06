@@ -1,5 +1,5 @@
 {
-  "_info": "Zuordnung der Modelle (docs/GDD.md, Asset-Spezifikation). Pro id: file, scale (Zahl oder [x, y, z]), rotation (Grad [x, y, z]), offset ([x, y, z] in Kacheln, vor der Drehung), palette (true = Paletten-Textur des Themas), texture (eigene angepasste Textur einer Figur), tint (Farbe, die das Modell einfärbt), color (eine Farbe statt Textur, etwa der Knochenthron), lights (offset, color, intensity, distance), animations (Figuren: Name im Spiel → Name im Paket: idle, walk, attack, hit, death, interact), accessories (Zubehör aus Grundformen an einem Knochen: shape, bone, offset und size in Kacheln, size auch als [x, y, z]). Varianten heißen <id>_<variante>.",
+  "_info": "Zuordnung der Modelle (docs/GDD.md, Asset-Spezifikation). Pro id: file, scale (Zahl oder [x, y, z]), rotation (Grad [x, y, z]), offset ([x, y, z] in Kacheln, vor der Drehung), palette (true = Paletten-Textur des Themas), texture (eigene angepasste Textur einer Figur), tint (Farbe, die das Modell einfärbt), color (eine Farbe statt Textur, etwa der Knochenthron), lights (offset, color, intensity, distance), animations (Figuren: Name im Spiel → Name im Paket: idle, walk, attack, hit, death, interact), accessories (Zubehör aus Grundformen an einem Knochen: shape, bone, offset und size in Kacheln, size auch als [x, y, z]; color beim Bart; hand: true hängt ein Werkzeug wie gehalten an den Knochen, etwa handslot.r). Varianten heißen <id>_<variante>.",
   "boden": {
     "file": "assets/tiles/boden.glb",
     "scale": 0.5,
@@ -1163,7 +1163,7 @@
       0.429
     ],
     "palette": false,
-    "texture": "assets/textures/figures/zwerg/zwerg_texture.png",
+    "texture": "assets/textures/figures/dunkelzwerg/dunkelzwerg_texture.png",
     "animations": {
       "idle": "Idle",
       "walk": "Walking_A",
@@ -1184,7 +1184,8 @@
           0.035,
           0.2
         ],
-        "size": 1
+        "size": 1,
+        "color": "#D4D6D8"
       },
       {
         "shape": "bart",
@@ -1195,26 +1196,29 @@
           0,
           0.19
         ],
-        "size": 1
+        "size": 1,
+        "color": "#D4D6D8"
       }
     ]
   },
   "zwergenkoch": {
-    "file": "assets/figures/zwerg.glb",
+    "file": "assets/figures/dunkelzwerg.glb",
     "scale": [
       0.429,
       0.2805,
       0.429
     ],
     "palette": false,
-    "texture": "assets/textures/figures/zwerg/zwerg_texture.png",
+    "texture": "assets/textures/figures/dunkelzwerg/dunkelzwerg_texture.png",
     "animations": {
       "idle": "Idle",
       "walk": "Walking_A",
       "attack": "1H_Melee_Attack_Chop",
       "hit": "Hit_A",
       "death": "Death_A",
-      "interact": "Interact"
+      "interact": "Interact",
+      "sit": "Sit_Chair_Idle",
+      "sit_floor": "Sit_Floor_Idle"
     },
     "accessories": [
       {
@@ -1226,7 +1230,8 @@
           0.035,
           0.2
         ],
-        "size": 1
+        "size": 1,
+        "color": "#D4D6D8"
       },
       {
         "shape": "bart",
@@ -1237,7 +1242,8 @@
           0,
           0.19
         ],
-        "size": 1
+        "size": 1,
+        "color": "#D4D6D8"
       },
       {
         "shape": "kochmuetze",
@@ -1319,5 +1325,210 @@
       "lie": "Lie_Idle"
     },
     "texture": "assets/textures/figures/ork/ork_texture.png"
+  },
+  "dunkelzwerg": {
+    "file": "assets/figures/dunkelzwerg.glb",
+    "scale": [
+      0.429,
+      0.2805,
+      0.429
+    ],
+    "palette": false,
+    "texture": "assets/textures/figures/dunkelzwerg/dunkelzwerg_texture.png",
+    "animations": {
+      "idle": "Idle",
+      "walk": "Walking_A",
+      "attack": "1H_Melee_Attack_Chop",
+      "hit": "Hit_A",
+      "death": "Death_A",
+      "interact": "Interact",
+      "sit": "Sit_Chair_Idle",
+      "sit_floor": "Sit_Floor_Idle"
+    },
+    "accessories": [
+      {
+        "shape": "bart",
+        "part": "kinn",
+        "bone": "head",
+        "offset": [
+          0,
+          0.035,
+          0.2
+        ],
+        "size": 1,
+        "color": "#D4D6D8"
+      },
+      {
+        "shape": "bart",
+        "part": "keil",
+        "bone": "chest",
+        "offset": [
+          0,
+          0,
+          0.19
+        ],
+        "size": 1,
+        "color": "#D4D6D8"
+      },
+      {
+        "shape": "axt",
+        "bone": "handslot.r",
+        "hand": true,
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "size": 0.5
+      }
+    ]
+  },
+  "zwergenschmied": {
+    "file": "assets/figures/dunkelzwerg.glb",
+    "scale": [
+      0.429,
+      0.2805,
+      0.429
+    ],
+    "palette": false,
+    "texture": "assets/textures/figures/dunkelzwerg/dunkelzwerg_texture.png",
+    "animations": {
+      "idle": "Idle",
+      "walk": "Walking_A",
+      "attack": "1H_Melee_Attack_Chop",
+      "hit": "Hit_A",
+      "death": "Death_A",
+      "interact": "Interact",
+      "sit": "Sit_Chair_Idle",
+      "sit_floor": "Sit_Floor_Idle"
+    },
+    "accessories": [
+      {
+        "shape": "bart",
+        "part": "kinn",
+        "bone": "head",
+        "offset": [
+          0,
+          0.035,
+          0.2
+        ],
+        "size": 1,
+        "color": "#D4D6D8"
+      },
+      {
+        "shape": "bart",
+        "part": "keil",
+        "bone": "chest",
+        "offset": [
+          0,
+          0,
+          0.19
+        ],
+        "size": 1,
+        "color": "#D4D6D8"
+      },
+      {
+        "shape": "hammer",
+        "bone": "handslot.r",
+        "hand": true,
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "size": 0.5
+      }
+    ]
+  },
+  "zwergenvermesser": {
+    "file": "assets/figures/dunkelzwerg.glb",
+    "scale": [
+      0.429,
+      0.2805,
+      0.429
+    ],
+    "palette": false,
+    "texture": "assets/textures/figures/dunkelzwerg/dunkelzwerg_texture.png",
+    "animations": {
+      "idle": "Idle",
+      "walk": "Walking_A",
+      "attack": "1H_Melee_Attack_Chop",
+      "hit": "Hit_A",
+      "death": "Death_A",
+      "interact": "Interact",
+      "sit": "Sit_Chair_Idle",
+      "sit_floor": "Sit_Floor_Idle"
+    },
+    "accessories": [
+      {
+        "shape": "bart",
+        "part": "kinn",
+        "bone": "head",
+        "offset": [
+          0,
+          0.035,
+          0.2
+        ],
+        "size": 1,
+        "color": "#D4D6D8"
+      },
+      {
+        "shape": "bart",
+        "part": "keil",
+        "bone": "chest",
+        "offset": [
+          0,
+          0,
+          0.19
+        ],
+        "size": 1,
+        "color": "#D4D6D8"
+      },
+      {
+        "shape": "messlatte",
+        "bone": "handslot.r",
+        "hand": true,
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "size": 0.6
+      }
+    ]
+  },
+  "monsterratte_rache": {
+    "file": "assets/figures/rat.glb",
+    "scale": 0.36,
+    "palette": false,
+    "animations": {
+      "idle": "Armature|Rat_Idle",
+      "walk": "Armature|Rat_Walk",
+      "attack": "Armature|Rat_Attack",
+      "death": "Armature|Rat_Death"
+    },
+    "accessories": [
+      {
+        "shape": "augen",
+        "bone": "Head",
+        "offset": [
+          0,
+          0.06,
+          0.14
+        ],
+        "size": 0.05,
+        "spread": 0.14
+      },
+      {
+        "shape": "gabelkrone",
+        "bone": "Head",
+        "offset": [
+          0,
+          0.15,
+          0.03
+        ],
+        "size": 0.28
+      }
+    ]
   }
 }

@@ -27,8 +27,10 @@ Content-Projekt ersetzt. Meilenstein 6a (echte Modelle für Umgebung und Requisi
 ist umgesetzt; was noch kein Modell hat, bleibt Platzhalter. Meilenstein 6b (Figuren und Animationen) läuft: Die Spielfiguren der drei Völker kommen aus KayKit Adventurers,
 Ratten, Küchenchef, Monsterratte und Kröte aus dem Easy Animated Enemy Pack (Quaternius), der Goblin aus Goblin Lowpoly
 Assets (auf das KayKit-Rig gesetzt, Animationen aus KayKit Character Animations 1.1), die Skelette aus KayKit Skeletons 1.0, Geist und Poltergeist aus KayKit Rogue (hellblau, durchscheinend), der Ritter (`knight`) aus KayKit Knight ohne Waffen, der Kobold aus dem Goblin-Modell mit roter Haut.
-Die Katakomben haben echte Inhalte für Kerker und Schrein (Monster, Begegnungen, Events). Die Zwergenminen haben Paket 1
-(Kerker mit Gefängnisausbrüchen, Küche, Wachstube, Säulenhalle; Zwergen-Wache mit Helm, Zwergenkoch mit Kochmütze, vorläufiger Ork aus dem Goblin-Modell in Grau). Die Mimik ist noch Grundform. Wie Event-Figuren im Raum
+Die Katakomben haben echte Inhalte für Kerker und Schrein (Monster, Begegnungen, Events). Die Zwergenminen haben Paket 1 und 2
+(Kerker mit Gefängnisausbrüchen ohne Begegnungen, Küche, Wachstube, Vorratskammer mit der Rache der Monsterratte auf Ebene 7, Säulenhalle und Schmiede
+als gemischte verlassene Stollen mit Begegnungen: Höhlenspinne, Stein- und Eisengolem aus Grundformen, abtrünniger Dunkelzwerg). Alle Zwerge dort sind
+Dunkelzwerge (Modell des Zwergs mit eigener Textur, grauweißem Bart und Werkzeug in der Hand); der Ork ist vorläufig ein graues Goblin-Modell. Die Mimik ist noch Grundform. Wie Event-Figuren im Raum
 stehen und sich bewegen, regelt die Inszenierung in `data/staging.json`.
 Meilenstein 6c (Sound) ist gebaut: `data/sounds.json`, Modul `src/sound.js`; erste Sounds von Freepik sind eingebaut, was fehlt, bleibt still.
 Die Liste aller Meilensteine steht im GDD.
@@ -42,7 +44,7 @@ Die Liste aller Meilensteine steht im GDD.
   baut aus `tools/asset-recipes.json` die Dateien in `assets/tiles/`, `assets/props/` und `assets/figures/` (braucht einmal `npm install`; FBX wandelt das npm-Paket `fbx2gltf` um, `meshoptimizer` vereinfacht);
   das Spiel selbst braucht keinen Build-Schritt. Zuordnung in `data/models.json`. `tools/palette-texture.py` erzeugt
   die erste Fassung der Paletten-Textur, `tools/skeleton-texture.py` die Skelett-Textur,
-  `tools/merchant-texture.py` die Textur des Händlers, `tools/ghost-texture.py` die der Geister (Händler-Modell in Hellblau, Haut weiß, Haare grau), `tools/dwarf-texture.py` die des Zwergs (Haare in Bartfarbe), `tools/kobold-texture.py` die des Kobolds und des vorläufigen Orks (Goblin-Textur mit roter bzw. grauer Haut, nach `npm run build:assets`), `tools/goblin-rig.py` setzt den Goblin auf das KayKit-Rig (braucht Blender als Python-Modul: `pip install bpy`; danach `npm run build:assets`).
+  `tools/merchant-texture.py` die Textur des Händlers, `tools/ghost-texture.py` die der Geister (Händler-Modell in Hellblau, Haut weiß, Haare grau), `tools/dwarf-texture.py` die des Zwergs (Haare in Bartfarbe), `tools/dunkelzwerg-texture.py` die der Dunkelzwerge (Haut, Haare, Umhang), `tools/kobold-texture.py` die des Kobolds und des vorläufigen Orks (Goblin-Textur mit roter bzw. grauer Haut, nach `npm run build:assets`), `tools/goblin-rig.py` setzt den Goblin auf das KayKit-Rig (braucht Blender als Python-Modul: `pip install bpy`; danach `npm run build:assets`).
   Die Spiellogik besteht aus ES-Modulen in `src/`, Einstieg ist `src/main.js`.
 - Würfelanzeige: `npm run build:dice` nimmt mit `tools/record-dice.mjs` die Flugbahnen auf (Physik mit dem npm-Paket `cannon-es`,
   nur beim Aufnehmen, fester Seed) und schreibt `data/dice-rolls.json`; das Spiel spielt sie ohne Physik ab.
@@ -69,8 +71,8 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/rng.js` | Seed-basierte Zufallszahlen und Würfel |
 | `src/state.js` | gemeinsamer Spielzustand |
 | `data/themes.json` | Themen: Name, Stufe, Proben-Zuschlag, Raumtypen, Nachbar des Starts, Monster, Boss, Regel-Ausnahmen (`overrides`), Palette (`palette`, `roomPalettes`, dort optional `brightness` für hellere Räume), Begegnungen (`encounters`), Bodenvarianten (`floorTiles`), Anteil der Risswände (`wandRiss`), Deckkraft beim Durchblick (`seeThroughOpacity`) |
-| `data/room-types.json` | Raumtypen: Name, Farben, Einrichtung als Daten (`decor`, `themeDecor`, dort `mimics` für Mimik-Truhen) oder altes Muster (`layout`), Bewertung und Bewertung pro Thema (`themeRating`), Lage- und Anzahlregeln (`themeLevel`: Ebene im Thema), Event-Chance, Event-Tabelle (`events`) und Tabellen pro Thema (`themeEvents`, ersetzen `events` im Thema), Bodenvarianten in der Einrichtung (`floorTiles`), Icon auf der Minimap (`mapIcon`, Bedingung `mapIconWhen`) |
-| `data/events.json` | alle Events (auch die Truhe), Figuren beim Event-Start (`figures`) |
+| `data/room-types.json` | Raumtypen: Name, Farben, Einrichtung als Daten (`decor`, `themeDecor`, dort `mimics` für Mimik-Truhen) oder altes Muster (`layout`), Bewertung und Bewertung pro Thema (`themeRating`), Lage- und Anzahlregeln (`themeLevel`: Ebene im Thema), Event-Chance, Event-Tabelle (`events`) und Tabellen pro Thema (`themeEvents`, ersetzen `events` im Thema; Einträge mit `themeLevel` gelten nur auf dieser Ebene des Themas), Bodenvarianten in der Einrichtung (`floorTiles`), Icon auf der Minimap (`mapIcon`, Bedingung `mapIconWhen`) |
+| `data/events.json` | alle Events (auch die Truhe), Figuren beim Event-Start (`figures`); Effekte laut GDD, darunter `flee` (Rückzug durch die Rück-Tür) |
 | `data/staging.json` | Inszenierung der Event-Figuren: Standard, Anker an Requisiten, Modell-Varianten und `stays`, eigene Inszenierung pro Event, Prozession (`procession`), verborgene Figuren bis zum Kampf (`hidden`), Abgänge pro Ende (`ends`: `leave`, `step_aside`, `collapse`), Event-Requisiten nur mit ihrem Event (`props`: `vor_figur`, `neben_figur`) |
 | `data/monsters.json` | Monster und Bosse mit Lebenspunkten, Rüstung, Angriff, Schaden, Satz zur Todesursache, Angriffsklang (`sound`) |
 | `data/sounds.json` | Sounds: pro Sound-id Dateien unter `assets/sounds/`, Lautstärke, `loopStart`/`loopEnd` |
@@ -81,7 +83,7 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/data.js` | lädt `data/*.json` und prüft die Daten |
 | `src/sound.js` | Sound über die Web Audio API: Kanäle, Raum-Stimmung mit Überblendung und Zufallsgeräuschen, Schritte, Dämpfen bei Events, Vorladen (`preload`, etwa `treppe` im Raum mit der Treppe nach unten); fehlende Sounds bleiben still |
 | `src/soundLogic.js` | Sound-Regeln: Angriffsklang, Treffer und Tod, Raum-Sound (`themeSound` vor `sound`), Schritte, Datenprüfung; rein logisch |
-| `src/eventLogic.js` | Event-Regeln: Proben-Kategorien, Tabelle und Bewertung pro Thema (`inTheme`), Auswahl, Begegnungen (`pickEncounter`), Effekte, Beute, Bedingungen, Datenprüfung; rein logisch |
+| `src/eventLogic.js` | Event-Regeln: Proben-Kategorien, Tabelle und Bewertung pro Thema (`inTheme`, mit Ebene im Thema für `themeLevel`), Auswahl, Begegnungen (`pickEncounter`), Effekte, Beute, Bedingungen, Datenprüfung; rein logisch |
 | `src/character.js` | Figur: Volk, Inventar, Anlegen, Stufenaufstieg, Fähigkeit; rein logisch |
 | `src/combat.js` | Rundenkampf: Angriff, Gegnerzug, Verteidigen, Gegenstände, Flucht, Tiefe; rein logisch |
 | `src/roomTypes.js` | Raumtypen-Tabelle, befüllt aus `data/room-types.json`; Icon eines Raums auf der Minimap (`mapIconFor`) |
@@ -91,7 +93,7 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/models.js` | Modell-Lader: `data/models.json`, Paletten-Textur des Themas, Klone pro Instanz, Figuren mit Animationen (`makeFigureModel`), Rückfall auf Platzhalter |
 | `src/seeThrough.js` | Durchblick: Innenwände (Zellwände, auch Gitter mit ganzer Fläche) und Säulen werden im Kreis um eine verdeckte Spielfigur oder einen Gegner durchsichtig |
 | `src/outline.js` | goldene Umrisslinie für anklickbare Objekte beim Überfahren mit der Maus |
-| `data/models.json` | Zuordnung der Modelle: Datei, Maßstab, Drehung, Versatz, Einfärbung (`tint`), eine Farbe statt Textur (`color`), Lichtpunkte, Deckkraft (`opacity`, durchscheinende Figur), Animationen, Zubehör an Knochen (`accessories`) |
+| `data/models.json` | Zuordnung der Modelle: Datei, Maßstab, Drehung, Versatz, Einfärbung (`tint`), eine Farbe statt Textur (`color`), Lichtpunkte, Deckkraft (`opacity`, durchscheinende Figur), Animationen, Zubehör an Knochen (`accessories`, `size` auch `[x, y, z]`, `color` beim Bart, `hand` für Werkzeuge in der Hand) |
 | `src/figurePlan.js` | Figuren im Raum: Figurenliste (Größe, Varianten), Platzierung für `figures` (inkl. `near:`) und Anker der Inszenierung, Platz im Kampf, Kacheln der Event-Requisiten (`placeEventProps`), Datenprüfung; rein logisch |
 | `src/monsterFigures.js` | Figuren der Monster und der Kröte aus Grundformen (Rückfall ohne Modell), Ersatzfigur für Monster ohne eigene Figur, Zubehör für Modelle (`ACCESSORIES`) |
 | `src/staging.js` | Inszenierung: welche Figuren ein Event zeigt (Anzahl, Variante, Anker), Event-Requisiten (`eventProps`), Datenprüfung; rein logisch |

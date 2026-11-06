@@ -6750,5 +6750,1293 @@
         "effects": []
       }
     ]
+  },
+  {
+    "id": "halle_netz",
+    "type": "trap",
+    "title": "Das Netz",
+    "text": "Zwischen zwei Säulen hängt ein Netz, dick wie Schiffstau, und darin baumelt ein Zwergenhelm. Im Helm klimpert etwas. Oben in der Dunkelheit bewegt sich etwas, das ebenfalls wissen möchte, was du jetzt tust.",
+    "options": [
+      {
+        "label": "Den Helm herausschneiden",
+        "check": {
+          "category": "fingerfertigkeit",
+          "dc": 12
+        },
+        "success": {
+          "text": "Drei Schnitte, und der Helm fällt dir in die Hände. Oben raschelt es enttäuscht.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Der Faden klebt an deiner Klinge und zupft. Oben weiß jetzt jemand, dass Essen da ist.",
+          "effects": [
+            {
+              "combat": "hoehlenspinne"
+            },
+            {
+              "gainXp": 4
+            },
+            {
+              "loot": "tier1"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Kräftig am Netz reißen",
+        "check": {
+          "category": "kraftakt",
+          "dc": 12
+        },
+        "success": {
+          "text": "Das Netz gibt nach, und der Helm rollt dir vor die Füße. Du bist weg, bevor oben jemand nachfragt.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Das Netz gibt nicht nach, die Spinne schon: Sie kommt herunter.",
+          "effects": [
+            {
+              "combat": "hoehlenspinne"
+            },
+            {
+              "gainXp": 4
+            },
+            {
+              "loot": "tier1"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Mit der Fackel anzünden",
+        "check": {
+          "category": "wissen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Spinnseide brennt, das hast du mal gelesen. Der Helm fällt herab, und oben wird es sehr still.",
+          "effects": [
+            {
+              "gold": "2W6"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Spinnseide brennt nicht, das weißt du jetzt. Die Spinne wusste es schon.",
+          "effects": [
+            {
+              "combat": "hoehlenspinne"
+            },
+            {
+              "gainXp": 4
+            },
+            {
+              "loot": "tier1"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Weitergehen",
+        "text": "Du machst einen großen Bogen um das Netz. Über dir folgt dir etwas noch ein Stück, dann verliert es die Lust.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "halle_wandernde_saeule",
+    "type": "trap",
+    "title": "Die wandernde Säule",
+    "text": "Diese Säule stand eben noch auf der anderen Seite der Halle. Jetzt steht sie vor dir, und in ihren Sockel sind Runen eingeschlagen. Sie knirscht erwartungsvoll.",
+    "options": [
+      {
+        "label": "Die Runen laut vorlesen",
+        "check": {
+          "category": "wissen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Dort steht „Ruhe“, in sehr altem Zwergisch. Die Säule erstarrt, und aus einem Fach im Sockel fällt ihr Wartungsgeld.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 4
+            }
+          ]
+        },
+        "failure": {
+          "text": "Du wolltest „Ruhe“ sagen, es wurde „Rauferei“. Aus der Säule wachsen Arme.",
+          "effects": [
+            {
+              "combat": "steingolem"
+            },
+            {
+              "gainXp": 5
+            },
+            {
+              "loot": "tier1"
+            }
+          ]
+        }
+      },
+      {
+        "label": "An ihr vorbeihuschen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du bist vorbei, bevor sie sich entschieden hat. Hinter dir steht sie nun beleidigt im Weg.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Die Säule macht einen Schritt. Du machst leider denselben.",
+          "effects": [
+            {
+              "combat": "steingolem"
+            },
+            {
+              "gainXp": 5
+            },
+            {
+              "loot": "tier1"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Sie umstoßen",
+        "check": {
+          "category": "kraftakt",
+          "dc": 16
+        },
+        "success": {
+          "text": "Sie kippt mit viel Würde und zerbricht. Aus dem Inneren rollt, was jemand dort sehr gut versteckt hatte.",
+          "effects": [
+            {
+              "loot": "tier2"
+            },
+            {
+              "gainXp": 5
+            }
+          ]
+        },
+        "failure": {
+          "text": "Du drückst, sie drückt zurück. Sie hat mehr Übung.",
+          "effects": [
+            {
+              "combat": "steingolem"
+            },
+            {
+              "gainXp": 5
+            },
+            {
+              "loot": "tier1"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "halle_wegezoll",
+    "type": "combat",
+    "title": "Der Wegezoll",
+    "text": "Ein abtrünniger Dunkelzwerg versperrt die Halle mit einer Axt und einem Zettel. Auf dem Zettel steht „Wegezoll“, den Rest erklärt die Axt. Mit der Bergwache hat er nichts zu tun, sagt er, und die auch nicht mit ihm.",
+    "options": [
+      {
+        "label": "Fünf Gold zahlen",
+        "text": "Er beißt auf jede Münze und winkt dich durch. Quittungen gibt es keine.",
+        "effects": [
+          {
+            "loseGold": 5
+          }
+        ]
+      },
+      {
+        "label": "Kämpfen",
+        "text": "Du zeigst auf den Zettel und schüttelst den Kopf. Die Axt erklärt es noch einmal.",
+        "effects": [
+          {
+            "combat": "dunkelzwerg"
+          },
+          {
+            "gainXp": 4
+          },
+          {
+            "loot": "tier1"
+          }
+        ]
+      },
+      {
+        "label": "Fragen, ob der Zoll auch für große Leute gilt",
+        "condition": "volk:elf",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Er sucht lange nach einer Antwort und gibt auf. Vor Scham überlässt er dir die Tageseinnahmen.",
+          "effects": [
+            {
+              "gold": "2W6"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Die Antwort findet er schnell, sie hat einen Stiel.",
+          "effects": [
+            {
+              "combat": "dunkelzwerg"
+            },
+            {
+              "gainXp": 4
+            },
+            {
+              "loot": "tier1"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Unter Zwergen: Nach seiner Sippe fragen",
+        "condition": "volk:zwerg",
+        "check": {
+          "category": "diplomatie",
+          "dc": 8
+        },
+        "success": {
+          "text": "Er wird rot, soweit das bei schwarzblauer Haut geht, und schiebt dir sein Geld hin. Seine Mutter soll nichts davon erfahren.",
+          "effects": [
+            {
+              "gold": "2W6"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "„Die habe ich hinter mir gelassen“, sagt er. Dich auch gleich, wenn es nach ihm geht.",
+          "effects": [
+            {
+              "combat": "dunkelzwerg"
+            },
+            {
+              "gainXp": 4
+            },
+            {
+              "loot": "tier1"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Eine Quittung und seine Zollnummer verlangen",
+        "condition": "volk:mensch",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Er schaut auf den Zettel, dann auf dich, dann zur Tür. Vor Amtspersonen hat er Angst, und seine Kasse lässt er liegen.",
+          "effects": [
+            {
+              "gold": "2W6"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Er stempelt dir die Quittung mit der flachen Seite der Axt.",
+          "effects": [
+            {
+              "combat": "dunkelzwerg"
+            },
+            {
+              "gainXp": 4
+            },
+            {
+              "loot": "tier1"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "halle_lore",
+    "type": "treasure",
+    "title": "Die verklemmte Lore",
+    "text": "Auf einem Gleis steckt eine Lore fest, schwer beladen und seit Jahren beleidigt. Unter der Plane glänzt etwas. Wer immer sie geschoben hat, ist irgendwann lieber zu Fuß gegangen.",
+    "options": [
+      {
+        "label": "Anschieben",
+        "check": {
+          "category": "kraftakt",
+          "dc": 12
+        },
+        "success": {
+          "text": "Mit einem Kreischen rollt sie los und kippt in der Kurve aus. Der Rest liegt dir zu Füßen.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Die Lore rollt einen Meter, und zwar über deinen Fuß.",
+          "effects": [
+            {
+              "damage": "W4"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Unter die Plane greifen",
+        "check": {
+          "category": "fingerfertigkeit",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du tastest dich an den Spitzen vorbei und ziehst einen Beutel heraus. Die Lore bleibt beleidigt.",
+          "effects": [
+            {
+              "gold": "2W6"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Etwas schnappt nach deiner Hand: eine Mausefalle, zwergische Bauart.",
+          "effects": [
+            {
+              "damage": 2
+            }
+          ]
+        }
+      },
+      {
+        "label": "Weitergehen",
+        "text": "Du lässt sie stehen. Es ist nicht deine Lore und nicht dein Tag.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "halle_vermesser",
+    "type": "npc",
+    "title": "Der Vermesser",
+    "text": "Ein Dunkelzwerg mit Messlatte flucht über die Zahl, die er gerade aufgeschrieben hat. „Halt mal das Lot“, sagt er, ohne sich umzudrehen. Er misst diese Halle offenbar seit dem Frühstück, und zwar nicht dem heutigen.",
+    "options": [
+      {
+        "label": "Das Lot halten",
+        "check": {
+          "category": "fingerfertigkeit",
+          "dc": 12
+        },
+        "success": {
+          "text": "Das Lot hängt still, und die Halle ist endlich gerade, zumindest auf dem Papier. Er zahlt dir den Tagessatz.",
+          "effects": [
+            {
+              "gold": "W6"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Das Lot schwingt, die Zahl ist hin. Den Schaden zieht er dir vom Lohn ab, den du nicht hattest.",
+          "effects": [
+            {
+              "loseGold": 2
+            }
+          ]
+        }
+      },
+      {
+        "label": "Seine Rechnung prüfen",
+        "check": {
+          "category": "wissen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Er hat eine Elle zweimal gezählt. Er schweigt lange und drückt dir dann wortlos Geld in die Hand.",
+          "effects": [
+            {
+              "gold": "W6"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Du findest einen Fehler, den es nicht gibt. Er rechnet dir das drei Mal vor.",
+          "effects": []
+        }
+      },
+      {
+        "label": "Fragen, ob die Halle schief ist oder er",
+        "condition": "volk:elf",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Er misst sich kurz selbst und lacht, bis die Latte wackelt. Dafür gibt er einen aus.",
+          "effects": [
+            {
+              "gold": "W4"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Die Messlatte misst jetzt dich, und zwar quer.",
+          "effects": [
+            {
+              "damage": "W4"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Unter Zwergen: Seine Zahl beglaubigen",
+        "condition": "volk:zwerg",
+        "check": {
+          "category": "diplomatie",
+          "dc": 8
+        },
+        "success": {
+          "text": "Du nickst ernst und setzt deinen Namen darunter. Damit ist es amtlich, und er ist dir etwas schuldig.",
+          "effects": [
+            {
+              "gold": "W6"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "„Du hast nicht einmal hingeschaut“, sagt er. Er streicht deinen Namen wieder durch.",
+          "effects": []
+        }
+      },
+      {
+        "label": "Seine Genauigkeit loben",
+        "condition": "volk:mensch",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "So etwas hat ihm noch keiner gesagt. Er zeigt dir begeistert alle Zahlen und schenkt dir zum Abschied etwas.",
+          "effects": [
+            {
+              "gold": "W4"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Er zeigt dir begeistert alle Zahlen. Das war der ganze Nachmittag.",
+          "effects": []
+        }
+      },
+      {
+        "label": "Weitergehen",
+        "text": "„Dann eben nicht“, sagt er, und du hörst, wie er von vorn anfängt.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "halle_ahnengalerie",
+    "type": "choice",
+    "title": "Die Ahnengalerie",
+    "text": "An der Wand reihen sich Reliefs zwergischer Ahnen, jeder Bart länger als der davor. Beim siebten stimmt etwas nicht. Sein Bart reicht bis in den Boden, und dort glänzt er vom vielen Anfassen.",
+    "options": [
+      {
+        "label": "Das Relief genau untersuchen",
+        "check": {
+          "category": "wahrnehmung",
+          "dc": 12
+        },
+        "success": {
+          "text": "Eine Bartsträhne sitzt lose und lässt sich drehen. Ein kleines Fach springt auf.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Du findest nichts außer einem Hinweis auf den Künstler. Er war stolz auf den Bart.",
+          "effects": []
+        }
+      },
+      {
+        "label": "Am Bart ziehen",
+        "check": {
+          "category": "kraftakt",
+          "dc": 12
+        },
+        "success": {
+          "text": "Es klickt, und aus dem Mund des Ahnen fallen Münzen. Respekt sieht anders aus, Gold aber genauso.",
+          "effects": [
+            {
+              "gold": "2W6"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Es klickt, und der Ahne spuckt dir einen Stein ins Gesicht. Er hat das offenbar schon öfter gemacht.",
+          "effects": [
+            {
+              "damage": 2
+            }
+          ]
+        }
+      },
+      {
+        "label": "Den Ahnen grüßen",
+        "condition": "volk:zwerg",
+        "text": "Du neigst den Kopf, wie es sich gehört. Ein wenig Stolz hat noch keinem Zwerg geschadet.",
+        "effects": [
+          {
+            "heal": "W4"
+          },
+          {
+            "gainXp": 2
+          }
+        ]
+      },
+      {
+        "label": "Weitergehen",
+        "text": "Du gehst weiter. Sechs Ahnen schauen dir nach, der siebte nur nach unten.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "schmiede_golem",
+    "type": "combat",
+    "title": "Der Golem ohne Auftrag",
+    "text": "Ein Eisengolem hämmert auf einen leeren Amboss, im Takt eines Auftrags, der seit Jahrzehnten erledigt ist. An seiner Brust steckt noch der Zettel. Als du eintrittst, dreht er den Kopf und nimmt für ein Hufeisen Maß an dir.",
+    "options": [
+      {
+        "label": "Den Auftrag umschreiben",
+        "check": {
+          "category": "wissen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du streichst „weiter“ durch und schreibst „Feierabend“. Er legt den Hammer ab und reicht dir sein letztes Werkstück.",
+          "effects": [
+            {
+              "item": "tier1"
+            },
+            {
+              "gainXp": 4
+            }
+          ]
+        },
+        "failure": {
+          "text": "Du hast „Feuerabend“ geschrieben. Das nimmt er sehr ernst.",
+          "effects": [
+            {
+              "combat": "eisengolem"
+            },
+            {
+              "gainXp": 5
+            },
+            {
+              "loot": "tier1"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Ihm den Hammer entwenden",
+        "check": {
+          "category": "fingerfertigkeit",
+          "dc": 16
+        },
+        "success": {
+          "text": "Du nimmst ihm den Hammer zwischen zwei Schlägen ab. Er hämmert mit der Faust weiter, und du gehst reich.",
+          "effects": [
+            {
+              "loot": "tier2"
+            },
+            {
+              "gainXp": 5
+            }
+          ]
+        },
+        "failure": {
+          "text": "Der Hammer ist schwerer als gedacht, und er will ihn zurück.",
+          "effects": [
+            {
+              "combat": "eisengolem"
+            },
+            {
+              "gainXp": 5
+            },
+            {
+              "loot": "tier1"
+            }
+          ]
+        }
+      },
+      {
+        "label": "An ihm vorbei zur Tür",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Der Hammer trifft den Boden, auf dem du gerade noch gestanden hast. Er schreibt das unter Ausschuss ab.",
+          "effects": [
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Er erwischt dich nur am Rand und hält das für einen ersten Entwurf.",
+          "effects": [
+            {
+              "damage": "W4"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Ihn angreifen",
+        "text": "Du schlägst zuerst. Es klingt wie eine Glocke, und er dreht sich um.",
+        "effects": [
+          {
+            "combat": "eisengolem"
+          },
+          {
+            "gainXp": 5
+          },
+          {
+            "loot": "tier1"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "schmiede_saboteur",
+    "type": "combat",
+    "title": "Der Saboteur",
+    "text": "Ein abtrünniger Dunkelzwerg kniet am Blasebalg und sägt leise an einem Riemen. Er schaut auf und legt den Finger an die Lippen, als wärst du eingeweiht. Neben ihm liegt ein prall gefüllter Beutel.",
+    "options": [
+      {
+        "label": "Ihn am Kragen packen",
+        "check": {
+          "category": "kraftakt",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du hängst ihn an seinem eigenen Riemen auf, und er baumelt beleidigt. Den Beutel braucht er da oben nicht.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Er rutscht aus seiner Jacke und hat plötzlich die Säge in der richtigen Hand.",
+          "effects": [
+            {
+              "combat": "dunkelzwerg"
+            },
+            {
+              "gainXp": 4
+            },
+            {
+              "loot": "tier1"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Genauer hinsehen",
+        "check": {
+          "category": "wahrnehmung",
+          "dc": 12
+        },
+        "success": {
+          "text": "Er sägt am falschen Riemen, und der hält den Kessel über ihm. Du zeigst nach oben, er wird blass und läuft, ohne den Beutel.",
+          "effects": [
+            {
+              "gold": "2W6"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Du schaust so lange hin, dass er es merkt. Er legt die Säge weg und nimmt die Axt.",
+          "effects": [
+            {
+              "combat": "dunkelzwerg"
+            },
+            {
+              "gainXp": 4
+            },
+            {
+              "loot": "tier1"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Ihm sagen, dass er das falsch hält",
+        "condition": "volk:elf",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Er schaut auf die Säge und wird unsicher. Während er grübelt, verschwindet sein Beutel.",
+          "effects": [
+            {
+              "gold": "W6"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Kritik verträgt er nicht. Er zeigt dir, wie er sie sonst hält.",
+          "effects": [
+            {
+              "combat": "dunkelzwerg"
+            },
+            {
+              "gainXp": 4
+            },
+            {
+              "loot": "tier1"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Unter Zwergen: Ihn an den Schmiedeeid erinnern",
+        "condition": "volk:zwerg",
+        "check": {
+          "category": "diplomatie",
+          "dc": 8
+        },
+        "success": {
+          "text": "Er sinkt in sich zusammen und lässt alles liegen. Dich trifft kein Blick, als er geht.",
+          "effects": [
+            {
+              "gold": "W6"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "„Den Eid habe ich verkauft“, sagt er. „Der Preis war gut.“",
+          "effects": [
+            {
+              "combat": "dunkelzwerg"
+            },
+            {
+              "gainXp": 4
+            },
+            {
+              "loot": "tier1"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Ihm anbieten, den Schmied nicht zu rufen",
+        "condition": "volk:mensch",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du nennst deinen Preis, und er bezahlt ihn sofort. Dann ist er durch die Tür.",
+          "effects": [
+            {
+              "gold": "W6"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Er rechnet kurz nach. Dich loszuwerden ist billiger.",
+          "effects": [
+            {
+              "combat": "dunkelzwerg"
+            },
+            {
+              "gainXp": 4
+            },
+            {
+              "loot": "tier1"
+            }
+          ]
+        }
+      },
+      {
+        "label": "So tun, als wärst du eingeweiht",
+        "text": "Du nickst ihm zu und gehst weiter. Irgendwo hinter dir reißt später etwas, und das warst nicht du.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "schmiede_meisterprobe",
+    "type": "npc",
+    "title": "Die Meisterprobe",
+    "text": "Ein Dunkelzwerg-Schmied stellt einen Hammer vor dich hin, und der Boden seufzt. „Wer ihn hebt, darf sich was aus der Kiste nehmen.“ An der Kiste liegt fingerdicker Staub.",
+    "options": [
+      {
+        "label": "Den Hammer heben",
+        "check": {
+          "category": "kraftakt",
+          "dc": 12
+        },
+        "success": {
+          "text": "Er kommt hoch, langsam, aber er kommt. Der Schmied öffnet wortlos die Kiste.",
+          "effects": [
+            {
+              "item": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Der Hammer bleibt, wo er ist, dein Rücken nicht. Der Schmied nickt, als hätte er es gewusst.",
+          "effects": [
+            {
+              "damage": 2
+            }
+          ]
+        }
+      },
+      {
+        "label": "Fragen, wann er ihn selbst zuletzt gehoben hat",
+        "condition": "volk:elf",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Er schweigt, dann dröhnt er vor Lachen, und die Kiste geht auf. „Heute nicht mehr.“",
+          "effects": [
+            {
+              "item": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Er hebt ihn, und zwar jetzt, in deine Richtung.",
+          "effects": [
+            {
+              "combat": "zwergenschmied"
+            },
+            {
+              "gainXp": 4
+            },
+            {
+              "loot": "tier1"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Unter Zwergen: Den Hammer ehren statt heben",
+        "condition": "volk:zwerg",
+        "check": {
+          "category": "diplomatie",
+          "dc": 8
+        },
+        "success": {
+          "text": "Du verneigst dich vor dem Hammer und sagst, das Werkzeug suche sich seinen Meister. Er ist gerührt, und die Kiste auch.",
+          "effects": [
+            {
+              "gold": "2W6"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "„Das sagen die, die ihn nicht hochkriegen“, brummt er. Er hat recht.",
+          "effects": []
+        }
+      },
+      {
+        "label": "Nach der Geschichte des Hammers fragen",
+        "condition": "volk:mensch",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Sie dauert eine Stunde und handelt von seiner Großmutter. Du fragst an den richtigen Stellen nach, und er gibt dir etwas mit.",
+          "effects": [
+            {
+              "gold": "2W6"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Sie dauert eine Stunde. Danach weißt du viel über Großmütter und hast nichts in der Hand.",
+          "effects": []
+        }
+      },
+      {
+        "label": "Weitergehen",
+        "text": "„Dachte ich mir“, sagt er und stellt den Hammer zurück. Der Boden atmet auf.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "schmiede_schaerfen",
+    "type": "npc",
+    "title": "Das Schärfen",
+    "text": "Ein Dunkelzwerg-Schmied nimmt dir die Waffe aus der Hand und betrachtet sie wie einen Unfall. „Wer hat das verbrochen?“ Er wartet wirklich auf eine Antwort.",
+    "options": [
+      {
+        "label": "Die Waffe fachkundig verteidigen",
+        "check": {
+          "category": "wissen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du sprichst von Härtegraden, bis er zuhört. Für deine Mühe bekommst du etwas, das er selbst gemacht hat.",
+          "effects": [
+            {
+              "item": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Du sprichst von Härtegraden. Er lacht, und zwar lange.",
+          "effects": []
+        }
+      },
+      {
+        "label": "Drei Gold fürs Schleifen zahlen",
+        "text": "Er schleift kurz, spuckt und gibt sie dir zurück. Sie sieht jetzt aus, als hätte sie jemand gern.",
+        "effects": [
+          {
+            "loseGold": 3
+          },
+          {
+            "gainXp": 2
+          }
+        ]
+      },
+      {
+        "label": "Sagen, dass er die Klinge von seiner Mutter kennt",
+        "condition": "volk:elf",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Einen Moment wird es heiß in der Schmiede, dann lacht er, bis der Hammer fällt. Das Schleifen geht aufs Haus, und ein Trinkgeld dazu.",
+          "effects": [
+            {
+              "gold": "W6"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Einen Moment wird es heiß in der Schmiede. Dann bleibt es so.",
+          "effects": [
+            {
+              "combat": "zwergenschmied"
+            },
+            {
+              "gainXp": 4
+            },
+            {
+              "loot": "tier1"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Unter Zwergen: Den Fehler eingestehen",
+        "condition": "volk:zwerg",
+        "check": {
+          "category": "diplomatie",
+          "dc": 8
+        },
+        "success": {
+          "text": "Du gibst zu, dass kein Zwerg das hätte tun dürfen. Er legt dir die Hand auf die Schulter und holt etwas aus dem Regal.",
+          "effects": [
+            {
+              "item": "tier1"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "„Dann schäm dich auch“, sagt er. Du gehst und schämst dich ein bisschen.",
+          "effects": []
+        }
+      },
+      {
+        "label": "Um seinen fachlichen Rat bitten",
+        "condition": "volk:mensch",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Er zeigt dir, wie man eine Klinge hält, und ist begeistert von sich. Er schenkt dir etwas für den Weg.",
+          "effects": [
+            {
+              "gold": "W6"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Sein Rat lautet: „Aufhören.“ Er gibt dir die Waffe zurück.",
+          "effects": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "schmiede_schlacke",
+    "type": "treasure",
+    "title": "Der Schlackehaufen",
+    "text": "Neben der Esse türmt sich Schlacke, noch immer warm. Mitten darin glänzt etwas, das nicht nach Abfall aussieht.",
+    "options": [
+      {
+        "label": "Schnell hineingreifen",
+        "check": {
+          "category": "ausweichen",
+          "dc": 12
+        },
+        "success": {
+          "text": "Rein, raus, und die Finger sind alle noch da. In der Hand hast du ein paar verschmolzene Münzen.",
+          "effects": [
+            {
+              "gold": "2W6"
+            },
+            {
+              "gainXp": 2
+            }
+          ]
+        },
+        "failure": {
+          "text": "Die Schlacke rutscht nach. Du hast jetzt einen Handschuh aus Blasen.",
+          "effects": [
+            {
+              "damage": 2
+            }
+          ]
+        }
+      },
+      {
+        "label": "Die Hitze aushalten und graben",
+        "check": {
+          "category": "widerstand",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du gräbst, bis dir der Schweiß auf den Stiefeln zischt. Es lohnt sich.",
+          "effects": [
+            {
+              "loot": "tier1"
+            },
+            {
+              "gainXp": 3
+            }
+          ]
+        },
+        "failure": {
+          "text": "Die Hitze gewinnt, und das Glänzende war ein Stück Topf.",
+          "effects": [
+            {
+              "damage": "W4"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Liegen lassen",
+        "text": "Du lässt es liegen. Morgen ist es auch noch warm.",
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "vorrat_rache",
+    "type": "combat",
+    "title": "Die Rache der Monsterratte",
+    "text": "Zwischen den Säcken richtet sich etwas Großes auf, mit einer Krone aus Gabeln und einer Narbe, die du gut kennst. „Ich habe schon auf dich gewartet“, sagt die Monsterratte. „Zeit für Rache.“",
+    "options": [
+      {
+        "label": "Kämpfen",
+        "text": "Beim letzten Mal war sie kleiner. Oder du warst größer.",
+        "effects": [
+          {
+            "combat": "monsterratte_rache"
+          },
+          {
+            "gainXp": 5
+          },
+          {
+            "loot": "tier2"
+          }
+        ]
+      },
+      {
+        "label": "Sie überreden abzuhauen",
+        "check": {
+          "category": "diplomatie",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du erinnerst sie daran, wie es beim letzten Mal ausging. Sie knurrt, das sei noch nicht vorbei, und zieht ab.",
+          "effects": [
+            {
+              "gainXp": 4
+            }
+          ]
+        },
+        "failure": {
+          "text": "Du sagst „Schwamm drüber“, und Schwämme hasst sie am meisten.",
+          "effects": [
+            {
+              "combat": "monsterratte_rache"
+            },
+            {
+              "gainXp": 5
+            },
+            {
+              "loot": "tier2"
+            }
+          ]
+        }
+      },
+      {
+        "label": "Mit einem Käsestück ablenken und abhauen",
+        "check": {
+          "category": "flucht",
+          "dc": 12
+        },
+        "success": {
+          "text": "Du wirfst den Käse, und sie schnappt danach, bevor sie es sich verbieten kann. Du bist durch die Tür, bevor sie schluckt.",
+          "effects": [
+            {
+              "gainXp": 2
+            },
+            {
+              "flee": true
+            }
+          ]
+        },
+        "failure": {
+          "text": "Sie fängt den Käse und dich gleich mit. Danke für die Vorspeise.",
+          "effects": [
+            {
+              "combat": "monsterratte_rache"
+            },
+            {
+              "gainXp": 5
+            },
+            {
+              "loot": "tier2"
+            }
+          ]
+        }
+      }
+    ]
   }
 ]

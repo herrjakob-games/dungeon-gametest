@@ -759,6 +759,117 @@
           "figure": "zwergenkoch"
         }
       ]
+    },
+    "halle_netz": {
+      "figures": [
+        {
+          "figure": "hoehlenspinne"
+        }
+      ],
+      "hidden": true
+    },
+    "halle_wandernde_saeule": {
+      "figures": [
+        {
+          "figure": "steingolem"
+        }
+      ],
+      "hidden": true
+    },
+    "halle_wegezoll": {
+      "figures": [
+        {
+          "figure": "dunkelzwerg"
+        }
+      ],
+      "ends": [
+        {
+          "option": "Fragen, ob der Zoll auch für große Leute gilt",
+          "result": "success",
+          "do": "leave"
+        },
+        {
+          "option": "Unter Zwergen: Nach seiner Sippe fragen",
+          "result": "success",
+          "do": "leave"
+        },
+        {
+          "option": "Eine Quittung und seine Zollnummer verlangen",
+          "result": "success",
+          "do": "leave"
+        }
+      ]
+    },
+    "halle_vermesser": {
+      "figures": [
+        {
+          "figure": "zwergenvermesser"
+        }
+      ]
+    },
+    "schmiede_golem": {
+      "figures": [
+        {
+          "figure": "eisengolem"
+        }
+      ]
+    },
+    "schmiede_saboteur": {
+      "figures": [
+        {
+          "figure": "dunkelzwerg"
+        }
+      ],
+      "ends": [
+        {
+          "option": "Genauer hinsehen",
+          "result": "success",
+          "do": "leave"
+        },
+        {
+          "option": "Unter Zwergen: Ihn an den Schmiedeeid erinnern",
+          "result": "success",
+          "do": "leave"
+        },
+        {
+          "option": "Ihm anbieten, den Schmied nicht zu rufen",
+          "result": "success",
+          "do": "leave"
+        }
+      ]
+    },
+    "schmiede_meisterprobe": {
+      "figures": [
+        {
+          "figure": "zwergenschmied"
+        }
+      ]
+    },
+    "schmiede_schaerfen": {
+      "figures": [
+        {
+          "figure": "zwergenschmied"
+        }
+      ]
+    },
+    "vorrat_rache": {
+      "figures": [
+        {
+          "figure": "monsterratte_rache"
+        }
+      ],
+      "ends": [
+        {
+          "option": "Sie überreden abzuhauen",
+          "result": "success",
+          "do": "leave"
+        },
+        {
+          "option": "Mit einem Käsestück ablenken und abhauen",
+          "result": "success",
+          "do": "leave"
+        }
+      ]
     }
   }
 }

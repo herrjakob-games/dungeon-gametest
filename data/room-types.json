@@ -1080,9 +1080,50 @@
       ],
       "zwergenminen": [
         {
+          "id": "halle_netz",
+          "weight": 3,
+          "hostile": true,
+          "rating": "hostile"
+        },
+        {
+          "id": "halle_wandernde_saeule",
+          "weight": 3,
+          "hostile": true,
+          "rating": "hostile"
+        },
+        {
+          "id": "halle_wegezoll",
+          "weight": 3,
+          "hostile": true,
+          "rating": "hostile"
+        },
+        {
           "id": "halle_schlafwache",
           "weight": 3,
-          "once": true
+          "once": true,
+          "hostile": false,
+          "rating": "neutral"
+        },
+        {
+          "id": "halle_lore",
+          "weight": 3,
+          "once": true,
+          "hostile": false,
+          "rating": "neutral"
+        },
+        {
+          "id": "halle_vermesser",
+          "weight": 3,
+          "once": true,
+          "hostile": false,
+          "rating": "neutral"
+        },
+        {
+          "id": "halle_ahnengalerie",
+          "weight": 3,
+          "once": true,
+          "hostile": false,
+          "rating": "neutral"
         }
       ]
     },
@@ -1167,7 +1208,7 @@
       "floor": "hall"
     },
     "themeRating": {
-      "zwergenminen": "neutral"
+      "zwergenminen": "mixed"
     }
   },
   {
@@ -1213,6 +1254,26 @@
           "weight": 3,
           "hostile": false,
           "rating": "neutral"
+        }
+      ],
+      "zwergenminen": [
+        {
+          "id": "vorrat_rache",
+          "weight": 3,
+          "once": true,
+          "themeLevel": 1
+        },
+        {
+          "id": "vorrat_kaese",
+          "weight": 2
+        },
+        {
+          "id": "vorrat_brot",
+          "weight": 2
+        },
+        {
+          "id": "vorrat_weinfass",
+          "weight": 2
         }
       ]
     },
@@ -1332,6 +1393,9 @@
     "sound": {
       "mood": "cozy",
       "floor": "stone"
+    },
+    "themeRating": {
+      "zwergenminen": "neutral"
     }
   },
   {
@@ -1973,6 +2037,9 @@
     "sound": {
       "mood": "kerker",
       "floor": "stone"
+    },
+    "themeRating": {
+      "zwergenminen": "neutral"
     }
   },
   {
@@ -2046,13 +2113,39 @@
     "themeEvents": {
       "zwergenminen": [
         {
-          "id": "schmiede_ruhe",
-          "weight": 1
+          "id": "schmiede_golem",
+          "weight": 3,
+          "hostile": true,
+          "rating": "hostile"
+        },
+        {
+          "id": "schmiede_saboteur",
+          "weight": 3,
+          "hostile": true,
+          "rating": "hostile"
+        },
+        {
+          "id": "schmiede_meisterprobe",
+          "weight": 3,
+          "hostile": false,
+          "rating": "neutral"
+        },
+        {
+          "id": "schmiede_schaerfen",
+          "weight": 3,
+          "hostile": false,
+          "rating": "neutral"
+        },
+        {
+          "id": "schmiede_schlacke",
+          "weight": 3,
+          "hostile": false,
+          "rating": "neutral"
         }
       ]
     },
     "themeRating": {
-      "zwergenminen": "neutral"
+      "zwergenminen": "mixed"
     }
   },
   {

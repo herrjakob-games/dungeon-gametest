@@ -24,7 +24,13 @@
       "kueche_koch_kostprobe": "An der Gesteinssuppe gestorben. Der Koch hält das für ein Kompliment.",
       "kueche_koch_schaelen": "Beim Kartoffelschälen verblutet. Die Knollen waren danach ausgezeichnet.",
       "kueche_koch_kessel": "Vom Kessel überwältigt. Es war ein ungleicher Kampf, und der Kessel hat ihn nie erwähnt.",
-      "kueche_koch_braten": "Beim Löschen eines Sonntagsbratens verbrannt. Es war Donnerstag."
+      "kueche_koch_braten": "Beim Löschen eines Sonntagsbratens verbrannt. Es war Donnerstag.",
+      "halle_lore": "Von einer Lore überrollt, die einen Meter weit gekommen ist. Es war ihr weitester Weg seit Jahren.",
+      "halle_vermesser": "Mit einer Messlatte erschlagen. Die Länge des Schadens ist exakt dokumentiert.",
+      "halle_ahnengalerie": "Von einem Ahnen angespuckt, mit Stein. Die Familie hat das schon immer so gehalten.",
+      "schmiede_golem": "Vom Eisengolem als erster Entwurf verworfen.",
+      "schmiede_meisterprobe": "An einem Hammer verhoben. Er liegt noch immer an derselben Stelle.",
+      "schmiede_schlacke": "In einem Haufen Abfall gestorben, auf der Suche nach etwas, das glänzt."
     }
   }
 }
