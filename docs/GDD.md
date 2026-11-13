@@ -8,7 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
-| 2.66 | 13.11.2026 | Waffen an den Spielfiguren: angelegte Waffe wird an der Figur gezeigt und wechselt mit dem Inventar; Waffen aus KayKit Fantasy Weapons Bits 1.0 FREE (Langschwert und Buch des Feuers aus KayKit Adventurers); Kurzschwert 0,85 so groß wie das Langschwert; Buch des Feuers zu und offen; Schriftrollen beim Benutzen kurz in der Hand |
+| 2.66 | 13.11.2026 | Waffen an den Spielfiguren: angelegte Waffe wird an der Figur gezeigt und wechselt mit dem Inventar; Waffen aus KayKit Fantasy Weapons Bits 1.0 FREE (Langschwert und Buch des Feuers aus KayKit Adventurers); Kurzschwert 0,85 so groß wie das Langschwert; Buch des Feuers zu und offen; Schriftrollen beim Benutzen kurz in der Hand; Kriegsaxt darf den Bart des Zwergs streifen |
 | 2.65 | 06.11.2026 | Mouseover an Türen: goldene Umrisslinie nur am Türblatt, nicht am Rahmen; an Süd- und Osttüren an der Türkachel am Boden; Schloss ohne Umrisslinie; Feld `highlight` in `data/models.json` |
 | 2.64 | 06.11.2026 | Dunkelzwerge neu: Haut `#415158`, Bart und Haare `#A0A8AB`, Bart dicker; Helm für alle außer dem Koch (Kochmütze); große Axt aus KayKit Adventurers (`2H_Axe` des Barbarian) im Kampf, Wachen auch im Stehen, nicht im Sitzen; Schmied auf Grundlage des KayKit `Barbarian`, ohne Kopfbedeckung, kämpft mit seinem Hammer (größerer, kurzer und hoher Hammerkopf); Todestext des Kochs an die Axt angepasst; Höhlenspinne aus `Spider` (Easy Animated Enemy Pack, Quaternius) statt Grundformen |
 | 2.63 | 06.11.2026 | Zwergenminen Paket 2: Säulenhalle und Schmiede dort gemischt, Begegnungen mit Höhlenspinne, Steingolem, Eisengolem und abtrünnigem Dunkelzwerg; höchstens 9 Wachstuben und 10 Säulenhallen; Vorratskammer im Thema; Rache der Monsterratte auf Ebene 7; alle Zwerge in den Zwergenminen als Dunkelzwerge; neuer Effekt `flee`; Feld `themeLevel` in Event-Tabellen |
@@ -596,7 +596,7 @@ Gilt für alle Modelle. Bei Paketteilen gilt sie für das Ergebnis im Spiel; Abw
 | Buch des Feuers (`feuerbuch`) | `assets/weapons/feuerbuch.glb`, `feuerbuch_offen.glb` | Adventurers `Mage.glb` › `Spellbook`, `Spellbook_open` | Einband feuerrot statt magenta; außerhalb des Kampfs zu, im Kampf offen |
 | Elfenklinge (`elfenklinge`) | `assets/weapons/elfenklinge.glb` | Weapons Bits `sword_C` | – |
 | Kriegshammer (`kriegshammer`) | `assets/weapons/kriegshammer.glb` | Weapons Bits `hammer_A` | – |
-| Zwergische Kriegsaxt (`kriegsaxt`) | `assets/weapons/kriegsaxt.glb` | Weapons Bits `axe_B` | Zweihand-Animationen wie bei den Dunkelzwergen |
+| Zwergische Kriegsaxt (`kriegsaxt`) | `assets/weapons/kriegsaxt.glb` | Weapons Bits `axe_B` | Zweihand-Animationen wie bei den Dunkelzwergen; der Stiel darf den Bart streifen (wie bei den Dunkelzwergen mit der großen Axt) |
 
 ### Einrichtung pro Raumtyp
 
@@ -1015,3 +1015,4 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Die Monsterratte kehrt auf Ebene 7 in der Vorratskammer zurück (`vorrat_rache`); Effekt `flee` und Feld `themeLevel` in Event-Tabellen
 - [x] Mouseover an Türen nur am Türblatt; vordere Türen über die Türkachel am Boden; verschlossene Türen werden ebenfalls hervorgehoben, das Schloss nicht; die Klickfläche bleibt die ganze Tür
 - [x] Die Spielfigur zeigt immer die angelegte Waffe (eigene Dateien aus KayKit Fantasy Weapons Bits, Langschwert und Buch des Feuers aus KayKit Adventurers); Schriftrollen beim Benutzen kurz in der Hand
+- [x] Die Kriegsaxt darf in der Zweihand-Haltung den Bart des Zwergs streifen; Bart und Haltung bleiben, wie sie sind
