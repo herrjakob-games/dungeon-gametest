@@ -67,7 +67,22 @@ test("Größen: Dolch < Eismesser < Kurzschwert < Langschwert < Rapier < Elfenkl
   };
   const order = ["dolch", "eismesser", "kurzschwert", "langschwert", "rapier", "elfenklinge"];
   order.slice(1).forEach((id, i) => assert.ok(length(id) > length(order[i]), order[i] + " < " + id));
-  assert.ok(Math.abs(WEAPONS.kurzschwert.size - 0.85 * WEAPONS.langschwert.size) < 1e-9);
+  assert.equal(WEAPONS.kurzschwert.size, 0.85);
+  Object.entries(WEAPONS).filter(([id]) => id !== "kurzschwert").forEach(([id, w]) => assert.equal(w.size, 1, id + ": size ist ein Verhältnis zur Paketgröße"));
+});
+
+test("Die Waffe wächst mit der Figur: weaponScale pro Volk; Kriegsaxt am Zwerg nicht größer als die Axt der Dunkelzwerge", () => {
+  assert.deepEqual([MODELS.zwerg.weaponScale, MODELS.elf.weaponScale, MODELS.mensch.weaponScale], [0.28, 0.49, 0.42]);
+  // Länge in Kacheln: Länge der Datei mal Größe in der Hand
+  const span = (file) => {
+    const b = readFileSync(new URL(file, root));
+    const j = JSON.parse(b.toString("utf8", 20, 20 + b.readUInt32LE(12)));
+    const ys = j.meshes.flatMap(m => m.primitives.map(p => j.accessors[p.attributes.POSITION])).flatMap(a => [a.min[1], a.max[1]]);
+    return Math.max(...ys) - Math.min(...ys);
+  };
+  const axe = MODELS.dunkelzwerg.accessories.find(a => a.model === "grossaxt");
+  const kriegsaxt = span(WEAPONS.kriegsaxt.file) * WEAPONS.kriegsaxt.size * MODELS.zwerg.weaponScale;
+  assert.ok(kriegsaxt <= span(MODELS.grossaxt.file) * axe.size, "Kriegsaxt " + kriegsaxt.toFixed(3) + " größer als die große Axt");
 });
 
 test("Spielfiguren ohne eingebaute Waffe, mit Handknochen; Kriegsaxt mit Zweihand-Clips", () => {

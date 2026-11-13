@@ -1,5 +1,5 @@
 {
-  "_info": "Zuordnung der Modelle (docs/GDD.md, Asset-Spezifikation). Pro id: file, scale (Zahl oder [x, y, z]), rotation (Grad [x, y, z]), offset ([x, y, z] in Kacheln, vor der Drehung), palette (true = Paletten-Textur des Themas), texture (eigene angepasste Textur einer Figur), tint (Farbe, die das Modell einfärbt), color (eine Farbe statt Textur, etwa der Knochenthron), lights (offset, color, intensity, distance), animations (Figuren: Name im Spiel → Name im Paket: idle, walk, attack, hit, death, interact), accessories (Zubehör aus Grundformen an einem Knochen: shape, bone, offset und size in Kacheln, size auch als [x, y, z]; color beim Bart; hand: true hängt ein Werkzeug wie gehalten an den Knochen, etwa handslot.r). Varianten heißen <id>_<variante>. Abschnitt weapons (Waffen der Spielfiguren, Schlüssel = Gegenstands-id aus data/items.json): file, size (Kacheln), offset, rotation (Grad [x, y, z]) am Knochen handslot.r, optional armedAnimations (andere Clips, solange die Figur sie hält) und combatFile (andere Datei im Kampf, das offene Buch). Abschnitt scrolls: Farben der Schriftrollen beim Benutzen (paper, rods, seals pro Gegenstands-id).",
+  "_info": "Zuordnung der Modelle (docs/GDD.md, Asset-Spezifikation). Pro id: file, scale (Zahl oder [x, y, z]), rotation (Grad [x, y, z]), offset ([x, y, z] in Kacheln, vor der Drehung), palette (true = Paletten-Textur des Themas), texture (eigene angepasste Textur einer Figur), tint (Farbe, die das Modell einfärbt), color (eine Farbe statt Textur, etwa der Knochenthron), lights (offset, color, intensity, distance), animations (Figuren: Name im Spiel → Name im Paket: idle, walk, attack, hit, death, interact), accessories (Zubehör aus Grundformen an einem Knochen: shape, bone, offset und size in Kacheln, size auch als [x, y, z]; color beim Bart; hand: true hängt ein Werkzeug wie gehalten an den Knochen, etwa handslot.r). Varianten heißen <id>_<variante>. weaponScale (Spielfiguren: Maßstab der Waffe in der Hand). Abschnitt weapons (Waffen der Spielfiguren, Schlüssel = Gegenstands-id aus data/items.json): file, size (Verhältnis zur Paketgröße; in der Hand mal weaponScale der Figur), offset, rotation (Grad [x, y, z]) am Knochen handslot.r, optional armedAnimations (andere Clips, solange die Figur sie hält) und combatFile (andere Datei im Kampf, das offene Buch). Abschnitt scrolls: Farben der Schriftrollen beim Benutzen (paper, rods, seals pro Gegenstands-id).",
   "boden": {
     "file": "assets/tiles/boden.glb",
     "scale": 0.5,
@@ -310,7 +310,8 @@
         "size": 1
       }
     ],
-    "weaponWhen": "always"
+    "weaponWhen": "always",
+    "weaponScale": 0.28
   },
   "elf": {
     "file": "assets/figures/elf.glb",
@@ -324,7 +325,8 @@
       "death": "Death_A",
       "interact": "Interact"
     },
-    "weaponWhen": "always"
+    "weaponWhen": "always",
+    "weaponScale": 0.49
   },
   "mensch": {
     "file": "assets/figures/mensch.glb",
@@ -338,7 +340,8 @@
       "death": "Death_A",
       "interact": "Interact"
     },
-    "weaponWhen": "always"
+    "weaponWhen": "always",
+    "weaponScale": 0.42
   },
   "rat": {
     "file": "assets/figures/rat.glb",
@@ -1590,7 +1593,7 @@
   "weapons": {
     "knueppel": {
       "file": "assets/weapons/knueppel.glb",
-      "size": 0.28,
+      "size": 1.0,
       "offset": [
         0,
         0,
@@ -1604,7 +1607,7 @@
     },
     "dolch": {
       "file": "assets/weapons/dolch.glb",
-      "size": 0.25,
+      "size": 1.0,
       "offset": [
         0,
         0,
@@ -1618,7 +1621,7 @@
     },
     "kurzschwert": {
       "file": "assets/weapons/kurzschwert.glb",
-      "size": 0.238,
+      "size": 0.85,
       "offset": [
         0,
         0,
@@ -1632,7 +1635,7 @@
     },
     "langschwert": {
       "file": "assets/weapons/langschwert.glb",
-      "size": 0.28,
+      "size": 1.0,
       "offset": [
         0,
         0,
@@ -1646,7 +1649,7 @@
     },
     "eismesser": {
       "file": "assets/weapons/eismesser.glb",
-      "size": 0.28,
+      "size": 1.0,
       "offset": [
         0,
         0,
@@ -1660,7 +1663,7 @@
     },
     "rapier": {
       "file": "assets/weapons/rapier.glb",
-      "size": 0.28,
+      "size": 1.0,
       "offset": [
         0,
         0,
@@ -1674,7 +1677,7 @@
     },
     "streitaxt": {
       "file": "assets/weapons/streitaxt.glb",
-      "size": 0.28,
+      "size": 1.0,
       "offset": [
         0,
         0,
@@ -1688,7 +1691,7 @@
     },
     "feuerbuch": {
       "file": "assets/weapons/feuerbuch.glb",
-      "size": 0.28,
+      "size": 1.0,
       "offset": [
         0,
         0,
@@ -1703,7 +1706,7 @@
     },
     "elfenklinge": {
       "file": "assets/weapons/elfenklinge.glb",
-      "size": 0.29,
+      "size": 1.0,
       "offset": [
         0,
         0,
@@ -1717,7 +1720,7 @@
     },
     "kriegshammer": {
       "file": "assets/weapons/kriegshammer.glb",
-      "size": 0.28,
+      "size": 1.0,
       "offset": [
         0,
         0,
@@ -1731,7 +1734,7 @@
     },
     "kriegsaxt": {
       "file": "assets/weapons/kriegsaxt.glb",
-      "size": 0.28,
+      "size": 1.0,
       "offset": [
         0,
         0,
