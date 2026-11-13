@@ -6,8 +6,11 @@
 // - Eingebettete Texturen werden entfernt; das Spiel setzt die gemeinsame Paletten-Textur des Themas.
 // - Figuren (figures): Paketfigur abspecken, schreibt assets/figures/<id>.glb. FBX wird vorher mit FBX2glTF
 //   umgewandelt; optional Materialfarben (colors), Waffe an einem Knochen (attach) und Vereinfachen (simplify).
+// - Waffen der Spielfiguren (weapons): pro Gegenstands-id eine Datei assets/weapons/<id>.glb, Griff am Ursprung, Klinge
+//   nach oben, gedreht wie die Waffen der KayKit-Figuren am Knochen handslot.r. Eigene Textur bleibt (optional ersetzt
+//   durch eine umgefärbte aus tools/weapon-texture.py), matt ohne Metallglanz.
 // Am Ende stehen pro Datei Dreiecke und Größe da, mit Warnung über 1.500 Dreiecken oder 1 MB.
-import { readFileSync, mkdirSync, statSync, mkdtempSync, rmSync } from "node:fs";
+import { readFileSync, mkdirSync, statSync, mkdtempSync, rmSync, existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { execFileSync } from "node:child_process";
 import { createRequire } from "node:module";
@@ -171,6 +174,22 @@ async function buildFigure(id, recipe) {
 // Requisit aus Teilen einer Paketfigur (etwa Knochen und Schädel der Skelette): Skelett-Bindung entfernen, jedes Teil mit
 // seiner Unterseite auf den Ursprung setzen und mit Position, Drehung (Grad [x, y, z]) und Höhe neu anordnen.
 async function buildExtract(id, recipe) {
+  const doc = await extractDoc(id, recipe);
+  const root = doc.getRoot();
+  if (recipe.simplify) {
+    await MeshoptSimplifier.ready;
+    await doc.transform(weld(), simplify({ simplifier: MeshoptSimplifier, ratio: recipe.simplify, error: 0.02 }));
+  }
+  const out = ROOT + "assets/" + recipe.dir + "/" + id + ".glb";
+  await io.write(out, doc);
+  let tris = 0;
+  root.listNodes().forEach(n => { const m = n.getMesh(); if (m) m.listPrimitives().forEach(p => { tris += p.getIndices().getCount() / 3; }); });
+  const bytes = statSync(out).size;
+  console.log((recipe.dir + "/" + id).padEnd(26) + String(tris).padStart(6) + " Dreiecke " + String(Math.round(bytes / 1024)).padStart(5) + " KB" +
+    (tris > MAX_TRIS ? "  WARNUNG: über " + MAX_TRIS + " Dreiecke" : ""));
+}
+
+async function extractDoc(id, recipe) {
   const doc = await io.read(ROOT + recipe.source + recipe.file);
   doc.setLogger(new Logger(Logger.Verbosity.WARN));
   const root = doc.getRoot();
@@ -207,19 +226,55 @@ async function buildExtract(id, recipe) {
     root.listTextures().forEach(t => t.dispose());
   }
   await doc.transform(prune({ keepAttributes: true }), dedup());
-  if (recipe.simplify) {
-    await MeshoptSimplifier.ready;
-    await doc.transform(weld(), simplify({ simplifier: MeshoptSimplifier, ratio: recipe.simplify, error: 0.02 }));
+  return doc;
+}
+
+// Waffe einer Spielfigur (docs/GDD.md, Asset-Spezifikation, Waffen an den Spielfiguren). Zwei Quellen:
+// - file aus KayKit Fantasy Weapons Bits (glTF): Griff liegt schon am Ursprung, Klinge nach +y; das Teil wird wie die
+//   Waffen der KayKit-Figuren um 180 Grad um y gedreht, damit es in handslot.r gleich sitzt.
+// - node aus einer KayKit-Figur (Langschwert, Buch des Feuers): Teil mit seiner Lage am Handknochen aus dem Paket.
+// texture: umgefärbte Textur (tools/weapon-texture.py) statt der Paket-Textur.
+async function buildWeapon(id, recipe) {
+  const source = recipe.source || recipes.weaponSource;
+  let doc;
+  if (recipe.node) {
+    doc = await extractDoc(id, { source, file: recipe.file, keepTexture: true, pieces: [{ node: recipe.node, keepTransform: true }] });
+  } else {
+    doc = await io.read(ROOT + source + recipe.file);
+    doc.setLogger(new Logger(Logger.Verbosity.WARN));
+    const scene = doc.getRoot().getDefaultScene() || doc.getRoot().listScenes()[0];
+    const holder = doc.createNode(id).setRotation([0, 1, 0, 0]);
+    scene.listChildren().forEach(n => { scene.removeChild(n); holder.addChild(n); });
+    scene.addChild(holder);
   }
-  const out = ROOT + "assets/" + recipe.dir + "/" + id + ".glb";
+  const root = doc.getRoot();
+  // Stilguide: matt wie Knete, kein Metallglanz
+  root.listMaterials().forEach(m => { m.setMetallicFactor(0); m.setRoughnessFactor(0.9); m.setMetallicRoughnessTexture(null); });
+  if (recipe.texture) {
+    if (!existsSync(ROOT + recipe.texture)) throw new Error(id + ": " + recipe.texture + " fehlt (python3 tools/weapon-texture.py)");
+    const textures = root.listTextures();
+    if (textures.length !== 1) throw new Error(id + ": erwartet genau eine Textur, gefunden " + textures.length);
+    textures[0].setImage(new Uint8Array(readFileSync(ROOT + recipe.texture))).setMimeType("image/png");
+  }
+  await doc.transform(prune({ keepAttributes: true }), dedup());
+  const out = ROOT + "assets/weapons/" + id + ".glb";
+  mkdirSync(ROOT + "assets/weapons", { recursive: true });
   await io.write(out, doc);
   let tris = 0;
   root.listNodes().forEach(n => { const m = n.getMesh(); if (m) m.listPrimitives().forEach(p => { tris += p.getIndices().getCount() / 3; }); });
   const bytes = statSync(out).size;
-  console.log((recipe.dir + "/" + id).padEnd(26) + String(tris).padStart(6) + " Dreiecke " + String(Math.round(bytes / 1024)).padStart(5) + " KB" +
-    (tris > MAX_TRIS ? "  WARNUNG: über " + MAX_TRIS + " Dreiecke" : ""));
+  const warn = [];
+  if (tris > MAX_TRIS) warn.push("über " + MAX_TRIS + " Dreiecke");
+  if (bytes > MAX_BYTES) warn.push("über 1 MB");
+  console.log(("weapons/" + id).padEnd(26) + String(tris).padStart(6) + " Dreiecke " + String(Math.round(bytes / 1024)).padStart(5) + " KB" +
+    (warn.length ? "  WARNUNG: " + warn.join(", ") : ""));
 }
 
-for (const [id, recipe] of Object.entries(recipes.parts)) await build(id, recipe);
-for (const [id, recipe] of Object.entries(recipes.figures || {})) await buildFigure(id, recipe);
-for (const [id, recipe] of Object.entries(recipes.extracts || {})) await buildExtract(id, recipe);
+// Nur einzelne Gruppen bauen: npm run build:assets -- weapons figures (ohne Angabe alle)
+const only = process.argv.slice(2);
+const want = (group) => !only.length || only.includes(group);
+if (want("parts")) for (const [id, recipe] of Object.entries(recipes.parts)) await build(id, recipe);
+if (want("figures")) for (const [id, recipe] of Object.entries(recipes.figures || {})) await buildFigure(id, recipe);
+if (want("extracts")) for (const [id, recipe] of Object.entries(recipes.extracts || {})) await buildExtract(id, recipe);
+if (want("weapons")) for (const [id, recipe] of Object.entries(recipes.weapons || {})) await buildWeapon(id, recipe);
+

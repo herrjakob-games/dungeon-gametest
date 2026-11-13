@@ -14,6 +14,8 @@ const root = new URL("../", import.meta.url);
 const read = (f) => JSON.parse(readFileSync(new URL(f, root), "utf8"));
 const MODELS = read("data/models.json");
 delete MODELS._info;
+delete MODELS.weapons; // Waffen der Spielfiguren: tests/weapons.test.mjs
+delete MODELS.scrolls;
 const ROOM_TYPES = read("data/room-types.json");
 const RECIPES = read("tools/asset-recipes.json");
 const MAX_PROP_TRIS = 1500, MAX_BYTES = 1024 * 1024;

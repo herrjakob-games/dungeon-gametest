@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.65 · Nov 6, 2026 · @Christian
+Version 2.66 · Nov 13, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.66 | 13.11.2026 | Waffen an den Spielfiguren: angelegte Waffe wird an der Figur gezeigt und wechselt mit dem Inventar; Waffen aus KayKit Fantasy Weapons Bits 1.0 FREE (Langschwert und Buch des Feuers aus KayKit Adventurers); Kurzschwert 0,85 so groß wie das Langschwert; Buch des Feuers zu und offen; Schriftrollen beim Benutzen kurz in der Hand; Kriegsaxt darf den Bart des Zwergs streifen |
 | 2.65 | 06.11.2026 | Mouseover an Türen: goldene Umrisslinie nur am Türblatt, nicht am Rahmen; an Süd- und Osttüren an der Türkachel am Boden; Schloss ohne Umrisslinie; Feld `highlight` in `data/models.json` |
 | 2.64 | 06.11.2026 | Dunkelzwerge neu: Haut `#415158`, Bart und Haare `#A0A8AB`, Bart dicker; Helm für alle außer dem Koch (Kochmütze); große Axt aus KayKit Adventurers (`2H_Axe` des Barbarian) im Kampf, Wachen auch im Stehen, nicht im Sitzen; Schmied auf Grundlage des KayKit `Barbarian`, ohne Kopfbedeckung, kämpft mit seinem Hammer (größerer, kurzer und hoher Hammerkopf); Todestext des Kochs an die Axt angepasst; Höhlenspinne aus `Spider` (Easy Animated Enemy Pack, Quaternius) statt Grundformen |
 | 2.63 | 06.11.2026 | Zwergenminen Paket 2: Säulenhalle und Schmiede dort gemischt, Begegnungen mit Höhlenspinne, Steingolem, Eisengolem und abtrünnigem Dunkelzwerg; höchstens 9 Wachstuben und 10 Säulenhallen; Vorratskammer im Thema; Rache der Monsterratte auf Ebene 7; alle Zwerge in den Zwergenminen als Dunkelzwerge; neuer Effekt `flee`; Feld `themeLevel` in Event-Tabellen |
@@ -575,10 +576,27 @@ Gilt für alle Modelle. Bei Paketteilen gilt sie für das Ergebnis im Spiel; Abw
 - **Platzhalter:** Fehlt eine Datei oder lädt sie nicht, baut der Code das Teil wie bisher aus Grundformen.
 - **Dunkelzwerge:** Alle Zwerge in den Zwergenminen sind Dunkelzwerge, die Spielfigur bleibt der bisherige Zwerg. Grundlage ist das Modell des Zwergs (KayKit `Knight`, gleicher Maßstab, mit Bart), Haut `#415158`, Bart und Haare `#A0A8AB`, Umhang (`Knight_Cape`) blau `#2F5FA8`. Alle tragen den Helm (`Knight_Helmet`), der Bart liegt auf dem Kinnschutz; nur der Koch trägt die Kochmütze statt des Helms. Der Schmied hat als einziger den KayKit `Barbarian` als Grundlage (gleicher Maßstab, ohne Bärenfell, mit Bartkeil, eigene Kleidung und Textur `dunkelschmied_texture.png`). **Waffen:** Im Kampf halten Zwerge die große Axt (`2H_Axe` des KayKit `Barbarian`, zweihändig: `2H_Melee_Idle`, `2H_Melee_Attack_Chop`). Wachen halten sie auch im Stehen, im Sitzen nicht; der abtrünnige Dunkelzwerg hält sie immer, der Koch nur im Kampf. Der Schmied trägt keine Kopfbedeckung, kämpft mit seinem Hammer (kurzer, hoher Kopf wie ein Schmiedehammer, damit er aus der Iso-Ansicht lesbar ist) und behält ihn immer in der Hand, der Vermesser hält seine Messlatte. Die Figuren müssen im Licht der Zwergenminen lesbar bleiben.
 - **Bart des Zwergs:** Zubehör `bart` aus Grundformen, Farbe `#4A3020`, matt und weich, in zwei Teilen: Kinnansatz mit Schnurrbart-Wulst am Kopfknochen (`part: "kinn"`, Knochen `head`) und ein breiter Keil bis zum Bauch, unten leicht gegabelt, am Brustknochen (`part: "keil"`, Knochen `chest`); beide überlappen leicht. Am Kinn etwa 0,27 Kacheln breit, der Keil oben 0,24 (schmaler als geplant, damit die Schwerthand beim Angriff frei bleibt), nach unten schmaler; gesamt etwa 0,34 Kacheln lang, weil der Kopf der Figur groß ist und 0,45 bis zu den Füßen reichen würde. Der Bart schneidet bei Stehen, Laufen und Angriff nicht ins Schwert.
-- **Zubehör der Spielfiguren:** Die Figur trägt das Teil des Pakets, das der Startwaffe am nächsten kommt: Zwerg Schwert (Langschwert), Elf Messer (Dolch), Mensch Zauberstab (das Paket hat keinen Knüppel). Schilde, Zweithand-Waffen und Bücher fallen weg.
+- **Waffen an den Spielfiguren:** Die Spielfigur zeigt immer die angelegte Waffe. Wechselt die Waffe im Inventar, wechselt sie sofort auch an der Figur. Ohne Waffe bleibt die Hand leer (Klang `faust`). Die Paketfiguren tragen keine eigene Waffe mehr; jede Waffe ist eine eigene Datei `assets/weapons/<id>.glb` mit der id aus `data/items.json` und hängt am Knochen `handslot.r`. Grundlage ist KayKit Fantasy Weapons Bits 1.0 FREE (CC0), ergänzt um zwei Teile aus KayKit Adventurers. Schilde und Zweithand-Waffen fallen weg; das Buch des Feuers ist das einzige Buch.
+- **Schriftrollen an der Figur:** Beim „Gegenstand nutzen“ hält die Figur die Schriftrolle während der Animation kurz in der Hand, danach verschwindet sie. Die Rolle ist eine Grundform (Papier `#DEC896`, Stäbe `#5A3A24`) mit einem Siegelband in der Farbe des Zaubers: Feuerpfeil `#E87828`, Schild `#466EAA`, Eis `#8CCDEB`, Feuerball `#BE281E`.
 - **Quellen der Figuren im Keller:** Mensch KayKit `Mage`, Elf `Rogue_Hooded`, Zwerg `Knight` ohne Helm, Haare und Augenbrauen in der Bartfarbe (Textur `assets/textures/figures/zwerg/zwerg_texture.png`), ungleich skaliert (Maßstab `[0,429, 0,2805, 0,429]`: breiter und kleiner), mit Bart, Händler `Rogue` ohne Kapuze und Waffen, Outfit dunkelblau statt grün (KayKit Adventurers); Skelett aus KayKit Skeletons 1.0 (Minion, Warrior, Rogue, Mage; die Fassung 1.1 FREE hat kein Sitzen, Liegen und Angreifen, Textur gleich) mit der auf die Palette umgefärbten Textur `assets/textures/figures/skeleton/skeleton_keller.png`; Goblin aus Goblin Lowpoly Assets (standout7, itch.io); Mimik aus der Truhe des KayKit Dungeon Pack (itch.io); Riesenratte, Küchenchef und Monsterratte aus `Rat`, Kröte aus `Frog` (Easy Animated Enemy Pack, Quaternius). Höhlenspinne (Zwergenminen) aus `Spider` desselben Pakets, Körper `#5A5058`, Augen im Gefahr-Rot `#C8432F`, etwa eine Kachel breit; Clips `Spider_Idle`, `Spider_Walk`, `Spider_Attack`, `Spider_Death`. Goblin: `Basic_Goblin` mit `Rusty Shiv` an der rechten Hand; die kostenlose Fassung hat keine Animationen, deshalb sitzt er auf dem Rig `Rig_Medium` aus KayKit Character Animations 1.1 (dasselbe Rig wie Adventurers und Skeletons; `tools/goblin-rig.py` schiebt die Gelenke auf die des Goblins und übernimmt seine Gewichte). Clips: `Idle_A`, `Walking_A`, `Melee_1H_Attack_Stab`, `Hit_A`, `Death_A`, `Interact`, `Sit_Chair_Idle`, `Sit_Floor_Idle`, `Lie_Idle`.
 - **Quellen der Figuren in den Katakomben:** Skelettkrieger aus KayKit Skeletons `Warrior` mit der Skelett-Textur; Geister (Geist, Poltergeist) aus KayKit Adventurers `Rogue` ohne Kapuze und Waffen, Outfit hellblau, Haut weiß, Haare grau, ohne Handschuhe (Hände in Hautfarbe), mit kaltem blauem Licht an der Figur (Lichtpunkt ohne Schatten). Geister sind als ganze Figur durchscheinend (Deckkraft 0,6, `opacity` in `data/models.json`); innere Teile bleiben dabei verborgen. Skelett-König aus KayKit Skeletons `Warrior` mit der Skelett-Textur, 1,3-fach so groß wie die anderen Skelette, mit goldener Krone aus Grundformen auf dem Helm (`accessories`, Form `krone` am Kopfknochen).
 - **Lizenzen:** Quelle und Lizenz jeder fremden Datei in `assets/CREDITS.md`.
+
+**Waffen der Spielfiguren**
+
+| Gegenstand (id) | Datei | Quelle | Anpassung |
+| --- | --- | --- | --- |
+| Knüppel (`knueppel`) | `assets/weapons/knueppel.glb` | Weapons Bits `hammer_C` (Nagelkeule) | – |
+| Dolch (`dolch`) | `assets/weapons/dolch.glb` | Weapons Bits `dagger_A` | – |
+| Kurzschwert (`kurzschwert`) | `assets/weapons/kurzschwert.glb` | Weapons Bits `sword_B` | auf 0,85 verkleinert, damit es kürzer wirkt als das Langschwert |
+| Langschwert (`langschwert`) | `assets/weapons/langschwert.glb` | Adventurers `Knight.glb` › `1H_Sword` | – (wie bisher am Zwerg) |
+| Eismesser (`eismesser`) | `assets/weapons/eismesser.glb` | Weapons Bits `dagger_B` | Metall eisblau `#8CC8F0`, Griff bleibt; optional schwacher blauer Lichtschein |
+| Rapier (`rapier`) | `assets/weapons/rapier.glb` | Weapons Bits `sword_D` | – |
+| Streitaxt (`streitaxt`) | `assets/weapons/streitaxt.glb` | Weapons Bits `axe_C` | – |
+| Buch des Feuers (`feuerbuch`) | `assets/weapons/feuerbuch.glb`, `feuerbuch_offen.glb` | Adventurers `Mage.glb` › `Spellbook`, `Spellbook_open` | Einband feuerrot statt magenta; außerhalb des Kampfs zu, im Kampf offen |
+| Elfenklinge (`elfenklinge`) | `assets/weapons/elfenklinge.glb` | Weapons Bits `sword_C` | – |
+| Kriegshammer (`kriegshammer`) | `assets/weapons/kriegshammer.glb` | Weapons Bits `hammer_A` | – |
+| Zwergische Kriegsaxt (`kriegsaxt`) | `assets/weapons/kriegsaxt.glb` | Weapons Bits `axe_B` | Zweihand-Animationen wie bei den Dunkelzwergen; der Stiel darf den Bart streifen (wie bei den Dunkelzwergen mit der großen Axt) |
 
 ### Einrichtung pro Raumtyp
 
@@ -996,3 +1014,5 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Zwerge kämpfen mit der großen Axt, Wachen halten sie auch im Stehen; der Schmied kämpft mit seinem Hammer und nutzt den KayKit `Barbarian` als Grundlage
 - [x] Die Monsterratte kehrt auf Ebene 7 in der Vorratskammer zurück (`vorrat_rache`); Effekt `flee` und Feld `themeLevel` in Event-Tabellen
 - [x] Mouseover an Türen nur am Türblatt; vordere Türen über die Türkachel am Boden; verschlossene Türen werden ebenfalls hervorgehoben, das Schloss nicht; die Klickfläche bleibt die ganze Tür
+- [x] Die Spielfigur zeigt immer die angelegte Waffe (eigene Dateien aus KayKit Fantasy Weapons Bits, Langschwert und Buch des Feuers aus KayKit Adventurers); Schriftrollen beim Benutzen kurz in der Hand
+- [x] Die Kriegsaxt darf in der Zweihand-Haltung den Bart des Zwergs streifen; Bart und Haltung bleiben, wie sie sind

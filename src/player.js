@@ -27,6 +27,9 @@ export function setFigure(volk) {
 export function animateFigure(dt, moving) {
   stepSound(dt, moving);
   if (!anim) return false;
+  // Angelegte Waffe in der Hand (docs/GDD.md, Waffen an den Spielfiguren); wechselt sofort mit dem Inventar,
+  // das Buch des Feuers ist im Kampf offen
+  anim.setWeapon(state.player ? state.player.weapon : null, !!state.combat);
   anim.loop(moving ? "walk" : "idle");
   anim.update(dt);
   return true;
@@ -74,6 +77,11 @@ export function faceTile(tile) {
 // Einmalige Animation der Spielfigur: "attack" beim eigenen Angriff, "hit" bei einem Treffer des Gegners
 export function playerAction(name) {
   if (anim) anim.once(name);
+}
+
+// Gegenstand im Kampf benutzt: Schriftrollen hält die Figur während der Interact-Animation in der Hand
+export function playerUseItem(id) {
+  if (anim) anim.holdScroll(id);
 }
 
 // Weiche Drehung der Spielfigur (Stilguide: etwa 0,25 Sekunden, kürzerer Weg), etwa zum Gegner im Kampf.
