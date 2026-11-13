@@ -3,9 +3,12 @@
 // Fehlt eine Datei oder schlägt das Laden fehl, gibt es kein Modell: Der Aufrufer baut das Teil wie bisher aus
 // Grundformen. Die id wird dann einmal in der Konsole gemeldet.
 import { ACCESSORIES } from "./monsterFigures.js";
+import { weaponKey, weaponFile, scrollSeal } from "./weapons.js";
 const THREE = window.THREE;
 
 let MODELS = {};
+let WEAPONS = {}; // Waffen der Spielfiguren (data/models.json, weapons), Schlüssel = Gegenstands-id
+let SCROLLS = {}; // Farben der Schriftrollen (data/models.json, scrolls)
 const scenes = new Map();   // Datei → geladene Szene
 const clips = new Map();    // Datei → Animationen
 const missing = new Set();  // gemeldete ids
@@ -63,13 +66,18 @@ export async function loadModels() {
     const res = await fetch("data/models.json", { cache: "no-cache" });
     MODELS = await res.json();
     delete MODELS._info;
+    WEAPONS = MODELS.weapons || {};
+    SCROLLS = MODELS.scrolls || {};
+    delete MODELS.weapons;
+    delete MODELS.scrolls;
   } catch (e) {
     console.warn("data/models.json fehlt, alle Teile bleiben Platzhalter");
     return;
   }
   if (!THREE.GLTFLoader) { console.warn("GLTFLoader fehlt, alle Teile bleiben Platzhalter"); return; }
   const loader = new THREE.GLTFLoader();
-  const files = [...new Set(Object.values(MODELS).map(m => m.file))];
+  const weaponFiles = Object.values(WEAPONS).flatMap(w => [w.file, w.combatFile]).filter(Boolean);
+  const files = [...new Set(Object.values(MODELS).map(m => m.file).concat(weaponFiles))];
   await Promise.all(files.map(f => new Promise(resolve => {
     loader.load(f, (gltf) => { scenes.set(f, gltf.scene); clips.set(f, gltf.animations || []); resolve(); }, undefined, () => resolve());
   })));
@@ -247,7 +255,15 @@ export function makeFigureModel(id, variant) {
   object.traverse(n => { if (n.userData.weapon) weapons.push(n); });
   let armed = !entry.weaponWhen || entry.weaponWhen === "always";
   weapons.forEach(w => { w.visible = armed; });
-  const clipName = (name) => (armed && entry.armedAnimations && entry.armedAnimations[name]) || names[name];
+  // Waffe der Spielfigur (setWeapon): Modell am Knochen handslot.r und ihre Clips (armedAnimations, etwa die Kriegsaxt)
+  let held = null, heldKey = null, heldAnims = null;
+  // Clip zum Namen im Spiel: zuerst die der gehaltenen Waffe, dann die bewaffneten der Figur; fehlt einer, der normale
+  const has = (clip) => !!clip && list.some(c => c.name === clip);
+  const clipName = (name) => {
+    if (heldAnims && has(heldAnims[name])) return heldAnims[name];
+    if (armed && entry.armedAnimations && has(entry.armedAnimations[name])) return entry.armedAnimations[name];
+    return names[name];
+  };
   const clipOf = (name) => (clipName(name) ? THREE.AnimationClip.findByName(list, clipName(name)) : null);
   let current = null, loopName = null, busy = false, dead = false;
   function start(name, once) {
@@ -286,16 +302,125 @@ export function makeFigureModel(id, variant) {
     if (on === armed) return;
     armed = on;
     weapons.forEach(w => { w.visible = on; });
+    if (held) held.visible = on && !scroll;
     if (loopName === "idle") loopName = null; // die Standhaltung wechselt beim nächsten loop("idle")
+  }
+  // Angelegte Waffe zeigen (docs/GDD.md, Waffen an den Spielfiguren): id aus data/items.json oder null (leere Hand).
+  // Tauscht das Modell nur, wenn sich Waffe oder Kampf (Buch des Feuers offen) ändern; günstig pro Frame aufrufbar.
+  function setWeapon(id, inCombat) {
+    const key = weaponKey(WEAPONS, id, inCombat);
+    if (key === heldKey) return;
+    heldKey = key;
+    if (held) { held.parent.remove(held); held = null; }
+    heldAnims = key ? WEAPONS[id] && WEAPONS[id].armedAnimations || null : null;
+    if (key) held = holdInHand(object, "handslot.r", weaponModel(key), WEAPONS[id] || {});
+    if (held) { held.userData.weaponModel = key; held.visible = armed && !scroll; }
+    if (loopName === "idle" || loopName === "walk") loopName = null; // Standhaltung wechselt beim nächsten loop()
+  }
+  // Schriftrolle beim Benutzen (docs/GDD.md, Schriftrollen an der Figur): in der linken Hand, solange die Interact-Animation
+  // läuft; ohne linken Handknochen statt der Waffe in der rechten
+  let scroll = null, scrollTime = 0;
+  function holdScroll(id) {
+    const seal = scrollSeal(SCROLLS, id);
+    if (!seal) return false;
+    dropScroll();
+    const left = !!findBone(object, "handslot.l");
+    scroll = holdInHand(object, left ? "handslot.l" : "handslot.r", makeScroll(seal), { size: 1 });
+    if (!scroll) return false;
+    if (!left && held) held.visible = false;
+    once("interact");
+    scrollTime = Math.max(0.8, clipOf("interact") ? clipOf("interact").duration : 1.2);
+    return true;
+  }
+  function dropScroll() {
+    if (!scroll) return;
+    scroll.parent.remove(scroll);
+    scroll = null;
+    if (held) held.visible = armed;
   }
   loop("idle");
   // Stand der Dauerschleife von 0 bis 1 (für Schritte im Takt der Laufanimation), sonst null
   const phase = (name) => (loopName === name && !busy && current ? (current.time % current.getClip().duration) / current.getClip().duration : null);
   return {
-    object, mixer, loop, once, phase, setArmed, weaponWhen: entry.weaponWhen || null,
+    object, mixer, loop, once, phase, setArmed, setWeapon, holdScroll, weaponWhen: entry.weaponWhen || null,
+    weapon: () => heldKey,
     has: (name) => !!clipOf(name),
     duration: (name) => (clipOf(name) ? clipOf(name).duration : 0),
     animated: list.length > 0,
-    update: (dt) => mixer.update(dt)
+    update: (dt) => {
+      mixer.update(dt);
+      if (scroll && (scrollTime -= dt) <= 0) dropScroll();
+    }
   };
+}
+
+function findBone(object, name) {
+  const want = THREE.PropertyBinding.sanitizeNodeName(name);
+  let bone = null;
+  object.traverse(n => { if (!bone && n.name === want) bone = n; });
+  return bone;
+}
+
+/**
+ * Teil in die Hand (Knochen handslot.r oder handslot.l): Größe in Kacheln (spec.size), unabhängig vom Maßstab der Figur
+ * (der Zwerg ist ungleich skaliert), dazu offset (Kacheln) und rotation (Grad [x, y, z]) am Knochen. null ohne Knochen.
+ */
+function holdInHand(object, boneName, part, spec) {
+  const bone = findBone(object, boneName);
+  if (!bone || !part) return null;
+  object.updateMatrixWorld(true);
+  const rel = new THREE.Matrix4().copy(object.matrixWorld).invert().multiply(bone.matrixWorld);
+  const s = new THREE.Vector3();
+  rel.decompose(new THREE.Vector3(), new THREE.Quaternion(), s);
+  const k = vec(spec.size, 1), r = vec(spec.rotation, 0);
+  const holder = new THREE.Group();
+  holder.scale.set(k[0] / s.x, k[1] / s.y, k[2] / s.z);
+  holder.position.set(...(spec.offset || [0, 0, 0])).divide(s);
+  holder.rotation.set(r[0] * Math.PI / 180, r[1] * Math.PI / 180, r[2] * Math.PI / 180);
+  holder.add(part);
+  part.traverse(n => { if (n.isMesh) { n.castShadow = true; n.raycast = () => {}; } });
+  bone.add(holder);
+  return holder;
+}
+
+// Modell einer Waffe (Klon der Datei aus weapons) oder, wenn sie fehlt, eine einfache Klinge aus Grundformen
+const warnedWeapons = new Set();
+function weaponModel(key) {
+  const file = weaponFile(WEAPONS, key);
+  if (file && scenes.has(file)) return scenes.get(file).clone(true);
+  if (!warnedWeapons.has(key)) { warnedWeapons.add(key); console.info("Platzhalter für Waffe " + key + (file ? " (Datei lädt nicht: " + file + ")" : "")); }
+  // In Paket-Einheiten wie die Waffen-Dateien: Griff am Ursprung, Klinge nach oben, etwa 1,7 lang
+  const g = new THREE.Group();
+  const metal = new THREE.MeshStandardMaterial({ color: 0x9aa3a8, roughness: 0.9, metalness: 0 });
+  const wood = new THREE.MeshStandardMaterial({ color: 0x5a3a24, roughness: 0.9, metalness: 0 });
+  const grip = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.45, 6), wood);
+  grip.position.y = -0.1;
+  const guard = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.08, 0.12), metal);
+  guard.position.y = 0.15;
+  const blade = new THREE.Mesh(new THREE.BoxGeometry(0.16, 1.15, 0.05), metal);
+  blade.position.y = 0.75;
+  g.add(grip, guard, blade);
+  return g;
+}
+
+// Schriftrolle aus Grundformen (docs/GDD.md): Papierrolle mit zwei Stäben und einem Siegelband; Maße in Kacheln
+const scrollMats = new Map();
+function scrollMat(color) {
+  if (!scrollMats.has(color)) scrollMats.set(color, new THREE.MeshStandardMaterial({ color: new THREE.Color(color), roughness: 0.9, metalness: 0 }));
+  return scrollMats.get(color);
+}
+function makeScroll(seal) {
+  const g = new THREE.Group();
+  const paper = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.2, 10), scrollMat(SCROLLS.paper || "#DEC896"));
+  const band = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.045, 10), scrollMat(seal));
+  g.add(paper, band);
+  [-1, 1].forEach(side => {
+    const rod = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.014, 0.05, 6), scrollMat(SCROLLS.rods || "#5A3A24"));
+    rod.position.y = side * 0.12;
+    const knob = new THREE.Mesh(new THREE.SphereGeometry(0.02, 6, 4), scrollMat(SCROLLS.rods || "#5A3A24"));
+    knob.position.y = side * 0.15;
+    g.add(rod, knob);
+  });
+  g.position.y = 0.06; // Hand umfasst die Rolle unterhalb der Mitte
+  return g;
 }

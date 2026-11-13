@@ -868,7 +868,8 @@
         "Round_Shield",
         "Spike_Shield",
         "2H_Sword",
-        "Knight_Helmet"
+        "Knight_Helmet",
+        "1H_Sword"
       ],
       "animations": [
         "Idle",
@@ -876,7 +877,9 @@
         "1H_Melee_Attack_Chop",
         "Hit_A",
         "Death_A",
-        "Interact"
+        "Interact",
+        "2H_Melee_Idle",
+        "2H_Melee_Attack_Chop"
       ],
       "maxTris": 4000
     },
@@ -886,7 +889,8 @@
         "Knife_Offhand",
         "1H_Crossbow",
         "2H_Crossbow",
-        "Throwable"
+        "Throwable",
+        "Knife"
       ],
       "animations": [
         "Idle",
@@ -903,7 +907,8 @@
       "remove": [
         "Spellbook",
         "Spellbook_open",
-        "2H_Staff"
+        "2H_Staff",
+        "1H_Wand"
       ],
       "animations": [
         "Idle",
@@ -1250,6 +1255,55 @@
           "keepTransform": true
         }
       ]
+    }
+  },
+  "weaponNotes": "Waffen der Spielfiguren (docs/GDD.md, Tabelle der Waffen): pro Gegenstands-id eine Datei assets/weapons/<id>.glb. file aus weaponSource (KayKit Fantasy Weapons Bits), oder source + file + node für ein Teil einer KayKit-Figur. texture: umgefärbte Textur aus tools/weapon-texture.py.",
+  "weaponSource": "assets/source/kaykit-weapons-bits/",
+  "weapons": {
+    "knueppel": {
+      "file": "hammer_C.gltf"
+    },
+    "dolch": {
+      "file": "dagger_A.gltf"
+    },
+    "kurzschwert": {
+      "file": "sword_B.gltf"
+    },
+    "langschwert": {
+      "source": "assets/source/kaykit-adventurers/",
+      "file": "Knight.glb",
+      "node": "1H_Sword"
+    },
+    "eismesser": {
+      "file": "dagger_B.gltf",
+      "texture": "assets/textures/weapons/eismesser_texture.png"
+    },
+    "rapier": {
+      "file": "sword_D.gltf"
+    },
+    "streitaxt": {
+      "file": "axe_C.gltf"
+    },
+    "feuerbuch": {
+      "source": "assets/source/kaykit-adventurers/",
+      "file": "Mage.glb",
+      "node": "Spellbook",
+      "texture": "assets/textures/weapons/feuerbuch_texture.png"
+    },
+    "feuerbuch_offen": {
+      "source": "assets/source/kaykit-adventurers/",
+      "file": "Mage.glb",
+      "node": "Spellbook_open",
+      "texture": "assets/textures/weapons/feuerbuch_texture.png"
+    },
+    "elfenklinge": {
+      "file": "sword_C.gltf"
+    },
+    "kriegshammer": {
+      "file": "hammer_A.gltf"
+    },
+    "kriegsaxt": {
+      "file": "axe_B.gltf"
     }
   }
 }

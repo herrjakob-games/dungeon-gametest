@@ -12,7 +12,7 @@ import { updateStats } from "./hud.js";
 import { renderInventory } from "./inventory.js";
 import { rollHtml, maybeRescue, signShort } from "./checkUI.js";
 import { hitCombatFigure, attackCombatFigure, focusCombatFigure } from "./roomFigures.js";
-import { playerAction } from "./player.js";
+import { playerAction, playerUseItem } from "./player.js";
 import { play, playFirst } from "./sound.js";
 import { showDelta, holdHp } from "./combatHud.js";
 import { showRoll } from "./diceView.js";
@@ -103,6 +103,7 @@ function useItem(e) {
   const m = state.combat.monster, hpBefore = p.hp, monsterBefore = m.hp;
   holdHp(true);
   const res = useInCombat(p, e.item, state.combat, Math.random);
+  playerUseItem(e.id); // Schriftrolle kurz in der Hand (docs/GDD.md)
   renderInventory();
   holdDialog();
   // Würfel des Gegenstands rollen (Heilung, Schaden); Schild und Einfrieren haben keine

@@ -1,5 +1,5 @@
 {
-  "_info": "Zuordnung der Modelle (docs/GDD.md, Asset-Spezifikation). Pro id: file, scale (Zahl oder [x, y, z]), rotation (Grad [x, y, z]), offset ([x, y, z] in Kacheln, vor der Drehung), palette (true = Paletten-Textur des Themas), texture (eigene angepasste Textur einer Figur), tint (Farbe, die das Modell einfärbt), color (eine Farbe statt Textur, etwa der Knochenthron), lights (offset, color, intensity, distance), animations (Figuren: Name im Spiel → Name im Paket: idle, walk, attack, hit, death, interact), accessories (Zubehör aus Grundformen an einem Knochen: shape, bone, offset und size in Kacheln, size auch als [x, y, z]; color beim Bart; hand: true hängt ein Werkzeug wie gehalten an den Knochen, etwa handslot.r). Varianten heißen <id>_<variante>.",
+  "_info": "Zuordnung der Modelle (docs/GDD.md, Asset-Spezifikation). Pro id: file, scale (Zahl oder [x, y, z]), rotation (Grad [x, y, z]), offset ([x, y, z] in Kacheln, vor der Drehung), palette (true = Paletten-Textur des Themas), texture (eigene angepasste Textur einer Figur), tint (Farbe, die das Modell einfärbt), color (eine Farbe statt Textur, etwa der Knochenthron), lights (offset, color, intensity, distance), animations (Figuren: Name im Spiel → Name im Paket: idle, walk, attack, hit, death, interact), accessories (Zubehör aus Grundformen an einem Knochen: shape, bone, offset und size in Kacheln, size auch als [x, y, z]; color beim Bart; hand: true hängt ein Werkzeug wie gehalten an den Knochen, etwa handslot.r). Varianten heißen <id>_<variante>. Abschnitt weapons (Waffen der Spielfiguren, Schlüssel = Gegenstands-id aus data/items.json): file, size (Kacheln), offset, rotation (Grad [x, y, z]) am Knochen handslot.r, optional armedAnimations (andere Clips, solange die Figur sie hält) und combatFile (andere Datei im Kampf, das offene Buch). Abschnitt scrolls: Farben der Schriftrollen beim Benutzen (paper, rods, seals pro Gegenstands-id).",
   "boden": {
     "file": "assets/tiles/boden.glb",
     "scale": 0.5,
@@ -309,7 +309,8 @@
         ],
         "size": 1
       }
-    ]
+    ],
+    "weaponWhen": "always"
   },
   "elf": {
     "file": "assets/figures/elf.glb",
@@ -322,7 +323,8 @@
       "hit": "Hit_A",
       "death": "Death_A",
       "interact": "Interact"
-    }
+    },
+    "weaponWhen": "always"
   },
   "mensch": {
     "file": "assets/figures/mensch.glb",
@@ -335,7 +337,8 @@
       "hit": "Hit_A",
       "death": "Death_A",
       "interact": "Interact"
-    }
+    },
+    "weaponWhen": "always"
   },
   "rat": {
     "file": "assets/figures/rat.glb",
@@ -1582,6 +1585,177 @@
       "walk": "HumanArmature|Spider_Walk",
       "attack": "HumanArmature|Spider_Attack",
       "death": "HumanArmature|Spider_Death"
+    }
+  },
+  "weapons": {
+    "knueppel": {
+      "file": "assets/weapons/knueppel.glb",
+      "size": 0.28,
+      "offset": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    "dolch": {
+      "file": "assets/weapons/dolch.glb",
+      "size": 0.25,
+      "offset": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    "kurzschwert": {
+      "file": "assets/weapons/kurzschwert.glb",
+      "size": 0.238,
+      "offset": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    "langschwert": {
+      "file": "assets/weapons/langschwert.glb",
+      "size": 0.28,
+      "offset": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    "eismesser": {
+      "file": "assets/weapons/eismesser.glb",
+      "size": 0.28,
+      "offset": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    "rapier": {
+      "file": "assets/weapons/rapier.glb",
+      "size": 0.28,
+      "offset": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    "streitaxt": {
+      "file": "assets/weapons/streitaxt.glb",
+      "size": 0.28,
+      "offset": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    "feuerbuch": {
+      "file": "assets/weapons/feuerbuch.glb",
+      "size": 0.28,
+      "offset": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        90
+      ],
+      "combatFile": "assets/weapons/feuerbuch_offen.glb"
+    },
+    "elfenklinge": {
+      "file": "assets/weapons/elfenklinge.glb",
+      "size": 0.29,
+      "offset": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    "kriegshammer": {
+      "file": "assets/weapons/kriegshammer.glb",
+      "size": 0.28,
+      "offset": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    "kriegsaxt": {
+      "file": "assets/weapons/kriegsaxt.glb",
+      "size": 0.28,
+      "offset": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "armedAnimations": {
+        "idle": "2H_Melee_Idle",
+        "attack": "2H_Melee_Attack_Chop"
+      }
+    }
+  },
+  "scrolls": {
+    "paper": "#DEC896",
+    "rods": "#5A3A24",
+    "seals": {
+      "feuerpfeil": "#E87828",
+      "schildrolle": "#466EAA",
+      "eisrolle": "#8CCDEB",
+      "feuerballrolle": "#BE281E"
     }
   }
 }
