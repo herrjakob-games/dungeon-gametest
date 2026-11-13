@@ -313,7 +313,11 @@ export function makeFigureModel(id, variant) {
     heldKey = key;
     if (held) { held.parent.remove(held); held = null; }
     heldAnims = key ? WEAPONS[id] && WEAPONS[id].armedAnimations || null : null;
-    if (key) held = holdInHand(object, "handslot.r", weaponModel(key), WEAPONS[id] || {});
+    // Größe in der Hand = size der Waffe (Verhältnis zur Paketgröße) × weaponScale der Figur (docs/GDD.md); gilt auch für
+    // den Platzhalter, wenn die Datei fehlt
+    const w = WEAPONS[id] || {};
+    const size = (w.size === undefined ? 1 : w.size) * (entry.weaponScale || 0.28);
+    if (key) held = holdInHand(object, "handslot.r", weaponModel(key), { size, offset: w.offset, rotation: w.rotation });
     if (held) { held.userData.weaponModel = key; held.visible = armed && !scroll; }
     if (loopName === "idle" || loopName === "walk") loopName = null; // Standhaltung wechselt beim nächsten loop()
   }
