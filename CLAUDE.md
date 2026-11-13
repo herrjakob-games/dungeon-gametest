@@ -44,7 +44,7 @@ Die Liste aller Meilensteine steht im GDD.
   baut aus `tools/asset-recipes.json` die Dateien in `assets/tiles/`, `assets/props/`, `assets/figures/` und `assets/weapons/` (einzelne Gruppen: `npm run build:assets -- weapons`) (braucht einmal `npm install`; FBX wandelt das npm-Paket `fbx2gltf` um, `meshoptimizer` vereinfacht);
   das Spiel selbst braucht keinen Build-Schritt. Zuordnung in `data/models.json`. `tools/palette-texture.py` erzeugt
   die erste Fassung der Paletten-Textur, `tools/skeleton-texture.py` die Skelett-Textur,
-  `tools/merchant-texture.py` die Textur des Händlers, `tools/ghost-texture.py` die der Geister (Händler-Modell in Hellblau, Haut weiß, Haare grau), `tools/dwarf-texture.py` die des Zwergs (Haare in Bartfarbe), `tools/dunkelzwerg-texture.py` die der Dunkelzwerge und des Schmieds (Haut, Haare, Umhang), `tools/kobold-texture.py` die des Kobolds und des vorläufigen Orks (Goblin-Textur mit roter bzw. grauer Haut, nach `npm run build:assets`), `tools/weapon-texture.py` die umgefärbten Texturen von Eismesser und Buch des Feuers (vor `npm run build:assets`), `tools/goblin-rig.py` setzt den Goblin auf das KayKit-Rig (braucht Blender als Python-Modul: `pip install bpy`; danach `npm run build:assets`).
+  `tools/merchant-texture.py` die Textur des Händlers, `tools/ghost-texture.py` die der Geister (Händler-Modell in Hellblau, Haut weiß, Haare grau), `tools/dwarf-texture.py` die des Zwergs (Haare in Bartfarbe), `tools/dunkelzwerg-texture.py` die der Dunkelzwerge und des Schmieds (Haut, Haare, Umhang), `tools/kobold-texture.py` die des Kobolds und des vorläufigen Orks (Goblin-Textur mit roter bzw. grauer Haut, nach `npm run build:assets`), `tools/weapon-texture.py` die umgefärbten Texturen von Eismesser, Buch des Feuers und Kellerhandbuch (vor `npm run build:assets`; das Handbuch landet in `assets/ui/handbuch.glb`), `tools/goblin-rig.py` setzt den Goblin auf das KayKit-Rig (braucht Blender als Python-Modul: `pip install bpy`; danach `npm run build:assets`).
   Die Spiellogik besteht aus ES-Modulen in `src/`, Einstieg ist `src/main.js`.
 - Würfelanzeige: `npm run build:dice` nimmt mit `tools/record-dice.mjs` die Flugbahnen auf (Physik mit dem npm-Paket `cannon-es`,
   nur beim Aufnehmen, fester Seed) und schreibt `data/dice-rolls.json`; das Spiel spielt sie ohne Physik ab.
@@ -79,7 +79,7 @@ Die Liste aller Meilensteine steht im GDD.
 | `data/characters.json` | Völker: Attribute, Lebenspunkte, LP je Stufe, Fähigkeit, Startausrüstung, Modell |
 | `data/items.json` | Gegenstände mit Rang 1–6, Preis (`preis`), Schaden/Rüstung/Nutzen, Mindestattribut und Volk (`req`), Klang (`sound`); erzeugt aus `data/gegenstaende.csv` |
 | `data/gegenstaende.csv` | Gegenstandsliste als Tabelle (Quelle für `items.json`) |
-| `data/texts.json` | Sätze zur Todesursache bei Events, eigene Sätze pro Event unter `death.events` |
+| `data/texts.json` | Sätze zur Todesursache bei Events, eigene Sätze pro Event unter `death.events`, Text des Kellerhandbuchs unter `tutorial` |
 | `src/data.js` | lädt `data/*.json` und prüft die Daten |
 | `src/sound.js` | Sound über die Web Audio API: Kanäle, Raum-Stimmung mit Überblendung und Zufallsgeräuschen, Schritte, Dämpfen bei Events, Vorladen (`preload`, etwa `treppe` im Raum mit der Treppe nach unten); fehlende Sounds bleiben still |
 | `src/soundLogic.js` | Sound-Regeln: Angriffsklang, Treffer und Tod, Raum-Sound (`themeSound` vor `sound`), Schritte, Datenprüfung; rein logisch |
@@ -111,13 +111,17 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/diceLogic.js` | Würfelanzeige, rein logisch: Körper der Würfel, Werte der Seiten, Symmetrie-Drehungen, Drehung für einen Zielwert, `rollKey` (etwa `"W4x2"`), Datenprüfung |
 | `src/diceView.js` | Würfelanzeige: eigener Renderer über dem Raum (`#diceField`), spielt Aufnahmen aus `data/dice-rolls.json` ab, `showRoll(spec, values)`, Überspringen per Klick oder Taste |
 | `data/dice-rolls.json` | Aufnahmen der Würfelwürfe, erzeugt mit `npm run build:dice` |
-| `src/inventory.js` | Ausrüstungs- und Rucksack-Feld oben rechts |
+| `src/inventory.js` | Kasten Ausrüstung: Waffe, Rüstung, Rucksack |
 | `src/shopUI.js` | Händler im Textfenster |
 | `src/screens.js` | Volkswahl und Endbildschirm |
 | `src/dialog.js` | Textfenster mit Optionen, Würfelergebnis und Effektzeilen; während eines Würfelwurfs ohne Optionen (`holdDialog`) |
-| `src/hud.js` | Infotafel (Werte der Figur) und Minimap (Canvas), Icons aus `assets/ui/karte_<id>.svg` als weiße Outlines |
+| `src/hud.js` | Werte in den Infokästen Karte, Charakter (mit Balken) und Entwicklung, Minimap (Canvas), Icons aus `assets/ui/karte_<id>.svg` als weiße Outlines |
+| `src/panels.js` | Infokästen auf- und zuklappen (Titelleiste, Tasten K, E, C, I), Zustand bis zum Neuladen, im Kampf alle zu und gesperrt (`lockPanels`) |
+| `src/book.js` | Kellerhandbuch (Tutorial): eigenes Fenster mit Renderer für `assets/ui/handbuch.glb`, Text als HTML auf den Seiten, Rückfall aus CSS; nach der Volkswahl und am Lesepult |
+| `src/tutorialText.js` | Text des Handbuchs: Platzhalter, fett, Doppelseiten, Datenprüfung; rein logisch |
+| `src/zoomLogic.js` | Zoom: Start ganz herausgezoomt (0,7), Maximum 2,2, im Kampf 30 % näher, weicher Übergang; rein logisch |
 | `src/gridOverlay.js` | Testhilfe `?grid=1`: Kachelnamen x\|y auf dem Boden |
-| `src/main.js` | Ablauf, Raumwechsel, Schnellreise, Eingabe, Spielschleife, Testmodus |
+| `src/main.js` | Ablauf, Raumwechsel, Schnellreise, Eingabe (auch Lesepult), Spielschleife (Kampf-Zoom, Sperre der Infokästen), Testmodus |
 
 ## Feste Regeln im Code
 

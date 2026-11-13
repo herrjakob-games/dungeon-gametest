@@ -1,4 +1,4 @@
-// Infotafel und Minimap.
+// Infokästen Karte, Charakter und Entwicklung (Werte) und Minimap.
 import { DIR, DIRKEYS, key, tileName } from "./config.js";
 import { TYPES, mapIconFor } from "./roomTypes.js";
 import { state } from "./state.js";
@@ -18,7 +18,10 @@ export const ui = {
   xp: document.getElementById("xp"),
   attrs: document.getElementById("attrs"),
   seedInput: document.getElementById("seedInput"),
-  reveal: document.getElementById("reveal")
+  reveal: document.getElementById("reveal"),
+  depthShort: document.getElementById("depthShort"),
+  hpBar: document.getElementById("hpBar"),
+  xpBar: document.getElementById("xpBar")
 };
 
 export const minimap = document.getElementById("minimap");
@@ -81,6 +84,11 @@ export function updateStats() {
   ui.hp.textContent = p.hp + " / " + p.maxHp;
   ui.hp.classList.toggle("low", p.hp <= 4);
   ui.xp.textContent = p.xp + " / " + xpForLevel(p.level);
+  // Balken unter Lebenspunkten und Erfahrung (Kasten Charakter)
+  ui.hpBar.style.width = Math.max(0, Math.min(100, 100 * p.hp / p.maxHp)) + "%";
+  ui.hpBar.classList.toggle("low", p.hp <= 4);
+  ui.xpBar.style.width = Math.max(0, Math.min(100, 100 * p.xp / xpForLevel(p.level))) + "%";
+  ui.depthShort.textContent = state.depth + (state.theme ? " · " + state.theme.name : "");
   ui.gold.textContent = p.gold;
   ui.attrs.textContent = ATTRS.map(a => ATTR_NAMES[a] + " " + signed(p.attrs[a])).join(" · ");
   ui.ability.textContent = p.ability.name + ": " + (p.abilityUsed ? "in diesem Dungeon verbraucht" : "bereit");

@@ -1,4 +1,5 @@
 // Renderer, Szene, isometrische Kamera und Grundbeleuchtung.
+import { ZOOM_MIN, clampZoom, zoomTarget, easeZoom } from "./zoomLogic.js";
 const THREE = window.THREE;
 
 export const stage = document.getElementById("stage");
@@ -42,8 +43,16 @@ sun.shadow.mapSize.set(2048, 2048);
 Object.assign(sun.shadow.camera, { left: -9, right: 9, top: 9, bottom: -9, near: 1, far: 50 });
 scene.add(sun);
 
-export function zoomBy(deltaY) {
-  camera.zoom = Math.min(2.2, Math.max(0.7, camera.zoom * (1 - deltaY * 0.0012)));
+// Zoom (zoomLogic.js): Start ganz herausgezoomt, das Mausrad ändert die gewählte Stufe, im Kampf geht die Kamera 30 % näher
+let baseZoom = ZOOM_MIN;
+camera.zoom = ZOOM_MIN;
+camera.updateProjectionMatrix();
+export function zoomBy(deltaY) { baseZoom = clampZoom(baseZoom * (1 - deltaY * 0.0012)); }
+export function updateZoom(dt, inCombat, instant) {
+  const target = zoomTarget(baseZoom, inCombat);
+  const z = instant ? target : easeZoom(camera.zoom, target, dt);
+  if (z === camera.zoom) return;
+  camera.zoom = z;
   camera.updateProjectionMatrix();
 }
 

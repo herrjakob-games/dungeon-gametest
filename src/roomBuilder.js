@@ -424,6 +424,7 @@ function placeDecor(spec, room, feature, id, torch) {
     if (PROPS[pl.prop].blocks) pl.tiles.forEach(t => block(t[0], t[1]));
     const o = at(propMesh(pl.prop, pl), pl.cx, pl.cz, pl.rot);
     if (SEE_THROUGH.includes(pl.prop)) addOccluder(o); // Säulen: Durchblick
+    if (pl.prop === "pult") makeLectern(o, pl.tiles[0]);
 
   }
 }
@@ -567,6 +568,20 @@ function makeChest(pos, id, rot, mimic) {
   if (st === "open") lidPivot.rotation.x = -1.9;
   add(chest);
   state.interactables.push(chest);
+}
+
+// Lesepult der Vorkammer: ein Klick öffnet das Kellerhandbuch noch einmal (docs/GDD.md, Interface, Tutorial)
+function makeLectern(o, tile) {
+  const hoverMats = [];
+  o.traverse(n => {
+    if (!n.isMesh || !n.material || !n.material.emissive) return;
+    n.material = n.material.clone();
+    n.material.emissive.setHex(0xe9a640);
+    n.material.emissiveIntensity = 0;
+    hoverMats.push(n.material);
+  });
+  o.userData = { kind: "lectern", tile, hoverMats };
+  state.interactables.push(o);
 }
 
 // Mimik erwacht: die Truhe verschwindet aus dem Raum, an ihrer Stelle steht die Figur (roomFigures.js)

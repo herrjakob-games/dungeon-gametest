@@ -1,4 +1,4 @@
-/* Layout: Vollbild-Spielfeld, Infotafel mit Minimap und Seed oben links, Textfenster unten mittig (wie im GDD) */
+/* Layout: Vollbild-Spielfeld, Infokästen am Rand (Karte, Entwicklung, Charakter, Ausrüstung), Textfenster unten mittig (wie im GDD) */
 :root {
   --bg: #15110e;
   --panel: rgba(30, 24, 20, 0.93);
@@ -20,9 +20,9 @@ html, body { height: 100%; margin: 0; }
 body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; overflow: hidden; }
 #stage { position: fixed; inset: 0; }
 #stage canvas { display: block; width: 100%; height: 100%; cursor: pointer; }
-/* Lebenspunkte und Zahlen im Kampf (combatHud.js): über der 3D-Szene, unter Abblende, Infotafeln und Textfenster.
+/* Lebenspunkte und Zahlen im Kampf (combatHud.js): über der 3D-Szene, unter Abblende, Infokästen und Textfenster.
    Farben und Schrift wie im Textfenster: --bad für Schaden, --good für Heilung, --body */
-/* Würfelfeld (diceView.js): durchsichtig über dem Raum, unter Textfenster, Infotafel und Inventar; keine Klicks */
+/* Würfelfeld (diceView.js): durchsichtig über dem Raum, unter Textfenster, Infokästen; keine Klicks */
 #diceField { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 #combatHud { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
 .hp-label, .hp-number { position: absolute; left: 0; top: 0; font-family: var(--body); white-space: nowrap; will-change: transform; }
@@ -33,27 +33,48 @@ body { background: var(--bg); color: var(--fg); font-family: var(--body); font-s
 .hp-number.good { color: var(--good); }
 #fade { position: fixed; inset: 0; background: var(--bg); opacity: 0; pointer-events: none; transition: opacity 0.28s ease; }
 
-.hud {
-  position: absolute;
-  top: calc(env(safe-area-inset-top, 0px) + 16px);
-  left: calc(env(safe-area-inset-left, 0px) + 16px);
-  width: min(300px, calc(100% - 32px));
-  max-height: calc(100% - 32px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
-  overflow-y: auto;
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  padding: 14px 16px 16px;
-  display: grid;
-  gap: 10px;
+/* Infokästen (docs/GDD.md, Interface): links oben Karte, links unten Entwicklung, rechts oben Charakter und Ausrüstung
+   nebeneinander. Zu ist nur die Titelleiste sichtbar; im Kampf sind alle zu und gesperrt (body.panels-locked). */
+.panels { position: absolute; display: flex; gap: 10px; align-items: flex-start; }
+.panels-left { top: calc(env(safe-area-inset-top, 0px) + 16px); left: calc(env(safe-area-inset-left, 0px) + 16px); flex-direction: column; }
+.panels-bottom-left { bottom: calc(env(safe-area-inset-bottom, 0px) + 16px); left: calc(env(safe-area-inset-left, 0px) + 16px); }
+.panels-right { top: calc(env(safe-area-inset-top, 0px) + 16px); right: calc(env(safe-area-inset-right, 0px) + 16px); }
+.box { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.box.open { width: 300px; }
+.box-char.open { width: 250px; }
+.box-equip.open { width: 230px; }
+.box-head {
+  display: flex; align-items: center; gap: 9px; width: 100%;
+  border: 0; border-radius: 0; padding: 9px 12px; text-align: left;
+  color: var(--muted); font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase;
 }
-.hud h1 { margin: 0; font-family: var(--display); font-weight: 700; font-size: 30px; line-height: 1; color: var(--accent); text-wrap: balance; }
-.hud .sub { margin: 0; color: var(--muted); font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; }
-.hud p { margin: 0; color: var(--muted); line-height: 1.45; }
+.box-head svg { width: 18px; height: 18px; flex: none; stroke: currentColor; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.box-head .t { flex: 1; }
+.box-head kbd { font: inherit; font-size: 11px; letter-spacing: 0; color: var(--muted); border: 1px solid var(--line); border-radius: 3px; padding: 0 5px; }
+.box-head .chev { transition: transform 0.2s; }
+.box-head:hover { border-color: transparent; }
+.box-head:focus-visible { outline-offset: -2px; }
+.box.open .box-head { color: var(--fg); border-bottom: 1px solid var(--line); }
+.box.open .box-head .chev { transform: rotate(180deg); }
+.box-body { padding: 12px 14px 14px; display: grid; gap: 10px; max-height: calc(100vh - 120px); overflow-y: auto; }
+.box:not(.open) .box-body { display: none; }
+.panels-locked .box-head { opacity: 0.38; cursor: default; }
+.panels-locked .box-head kbd { display: none; }
+.panels-locked .box-head:hover { color: var(--muted); }
+.box h1 { margin: 0; font-family: var(--display); font-weight: 700; font-size: 26px; line-height: 1; color: var(--accent); text-wrap: balance; }
+.box p { margin: 0; color: var(--muted); line-height: 1.45; }
+.box .sub, .box .room-sub { margin: 0; color: var(--muted); font-size: 13px; }
+.box .room-sub { margin-top: -4px; }
+.box p.small { font-size: 13px; }
+.bar-row { grid-column: 1 / -1; margin-top: -2px !important; }
+.bar { display: block; height: 5px; background: rgba(255, 255, 255, 0.08); border-radius: 3px; overflow: hidden; }
+.bar i { display: block; height: 100%; width: 0; background: var(--good); transition: width 0.3s ease; }
+.bar i.low { background: var(--bad); }
+.bar.xp i { background: var(--accent); }
+
 .stats { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin: 0; font-variant-numeric: tabular-nums; }
 .stats dt { color: var(--muted); }
 .stats dd { margin: 0; text-align: right; }
-.hud hr { border: 0; border-top: 1px solid var(--line); margin: 0; width: 100%; }
 .map { display: grid; gap: 6px; }
 .label { color: var(--muted); font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; }
 #minimap { display: block; width: 100%; height: auto; max-width: 100%; }
@@ -110,24 +131,13 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .fx .bad, .stats dd.low { color: var(--bad); }
 .fx .good { color: var(--good); }
 .fx .gold { color: var(--accent); }
-.hud p.attrs { font-size: 14px; color: var(--fg); }
+.box p.attrs { font-size: 14px; color: var(--fg); }
 .fx .status { color: var(--fg); font-weight: 500; }
-.hud p.ability { font-size: 14px; color: var(--good); }
-.hud p.ability.used { color: var(--muted); }
+.box p.ability { font-size: 14px; color: var(--good); }
+.box p.ability.used { color: var(--muted); }
 
-/* Ausrüstung und Rucksack oben rechts */
-.inv {
-  position: absolute;
-  top: calc(env(safe-area-inset-top, 0px) + 16px);
-  right: calc(env(safe-area-inset-right, 0px) + 16px);
-  width: 220px;
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  padding: 12px 14px 14px;
-  display: grid;
-  gap: 8px;
-}
+/* Kasten Ausrüstung */
+.inv { display: grid; gap: 8px; }
 .inv .worn, .inv .pack { display: grid; gap: 6px; }
 .inv .worn { grid-template-columns: 1fr; }
 .inv .pack { grid-template-columns: 1fr 1fr; }
@@ -167,9 +177,32 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .opts button { padding: 8px 14px; }
 .opts button .key { color: var(--muted); margin-right: 6px; font-variant-numeric: tabular-nums; }
 
-@media (max-width: 520px) {
-  .hud p.help { display: none; }
-}
+/* Kellerhandbuch (docs/GDD.md, Interface, Tutorial): Buch aus dem Modell, Text als HTML auf den Seiten */
+.book { position: fixed; inset: 0; background: rgba(12, 9, 7, 0.72); display: grid; place-items: center; }
+.book-stage { position: relative; width: min(1180px, 96vw); height: min(760px, 90vh); --page-font: 19px; }
+.book-stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; filter: drop-shadow(0 24px 40px rgba(0, 0, 0, 0.6)); }
+.book-stage.no-model canvas { display: none; }
+.book-stage.no-model::before { content: ""; position: absolute; left: var(--book-x); top: var(--book-y); width: var(--book-w); height: var(--book-h);
+  background: linear-gradient(90deg, #e2d0a8 0%, #eedeba 46%, #d4c098 50%, #eedeba 54%, #e2d0a8 100%);
+  border: 14px solid #7a4e2c; border-radius: 6px; box-shadow: 0 24px 40px rgba(0, 0, 0, 0.6); }
+.book-head { position: absolute; left: 0; right: 0; top: 0; text-align: center; }
+.book-head h2 { margin: 0; font-family: var(--display); font-weight: 700; font-size: 34px; line-height: 1; color: var(--accent); }
+.book-head p { margin: 6px 0 0; color: var(--muted); font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; }
+.page { position: absolute; color: #3b2a1c; font-size: var(--page-font); line-height: 1.5; display: grid; align-content: start; gap: 0.6em; }
+.page h3 { margin: 0; font-family: var(--display); font-weight: 700; font-size: 1.6em; line-height: 1.05; color: #7a3b1c; }
+.page .ornament { width: 60px; height: 2px; background: #b88a55; opacity: 0.7; }
+.page p { margin: 0; }
+.page b { color: #7a3b1c; }
+.page .sign { margin-top: 0.3em; font-style: italic; color: #6b5440; }
+.page .num { position: absolute; bottom: -0.3em; font-size: 13px; color: #8a7058; }
+.page.left .num { left: 0; }
+.page.right .num { right: 0; }
+.book-nav { position: absolute; left: 0; right: 0; bottom: 0; display: flex; justify-content: center; align-items: center; gap: 10px; }
+.book-nav button { background: var(--panel); padding: 8px 16px; }
+.book-nav button.primary { border-color: var(--accent); color: var(--accent); }
+.book-nav .key { color: var(--muted); margin-right: 6px; }
+.book-nav .dots { color: var(--muted); font-size: 13px; letter-spacing: 0.1em; margin: 0 8px; }
+
 @media (max-width: 900px) {
-  .inv { top: auto; bottom: 16px; width: 180px; }
+  .panels-right { flex-direction: column; align-items: flex-end; }
 }

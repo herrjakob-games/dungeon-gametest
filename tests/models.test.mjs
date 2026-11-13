@@ -76,7 +76,9 @@ test("Jede Requisiten-id hat ein Modell oder einen Platzhalter", () => {
   }
   // Jedes Modell aus dem Build-Skript ist zugeordnet
   Object.keys(RECIPES.parts).forEach(id => assert.ok(MODELS[id], id + ": gebaut, aber nicht in data/models.json"));
-  Object.keys(RECIPES.extracts || {}).forEach(id => assert.ok(MODELS[id], id + ": gebaut, aber nicht in data/models.json"));
+  // (Teile für die Oberfläche in assets/ui/, etwa das Kellerhandbuch, lädt ihr Modul selbst)
+  Object.entries(RECIPES.extracts || {}).filter(([, r]) => r.dir !== "ui")
+    .forEach(([id]) => assert.ok(MODELS[id], id + ": gebaut, aber nicht in data/models.json"));
 });
 
 test("Jedes Volk hat eine Figur mit allen Animationen", () => {

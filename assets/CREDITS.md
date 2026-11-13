@@ -31,7 +31,7 @@ Quelle und Lizenz jeder fremden Datei (docs/GDD.md, Asset-Spezifikation).
 - Lizenz: CC0 1.0 (Creative Commons Zero), siehe `source/kaykit-adventurers/LICENSE.txt`
 - Quelle: https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0, Commit `672074b73ba276876a19e8816ecdc5241817ab47`
 - Übernommene Dateien (in `source/kaykit-adventurers/`, aus `Characters/gltf/`): Knight, Mage, Rogue_Hooded, Rogue, Barbarian, rogue_texture.png
-- Daraus gebaut (`npm run build:assets`): `weapons/langschwert.glb` (`1H_Sword` aus Knight), `weapons/feuerbuch.glb` und `weapons/feuerbuch_offen.glb` (`Spellbook` und `Spellbook_open` aus Mage, Einband umgefärbt mit `tools/weapon-texture.py`), `figures/zwerg.glb`, `figures/elf.glb`, `figures/mensch.glb` (ohne eingebaute Waffe), `figures/haendlerfigur.glb` (Händler), `figures/knight.glb` (Ritter ohne Waffen), `figures/dunkelzwerg.glb`, `figures/zwergenkoch.glb`, `figures/zwergenschmied.glb` (Dunkelzwerge), `props/grossaxt.glb` (große Axt, `2H_Axe` aus Barbarian)
+- Daraus gebaut (`npm run build:assets`): `weapons/langschwert.glb` (`1H_Sword` aus Knight), `weapons/feuerbuch.glb` und `weapons/feuerbuch_offen.glb` (`Spellbook` und `Spellbook_open` aus Mage, Einband umgefärbt mit `tools/weapon-texture.py`), `figures/zwerg.glb`, `figures/elf.glb`, `figures/mensch.glb` (ohne eingebaute Waffe), `figures/haendlerfigur.glb` (Händler), `figures/knight.glb` (Ritter ohne Waffen), `figures/dunkelzwerg.glb`, `figures/zwergenkoch.glb`, `figures/zwergenschmied.glb` (Dunkelzwerge), `props/grossaxt.glb` (große Axt, `2H_Axe` aus Barbarian), `ui/handbuch.glb` (Kellerhandbuch, `Spellbook_open` aus Mage, Einband braun, Seiten Pergament mit `tools/weapon-texture.py`)
 - `textures/figures/dunkelzwerg/dunkelzwerg_texture.png` und `dunkelschmied_texture.png` sind umgefärbte Fassungen der Knight- und Barbarian-Textur (`tools/dunkelzwerg-texture.py`)
 - `textures/figures/haendler/haendler_texture.png` ist die Rogue-Textur mit dunkelblauem statt grünem Outfit (`tools/merchant-texture.py`)
 
@@ -42,6 +42,7 @@ Quelle und Lizenz jeder fremden Datei (docs/GDD.md, Asset-Spezifikation).
 - Quelle: itch.io-Seite von Kay Lousberg, Fassung 1.0 FREE (hochgeladen von Christian)
 - Übernommene Dateien (in `source/kaykit-weapons-bits/`, aus `Assets/gltf/`): hammer_C, dagger_A, sword_B, dagger_B, sword_D, axe_C, sword_C, hammer_A, axe_B (je `.gltf` und `.bin`), weapons_bits_texture.png
 - Daraus gebaut (`npm run build:assets`): `weapons/knueppel.glb`, `weapons/dolch.glb`, `weapons/kurzschwert.glb`, `weapons/eismesser.glb`, `weapons/rapier.glb`, `weapons/streitaxt.glb`, `weapons/elfenklinge.glb`, `weapons/kriegshammer.glb`, `weapons/kriegsaxt.glb`
+- `textures/ui/handbuch_texture.png` ist die Mage-Textur mit braunem Einband und Pergamentseiten (`tools/weapon-texture.py`)
 - `textures/weapons/eismesser_texture.png` ist die Paket-Textur mit eisblauem Metall (`tools/weapon-texture.py`)
 
 ## KayKit Character Pack: Skeletons 1.0 (und 1.1 FREE)
