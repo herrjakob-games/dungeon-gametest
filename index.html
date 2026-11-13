@@ -15,46 +15,78 @@
   <div id="combatHud" aria-hidden="true"></div>
   <div id="fade"></div>
 
-  <aside class="hud" aria-label="Spielinfo">
-    <div>
-      <p class="sub">Themen und Ebenen · Prototyp</p>
-      <h1 id="roomName">Die Vorkammer</h1>
-    </div>
-    <p class="help">Klicke auf eine Kachel, um zu laufen, und auf Türen, Truhen oder die Wendeltreppe nach unten. Klicke auf besuchte Räume in der Karte, um dorthin zu reisen. In manchen Räumen wartet ein Ereignis. Steig so tief hinab, wie du kannst. Mausrad zoomt.</p>
-    <hr>
-    <div class="map">
-      <span class="label">Karte</span>
-      <canvas id="minimap" width="268" height="220" aria-label="Minimap des Dungeons"></canvas>
-      <label class="check" for="reveal"><input type="checkbox" id="reveal"> Ganze Karte zeigen (Test)</label>
-    </div>
-    <hr>
-    <dl class="stats">
-      <dt>Figur</dt><dd id="hero">–</dd>
-      <dt>Ebene</dt><dd id="depth">1</dd>
-      <dt>Lebenspunkte</dt><dd id="hp">–</dd>
-      <dt>Erfahrung</dt><dd id="xp">0</dd>
-      <dt>Gold</dt><dd id="gold">0</dd>
-    </dl>
-    <p class="attrs" id="attrs"></p>
-    <p class="ability" id="ability"></p>
-    <hr>
-    <dl class="stats">
-      <dt>Position</dt><dd id="pos">–</dd>
-      <dt>Maus über</dt><dd id="hover">–</dd>
-      <dt>Weg</dt><dd id="steps">–</dd>
-      <dt>Räume besucht</dt><dd id="visited">1 / 1</dd>
-    </dl>
-    <hr>
-    <form class="seed" id="seedForm">
-      <label class="label" for="seedInput">Seed</label>
-      <input id="seedInput" inputmode="numeric" autocomplete="off" aria-describedby="seedHelp">
-      <button type="submit">Laden</button>
-      <button type="button" id="newSeed">Neu</button>
-    </form>
-    <p id="seedHelp" style="font-size: 13px;">Gleicher Seed ergibt den gleichen Dungeon.</p>
-  </aside>
+  <!-- Infokästen (docs/GDD.md, Interface): links Karte, unten links Entwicklung, rechts Charakter und Ausrüstung.
+       Ein Klick auf die Titelleiste (oder K, E, C, I) klappt den Kasten auf und zu; im Kampf sind alle zu und gesperrt. -->
+  <div class="panels panels-left">
+    <section class="box" id="boxKarte" data-key="k">
+      <button type="button" class="box-head" aria-expanded="true" aria-controls="boxKarteBody">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg>
+        <span class="t">Karte</span><kbd>K</kbd><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="box-body" id="boxKarteBody">
+        <h1 id="roomName">Die Vorkammer</h1>
+        <p class="room-sub">Ebene <span id="depthShort">1</span></p>
+        <canvas id="minimap" width="268" height="220" aria-label="Minimap des Dungeons"></canvas>
+      </div>
+    </section>
+  </div>
 
-  <aside class="inv" id="inv" aria-label="Ausrüstung und Rucksack"></aside>
+  <div class="panels panels-bottom-left">
+    <section class="box" id="boxEntwicklung" data-key="e">
+      <button type="button" class="box-head" aria-expanded="true" aria-controls="boxEntwicklungBody">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3.5 17.5l3 3 5.8-5.8a4 4 0 0 0 5.4-5.4l-2.4 2.4-2.6-.4-.4-2.6z"/></svg>
+        <span class="t">Entwicklung</span><kbd>E</kbd><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="box-body" id="boxEntwicklungBody">
+        <p class="sub">Themen und Ebenen · Prototyp</p>
+        <dl class="stats">
+          <dt>Position</dt><dd id="pos">–</dd>
+          <dt>Maus über</dt><dd id="hover">–</dd>
+          <dt>Weg</dt><dd id="steps">–</dd>
+          <dt>Räume besucht</dt><dd id="visited">1 / 1</dd>
+        </dl>
+        <label class="check" for="reveal"><input type="checkbox" id="reveal"> Ganze Karte zeigen (Test)</label>
+        <form class="seed" id="seedForm">
+          <label class="label" for="seedInput">Seed</label>
+          <input id="seedInput" inputmode="numeric" autocomplete="off" aria-describedby="seedHelp">
+          <button type="submit">Laden</button>
+          <button type="button" id="newSeed">Neu</button>
+        </form>
+        <p id="seedHelp" class="small">Gleicher Seed ergibt den gleichen Dungeon.</p>
+      </div>
+    </section>
+  </div>
+
+  <div class="panels panels-right">
+    <section class="box box-char" id="boxCharakter" data-key="c">
+      <button type="button" class="box-head" aria-expanded="true" aria-controls="boxCharakterBody">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-6.5 8-6.5s8 2.1 8 6.5"/></svg>
+        <span class="t">Charakter</span><kbd>C</kbd><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="box-body" id="boxCharakterBody">
+        <dl class="stats">
+          <dt>Figur</dt><dd id="hero">–</dd>
+          <dt>Ebene</dt><dd id="depth">1</dd>
+          <dt>Lebenspunkte</dt><dd id="hp">–</dd>
+          <dd class="bar-row"><span class="bar"><i id="hpBar"></i></span></dd>
+          <dt>Erfahrung</dt><dd id="xp">0</dd>
+          <dd class="bar-row"><span class="bar xp"><i id="xpBar"></i></span></dd>
+          <dt>Gold</dt><dd id="gold">0</dd>
+        </dl>
+        <p class="attrs" id="attrs"></p>
+        <p class="ability" id="ability"></p>
+      </div>
+    </section>
+    <section class="box box-equip" id="boxAusruestung" data-key="i">
+      <button type="button" class="box-head" aria-expanded="true" aria-controls="boxAusruestungBody">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/><path d="M12 8v8M9 11h6"/></svg>
+        <span class="t">Ausrüstung</span><kbd>I</kbd><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="box-body" id="boxAusruestungBody">
+        <div class="inv" id="inv" aria-label="Ausrüstung und Rucksack"></div>
+      </div>
+    </section>
+  </div>
 
   <section class="dialog" id="dialog" hidden aria-live="polite">
     <h2 id="dlgTitle"></h2>
@@ -62,6 +94,21 @@
     <p class="roll" id="dlgRoll" hidden></p>
     <ul class="fx" id="dlgFx" hidden></ul>
     <div class="opts" id="dlgOpts"></div>
+  </section>
+
+  <section class="book" id="book" hidden aria-labelledby="bookTitle">
+    <div class="book-stage" id="bookStage">
+      <canvas id="bookCanvas" aria-hidden="true"></canvas>
+      <div class="book-head"><h2 id="bookTitle"></h2><p id="bookSub"></p></div>
+      <div class="page left" id="pageLeft"></div>
+      <div class="page right" id="pageRight"></div>
+      <div class="book-nav">
+        <button type="button" id="bookSkip"><span class="key">Esc</span>Überspringen</button>
+        <button type="button" id="bookBack"><span class="key">←</span>Zurückblättern</button>
+        <span class="dots" id="bookDots" aria-hidden="true"></span>
+        <button type="button" class="primary" id="bookNext"><span class="key">→</span><span id="bookNextLabel">Umblättern</span></button>
+      </div>
+    </div>
   </section>
 
   <section class="screen" id="select" hidden aria-labelledby="selectTitle">

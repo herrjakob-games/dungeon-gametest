@@ -1182,7 +1182,7 @@
       "maxTris": 4000
     }
   },
-  "extractNotes": "Requisiten aus Teilen einer Paketfigur: pieces mit node (Name des Teils), position (KayKit-Einheiten, Unterseite des Teils), rotation (Grad [x, y, z]). keepTexture: eigene Textur bleibt; keepTransform: Teil behält seine Lage aus dem Paket (Griff am Ursprung, für Waffen in der Hand).",
+  "extractNotes": "Requisiten aus Teilen einer Paketfigur: pieces mit node (Name des Teils), position (KayKit-Einheiten, Unterseite des Teils), rotation (Grad [x, y, z]). keepTexture: eigene Textur bleibt; keepTransform: Teil behält seine Lage aus dem Paket (Griff am Ursprung, für Waffen in der Hand). texture: eigene Textur statt der Paket-Textur (mit keepTexture).",
   "extracts": {
     "knochen": {
       "dir": "props",
@@ -1252,6 +1252,19 @@
       "pieces": [
         {
           "node": "2H_Axe",
+          "keepTransform": true
+        }
+      ]
+    },
+    "handbuch": {
+      "dir": "ui",
+      "source": "assets/source/kaykit-adventurers/",
+      "file": "Mage.glb",
+      "keepTexture": true,
+      "texture": "assets/textures/ui/handbuch_texture.png",
+      "pieces": [
+        {
+          "node": "Spellbook_open",
           "keepTransform": true
         }
       ]

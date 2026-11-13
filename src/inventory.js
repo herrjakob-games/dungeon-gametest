@@ -1,4 +1,4 @@
-// Inventar-Feld: angelegte Waffe und Rüstung, sechs Rucksackplätze.
+// Kasten Ausrüstung: angelegte Waffe und Rüstung, sechs Rucksackplätze.
 // Außerhalb von Events öffnet ein Klick auf einen Gegenstand ein Fenster zum Anlegen, Trinken oder Wegwerfen.
 import { state } from "./state.js";
 import { DATA } from "./data.js";
@@ -45,7 +45,7 @@ function slot(label, id, onClick, extraClass) {
 export function renderInventory() {
   const p = state.player;
   if (!p) return;
-  el.innerHTML = '<span class="label">Ausrüstung</span>';
+  el.innerHTML = ""; // Titel steht in der Titelleiste des Kastens
   const worn = document.createElement("div");
   worn.className = "worn";
   worn.append(slot("Waffe", p.weapon, () => openWorn("weapon")), slot("Rüstung", p.armor, () => openWorn("armor")));

@@ -32,5 +32,44 @@
       "schmiede_meisterprobe": "An einem Hammer verhoben. Er liegt noch immer an derselben Stelle.",
       "schmiede_schlacke": "In einem Haufen Abfall gestorben, auf der Suche nach etwas, das glänzt."
     }
+  },
+  "tutorial": {
+    "title": "Das kleine Kellerhandbuch",
+    "subtitle": "3. Auflage · leicht angekokelt",
+    "pages": [
+      {
+        "title": "Vorwort",
+        "text": [
+          "Herzlichen Glückwunsch, **{volk}**! Du hast dich für eine Laufbahn im Untergrund entschieden.",
+          "Das Ziel ist schlicht: so tief hinab wie möglich. Einen Rückweg gibt es nicht.",
+          "Dieses Handbuch hat dein Vorgänger hier liegen lassen. Er braucht es nicht mehr."
+        ]
+      },
+      {
+        "title": "Laufen und Klicken",
+        "text": [
+          "Klick auf eine Kachel, und du läufst hin. Klick auf Türen, Truhen und Treppen, und du benutzt sie.",
+          "Räume, die du schon kennst, erreichst du per Klick auf die **Karte**, ganz ohne Fußweg.",
+          "Mit dem Mausrad zoomst du, falls du genauer sehen willst, was dich gleich anknabbert."
+        ]
+      },
+      {
+        "title": "Ereignisse und Kämpfe",
+        "text": [
+          "In manchen Räumen wartet etwas auf dich. Dann wählst du im Textfenster, und ein W20 entscheidet, ob das eine gute Idee war.",
+          "Kämpfe laufen in Runden: angreifen, verteidigen, Gegenstand nutzen oder fliehen.",
+          "Fliehen ist keine Schande. Nur ein bisschen."
+        ]
+      },
+      {
+        "title": "Kram und Kästen",
+        "text": [
+          "Waffen, Rüstung und Tränke liegen im Kasten **Ausrüstung**, deine Werte im Kasten **Charakter**. Jeder Kasten klappt per Klick auf und zu.",
+          "Einmal pro Dungeon rettet dich **{faehigkeit}**: Eine misslungene {attribut}-Probe gilt dann doch als bestanden.",
+          "Wenn du stirbst, ist es vorbei. Ganz. Aber der nächste Dungeon wartet schon."
+        ],
+        "sign": "Viel Glück. Die Kellerverwaltung"
+      }
+    ]
   }
 }

@@ -176,11 +176,19 @@ async function buildFigure(id, recipe) {
 async function buildExtract(id, recipe) {
   const doc = await extractDoc(id, recipe);
   const root = doc.getRoot();
+  if (recipe.texture) {
+    // eigene Textur statt der Paket-Textur (Kellerhandbuch, tools/weapon-texture.py)
+    if (!existsSync(ROOT + recipe.texture)) throw new Error(id + ": " + recipe.texture + " fehlt (python3 tools/weapon-texture.py)");
+    const textures = root.listTextures();
+    if (textures.length !== 1) throw new Error(id + ": erwartet genau eine Textur, gefunden " + textures.length);
+    textures[0].setImage(new Uint8Array(readFileSync(ROOT + recipe.texture))).setMimeType("image/png");
+  }
   if (recipe.simplify) {
     await MeshoptSimplifier.ready;
     await doc.transform(weld(), simplify({ simplifier: MeshoptSimplifier, ratio: recipe.simplify, error: 0.02 }));
   }
   const out = ROOT + "assets/" + recipe.dir + "/" + id + ".glb";
+  mkdirSync(ROOT + "assets/" + recipe.dir, { recursive: true });
   await io.write(out, doc);
   let tris = 0;
   root.listNodes().forEach(n => { const m = n.getMesh(); if (m) m.listPrimitives().forEach(p => { tris += p.getIndices().getCount() / 3; }); });

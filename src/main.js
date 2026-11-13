@@ -2,7 +2,7 @@
 import { N, MID, DIR, key, inBounds, reduceMotion, tileName } from "./config.js";
 import { generate } from "./generator.js";
 import { state, walkable } from "./state.js";
-import { renderer, scene, camera, zoomBy } from "./scene.js";
+import { renderer, scene, camera, zoomBy, updateZoom } from "./scene.js";
 import { buildRoom, douseCampfire } from "./roomBuilder.js";
 import { placePlayer, setFigure, player } from "./player.js";
 import { hoverMesh, showHoverTile } from "./markers.js";
@@ -27,6 +27,8 @@ import { newCharacter } from "./character.js";
 import { renderInventory } from "./inventory.js";
 import { showCharacterSelect, showEndScreen, isScreenOpen } from "./screens.js";
 import { TYPES } from "./roomTypes.js";
+import { openBook, isBookOpen } from "./book.js";
+import { initPanels, lockPanels } from "./panels.js";
 import { ui, minimap, updateHud, drawMinimap, mapRoomAt, setHover } from "./hud.js";
 const THREE = window.THREE;
 
@@ -85,7 +87,8 @@ function startDungeon(dSeed, quiet) {
   if (!quiet) { state.stats.rooms += 1; startRoomEvent(); } // Begrüßungs-Event im Startraum
 }
 
-// Neuer Durchlauf: Volk wählen, dann Ebene 1
+// Neuer Durchlauf: Volk wählen, dann Ebene 1. Nach der Aufblende liegt das Kellerhandbuch offen; erst wenn es zu ist,
+// beginnt das Begrüßungs-Event (docs/GDD.md, Interface, Tutorial)
 function chooseCharacter() {
   showCharacterSelect((def) => {
     state.player = newCharacter(def);
@@ -93,7 +96,9 @@ function chooseCharacter() {
     state.stats = { rooms: 0 };
     setFigure(def.model);
     renderInventory();
-    withFade(() => startDungeon(randomSeed()));
+    withFade(() => startDungeon(randomSeed(), true), {
+      after: () => openBook(state.player, () => { state.stats.rooms += 1; startRoomEvent(); })
+    });
   });
 }
 
@@ -164,7 +169,7 @@ function enterRoom(first) {
 }
 
 function travelTo(k) {
-  if (state.transitioning || k === state.current || !state.visited.has(k) || isDialogOpen() || isScreenOpen()) return;
+  if (state.transitioning || k === state.current || !state.visited.has(k) || isDialogOpen() || isScreenOpen() || isBookOpen()) return;
   withFade(() => {
     state.current = k;
     state.backDoor = null;
@@ -246,6 +251,7 @@ const labelFor = (o) => {
   if (o.userData.kind === "chest") return "Truhe";
   if (o.userData.kind === "campfire") return "Lagerfeuer";
   if (o.userData.kind === "merchant") return "Händler";
+  if (o.userData.kind === "lectern") return "Lesepult: Kellerhandbuch";
   if (o.userData.kind === "boss") return DATA.monsters[state.dungeon.boss].name;
   return "Treppe nach unten";
 };
@@ -291,6 +297,8 @@ renderer.domElement.addEventListener("pointerup", (ev) => {
     approachTile(h.obj.userData.tile, () => openShop());
   } else if (kind === "boss") {
     approachTile(h.obj.userData.tile, startBoss);
+  } else if (kind === "lectern") {
+    approachTile(h.obj.userData.tile, () => openBook(state.player)); // Kellerhandbuch noch einmal lesen
   } else if (kind === "chest") {
     approachTile(h.obj.userData.tile, () => chestEvent(h.obj));
   } else if (kind === "exit") {
@@ -301,6 +309,9 @@ renderer.domElement.addEventListener("pointerup", (ev) => {
 });
 
 renderer.domElement.addEventListener("wheel", (ev) => { ev.preventDefault(); zoomBy(ev.deltaY); }, { passive: false });
+
+// Infokästen: Tasten K, E, C, I gelten nicht im Eingabefeld, bei Volkswahl, Endbildschirm und offenem Handbuch
+initPanels(() => isScreenOpen() || isBookOpen());
 
 // ---------- Start ----------
 // Spieldaten aus data/ laden, dann den ersten Dungeon bauen
@@ -413,6 +424,8 @@ function loop() {
   updateSeeThrough(dt, [player].concat(enemyObjects())); // Innenwände und Säulen um verdeckte Figuren durchsichtig
   updateCombatHud(); // Lebenspunkte und Zahlen über den Köpfen im Kampf
   setDuck(state.eventActive || !!state.combat); // Hintergrund halb so laut während Events und Kämpfen
+  lockPanels(!!state.combat);                   // im Kampf alle Infokästen zu und gesperrt
+  updateZoom(dt, !!state.combat, reduceMotion);  // im Kampf 30 % näher, weicher Übergang
 
   if (state.merchantAnim) state.merchantAnim.update(dt); // Händler steht mit Idle-Animation
 

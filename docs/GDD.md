@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.68 | 13.11.2026 | Interface: Infokästen zum Auf- und Zuklappen (links oben Karte, links unten Entwicklung, rechts oben Charakter und Ausrüstung nebeneinander; Tasten K, E, C, I; Zustand bleibt beim Wechsel der Räume und Ebenen); Balken für Lebenspunkte und Erfahrung; im Kampf alle Kästen zu und gesperrt; Kamera startet ganz herausgezoomt, im Kampf 30 % näher; Kellerhandbuch als Tutorial nach der Volkswahl und per Klick auf das Lesepult der Vorkammer |
 | 2.67 | 13.11.2026 | Waffengröße an den Spielfiguren: Größe in der Hand = size der Waffe (Verhältnis zur Paketgröße) × weaponScale des Volks (Zwerg 0,28, Elf 0,49, Mensch 0,42) |
 | 2.66 | 13.11.2026 | Waffen an den Spielfiguren: angelegte Waffe wird an der Figur gezeigt und wechselt mit dem Inventar; Waffen aus KayKit Fantasy Weapons Bits 1.0 FREE (Langschwert und Buch des Feuers aus KayKit Adventurers); Kurzschwert 0,85 so groß wie das Langschwert; Buch des Feuers zu und offen; Schriftrollen beim Benutzen kurz in der Hand; Kriegsaxt darf den Bart des Zwergs streifen |
 | 2.65 | 06.11.2026 | Mouseover an Türen: goldene Umrisslinie nur am Türblatt, nicht am Rahmen; an Süd- und Osttüren an der Türkachel am Boden; Schloss ohne Umrisslinie; Feld `highlight` in `data/models.json` |
@@ -133,10 +134,33 @@ Das Spiel kennt zwei Modi: freie Erkundung in Echtzeit und rundenbasierte Events
 - **Interaktion:** Klick auf ein Objekt lässt die Figur hinlaufen und interagieren, etwa eine Truhe öffnen.
 - **Raumwechsel:** Klick auf eine Tür. Das Bild blendet kurz ab, die Figur steht im neuen Raum an der gegenüberliegenden Tür.
 - **Startposition:** Zu Beginn jedes Dungeons, auch nach jedem Abstieg, steht die Figur in der Vorkammer am Fuß der Treppe nach oben, auf Kachel 2|4.
-- **Kamera:** Zentriert auf den aktuellen Raum. Die vorderen Wände sind ausgeblendet, damit nichts die Figur verdeckt.
+- **Kamera:** Zentriert auf den aktuellen Raum. Die vorderen Wände sind ausgeblendet, damit nichts die Figur verdeckt. Die Kamera startet ganz herausgezoomt (Zoom 0,7, das Minimum); das Mausrad zoomt bis 2,2. Im Kampf geht sie in einem weichen Übergang 30 % näher als die gewählte Stufe (höchstens bis 2,2) und nach dem Kampf wieder zurück.
 - **Modus-Wechsel:** Löst ein Event aus, stoppt die Bewegung und das Textfenster übernimmt. Events gibt es nur beim ersten Betreten eines Raums, danach durchläuft der Spieler ihn ohne neues Event. Eine Begegnung (siehe Begegnungen) startet statt eines Events direkt den Kampf.
 - **Minimap:** Zeigt besuchte Räume und bekannte Türen. Ein Klick auf einen besuchten Raum reist sofort mit Abblende dorthin, ohne Kosten. Die Figur erscheint in der Raummitte, ist diese blockiert, auf dem nächsten freien Feld. Unbesuchte Räume sind kein Reiseziel. Während eines Events oder Kampfes ist die Schnellreise gesperrt.
 - **Icons auf der Minimap:** Ein Raumtyp kann in `data/room-types.json` im Feld `mapIcon` ein Icon nennen, das auf der Minimap erscheint, sobald der Raum besucht wurde. Alle Icons sind reine weiße Outlines ohne Füllung. Heute: Vorkammer `eingang` (Torbogen, darin Stufen nach oben), Abstieg und Bossraum `abgang` (rechteckiges Bodenfeld, darin Stufen nach unten), Händler `haendler` (Beutel), Rastplatz `rastplatz` (Flamme). Im Bossraum gilt `"mapIconWhen": "bossDefeated"`: Das Icon erscheint erst nach dem Sieg, wenn die Treppe da ist. Vorher hat der Bossraum keine eigene Markierung. Der Rastplatz behält sein Icon auch nach dem Benutzen des Lagerfeuers. Das Icon bleibt sichtbar, wenn die Spielfigur im Raum steht, und nimmt der Schnellreise keine Klickfläche weg.
+
+## Interface
+
+Alle Anzeigen am Rand sind Infokästen über der 3D-Szene. Das Textfenster bleibt unten in der Mitte.
+
+| Kasten | Lage | Taste | Inhalt |
+| --- | --- | --- | --- |
+| Karte | links oben | K | Name des Raums, Ebene und Thema, Minimap |
+| Entwicklung | links unten | E | Position, Maus über, Weg, Räume besucht, „Ganze Karte zeigen“, Seed. Bleibt nur, solange das Spiel entwickelt wird |
+| Charakter | rechts oben, links neben Ausrüstung | C | Figur und Stufe, Ebene, Lebenspunkte mit Balken, Erfahrung mit Balken (bis zur nächsten Stufe), Gold, Attribute, Fähigkeit |
+| Ausrüstung | rechts oben, ganz außen | I | Waffe, Rüstung, Rucksack |
+
+- **Auf- und Zuklappen:** Ein Klick auf die Titelleiste (Symbol, Titel, Taste, Pfeil) oder die Taste klappt den Kasten auf und zu. Zu ist nur die Titelleiste zu sehen. Die Tasten gelten nicht in Eingabefeldern, bei Volkswahl, Endbildschirm und offenem Handbuch.
+- **Zustand:** Beim Laden der Seite sind alle Kästen offen. Was der Spieler auf- oder zuklappt, bleibt beim Wechsel der Räume und Ebenen und nach dem Tod so, aber nicht über ein Neuladen der Seite.
+- **Kampf:** Solange ein Kampf läuft, sind alle Kästen zu, ihre Titelleisten abgedunkelt und nicht klickbar (auch die Tasten nicht). Nach dem Kampf gehen sie wieder so auf wie vorher. Kampffenster und Lebenspunkte über den Figuren bleiben.
+- **Balken:** Lebenspunkte grün (rot ab 4 oder weniger, wie die Zahl), Erfahrung in der Akzentfarbe.
+
+### Tutorial: das Kellerhandbuch
+
+- **Wann:** Nach der Volkswahl, sobald die Vorkammer aufgeblendet ist. Erst wenn das Buch zu ist, beginnt das Begrüßungs-Event. Später öffnet ein Klick auf das Lesepult der Vorkammer das Buch noch einmal (die Figur läuft hin; Mouseover „Lesepult: Kellerhandbuch“).
+- **Darstellung:** Ein aufgeschlagenes Buch von oben, groß in der Mitte über dem abgedunkelten Raum, darüber Titel und Untertitel. Modell `assets/ui/handbuch.glb`: `Spellbook_open` aus KayKit Adventurers (`Mage.glb`, CC0), Einband lederbraun `#7A4E2C`, Seiten Pergament `#EEDEBA` (Textur aus `tools/weapon-texture.py`). Der Text liegt als HTML auf den Seiten (Überschrift in der Display-Schrift, Fließtext dunkelbraun). Fehlt das Modell, zeichnet CSS ein schlichtes Buch.
+- **Bedienung:** Doppelseiten. Knöpfe „Überspringen“ (Esc), „Zurückblättern“ (←, ab der zweiten Doppelseite), „Umblättern“ (→), auf der letzten Doppelseite „Ab in den Keller“. Punkte zeigen die Doppelseite.
+- **Text:** In `data/texts.json` unter `tutorial` (Titel, Untertitel, Seiten mit Titel, Absätzen und optional Unterschrift). Platzhalter `{volk}`, `{faehigkeit}`, `{attribut}` für die gewählte Figur, `**Wort**` wird fett. Die Seitenzahl ist gerade. Heute vier Seiten: Vorwort, Laufen und Klicken, Ereignisse und Kämpfe, Kram und Kästen.
 
 ## Regelwerk
 
@@ -442,11 +466,11 @@ Spielerwürfe rollen als 3D-Würfel. Die Anzeige ändert keine Regel: Der Regelc
 - **Ablauf:** Option wählen, das Textfenster bleibt ohne Optionen stehen, die Würfel rollen und landen. Nach 0,4 Sekunden Haltezeit erscheint das Ergebnis im Textfenster. Bei einem Treffer folgt zuerst der Schadenswurf. Die Figur schlägt zu, wenn der W20 gelandet ist, und der Gegner reagiert, wenn der Schaden gelandet ist.
 - **Volks-Fähigkeit:** Das Angebot, eine misslungene Probe zu retten, erscheint nach der Landung. Der Würfel bleibt dabei auf dem gewürfelten Wert liegen.
 - **Überspringen:** Ein Klick in den Raum oder eine beliebige Taste setzt die Würfel sofort auf die Endlage. Mit `prefers-reduced-motion` liegen sie ohne Flug gleich dort.
-- **Würfelfeld:** Eine durchsichtige Ebene über dem ganzen Raum, ohne Hintergrund und ohne Rahmen. Die Würfel haben keinen Kontakt zu Figuren, Möbeln oder Wänden. Sie liegen über dem Raum und unter Textfenster, Infotafel und Inventar.
+- **Würfelfeld:** Eine durchsichtige Ebene über dem ganzen Raum, ohne Hintergrund und ohne Rahmen. Die Würfel haben keinen Kontakt zu Figuren, Möbeln oder Wänden. Sie liegen über dem Raum und unter Textfenster und Infokästen.
 - **Bewegung:** Die Würfel rollen von rechts herein und blenden dabei in den ersten 0,3 Sekunden ein. Sie bleiben in der Raummitte liegen. Bei der nächsten Auswahl oder beim Schließen des Textfensters blenden sie in 0,2 Sekunden aus. Folgt ein weiterer Wurf, blenden sie zuerst aus.
 - **Größe und Blick:** 200 Pixel pro Einheit, ein W20 ist also rund 200 Pixel groß; in schmalen Browserfenstern wird das kleiner (Breite durch 4). Die Kamera schaut mit 78° steiler als die Raumkamera, damit die obere Seite klar zur Kamera zeigt.
 - **Schatten:** Die Würfel werfen einen weichen Schatten auf die unsichtbare Ebene. Er liegt auch über Figuren und Möbeln. Würfelfeld und Licht sind eine eigene Szene und zählen nicht zu den höchstens zwei schattenwerfenden Lichtern des Raums.
-- **Mehrere Würfel:** Jeder Würfel fliegt einzeln und berührt die anderen nicht. Zwei Würfel liegen nebeneinander, vier als Quadrat, damit sie die Infotafel nicht berühren.
+- **Mehrere Würfel:** Jeder Würfel fliegt einzeln und berührt die anderen nicht. Zwei Würfel liegen nebeneinander, vier als Quadrat, damit sie die Infokästen nicht berühren.
 - **Aussehen:** Würfelkörper aus Grundformen mit flacher Schattierung in `#F0E5D3`, Ziffern in `#2A2230`. Gold und Gefahr-Rot werden nicht benutzt. 6 und 9 sind unterstrichen. Der W10 zeigt 1 bis 10. Der W4 trägt drei Zahlen pro Seite, es gilt die Zahl an der oberen Spitze. Eine gewürfelte 20 oder 1 hat keine eigene Darstellung, weil es keine Regel für kritische Treffer gibt.
 - **Aufzeichnung:** Die Flugbahnen entstehen vorab mit einer Physik-Simulation (`tools/record-dice.mjs`, `npm run build:dice`) und liegen in `data/dice-rolls.json`. Das Spiel braucht zur Laufzeit keine Physik-Engine. Pro Würfelsatz gibt es 8 Aufnahmen, höchstens 1,8 Sekunden lang, das Spiel wählt eine zufällig.
 - **Ergebnis festlegen:** Alle Würfel sind symmetrisch. Der Würfel wird vor dem Abspielen in sich so gedreht, dass die Seite mit dem gewünschten Wert dort liegt, wo die Aufnahme oben endet. Die Flugbahn bleibt dabei gleich. Passen mehrere Drehungen, gilt die, bei der die Zahl am aufrechtesten liegt.
@@ -1018,3 +1042,7 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Die Spielfigur zeigt immer die angelegte Waffe (eigene Dateien aus KayKit Fantasy Weapons Bits, Langschwert und Buch des Feuers aus KayKit Adventurers); Schriftrollen beim Benutzen kurz in der Hand
 - [x] Die Kriegsaxt darf in der Zweihand-Haltung den Bart des Zwergs streifen; Bart und Haltung bleiben, wie sie sind
 - [x] Die Waffe wächst mit der Figur: size der Waffe (Verhältnis zur Paketgröße) mal weaponScale des Volks
+- [x] Interface aus Infokästen: Karte links oben, Entwicklung links unten (nur während der Entwicklung), Charakter und Ausrüstung rechts oben nebeneinander; Tasten K, E, C, I; Balken für Lebenspunkte und Erfahrung; Zustand bleibt beim Wechsel der Räume und Ebenen, nicht über ein Neuladen
+- [x] Im Kampf alle Infokästen zu und gesperrt, danach wie vorher; Kamera 30 % näher
+- [x] Die Kamera startet ganz herausgezoomt
+- [x] Tutorial als Kellerhandbuch (KayKit-Zauberbuch in Braun) nach der Volkswahl, erneut per Klick auf das Lesepult der Vorkammer

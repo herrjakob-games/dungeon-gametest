@@ -3,6 +3,8 @@
 #   Eismesser:       Weapons-Bits-Textur, alle kühlen Metallflächen (blaugrau) werden eisblau #8CC8F0; Griff und Holz bleiben
 #   Buch des Feuers: Textur des Mage (KayKit Adventurers), das Magenta des Einbands wird feuerrot #C8461E; Riemen und
 #                    Beschläge bleiben
+#   Kellerhandbuch:  dieselbe Textur, Einband lederbraun #7A4E2C, weiße und blaugraue Seiten pergamentfarben #EEDEBA
+#                    (Tutorial nach der Volkswahl, Modell assets/ui/handbuch.glb)
 # Die Helligkeit jedes Pixels bleibt im Verhältnis erhalten (Verlauf und Kanten), wie bei den Figuren-Texturen.
 # Aufruf: python3 tools/weapon-texture.py   (braucht Pillow)
 import colorsys
@@ -52,6 +54,17 @@ def magenta(r, g, b):  # Einband des Zauberbuchs
     return s > 0.45 and v > 0.25 and (h > 0.85 or h < 0.0)
 
 
+def parchment(im):  # helle, fast farblose Pixel (Seiten) werden Pergament; die Helligkeit bleibt als leichter Verlauf
+    px = im.load()
+    for y in range(im.height):
+        for x in range(im.width):
+            r, g, b, a = px[x, y]
+            h, s, v = colorsys.rgb_to_hsv(r / 255, g / 255, b / 255)
+            if v > 0.62 and s < 0.22:
+                f = 0.86 + 0.14 * (v - 0.62) / 0.38
+                px[x, y] = (round(238 * f), round(222 * f), round(186 * f), a)
+
+
 OUT.mkdir(parents=True, exist_ok=True)
 jobs = [
     ("eismesser_texture.png", Image.open(ROOT / "assets/source/kaykit-weapons-bits/weapons_bits_texture.png").convert("RGBA"), cool_metal, "#8CC8F0"),
@@ -61,3 +74,12 @@ for name, im, match, color in jobs:
     n = recolor(im, match, color)
     im.save(OUT / name)
     print("geschrieben:", (OUT / name).relative_to(ROOT), "(" + str(n) + " Pixel umgefärbt)")
+
+# Kellerhandbuch: Einband braun, Seiten Pergament
+UI = ROOT / "assets/textures/ui"
+UI.mkdir(parents=True, exist_ok=True)
+im = glb_image(ROOT / "assets/source/kaykit-adventurers/Mage.glb")
+n = recolor(im, magenta, "#7A4E2C")
+parchment(im)
+im.save(UI / "handbuch_texture.png")
+print("geschrieben:", (UI / "handbuch_texture.png").relative_to(ROOT), "(" + str(n) + " Pixel umgefärbt, Seiten Pergament)")
