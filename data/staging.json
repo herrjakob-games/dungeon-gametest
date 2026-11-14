@@ -254,6 +254,19 @@
       "face": "random",
       "animation": "sit_floor",
       "_": "Schlafende Wache, sitzt am Boden an einer Säule; ohne Sitz-Animation liegend (flat)"
+    },
+    "am_amboss": {
+      "props": [
+        "amboss"
+      ],
+      "offset": [
+        0,
+        0,
+        1
+      ],
+      "face": "player",
+      "animation": "idle",
+      "_": "Der Schmied steht neben dem Amboss (Schmiede der Zwergenminen); ohne Amboss gilt der Standard"
     }
   },
   "figures": {
@@ -841,14 +854,16 @@
     "schmiede_meisterprobe": {
       "figures": [
         {
-          "figure": "zwergenschmied"
+          "figure": "zwergenschmied",
+          "anchor": "am_amboss"
         }
       ]
     },
     "schmiede_schaerfen": {
       "figures": [
         {
-          "figure": "zwergenschmied"
+          "figure": "zwergenschmied",
+          "anchor": "am_amboss"
         }
       ]
     },

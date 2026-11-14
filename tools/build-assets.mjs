@@ -4,6 +4,7 @@
 // - Einfache Teile: Paketdatei übernehmen und unter der id ablegen.
 // - Zusammengesetzte Teile: mehrere Paketdateien mit Position, Drehung und Skalierung zu einer GLB.
 // - uvShift: Farbe eines Teils über die Paletten-Textur ändern (Fahnen in Farben, die das Paket nicht hat).
+// - keepTexture: eigene Paket-Textur bleibt (Schmiede: RPG Tools Bits, Resource Bits); rotation auch als [x, y, z].
 // - source: anderes Paket als Dungeon Remastered; stretchY streckt nur den Schaft, uvRemap setzt die Paletten-Textur auf.
 // - Eingebettete Texturen werden entfernt; das Spiel setzt die gemeinsame Paletten-Textur des Themas.
 // - Figuren (figures): Paketfigur abspecken, schreibt assets/figures/<id>.glb. FBX wird vorher mit FBX2glTF
@@ -41,7 +42,12 @@ const hexColor = (h) => [1, 3, 5].map(i => Math.pow(parseInt(h.slice(i, i + 2), 
 function wrap(doc, scene, name, piece) {
   const parent = doc.createNode(name);
   if (piece.position) parent.setTranslation(piece.position);
-  if (piece.rotation) {
+  if (Array.isArray(piece.rotation)) {
+    // [x, y, z] in Grad, Reihenfolge XYZ wie in Three.js (etwa der liegende Hammer auf dem Amboss)
+    const [x, y, z] = piece.rotation.map(d => d * Math.PI / 360);
+    const [cx, cy, cz, sx, sy, sz] = [Math.cos(x), Math.cos(y), Math.cos(z), Math.sin(x), Math.sin(y), Math.sin(z)];
+    parent.setRotation([sx * cy * cz + cx * sy * sz, cx * sy * cz - sx * cy * sz, cx * cy * sz + sx * sy * cz, cx * cy * cz - sx * sy * sz]);
+  } else if (piece.rotation) {
     const a = (piece.rotation * Math.PI) / 180;
     parent.setRotation([0, Math.sin(a / 2), 0, Math.cos(a / 2)]);
   }
@@ -113,9 +119,13 @@ async function build(id, recipe) {
     }));
     if (!moved) throw new Error(id + ": uvShift trifft keine Texturkoordinaten");
   }
-  // Texturen entfernen: der Lader setzt die Paletten-Textur des Themas
-  root.listMaterials().forEach(m => m.setBaseColorTexture(null));
-  root.listTextures().forEach(t => t.dispose());
+  // Texturen entfernen: der Lader setzt die Paletten-Textur des Themas. keepTexture: eigene Textur des Pakets bleibt
+  // (RPG Tools Bits, Resource Bits), matt ohne Metallglanz
+  if (recipe.keepTexture) root.listMaterials().forEach(m => { m.setMetallicFactor(0); m.setRoughnessFactor(1); });
+  else {
+    root.listMaterials().forEach(m => m.setBaseColorTexture(null));
+    root.listTextures().forEach(t => t.dispose());
+  }
   root.setDefaultScene(main);
   root.listScenes().filter(s => s !== main).forEach(s => s.dispose());
   // keepAttributes: die Texturkoordinaten bleiben, obwohl die eingebettete Textur entfernt ist (Paletten-Textur nutzt sie)

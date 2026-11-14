@@ -1,6 +1,6 @@
 {
   "source": "assets/source/kaykit-dungeon-remastered/gltf/",
-  "notes": "Positionen, Drehungen (Grad um y) und Skalierungen in KayKit-Einheiten. Den Faktor 0,5 und die Lage im Raum setzt data/models.json. uvShift: Texturkoordinaten im Bereich area [u0, v0, u1, v1] um u verschieben (Farbe aus der Paletten-Textur; Fahnen: Rot 0, Gelb +0,125, Blau +0,375, Grün −0,25). source: Ordner eines anderen Pakets (etwa kaykit-dungeon-pack). stretchY {split, height}: nur Ecken über split wandern nach oben, bis das Teil height hoch ist (Schaft strecken, Fuß und Kopf bleiben). uvRemap {u, v: [unten, oben]}: Texturkoordinaten auf eine Fläche der Paletten-Textur (Wandstein).",
+  "notes": "Positionen, Drehungen (Grad um y) und Skalierungen in KayKit-Einheiten. Den Faktor 0,5 und die Lage im Raum setzt data/models.json. uvShift: Texturkoordinaten im Bereich area [u0, v0, u1, v1] um u verschieben (Farbe aus der Paletten-Textur; Fahnen: Rot 0, Gelb +0,125, Blau +0,375, Grün −0,25). source: Ordner eines anderen Pakets (etwa kaykit-dungeon-pack). stretchY {split, height}: nur Ecken über split wandern nach oben, bis das Teil height hoch ist (Schaft strecken, Fuß und Kopf bleiben). uvRemap {u, v: [unten, oben]}: Texturkoordinaten auf eine Fläche der Paletten-Textur (Wandstein). keepTexture: eigene Textur des Pakets bleibt (data/models.json mit palette: false). rotation: Grad um y oder [x, y, z].",
   "parts": {
     "boden": {
       "dir": "tiles",
@@ -922,6 +922,141 @@
     "kerzenstummel": {
       "dir": "props",
       "file": "candle_melted.gltf.glb"
+    },
+    "amboss": {
+      "dir": "props",
+      "source": "assets/source/kaykit-rpg-tools-bits/",
+      "keepTexture": true,
+      "pieces": [
+        {
+          "file": "anvil.gltf",
+          "position": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "file": "hammer.gltf",
+          "position": [
+            0.1,
+            0.963,
+            0.02
+          ],
+          "rotation": [
+            90,
+            0,
+            -15
+          ]
+        }
+      ]
+    },
+    "schleifstein": {
+      "dir": "props",
+      "source": "assets/source/kaykit-rpg-tools-bits/",
+      "keepTexture": true,
+      "pieces": [
+        {
+          "file": "grindstone.gltf",
+          "position": [
+            -0.268,
+            0,
+            -0.035
+          ]
+        }
+      ]
+    },
+    "wassereimer": {
+      "dir": "props",
+      "source": "assets/source/kaykit-rpg-tools-bits/",
+      "keepTexture": true,
+      "file": "bucket_metal.gltf"
+    },
+    "zange": {
+      "dir": "props",
+      "source": "assets/source/kaykit-rpg-tools-bits/",
+      "keepTexture": true,
+      "file": "tongs.gltf"
+    },
+    "eisenlager": {
+      "dir": "props",
+      "source": "assets/source/kaykit-resource-bits/",
+      "keepTexture": true,
+      "pieces": [
+        {
+          "file": "Iron_Bars_Stack_Small.gltf",
+          "position": [
+            -1,
+            0,
+            -0.58
+          ],
+          "rotation": 8
+        },
+        {
+          "file": "Iron_Bars_Stack_Small.gltf",
+          "position": [
+            1,
+            0,
+            -0.58
+          ],
+          "rotation": -10
+        }
+      ]
+    },
+    "eisenbarren": {
+      "dir": "props",
+      "source": "assets/source/kaykit-resource-bits/",
+      "keepTexture": true,
+      "file": "Iron_Bar.gltf"
+    },
+    "kohle": {
+      "dir": "props",
+      "source": "assets/source/kaykit-resource-bits/",
+      "keepTexture": true,
+      "pieces": [
+        {
+          "file": "Iron_Nuggets.gltf",
+          "position": [
+            -0.077,
+            0.032,
+            0.023
+          ]
+        }
+      ]
+    },
+    "kohle_gross": {
+      "dir": "props",
+      "source": "assets/source/kaykit-resource-bits/",
+      "keepTexture": true,
+      "pieces": [
+        {
+          "file": "Iron_Nugget_Large.gltf",
+          "position": [
+            -0.01,
+            0.23,
+            -0.008
+          ]
+        }
+      ]
+    },
+    "kohle_klein": {
+      "dir": "props",
+      "source": "assets/source/kaykit-resource-bits/",
+      "keepTexture": true,
+      "pieces": [
+        {
+          "file": "Iron_Nugget_Medium.gltf",
+          "position": [
+            0.018,
+            0.139,
+            0.007
+          ]
+        }
+      ]
+    },
+    "tisch_mittel": {
+      "dir": "props",
+      "file": "table_medium.gltf.glb"
     }
   },
   "figureSource": "assets/source/kaykit-adventurers/",
