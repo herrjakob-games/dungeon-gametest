@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.70 · Nov 14, 2026 · @Christian
+Version 2.71 · Nov 14, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.71 | 14.11.2026 | Zwergenminen: eckige Pfeiler (`pfeiler`, KayKit Dungeon Pack 1.1 FREE `column`) auf Raumhöhe statt Säulen; neues Feld `propModels` in `data/themes.json` (anderes Modell für ein Requisit im Thema, die id bleibt); Säulenfackeln mit Abstand aus der halben Breite (`pillarTorch`) |
 | 2.70 | 14.11.2026 | Säulenhalle: immer 8 Säulen in zwei festen Reihen, Layout A (Reihen Nord–Süd) und B (West–Ost) mit Feld `axis`, Layout passt zum Türpaar, Mittelgang frei; Säulenhalle nur in Räumen mit gegenüberliegendem Türpaar (`doorPair`); bleibt dadurch kein Raumtyp unter seiner Höchstzahl frei, darf die Höchstzahl überschritten werden |
 | 2.69 | 14.11.2026 | Fahnen: Farbe pro Thema (`bannerColor`: Keller und Katakomben gelb, Zwergenminen blau, Goblin-Höhlen und Ork-Lager grün), feste Farbvarianten entfallen; Varianten `<farbe>` und `wappen_<farbe>` (fahne), `<farbe>` (fahne_dreifach); `door-sides` mit Ausweichen neben die Türfackel und nur als Paar, neu `wall-center` für Wände ohne Tür (Fackeln dort auf 2 und 8); Abstandsregel für Fahnen; Fahnen pro Raumtyp neu (Wachstube, Speisesaal, Säulenhalle, Schatzkammer, Abstieg, Bossraum) |
 | 2.68 | 13.11.2026 | Interface: Infokästen zum Auf- und Zuklappen (links oben Karte, links unten Entwicklung, rechts oben Charakter und Ausrüstung nebeneinander; Tasten K, E, C, I; Zustand bleibt beim Wechsel der Räume und Ebenen); Balken für Lebenspunkte und Erfahrung; im Kampf alle Kästen zu und gesperrt; Kamera startet ganz herausgezoomt, im Kampf 30 % näher; Kellerhandbuch als Tutorial nach der Volkswahl und per Klick auf das Lesepult der Vorkammer |
@@ -107,7 +108,7 @@ Das Spiel läuft im Browser auf Basis von Three.js. Claude schreibt den Code, Ch
 | Plattform | Browser, nur Desktop |
 | 3D-Bibliothek | Three.js (WebGL) |
 | Kamera | Orthografisch, fester Iso-Winkel (45° gedreht, ca. 35° geneigt) |
-| Modelle | Low-Poly im Format glTF/GLB, Pakete KayKit Dungeon Remastered, Adventurers und Skeletons (CC0) im Maßstab 0,5, dazu KI-Modelle; fehlende Modelle bleiben Platzhalter aus Grundformen. |
+| Modelle | Low-Poly im Format glTF/GLB, Pakete KayKit Dungeon Remastered, Dungeon Pack 1.1 FREE, Adventurers, Skeletons und Fantasy Weapons Bits (CC0) im Maßstab 0,5, dazu KI-Modelle; fehlende Modelle bleiben Platzhalter aus Grundformen. |
 | Spieldaten | JSON-Dateien für Raumtypen, Einrichtung, Events, Monster und Gegenstände |
 | Text-UI | HTML-Fenster über der 3D-Szene |
 | Sound | MP3 über die Web Audio API, Zuordnung in `data/sounds.json`; ohne festgelegten Sound bleibt es still |
@@ -506,6 +507,7 @@ Ein Dungeon wie aus warmem Ton geknetet: weiche, blockige Formen, gedeckte Erdt�
 **Referenzen**
 
 - KayKit Dungeon Remastered: Formensprache und Baukasten; eine gemeinsame Atlas-Textur, daher zentral umfärbbar.
+- KayKit Dungeon Pack 1.1 FREE (Kay Lousberg, CC0): der eckige Pfeiler `column` der Zwergenminen; das Paket hat eine eigene Textur, der Pfeiler bekommt beim Bau die Steinfläche der Paletten-Textur.
 - KayKit Adventurers und Skeletons: Figurenproportionen und ein gemeinsames Rig, Animationen sind übertragbar.
 - Wallace & Gromit: Materialgefühl (Knete, Wolle, abgenutztes Holz), Wärme, übergroße Alltagsgegenstände als Gag.
 - Tunic: Low-Poly-Figuren in Iso-Ansicht, trotz dunkler Räume klar lesbar.
@@ -534,6 +536,8 @@ Ein Dungeon wie aus warmem Ton geknetet: weiche, blockige Formen, gedeckte Erdt�
 - Deko nutzt nie Akzentfarben.
 - Pro Thema wechseln Boden, Wand, Akzent, Fackel und Grundlicht. Technisch wechselt der Code dafür die Paletten-Textur (`assets/textures/<thema>/`).
 - Fahnenfarbe pro Thema (`bannerColor` in `data/themes.json`): Keller und Katakomben gelb, Zwergenminen blau, Goblin-Höhlen und Ork-Lager grün. Alle Fahnen eines Raums nehmen die Farbe ihres Themas; feste Farben pro Raumtyp gibt es nicht.
+- Requisiten-Modelle pro Thema (`propModels` in `data/themes.json`): Ein Thema kann für ein Requisit ein anderes Modell nehmen, etwa `"propModels": { "saeule": "pfeiler" }`. Die id bleibt, damit Platzierung, Blockieren, Säulenfackeln, Durchblick, Anker und Events gleich bleiben; nur das Modell wechselt.
+- Zwergenminen: Statt runder Säulen stehen eckige Pfeiler auf Raumhöhe (2 Kacheln) als Stollenstützen, in Steinfarbe der Wand (`#55504C`), matt. Das gilt für jede Säule im Thema: Säulenhalle, Schrein, Schatzkammer, Bossraum und die Säulen der älteren Einrichtungsmuster (Bibliothek, Schmiede, Bossraum). Andere Themen behalten die Säule; die liegende Säule (`saeule_liegend`) ist nicht betroffen.
 
 | Thema | Boden | Wand | Akzent | Fackel | Grundlicht |
 | --- | --- | --- | --- | --- | --- |
@@ -649,7 +653,7 @@ Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kan
 - **Varianten:** `layouts` enthält eine oder mehrere Varianten. Der Raum-Seed wählt eine davon, gleicher Seed ergibt gleiche Einrichtung.
 - **Platzierung (`place`):** `center` (Raummitte), `wall-back` (an der Nord- oder Westwand, weil die vorderen Wände nur Sockel sind), `corner` (in einer Ecke, bei `count` über 1 in verschiedenen Ecken), `free` (beliebige freie Kachel), `around:<prop>` (um ein anderes Requisit herum, etwa Stühle um die Tafel), `above:<prop>` (über einem anderen Requisit, etwa der Kronleuchter über der Tafel), `tile:x|y` (genau diese Kachel, etwa die Säulen der Schatzkammer; ohne Korrektur, passt sie nicht, fällt das Requisit weg), `door-sides` (Fahne auf der Wandkachel neben dem Türrahmen, an der Nordwand 3|1 und 7|1, an der Westwand 1|3 und 1|7; hängt dort die Türfackel, rückt die Fahne auf 8, direkt neben die Fackel. Immer als Paar: passt eine Seite nicht, etwa wegen der Treppe in der Nordwest-Ecke, eines Pflichtstücks oder einer Kollision, fallen beide an dieser Tür weg. Nur an Nord- und Westtüren, weil die vorderen Wände nur Sockel sind), `wall-center` (nur an einer Nord- oder Westwand ohne Tür: das 2 Kacheln breite Modell hängt um eine halbe Kachel versetzt optisch mittig über Kachel 5 und reserviert die Kacheln 4 bis 6; die Wandfackeln dieser Wand hängen dann auf 2 und 8. Passt es nicht, fällt die Fahne weg, ohne Ausweichen). Bei Fahnen entscheidet die Wand: Wand mit Tür → `door-sides`, Wand ohne Tür → `wall-center`.
 - **Säulenhalle:** Immer 8 Säulen in zwei Reihen zu je 4, als Pflichtstücke mit `tile:x|y`; es fehlt keine Säule. Zwei Layouts mit dem Feld `axis`: **A, Reihen Nord–Süd** (`"axis": "ns"`) auf 3|2, 3|4, 3|6, 3|8, 7|2, 7|4, 7|6, 7|8; **B, Reihen West–Ost** (`"axis": "we"`) auf 2|3, 4|3, 6|3, 8|3, 2|7, 4|7, 6|7, 8|7. Die Reihen laufen auf ein gegenüberliegendes Türpaar zu: A braucht Türen Nord und Süd, B West und Ost, die beiden anderen Türen sind frei. Der Code wählt nur Layouts, deren Achse zu einem vorhandenen Türpaar passt; hat der Raum beide Paare, wählt der Raum-Seed. Der Mittelgang (Kacheln 4 bis 6 quer zu den Reihen) bleibt frei; Waffenständer und alle anderen Requisiten stehen nur auf freien Kacheln, nie auf Säulenkacheln und nie im Mittelgang, Türkachel und Kachel davor bleiben frei, auch bei den freien Türen. Fackeln an 3 bis 4 zufälligen Säulen auf der Seite zum Gang. Fahnen wie im Abschnitt Fahnen pro Raumtyp; dass die Säulen 3|2 und 7|2 in Layout A die Türfahnen auf 3|1 und 7|1 teilweise verdecken, ist akzeptiert.
-- **Fackeln an Säulen (`torches`):** Mit `"torches": "saeulen"` in der Einrichtung hängen keine Fackeln an den Wänden, und die Lichter der vorderen Fackeln fallen weg. Stattdessen trägt jede Säule eine leuchtende Fackel auf der Seite zur Raummitte; Säulen in Reihen (Säulenhalle, Layout mit `axis`) tragen sie auf der Seite zum Gang. Heute so in der Schatzkammer und im Brunnenraum (alle Säulen) sowie in der Säulenhalle (3 bis 4 zufällige Säulen).
+- **Fackeln an Säulen (`torches`):** Mit `"torches": "saeulen"` in der Einrichtung hängen keine Fackeln an den Wänden, und die Lichter der vorderen Fackeln fallen weg. Stattdessen trägt jede Säule eine leuchtende Fackel auf der Seite zur Raummitte, mittig auf der Fläche; der Abstand zur Mitte ist die halbe Breite des Modells in Fackelhöhe (`pillarTorch` in `data/models.json`: Säule 0,3, Pfeiler 0,295); Säulen in Reihen (Säulenhalle, Layout mit `axis`) tragen sie auf der Seite zum Gang. Heute so in der Schatzkammer und im Brunnenraum (alle Säulen) sowie in der Säulenhalle (3 bis 4 zufällige Säulen).
 - **Anzahl der Fackeln (`torchCount`):** Zahl oder Bereich `[von, bis]`. Mit `torches: "saeulen"` zählt es die Säulen mit Fackel, sonst die Wandfackeln an Nord- und Westwand (Auswahl nach Raum-Seed); dann fallen auch die Lichter der vorderen Fackeln weg. `torchFlame` (Farbe) legt eine eigene Flamme über die des Modells. Heute: Gruft mit zwei Fackeln, Licht `#5d86e0`, Flamme `#8fb4ff`.
 - **Brunnenraum:** Es gibt nur eine Variante. Der Brunnen steht als Pflichtstück in der Raummitte (5|5), Säulen stehen fest auf 2|2, 8|2, 2|8 und 8|8. An jeder Säule hängt eine leuchtende Fackel zur Raummitte, an den Wänden gibt es weder Fackeln noch Wanddekoration. Dazu kommen flach Moos, Pfütze und Geröll, aber keine blockierenden Requisiten.
 - **Fahnen pro Raumtyp** (auch in `themeDecor`): Wachstube: Wand mit Tür `fahne` `wappen_<farbe>`, Wand ohne Tür keine Fahne. Speisesaal: Wand mit Tür `fahne` `<farbe>`, Wand ohne Tür `fahne_dreifach`. Säulenhalle: Wand mit Tür `fahne` `wappen_<farbe>`, Wand ohne Tür `fahne_dreifach`; die Waffenständer bleiben, mit Abstand. Schatzkammer: Wand mit Tür keine Fahne, Wand ohne Tür `fahne_dreifach`. Abstieg und Bossraum: Wand mit Tür `fahne` `wappen_<farbe>`, Wand ohne Tür `fahne_dreifach`. Alle übrigen Raumtypen haben keine Fahnen, der Brunnenraum weiterhin keine Wanddekoration. Die Farbvarianten, die KayKit nicht hat (Wappenfahne gelb, blau, grün; dreifache Fahne grün), entstehen aus der roten Fahne: Der Bau verschiebt die Texturkoordinaten des Stoffs auf das Farbfeld der Paletten-Textur (`uvShift`), so wie sich auch die Paketfarben unterscheiden.
@@ -671,6 +675,7 @@ Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kan
 | id | Requisit | Größe | Blockiert | Anklickbar | Eigenes Licht | Für |
 | --- | --- | --- | --- | --- | --- | --- |
 | saeule | Säule | 1 | ja | nein | nein | mehrere |
+| pfeiler | Eckiger Pfeiler (KayKit Dungeon Pack 1.1 FREE `column.gltf`, CC0), 2 Kacheln hoch, Grundfläche wie die Säule (0,75 Kacheln); nur der Schaft ist gestreckt, Fuß und Kopf behalten ihre Höhe; Modell der Säule in den Zwergenminen (`propModels`) | 1 | ja | nein | nein | Zwergenminen statt `saeule` |
 | saeule_liegend | Umgestürzte Säule | 2×1 | ja | nein | nein | Säulenhalle |
 | fass | Fass, meist als Gruppe aus 3 (`variant: gruppe`) | 1 | ja | nein | nein | mehrere |
 | kiste | Kiste | 1 | ja | nein | nein | mehrere |
@@ -1055,3 +1060,4 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Fahnen bleiben bei der Reihenfolge Pflichtstücke, große Wandrequisiten, Fahnen; dass Fahnen dadurch oft wegfallen (in Abstieg und Bossraum die Türbanner immer, wegen der Treppe), ist so gewollt
 - [x] Säulenhalle: immer 8 Säulen in zwei Reihen (Layout A Nord–Süd, B West–Ost, Feld `axis`), die Reihen laufen auf ein gegenüberliegendes Türpaar zu; Säulenhalle nur in Räumen mit Türpaar N+S oder W+O (`doorPair`), bevorzugt an Kreuzungen; Mittelgang frei
 - [x] Höchstzahlen dürfen überschritten werden, wenn für einen Raum kein erlaubter Raumtyp mehr frei ist (Folge der Türpaar-Regel der Säulenhalle, vor allem Zwergenminen Ebene 9)
+- [x] Zwergenminen: eckige Pfeiler (KayKit Dungeon Pack 1.1 FREE `column`) auf Raumhöhe statt Säulen, über `propModels` (die id `saeule` bleibt); Fackeln mittig auf der Pfeilerfläche

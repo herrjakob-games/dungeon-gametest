@@ -41,3 +41,7 @@ export function monsterHpBonus(themes, depth) {
   if (depth >= last) return depth - last;
   return (depth - 1) % LEVELS_PER_THEME;
 }
+
+// Modell eines Requisits im Thema (docs/GDD.md, propModels in data/themes.json): etwa in den Zwergenminen der eckige
+// Pfeiler statt der Säule. Die id des Requisits bleibt (Platzierung, Fackeln, Durchblick, Anker), nur das Modell wechselt.
+export const modelIdFor = (theme, id) => (theme && theme.propModels && theme.propModels[id]) || id;

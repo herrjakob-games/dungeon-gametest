@@ -25,6 +25,14 @@ Quelle und Lizenz jeder fremden Datei (docs/GDD.md, Asset-Spezifikation).
 - Daraus gebaut (`npm run build:assets`): alle Dateien in `tiles/` und `props/`.
 - `textures/keller/dungeon_texture.png` ist eine umgefärbte Fassung der Paletten-Textur (`tools/palette-texture.py`).
 
+## KayKit Dungeon Pack 1.1 FREE
+
+- Autor: Kay Lousberg (www.kaylousberg.com)
+- Lizenz: CC0 1.0 (Creative Commons Zero), siehe `source/kaykit-dungeon-pack/License.txt` (aus dem Paket)
+- Quelle: itch.io-Seite von Kay Lousberg, Fassung 1.1 FREE (hochgeladen von Christian)
+- Übernommene Dateien (in `source/kaykit-dungeon-pack/`, aus `gltf/`): column.gltf, column.bin, dungeon_texture.png
+- Daraus gebaut (`npm run build:assets`): `props/pfeiler.glb` (Schaft auf 2 Kacheln Gesamthöhe gestreckt, Texturkoordinaten auf die Steinfläche der Paletten-Textur gesetzt)
+
 ## KayKit Character Pack: Adventurers 1.0
 
 - Autor: Kay Lousberg (www.kaylousberg.com)

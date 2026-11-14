@@ -335,7 +335,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawMinima
 
 // ---------- Testmodus (lokal und auf GitHub Pages) ----------
 // ?event=<id> startet das Event im ersten passenden Raum, ?fight=<monster-id> einen Kampf in der Vorkammer,
-// ?room=<raumtyp-id> betritt den ersten passenden Raum ohne Event (im Bossraum mit &sieg=1 nach dem Sieg),
+// ?room=<raumtyp-id> betritt den ersten passenden Raum ohne Event (im Bossraum mit &sieg=1 nach dem Sieg, mit &thema=<id> in diesem Thema),
 // ?grid=1 zeigt die Kachelnamen x|y, ?wurf=<satz> (etwa 4W6): Taste W würfelt diesen Satz in der Vorkammer mit
 // zufälligen Werten. Optional &volk=zwerg|elf|mensch.
 // Ergebnis: true, wenn der Testmodus übernommen hat.
@@ -367,7 +367,8 @@ function devStart() {
     startDungeon(randomSeed(), true);
     startFight(monster);
   } else if (room) {
-    if (!devGoto(room, room === "boss" ? "keller" : null, q.get("sieg") === "1")) console.error("Testmodus: kein Raum " + room + " gefunden");
+    // &thema=<id> wählt das Thema (etwa zwergenminen); der Bossraum ohne Angabe im Keller
+    if (!devGoto(room, q.get("thema") || (room === "boss" ? "keller" : null), q.get("sieg") === "1")) console.error("Testmodus: kein Raum " + room + " gefunden");
   } else if (!devEvent(ev)) {
     console.error("Testmodus: kein Raum für Event " + ev + " gefunden");
   }
