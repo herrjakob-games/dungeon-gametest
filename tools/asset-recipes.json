@@ -918,6 +918,10 @@
           0.1
         ]
       }
+    },
+    "kerzenstummel": {
+      "dir": "props",
+      "file": "candle_melted.gltf.glb"
     }
   },
   "figureSource": "assets/source/kaykit-adventurers/",
@@ -1381,6 +1385,31 @@
     },
     "kriegsaxt": {
       "file": "axe_B.gltf"
+    }
+  },
+  "statueNotes": "Statuen aus Paketfiguren: pose (Animation, erster Frame eingefroren), remove (Teile, die wegfallen), height (Höhe der Figur in Kacheln), color (einfarbig, matt), maxTris (Figur wird bis dahin vereinfacht), pedestal (width, height, chamfer in Kacheln, color). Ergebnis in Kacheln, Maßstab 1.",
+  "statues": {
+    "schreinstatue": {
+      "dir": "props",
+      "source": "assets/source/kaykit-adventurers/",
+      "file": "Knight.glb",
+      "pose": "Idle",
+      "remove": [
+        "1H_Sword_Offhand",
+        "Rectangle_Shield",
+        "Round_Shield",
+        "Spike_Shield",
+        "2H_Sword"
+      ],
+      "height": 1.2,
+      "color": "#8A847D",
+      "maxTris": 1500,
+      "pedestal": {
+        "width": 0.9,
+        "height": 0.25,
+        "chamfer": 0.06,
+        "color": "#55504C"
+      }
     }
   }
 }

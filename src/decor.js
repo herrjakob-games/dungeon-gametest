@@ -53,6 +53,9 @@ export const PROPS = {
   schluesselbund: { w: 1, d: 1, blocks: false, wall: true, floor: false },
   strohlager: { w: 1, d: 2, blocks: true },
   kerze_duenn: { w: 1, d: 1, blocks: false },
+  kerzenstummel: { w: 1, d: 1, blocks: false }, // nur rund um die Statue im Schrein der Zwergenminen (docs/GDD.md, Feste Regeln)
+  // Steinstatue: blickt nach Raum-Seed nach Süden oder Osten; ring: around: nutzt auch die schrägen Nachbarkacheln (Kerzenkranz)
+  schreinstatue: { w: 1, d: 1, blocks: true, faceCamera: true, ring: true },
   zapffass: { w: 1, d: 1, blocks: true },
   zapffass_verziert: { w: 2, d: 1, blocks: true },
   kistenberg: { w: 1, d: 1, blocks: true },
@@ -482,7 +485,8 @@ export function planDecor(spec, opts) {
       return shuffle(out);
     }
     const ft = TILE_PLACE.exec(place || "");
-    if (ft) return [{ tiles: shape(p, v, +ft[1] - 1, +ft[2] - 1, "h", 1, 1), rot: 0 }];
+    // faceCamera (Schreinstatue): Blick zur Kamera, nach Raum-Seed nach Süden (+z) oder Osten (+x), nie zur Wand
+    if (ft) return [{ tiles: shape(p, v, +ft[1] - 1, +ft[2] - 1, "h", 1, 1), rot: PROPS[p].faceCamera ? (R() < 0.5 ? 0 : Math.PI / 2) : 0 }];
     const m = /^(around|above):(\w+)$/.exec(place || "");
     if (m) {
       const targets = placements.filter(t => t.prop === m[2]);
@@ -490,7 +494,8 @@ export function planDecor(spec, opts) {
       targets.forEach(t => {
         const own = new Set(t.tiles.map(x => key(...x)));
         const seenN = new Set();
-        t.tiles.forEach(([x, z]) => [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(([dx, dz]) => {
+        const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]].concat(PROPS[t.prop].ring ? [[1, 1], [1, -1], [-1, 1], [-1, -1]] : []);
+        t.tiles.forEach(([x, z]) => dirs.forEach(([dx, dz]) => {
           const nx = x + dx, nz = z + dz, k = key(nx, nz);
           if (own.has(k) || seenN.has(k)) return;
           seenN.add(k);
@@ -698,7 +703,9 @@ export function checkDecor(spec, where, err) {
         err(w, p.prop + ": count muss eine positive Zahl oder ein Bereich [von, bis] sein");
       ["clear", "doorGap"].forEach(f => { if (p[f] !== undefined && !(Number.isInteger(p[f]) && p[f] > 0)) err(w, p.prop + ": " + f + " muss eine positive Zahl sein"); });
       if (p.required !== undefined && typeof p.required !== "boolean") err(w, p.prop + ": required muss true oder false sein");
-      if (p.required && m) err(w, p.prop + ": ein Pflichtstück braucht eine eigene Platzierung, nicht " + m[1] + ":");
+      // Pflichtstück mit around:/above: nur, wenn das Bezugsrequisit selbst Pflicht ist (etwa die Kerzen an der Schreinstatue)
+      const requiredBefore = (id) => (l.props || []).some(q => q !== p && q.prop === id && q.required === true && (l.props || []).indexOf(q) < (l.props || []).indexOf(p));
+      if (p.required && m && !requiredBefore(m[2])) err(w, p.prop + ": ein Pflichtstück braucht eine eigene Platzierung oder ein Pflichtstück als Bezug, nicht " + m[1] + ":" + m[2]);
       if (p.variant !== undefined && !(VARIANTS[p.prop] || []).includes(p.variant)) err(w, p.prop + ": unbekannte Variante " + p.variant);
       if (PROPS[p.prop] && PROPS[p.prop].wall && PROPS[p.prop].floor === false && p.place !== "wall-back" && p.place !== DOOR_SIDES && p.place !== WALL_CENTER) err(w, p.prop + " hängt an der Wand und braucht wall-back");
       before.add(p.prop);

@@ -477,3 +477,37 @@ test("Risswände: nur auf 1–2 und 8–9 von Nord- und Westwand, nie auf Fackel
   assert.ok(Math.abs(share - 0.3) < 0.1, "Anteil " + share.toFixed(2));
   assert.deepEqual(crackedWalls(15, null, 5, null, 0), []);
 });
+
+test("Schrein der Zwergenminen: Statue auf 5|5, vier Säulen, mindestens 2 brennende Kerzen an der Statue, 2 Fackeln, alle Türen erreichbar", () => {
+  const rt = ROOM_TYPES.find(t => t.id === "schrein");
+  const spec = decorFor(rt, "zwergenminen");
+  assert.equal(spec.torchCount, 2);
+  assert.equal(spec.torches, undefined, "keine Fackeln an den Säulen");
+  assert.equal(decorFor(rt, "katakomben"), null, "Schrein der Katakomben unverändert (altes Muster)");
+  const rots = new Set();
+  for (let doors = 0; doors < 16; doors++) for (let s = 1; s <= 20; s++) {
+    const plan = planDecor(spec, { seed: s * 7919 + doors, doors });
+    const where = "Türen " + doors + ", Seed " + s;
+    const statue = plan.placements.filter(p => p.prop === "schreinstatue");
+    assert.deepEqual(statue.map(p => tileName(...p.tiles[0])), ["5|5"], where);
+    rots.add(statue[0].rot);
+    assert.deepEqual(plan.placements.filter(p => p.prop === "saeule").map(p => tileName(...p.tiles[0])).sort(), ["2|2", "2|8", "8|2", "8|8"], where);
+    const near = (p) => p.tiles.every(([x, z]) => Math.max(Math.abs(x - MID), Math.abs(z - MID)) === 1);
+    const lit = plan.placements.filter(p => p.prop === "kerze_duenn" && p.variant === "an");
+    assert.ok(lit.length >= 2 && lit.every(near), where + ": brennende Kerzen");
+    plan.placements.filter(p => ["kerzen", "kerzenstummel"].includes(p.prop)).forEach(p => assert.ok(near(p), where + ": " + p.prop + " nicht an der Statue"));
+    assert.ok(plan.torches.length <= 2, where + ": mehr als 2 Wandfackeln");
+    assert.deepEqual(plan.torchSpots, []);
+    assert.deepEqual(plan.missingRequired, [], where);
+    checkPlan(plan, doors, null, where); // Türkachel und Kachel davor frei, alle Türen gegenseitig erreichbar (A*)
+  }
+  assert.deepEqual([...rots].sort(), [0, Math.PI / 2], "Statue blickt nach Süden oder Osten");
+});
+
+test("Kerzenstummel nur rund um die Statue im Schrein der Zwergenminen", () => {
+  for (const [name, , spec] of SPECS) for (const l of layoutsOf(spec)) {
+    const stubs = l.props.filter(p => p.prop === "kerzenstummel");
+    if (name === "schrein/zwergenminen") assert.ok(stubs.length && stubs.every(p => p.place === "around:schreinstatue"), name);
+    else assert.deepEqual(stubs, [], name + ": Kerzenstummel");
+  }
+});

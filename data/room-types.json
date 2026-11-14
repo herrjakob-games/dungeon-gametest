@@ -1960,6 +1960,69 @@
     },
     "torch": "#c9a0ff",
     "layout": "pillars",
+    "themeDecor": {
+      "zwergenminen": {
+        "torchCount": 2,
+        "layouts": [
+          {
+            "id": "A",
+            "props": [
+              {
+                "prop": "saeule",
+                "place": "tile:2|2",
+                "required": true
+              },
+              {
+                "prop": "saeule",
+                "place": "tile:8|2",
+                "required": true
+              },
+              {
+                "prop": "saeule",
+                "place": "tile:2|8",
+                "required": true
+              },
+              {
+                "prop": "saeule",
+                "place": "tile:8|8",
+                "required": true
+              },
+              {
+                "prop": "schreinstatue",
+                "place": "tile:5|5",
+                "required": true
+              },
+              {
+                "prop": "kerze_duenn",
+                "place": "around:schreinstatue",
+                "variant": "an",
+                "count": [
+                  2,
+                  4
+                ],
+                "required": true
+              },
+              {
+                "prop": "kerzen",
+                "place": "around:schreinstatue",
+                "count": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "prop": "kerzenstummel",
+                "place": "around:schreinstatue",
+                "count": [
+                  2,
+                  3
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
     "rating": "mixed",
     "eventChance": 0.4,
     "max": 1,

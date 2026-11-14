@@ -170,6 +170,11 @@
       "torch": "#FF6A2A",
       "ambient": "#2A2228"
     },
+    "roomPalettes": {
+      "schrein": {
+        "brightness": 1.7
+      }
+    },
     "bannerColor": "blau",
     "propModels": {
       "saeule": "pfeiler"
