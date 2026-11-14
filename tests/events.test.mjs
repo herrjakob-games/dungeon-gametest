@@ -352,8 +352,10 @@ test("Zwergenminen: höchstens 9 Wachstuben und 10 Säulenhallen, keine Begegnun
   for (let depth = 7; depth <= 9; depth++) for (let s = 1; s <= 40; s++) {
     const d = generate(s, depth, { themes: DATA.themes, roomTypes: DATA.roomTypes });
     const count = (t) => Object.values(d.rooms).filter(r => r.type === t).length;
-    assert.ok(count("wache") <= 9, "Ebene " + depth + " Seed " + s + ": " + count("wache") + " Wachstuben");
-    assert.ok(count("halle") <= 10, "Ebene " + depth + " Seed " + s + ": " + count("halle") + " Säulenhallen");
+    // Mehr nur, wenn für einen Raum kein anderer Raumtyp mehr frei war (overflow, docs/GDD.md)
+    const extra = (t) => d.overflow.filter(o => o.type === t).length;
+    assert.ok(count("wache") - extra("wache") <= 9, "Ebene " + depth + " Seed " + s + ": " + count("wache") + " Wachstuben");
+    assert.ok(count("halle") - extra("halle") <= 10, "Ebene " + depth + " Seed " + s + ": " + count("halle") + " Säulenhallen");
   }
   for (let seed = 1; seed <= 200; seed++) assert.equal(pickEncounter(zm, DATA.roomTypes.kerker, seed), null);
   assert.ok(Array.from({ length: 200 }, (_, s) => pickEncounter(zm, DATA.roomTypes.halle, s + 1)).some(Boolean), "Säulenhalle hat Begegnungen");

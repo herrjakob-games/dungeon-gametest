@@ -85,18 +85,27 @@ test("Raumtypen passen zum Thema, feste Lageregeln werden eingehalten", () => {
       assert.ok(SPECIAL.includes(r.type) || theme.roomTypes.includes(r.type), `Seed ${s}/${depth}: ${r.type} gehört nicht zu ${theme.id}`);
       if (def.deadEnd === "never") assert.notEqual(doorCount(r.doors), 1, `Seed ${s}/${depth}: ${r.type} in Sackgasse`);
       if (def.nextToStart === "never") assert.ok(!startNeighbors.includes(r), `Seed ${s}/${depth}: ${r.type} neben dem Start`);
+      if (def.doorPair === "only") assert.ok((r.doors & 5) === 5 || (r.doors & 10) === 10, `Seed ${s}/${depth}: ${r.type} ohne gegenüberliegendes Türpaar (Türen ${r.doors})`);
     }
   }
 });
 
-test("Höchstzahlen pro Ebene werden eingehalten", () => {
+test("Höchstzahlen pro Ebene werden eingehalten (außer wenn kein Raumtyp mehr frei ist)", (ctx) => {
+  let over = 0, all = 0;
   for (const [s, depth, d] of levels()) {
     const theme = themeFor(themes, depth);
+    all++;
+    if (d.overflow.length) over++;
+    // Rückfall nur, wenn alle Raumtypen, die dort hätten stehen dürfen, schon voll waren
+    d.overflow.forEach(o => assert.ok(ruleOf(theme, o.type).max, `Seed ${s}/${depth}: Rückfall auf ${o.type} ohne Höchstzahl`));
     for (const t of Object.keys(roomTypes)) {
       const max = ruleOf(theme, t).max;
-      if (max) assert.ok(count(d, t) <= max, `Seed ${s}/${depth}: ${t} ${count(d, t)}× statt höchstens ${max}`);
+      // Überschreiten nur, wenn für einen Raum kein anderer Raumtyp mehr frei war (overflow)
+      const extra = d.overflow.filter(o => o.type === t).length;
+      if (max) assert.ok(count(d, t) - extra <= max, `Seed ${s}/${depth}: ${t} ${count(d, t)}× statt höchstens ${max}`);
     }
   }
+  ctx.diagnostic("Ebenen mit überschrittener Höchstzahl (kein Raumtyp mehr frei): " + over + " von " + all);
 });
 
 test("Katakomben: Kerker neben dem Start und höchstens 2, Gruft darf neben den Start", () => {

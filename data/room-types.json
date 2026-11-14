@@ -1058,6 +1058,7 @@
     "eventChance": 0.4,
     "max": 3,
     "deadEnd": "never",
+    "doorPair": "only",
     "crossroads": "prefer",
     "events": [],
     "themeEvents": {
@@ -1183,12 +1184,47 @@
       "layouts": [
         {
           "id": "A",
+          "axis": "ns",
           "props": [
             {
               "prop": "saeule",
-              "place": "free",
-              "variant": "reihen",
-              "count": 8
+              "place": "tile:3|2",
+              "required": true
+            },
+            {
+              "prop": "saeule",
+              "place": "tile:3|4",
+              "required": true
+            },
+            {
+              "prop": "saeule",
+              "place": "tile:3|6",
+              "required": true
+            },
+            {
+              "prop": "saeule",
+              "place": "tile:3|8",
+              "required": true
+            },
+            {
+              "prop": "saeule",
+              "place": "tile:7|2",
+              "required": true
+            },
+            {
+              "prop": "saeule",
+              "place": "tile:7|4",
+              "required": true
+            },
+            {
+              "prop": "saeule",
+              "place": "tile:7|6",
+              "required": true
+            },
+            {
+              "prop": "saeule",
+              "place": "tile:7|8",
+              "required": true
             },
             {
               "prop": "moos",
@@ -1218,17 +1254,57 @@
         },
         {
           "id": "B",
+          "axis": "we",
           "props": [
             {
               "prop": "saeule",
-              "place": "free",
-              "variant": "reihen",
-              "count": 6
+              "place": "tile:2|3",
+              "required": true
+            },
+            {
+              "prop": "saeule",
+              "place": "tile:4|3",
+              "required": true
+            },
+            {
+              "prop": "saeule",
+              "place": "tile:6|3",
+              "required": true
+            },
+            {
+              "prop": "saeule",
+              "place": "tile:8|3",
+              "required": true
+            },
+            {
+              "prop": "saeule",
+              "place": "tile:2|7",
+              "required": true
+            },
+            {
+              "prop": "saeule",
+              "place": "tile:4|7",
+              "required": true
+            },
+            {
+              "prop": "saeule",
+              "place": "tile:6|7",
+              "required": true
+            },
+            {
+              "prop": "saeule",
+              "place": "tile:8|7",
+              "required": true
             },
             {
               "prop": "moos",
               "place": "free",
-              "count": 3
+              "count": 2
+            },
+            {
+              "prop": "fass",
+              "place": "corner",
+              "variant": "gruppe"
             },
             {
               "prop": "waffenstaender",

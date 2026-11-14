@@ -109,8 +109,11 @@ test("Fahnenfarbe pro Thema: jedes Thema hat bannerColor, jede Variante hat ein 
 
 test("Fahnen im Spiel tragen die Farbe des Themas", () => {
   const spec = decorFor(ROOM_TYPES.find(r => r.id === "halle"), "zwergenminen");
-  const plan = planDecor(spec, { seed: 11, doors: DIR.N.bit, bannerColor: "blau" });
-  const vs = plan.placements.filter(p => BANNERS.includes(p.prop)).map(p => p.prop + ":" + p.variant);
+  const vs = [];
+  for (let s = 1; s <= 30; s++) {
+    const plan = planDecor(spec, { seed: s, doors: DIR.N.bit | DIR.S.bit, bannerColor: "blau" });
+    vs.push(...plan.placements.filter(p => BANNERS.includes(p.prop)).map(p => p.prop + ":" + p.variant));
+  }
   assert.ok(vs.length > 0);
   assert.ok(vs.every(v => v === "fahne:wappen_blau" || v === "fahne_dreifach:blau"), vs.join(", "));
   assert.equal(tileName(MID, 0), "5|1");
