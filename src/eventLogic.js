@@ -289,6 +289,7 @@ export function validateData(data) {
     });
     if (!rt.layout) err(w, "layout fehlt");
     if (rt.deadEnd !== undefined && !["only", "never", "prefer"].includes(rt.deadEnd)) err(w, "deadEnd muss only, never oder prefer sein");
+    if (rt.doorPair !== undefined && rt.doorPair !== "only") err(w, "doorPair kennt nur \"only\" (gegenüberliegendes Türpaar)");
     if (rt.themeLevel !== undefined && ![1, 2, 3].includes(rt.themeLevel)) err(w, "themeLevel muss 1, 2 oder 3 sein (Ebene im Thema)");
     (rt.near || []).forEach(n => { if (!data.roomTypes[n]) err(w, "unbekannter Nachbar-Raumtyp " + n); });
     if (!Array.isArray(rt.events)) { err(w, "events fehlt"); continue; }
@@ -358,7 +359,7 @@ export function validateData(data) {
     }
     Object.entries(th.overrides || {}).forEach(([t, o]) => {
       if (!(th.roomTypes || []).includes(t)) err(w, "Ausnahme für " + t + ", das nicht zum Thema gehört");
-      Object.keys(o).forEach(k => { if (!["max", "deadEnd", "nextToStart", "near", "crossroads"].includes(k)) err(w, "unbekannte Regel " + k + " bei " + t); });
+      Object.keys(o).forEach(k => { if (!["max", "deadEnd", "nextToStart", "near", "crossroads", "doorPair"].includes(k)) err(w, "unbekannte Regel " + k + " bei " + t); });
     });
   }
 

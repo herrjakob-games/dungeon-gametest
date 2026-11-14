@@ -127,7 +127,7 @@ test("Einrichtung: alle Varianten mit allen 16 Türkombinationen; Liste der Korr
               const n = plan.placements.filter(x => x.prop === p.prop && x.variant === (p.variant || null)).length;
               assert.ok(n >= [].concat(p.count || 1)[0], where + ": " + p.prop + " nur " + n + "×");
             });
-            l.props.forEach(p => { row(name, l, p).wanted += p.prop === "saeule" && p.variant === "reihen" ? (p.count || 8) : [].concat(p.count || 1)[0]; });
+            l.props.forEach(p => { row(name, l, p).wanted += [].concat(p.count || 1)[0]; });
             plan.corrected.forEach(c => {
               const st = row(name, l, c); st.corrected++;
               st.how[c.from + " → " + c.to] = (st.how[c.from + " → " + c.to] || 0) + 1;
@@ -345,19 +345,41 @@ test("Gruft: 4 bis 5 Sarkophage mit einer Kachel Abstand zur Wand und zueinander
   });
 });
 
-test("Säulenhalle: nur der Säulengang, 3 bis 4 Fackeln an Säulen zum Gang, Wandschmuck nie doppelt an einer Stelle", () => {
-  const spec = decorFor(ROOM_TYPES.find(t => t.id === "halle"), "keller");
-  spec.layouts.forEach((layout, li) => {
-    for (let doors = 0; doors < 16; doors++) for (let s = 1; s <= 10; s++) {
-      const plan = planDecor(spec, { seed: s * 7919, doors, layoutIndex: li });
-      assert.ok(plan.placements.every(p => !p.prop.startsWith("saeule") || (p.prop === "saeule" && p.variant === "reihen")), "nur Säulen im Gang");
-      assert.ok(plan.torchSpots.length >= 3 && plan.torchSpots.length <= 4);
-      plan.torchSpots.forEach(t => assert.ok(Math.abs(t.cx + t.dx * 2 - MID) < Math.abs(t.cx - MID) + 0.01 || Math.abs(t.cz + t.dz * 2 - MID) < Math.abs(t.cz - MID) + 0.01, "Fackel zeigt zum Gang"));
+test("Säulenhalle: 8 Säulen in zwei Reihen, Layout passt zum Türpaar, Mittelgang frei, Fackeln zum Gang, alle Türen erreichbar", () => {
+  const PILLARS = { ns: ["3|2", "3|4", "3|6", "3|8", "7|2", "7|4", "7|6", "7|8"], we: ["2|3", "4|3", "6|3", "8|3", "2|7", "4|7", "6|7", "8|7"] };
+  const PAIR = { ns: DIR.N.bit | DIR.S.bit, we: DIR.W.bit | DIR.E.bit };
+  const rt = ROOM_TYPES.find(t => t.id === "halle");
+  assert.equal(rt.doorPair, "only");
+  assert.deepEqual(Object.keys(rt.themeDecor || {}), [], "Säulenhalle ohne eigene Einrichtung pro Thema");
+  const spec = decorFor(rt, "keller");
+  assert.deepEqual(spec.layouts.map(l => l.id + ":" + l.axis), ["A:ns", "B:we"]);
+  for (let doors = 0; doors < 16; doors++) {
+    if ((doors & PAIR.ns) !== PAIR.ns && (doors & PAIR.we) !== PAIR.we) continue; // nie ohne Türpaar (Generator)
+    for (let s = 1; s <= 30; s++) {
+      const plan = planDecor(spec, { seed: s * 7919 + doors, doors, bannerColor: "gelb" });
+      const layout = spec.layouts.find(l => l.id === plan.layout);
+      const where = "Layout " + layout.id + ", Türen " + doors + ", Seed " + s;
+      assert.equal(doors & PAIR[layout.axis], PAIR[layout.axis], where + ": Layout passt nicht zum Türpaar");
+      const pillars = plan.placements.filter(p => p.prop === "saeule").map(p => tileName(...p.tiles[0])).sort();
+      assert.deepEqual(pillars, PILLARS[layout.axis].slice().sort(), where + ": Säulen");
+      // Mittelgang: Kacheln 4 bis 6 quer zur Reihe, dort nur Säulen (keine)
+      const inCorridor = ([x, z]) => (layout.axis === "ns" ? x : z) >= MID - 1 && (layout.axis === "ns" ? x : z) <= MID + 1;
+      plan.placements.filter(p => p.prop !== "saeule").forEach(p => assert.ok(!p.tiles.some(inCorridor), where + ": " + p.prop + " im Mittelgang"));
+      assert.ok(plan.torchSpots.length >= 3 && plan.torchSpots.length <= 4, where + ": Fackeln");
+      plan.torchSpots.forEach(t => {
+        const [toGang, along] = layout.axis === "ns" ? [t.dx, t.dz] : [t.dz, t.dx];
+        assert.equal(Math.sign(toGang), Math.sign(MID - (layout.axis === "ns" ? t.cx : t.cz)), where + ": Fackel zeigt nicht zum Gang");
+        assert.equal(along, 0, where + ": Fackel quer zum Gang");
+      });
       assert.deepEqual(torchSlots(doors, spec, s), [], "keine Wandfackeln");
       const slots = plan.placements.filter(p => p.wall).flatMap(p => p.tiles.map(t => p.wall + key(...t)));
-      assert.equal(new Set(slots).size, slots.length, "zwei Wandstücke an derselben Stelle");
+      assert.equal(new Set(slots).size, slots.length, where + ": zwei Wandstücke an derselben Stelle");
+      checkPlan(plan, doors, null, where); // Türkacheln frei, alle Türen gegenseitig erreichbar (A*)
     }
-  });
+  }
+  // Beide Türpaare: der Raum-Seed wählt beide Layouts
+  const both = new Set(Array.from({ length: 40 }, (_, s) => planDecor(spec, { seed: s + 1, doors: 15 }).layout));
+  assert.deepEqual([...both].sort(), ["A", "B"]);
 });
 
 test("Vorkammer: keine Fackel hinter oder neben der Treppe (Wandkacheln 1 bis 4 von Nord- und Westwand)", () => {

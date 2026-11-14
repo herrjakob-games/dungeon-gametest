@@ -64,6 +64,7 @@ export function generate(dSeed, depth, world) {
   // Regeln eines Raumtyps, mit den Ausnahmen des Themas (overrides; null hebt eine Regel auf)
   const rule = (t) => Object.assign({}, types[t], (theme.overrides || {})[t]);
   const counts = {};
+  const overflow = []; // Räume, für die nur noch ein voller Raumtyp blieb (docs/GDD.md: Höchstzahl darf dann überschritten werden)
   const set = (k, t) => { rooms[k].type = t; counts[t] = (counts[t] || 0) + 1; };
   const isDead = (k) => doorCount(rooms[k].doors) === 1;
   const neighbors = (k) => DIRKEYS.filter(dk => rooms[k].doors & DIR[dk].bit)
@@ -100,6 +101,9 @@ export function generate(dSeed, depth, world) {
     if (def.deadEnd === "only" && !isDead(k)) return false;
     if (def.deadEnd === "never" && isDead(k)) return false;
     if (def.nextToStart === "never" && nextToStart.has(k)) return false;
+    // doorPair "only": nur mit gegenüberliegendem Türpaar (Nord und Süd oder West und Ost), etwa die Säulenhalle
+    const d = rooms[k].doors;
+    if (def.doorPair === "only" && (d & 5) !== 5 && (d & 10) !== 10) return false;
     return true;
   };
   const allowed = (k, t) => hardOk(k, t) && !(rule(t).max && (counts[t] || 0) >= rule(t).max);
@@ -137,6 +141,7 @@ export function generate(dSeed, depth, world) {
       // Alle erlaubten Raumtypen sind voll: den am wenigsten überzähligen nehmen
       const fill = (x) => ((counts[x] || 0) + 1) / (rule(x).max || Infinity);
       t = theme.roomTypes.filter(x => hardOk(k, x)).sort((x, y) => fill(x) - fill(y))[0];
+      overflow.push({ room: k, type: t }); // Höchstzahl überschritten, weil kein anderer Raumtyp mehr frei ist
     }
     set(k, t);
     if (isHostile(t)) hostile++;
@@ -148,5 +153,5 @@ export function generate(dSeed, depth, world) {
     r.dist = dist[k];
   });
 
-  return { seed: dSeed, depth, theme: theme.id, boss, rooms, start, exit, count: list.length };
+  return { seed: dSeed, depth, theme: theme.id, boss, rooms, start, exit, count: list.length, overflow };
 }

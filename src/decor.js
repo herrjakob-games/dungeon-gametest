@@ -69,7 +69,7 @@ export const PROPS = {
 
 // Abwandlungen, die es pro Requisit gibt
 export const VARIANTS = {
-  tisch: ["kueche"], fass: ["gruppe", "gross"], stuhl: ["umgekippt"], kiste: ["angenagt", "flaschen"], saeule: ["reihen"],
+  tisch: ["kueche"], fass: ["gruppe", "gross"], stuhl: ["umgekippt"], kiste: ["angenagt", "flaschen"],
   flaschen: ["b"], fahne: ["wappen"], muenzen: ["klein", "einzeln"], kerze_duenn: ["an"]
 };
 
@@ -89,12 +89,31 @@ export const BIG_WALL = ["kaeseberg", "knochenthron", "anrichte", "herd", "regal
 // Fackeln zählen nicht
 export const isWallDecor = (prop) => !!PROPS[prop] && PROPS[prop].wall && (PROPS[prop].floor === false || BIG_WALL.includes(prop));
 
+// Achse einer Variante (axis, Säulenhalle): die Reihen laufen auf ein gegenüberliegendes Türpaar zu. "ns" braucht Nord und Süd,
+// "we" West und Ost. Varianten ohne axis passen immer.
+export const AXES = { ns: DIR.N.bit | DIR.S.bit, we: DIR.W.bit | DIR.E.bit };
+export const hasDoorPair = (doors) => (doors & AXES.ns) === AXES.ns || (doors & AXES.we) === AXES.we;
+export const fitsAxis = (layout, doors) => !layout.axis || (doors & AXES[layout.axis]) === AXES[layout.axis];
+// Varianten, aus denen der Raum-Seed wählt: nur die, deren Achse zu einem Türpaar passt (passt keine, alle)
+export function layoutChoices(spec, doors) {
+  const all = layoutsOf(spec);
+  const fit = all.filter(l => fitsAxis(l, doors || 0));
+  return fit.length ? fit : all;
+}
+// Mittelgang einer Variante mit axis: die Kacheln 4 bis 6 quer zu den Reihen (gezählt ab 1), frei von Requisiten außer Säulen
+export function corridorOf(layout) {
+  if (!layout || !layout.axis) return null;
+  const out = new Set();
+  for (let a = 0; a < N; a++) for (let b = MID - 1; b <= MID + 1; b++) out.add(layout.axis === "ns" ? key(b, a) : key(a, b));
+  return out;
+}
+
 // Variante (layout) der Einrichtung, die planDecor für diesen Seed wählt (erster Zufallswert)
-export function chosenLayout(spec, seed, layoutIndex) {
+export function chosenLayout(spec, seed, layoutIndex, doors) {
   if (!spec) return null;
-  const layouts = layoutsOf(spec);
-  const idx = layoutIndex !== undefined ? layoutIndex : Math.floor(mulberry32((seed ^ 0x5bd1e995) >>> 0)() * layouts.length);
-  return layouts[idx];
+  if (layoutIndex !== undefined) return layoutsOf(spec)[layoutIndex];
+  const choices = layoutChoices(spec, doors);
+  return choices[Math.floor(mulberry32((seed ^ 0x5bd1e995) >>> 0)() * choices.length)];
 }
 
 /**
@@ -108,7 +127,7 @@ export function chosenLayout(spec, seed, layoutIndex) {
 export function torchSlots(doors, spec, seed, feature, layout) {
   let out = [];
   if (pillarTorches(spec)) return out; // Fackeln an den Säulen statt an den Wänden (Schatzkammer, Säulenhalle)
-  const lay = layout || chosenLayout(spec, seed);
+  const lay = layout || chosenLayout(spec, seed, undefined, doors);
   const centered = !!lay && lay.props.some(p => p.place === WALL_CENTER);
   ["N", "W"].forEach(w => ((doors & DIR[w].bit) ? [MID + 2] : centered ? [1, N - 2] : [2, N - 3]).forEach(t => out.push({ wall: w, t })));
   if (feature === "up") out = out.filter(f => f.t > STAIRS_SIZE);
@@ -388,9 +407,11 @@ export function planDecor(spec, opts) {
     return a;
   };
   // Zellen (cells): eigene Planung statt layouts, Einrichtung nur in den Zellen
-  const layouts = layoutsOf(spec);
-  const idx = opts.layoutIndex !== undefined ? opts.layoutIndex : Math.floor(R() * layouts.length);
-  const layout = layouts[idx];
+  // Varianten mit axis (Säulenhalle) nur, wenn ihr Türpaar da ist; layoutIndex (Tests) wählt aus allen Varianten
+  const choices = layoutChoices(spec, opts.doors);
+  const pickIdx = Math.floor(R() * choices.length);
+  const layout = opts.layoutIndex !== undefined ? layoutsOf(spec)[opts.layoutIndex] : choices[pickIdx];
+  const corridor = corridorOf(layout);
   const cellPlan = spec.cells ? planCells(R) : null;
   const edges = cellPlan ? cellPlan.edges : new Set();
   const doors = opts.doors, feature = opts.feature || null;
@@ -496,6 +517,8 @@ export function planDecor(spec, opts) {
   function fits(item, c) {
     const def = PROPS[item.prop];
     if (!c.tiles.every(([x, z]) => inBounds(x, z))) return false;
+    // Mittelgang der Säulenhalle: nur Säulen, sonst nichts (auch kein Wandschmuck am Ende des Gangs)
+    if (corridor && item.prop !== "saeule" && c.tiles.some(t => corridor.has(key(...t)))) return false;
     if (def.floor !== false && c.tiles.length && clearZones.some(z => gap(c.tiles, z.tiles) <= z.r)) return false;
     if (item.clear && c.tiles.length && placements.some(p => PROPS[p.prop].floor !== false && p.tiles.length && gap(c.tiles, p.tiles) <= item.clear)) return false;
     if (item.doorGap && doorList.length && gap(c.tiles, doorList) <= item.doorGap) return false;
@@ -544,26 +567,6 @@ export function planDecor(spec, opts) {
       target: c.target || null, place: item.place, face: c.face || null, clear: item.clear || 0 });
   }
 
-  // Säulen in zwei Reihen (Variante "reihen"): feste Plätze, wie in der bisherigen Säulenhalle
-  function rows(item) {
-    const count = item.count || 8;
-    const along = [1, N - 2, 3, N - 4, 0, N - 1, 2, N - 3].filter(a => a !== MID); // nie in der Türspalte
-    const perRow = Math.ceil(count / 2);
-    const lines = [2, N - 3]; // zwei Reihen, je zwei Kacheln von der Wand
-    const vertical = R() < 0.5;
-    let left = count;
-    for (const line of lines) {
-      for (const a of along.slice(0, perRow)) {
-        if (!left) break;
-        left--;
-        const [x, z] = vertical ? [line, a] : [a, line];
-        const toMid = Math.sign(MID - line); // Seite zum Gang in der Raummitte
-        const c = { tiles: [[x, z]], rot: 0, face: vertical ? [toMid, 0] : [0, toMid] };
-        if (fits(item, c)) put(item, c); else dropped.push({ prop: item.prop, variant: item.variant || null });
-      }
-    }
-  }
-
   // Fahnen neben den hinteren Türen (place "door-sides", docs/GDD.md): Wandkachel neben dem Türrahmen (3 und 7, gezählt ab 1);
   // hängt dort die Türfackel, rückt die Fahne auf 8, direkt neben die Fackel. Immer als Paar: passt eine Seite nicht
   // (Treppe, Pflichtstück, Abstand), fallen beide an dieser Tür weg. Nur an Nord- und Westtüren.
@@ -599,7 +602,6 @@ export function planDecor(spec, opts) {
   const order = required.concat(big, banners, layout.props.filter(p => !p.required && !BIG_WALL.includes(p.prop) && !isBanner(p)));
   for (const item of order) {
     if (!PROPS[item.prop]) { dropped.push(tag(item)); continue; }
-    if (item.prop === "saeule" && item.variant === "reihen") { rows(item); continue; }
     if (item.place === DOOR_SIDES) { doorSides(item); continue; }
     if (item.place === WALL_CENTER) { wallCenter(item); continue; }
     // Korrekturablauf: erst die eigene Platzierung, dann die folgenden aus CHAIN (Wandschmuck, around und above nicht)
@@ -644,7 +646,8 @@ export function planDecor(spec, opts) {
   let torchSpots = [];
   if (pillarTorches(spec)) {
     torchSpots = placements.filter(p => p.prop === "saeule").map(p => {
-      const [dx, dz] = p.face || [MID - p.cx, MID - p.cz];
+      // Säulen in Reihen (axis): Fackel auf der Seite zum Mittelgang, sonst zur Raummitte
+      const [dx, dz] = layout.axis === "ns" ? [Math.sign(MID - p.cx), 0] : layout.axis === "we" ? [0, Math.sign(MID - p.cz)] : p.face || [MID - p.cx, MID - p.cz];
       const len = Math.hypot(dx, dz) || 1;
       return { cx: p.cx, cz: p.cz, dx: dx / len, dz: dz / len, rot: Math.atan2(dx, dz) };
     });
@@ -676,6 +679,7 @@ export function checkDecor(spec, where, err) {
     if (!l.id) err(w, "id fehlt");
     if (ids.has(l.id)) err(w, "doppelte id");
     ids.add(l.id);
+    if (l.axis !== undefined && !AXES[l.axis]) err(w, "axis muss ns oder we sein");
     const before = new Set();
     (l.props || []).forEach(p => {
       if (!PROPS[p.prop]) err(w, "unbekanntes Requisit " + p.prop);
