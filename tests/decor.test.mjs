@@ -276,7 +276,7 @@ test("Brunnenraum: eine Variante, Brunnen auf 5|5, Säulen auf 2|2, 8|2, 2|8 und
   }
 });
 
-test("Schatzkammer: Säulen immer auf 2|2, 8|2, 2|8 und 8|8, keine Fackeln an den Wänden", () => {
+test("Schatzkammer: Säulen immer auf 2|2, 8|2, 2|8 und 8|8, keine Fackeln an den Wänden, dreifache Fahne an Wänden ohne Tür", () => {
   const spec = decorFor(ROOM_TYPES.find(t => t.id === "schatz"), "keller");
   assert.equal(spec.torches, "saeulen");
   assert.deepEqual(torchSlots(0, spec), []);
@@ -285,13 +285,15 @@ test("Schatzkammer: Säulen immer auf 2|2, 8|2, 2|8 und 8|8, keine Fackeln an de
       const plan = planDecor(spec, { seed: s * 7919, doors, layoutIndex: li });
       const pillars = plan.placements.filter(p => p.prop === "saeule").map(p => tileName(...p.tiles[0])).sort();
       assert.deepEqual(pillars, ["2|2", "2|8", "8|2", "8|8"], "Variante " + layout.id + ", Türen " + doors);
-      // Banner nur links und rechts der hinteren Türen, eine Kachel Abstand, alle in derselben Farbe; sonst kein Wandschmuck
+      // Keine Fahnen neben Türen; an jeder Nord- und Westwand ohne Tür eine dreifache Fahne mittig (Kacheln 4 bis 6)
       const want = [];
-      if (doors & DIR.N.bit) want.push("3|1", "7|1");
-      if (doors & DIR.W.bit) want.push("1|3", "1|7");
+      if (!(doors & DIR.N.bit)) want.push("4|1");
+      if (!(doors & DIR.W.bit)) want.push("1|4");
+      // Eine Truhe (Pflichtstück) an der Wandmitte verdrängt die Fahne; dann steht sie in dropped
       const wall = plan.placements.filter(p => PROPS[p.prop].floor === false || (PROPS[p.prop].wall && p.prop !== "truhe"));
-      assert.deepEqual(wall.map(p => tileName(...p.tiles[0])).sort(), want.sort(), "Variante " + layout.id + ", Türen " + doors);
-      assert.ok(wall.every(p => p.prop === "fahne" && p.variant === wall[0].variant));
+      const gone = plan.dropped.filter(d => d.prop === "fahne_dreifach").map(d => (d.wall === "N" ? "4|1" : "1|4"));
+      assert.deepEqual(wall.map(p => tileName(...p.tiles[0])).concat(gone).sort(), want.sort(), "Variante " + layout.id + ", Türen " + doors);
+      assert.ok(wall.every(p => p.prop === "fahne_dreifach" && p.tiles.length === 3));
     }
   });
 });

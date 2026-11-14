@@ -393,7 +393,7 @@ function propMesh(id, pl) {
 
 // ---------- Einrichtung aus den Daten ----------
 function placeDecor(spec, room, feature, id, torch) {
-  const plan = planDecor(spec, { seed: room.seed, doors: room.doors, feature });
+  const plan = planDecor(spec, { seed: room.seed, doors: room.doors, feature, bannerColor: state.theme && state.theme.bannerColor }); // Fahnen in der Farbe des Themas
   state.decorPlan = plan; // für Figuren mit near:<prop>
   state.edges = plan.edges; // Zellwände sperren Kanten für die Wegfindung
   // Zellwände (Kerker der Katakomben): Teile auf Kachelkanten, Lage in Kachelkoordinaten

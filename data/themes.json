@@ -26,6 +26,7 @@
       "torch": "#FF9A3C",
       "ambient": "#3A3048"
     },
+    "bannerColor": "gelb",
     "roomPalettes": {
       "gruft": {
         "floor": "#4A4440",
@@ -91,6 +92,7 @@
       "torch": "#FFB05A",
       "ambient": "#2A3330"
     },
+    "bannerColor": "gelb",
     "floorTiles": [
       {
         "tile": "boden_bruch_a",
@@ -168,6 +170,7 @@
       "torch": "#FF6A2A",
       "ambient": "#2A2228"
     },
+    "bannerColor": "blau",
     "seeThroughOpacity": 0.4,
     "overrides": {
       "wache": {
@@ -233,6 +236,7 @@
       "torch": "#E8B840",
       "ambient": "#22301E"
     },
+    "bannerColor": "gruen",
     "seeThroughOpacity": 0.4
   },
   {
@@ -265,6 +269,7 @@
       "torch": "#FF5A28",
       "ambient": "#3A2420"
     },
+    "bannerColor": "gruen",
     "seeThroughOpacity": 0.4
   }
 ]
