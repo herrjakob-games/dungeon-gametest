@@ -1050,3 +1050,4 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Die Kamera startet ganz herausgezoomt
 - [x] Tutorial als Kellerhandbuch (KayKit-Zauberbuch in Braun) nach der Volkswahl, erneut per Klick auf das Lesepult der Vorkammer
 - [x] Fahnen: Farbe pro Thema (`bannerColor`), Türbanner als Paar neben dem Türrahmen (`door-sides`), dreifache Fahne mittig an Wänden ohne Tür (`wall-center`, Fackeln dort auf 2 und 8), Abstandsregel; Fahnen nur in Wachstube, Speisesaal, Säulenhalle, Schatzkammer, Abstieg und Bossraum
+- [x] Fahnen bleiben bei der Reihenfolge Pflichtstücke, große Wandrequisiten, Fahnen; dass Fahnen dadurch oft wegfallen (in Abstieg und Bossraum die Türbanner immer, wegen der Treppe), ist so gewollt
