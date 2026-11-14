@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.72 · Nov 14, 2026 · @Christian
+Version 2.73 · Nov 14, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.73 | 14.11.2026 | Schreinstatue: Podest im selben Stein wie die Statue (`#8A847D`, aus einem Guss) statt Wandfarbe |
 | 2.72 | 14.11.2026 | Schrein der Zwergenminen: eigene Einrichtung mit Steinstatue (`schreinstatue`) als Lichtinsel, Kerzenkranz mit Kerzenstummeln (`kerzenstummel`, nur dort), vier Säulen ohne Fackeln, nur 2 Wandfackeln, Grundlicht 1,7; `around:` an der Statue auch schräg (`ring`); Pflichtstück mit `around:` erlaubt, wenn das Bezugsrequisit Pflicht ist |
 | 2.71 | 14.11.2026 | Zwergenminen: eckige Pfeiler (`pfeiler`, KayKit Dungeon Pack 1.1 FREE `column`) auf Raumhöhe statt Säulen; neues Feld `propModels` in `data/themes.json` (anderes Modell für ein Requisit im Thema, die id bleibt); Säulenfackeln mit Abstand aus der halben Breite (`pillarTorch`) |
 | 2.70 | 14.11.2026 | Säulenhalle: immer 8 Säulen in zwei festen Reihen, Layout A (Reihen Nord–Süd) und B (West–Ost) mit Feld `axis`, Layout passt zum Türpaar, Mittelgang frei; Säulenhalle nur in Räumen mit gegenüberliegendem Türpaar (`doorPair`); bleibt dadurch kein Raumtyp unter seiner Höchstzahl frei, darf die Höchstzahl überschritten werden |
@@ -697,7 +698,7 @@ Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kan
 | sarkophag | Sarkophag (eine Kachel Abstand zur Wand und zum nächsten Sarkophag) | 1×2 | ja | nein | nein | Gruft |
 | kerzen | Kerzengruppe | Deko | nein | nein | ja | Gruft, Speisesaal, Schatzkammer, Schrein (Zwergenminen) |
 | kerzenstummel | Abgebrannte Kerze (KayKit Dungeon Remastered `candle_melted`, Maßstab 0,5, Palette) | Deko | nein | nein | nein | nur Schrein (Zwergenminen) |
-| schreinstatue | Steinstatue: KayKit Adventurers `Knight` mit `1H_Sword` und `Badge_Shield`, Pose aus dem ersten Frame von `Idle` eingefroren, einfarbig matt `#8A847D`, 1,2 Kacheln hoch auf gefastem Podest (0,9 × 0,9, Höhe 0,25, `#55504C`), zusammen etwa 1,45; höchstens 1.500 Dreiecke (die Figur ist vereinfacht); warmes Licht ohne Schatten auf Höhe 0,3, Reichweite 3; blickt nach Süden oder Osten | 1 | ja | nein | ja | Schrein (Zwergenminen) |
+| schreinstatue | Steinstatue: KayKit Adventurers `Knight` mit `1H_Sword` und `Badge_Shield`, Pose aus dem ersten Frame von `Idle` eingefroren, einfarbig matt `#8A847D`, 1,2 Kacheln hoch auf gefastem Podest (0,9 × 0,9, Höhe 0,25, im selben Stein `#8A847D`, aus einem Guss), zusammen etwa 1,45; höchstens 1.500 Dreiecke (die Figur ist vereinfacht); warmes Licht ohne Schatten auf Höhe 0,3, Reichweite 3; blickt nach Süden oder Osten | 1 | ja | nein | ja | Schrein (Zwergenminen) |
 | knochen | Knochen | Deko | nein | nein | nein | Gruft, Bossraum, Kerker |
 | geroell | Geröll | Deko | nein | nein | nein | alle |
 | goldhaufen | Goldhaufen (KayKit `coin_stack_large`) | Deko | nein | nein | nein | Schatzkammer |
@@ -1066,3 +1067,4 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Höchstzahlen dürfen überschritten werden, wenn für einen Raum kein erlaubter Raumtyp mehr frei ist (Folge der Türpaar-Regel der Säulenhalle, vor allem Zwergenminen Ebene 9)
 - [x] Zwergenminen: eckige Pfeiler (KayKit Dungeon Pack 1.1 FREE `column`) auf Raumhöhe statt Säulen, über `propModels` (die id `saeule` bleibt); Fackeln mittig auf der Pfeilerfläche
 - [x] Schrein der Zwergenminen: Steinstatue als Lichtinsel mit Kerzenkranz (auch Kerzenstummel, nur hier), vier Säulen ohne Fackeln, nur 2 Wandfackeln; Statue blickt zur Kamera
+- [x] Podest der Schreinstatue im selben Stein wie die Statue (`#8A847D`), aus einem Guss
