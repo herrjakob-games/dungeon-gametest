@@ -178,3 +178,16 @@ test("Dunkelzwerge: Waffe und Haltung", async () => {
   assert.ok(MODELS.zwergenschmied.accessories.some(a => a.shape === "hammer"));
   for (const id of ["zwergenwache", "dunkelzwerg", "zwergenkoch"]) assert.ok(MODELS[id].accessories.some(a => a.model === "grossaxt"), id);
 });
+
+test("Schreinstatue: höchstens 1.500 Dreiecke, etwa 1,45 Kacheln hoch, warmes Licht ohne Schatten", () => {
+  const m = MODELS.schreinstatue;
+  const b = readFileSync(new URL(m.file, root));
+  const j = JSON.parse(b.toString("utf8", 20, 20 + b.readUInt32LE(12)));
+  const tris = j.meshes.reduce((s, mm) => s + mm.primitives.reduce((t, p) => t + j.accessors[p.indices].count / 3, 0), 0);
+  assert.ok(tris <= 1500, tris + " Dreiecke");
+  const ys = j.meshes.flatMap(mm => mm.primitives.map(p => j.accessors[p.attributes.POSITION])).flatMap(a => [a.min[1], a.max[1]]);
+  assert.ok(Math.abs(Math.max(...ys) * m.scale - 1.45) < 0.03, "Höhe " + Math.max(...ys));
+  assert.equal(j.images, undefined, "einfarbig, ohne Textur");
+  assert.ok(m.lights.length === 1 && m.lights[0].distance === 3 && Math.abs(m.lights[0].offset[1] - 0.3) < 0.01);
+  assert.equal(MODELS.kerzenstummel.palette, true);
+});

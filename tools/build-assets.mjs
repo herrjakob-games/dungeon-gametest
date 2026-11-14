@@ -16,7 +16,7 @@ import { readFileSync, mkdirSync, statSync, mkdtempSync, rmSync, existsSync } fr
 import { tmpdir } from "node:os";
 import { execFileSync } from "node:child_process";
 import { createRequire } from "node:module";
-import { NodeIO, Logger } from "@gltf-transform/core";
+import { NodeIO, Logger, Document } from "@gltf-transform/core";
 import { mergeDocuments, prune, dedup, unpartition, weld, simplify } from "@gltf-transform/functions";
 import { MeshoptSimplifier } from "meshoptimizer";
 
@@ -323,6 +323,130 @@ async function buildWeapon(id, recipe) {
     (warn.length ? "  WARNUNG: " + warn.join(", ") : ""));
 }
 
+// ---------- Statuen aus Paketfiguren (statues, etwa die Steinstatue im Schrein der Zwergenminen) ----------
+// Pose einer Animation (erster Frame) einfrieren: Ecken der Figur mit den Knochen der Pose verrechnen, Skelett und
+// Animationen entfernen, starre Teile (Schwert, Schild, Helm) an ihre Stelle in der Welt setzen. Dann alles einfarbig
+// (Stein), Normalen und Texturkoordinaten weg (der GLTFLoader schattiert flach), auf maxTris vereinfachen, auf height
+// Kacheln skalieren und auf ein gefastes Podest stellen (pedestal: Breite, Höhe, Fase, Farbe). Ergebnis in Kacheln (Maßstab 1).
+const m4 = {
+  mul(a, b) { const o = new Array(16).fill(0); for (let c = 0; c < 4; c++) for (let r = 0; r < 4; r++) for (let k = 0; k < 4; k++) o[c * 4 + r] += a[k * 4 + r] * b[c * 4 + k]; return o; },
+  point(m, [x, y, z]) { return [m[0] * x + m[4] * y + m[8] * z + m[12], m[1] * x + m[5] * y + m[9] * z + m[13], m[2] * x + m[6] * y + m[10] * z + m[14]]; },
+  add(a, b, w) { return a.map((v, i) => v + b[i] * w); }
+};
+
+function sampleAt(sampler, t) {
+  // erster Frame: Wert am ersten Zeitpunkt (Interpolation unnötig)
+  const out = sampler.getOutput(), n = out.getElementSize(), v = [];
+  out.getElement(0, v);
+  return v.slice(0, n);
+}
+
+async function buildStatue(id, recipe) {
+  const src = ROOT + recipe.source + recipe.file;
+  const doc = await io.read(src);
+  doc.setLogger(new Logger(Logger.Verbosity.WARN));
+  const root = doc.getRoot();
+  const scene = root.getDefaultScene() || root.listScenes()[0];
+  const names = new Set(root.listNodes().map(n => n.getName()));
+  (recipe.remove || []).concat(recipe.keep || []).forEach(n => { if (!names.has(n)) throw new Error(id + ": Teil " + n + " fehlt"); });
+  // 1. Pose: erster Frame der Animation auf die Knoten
+  const anim = root.listAnimations().find(a => a.getName() === recipe.pose);
+  if (!anim) throw new Error(id + ": Animation " + recipe.pose + " fehlt");
+  anim.listChannels().forEach(ch => {
+    const node = ch.getTargetNode(), path = ch.getTargetPath(), v = sampleAt(ch.getSampler(), 0);
+    if (path === "translation") node.setTranslation(v); else if (path === "rotation") node.setRotation(v); else if (path === "scale") node.setScale(v);
+  });
+  // 2. Ecken in die Welt rechnen
+  const parts = []; // { pos: [[x,y,z]...], idx: [...] }
+  const removeSet = new Set(recipe.remove || []);
+  const skippedByParent = (n) => { for (let p = n; p; p = p.getParentNode()) if (removeSet.has(p.getName())) return true; return false; };
+  for (const node of root.listNodes()) {
+    const mesh = node.getMesh();
+    if (!mesh || skippedByParent(node)) continue;
+    const skin = node.getSkin();
+    let joints = null;
+    if (skin) {
+      const ibm = skin.getInverseBindMatrices();
+      joints = skin.listJoints().map((j, i) => { const b = []; ibm.getElement(i, b); return m4.mul(j.getWorldMatrix(), b); });
+    }
+    const world = node.getWorldMatrix();
+    for (const prim of mesh.listPrimitives()) {
+      const P = prim.getAttribute("POSITION"), J = prim.getAttribute("JOINTS_0"), W = prim.getAttribute("WEIGHTS_0");
+      const pos = [];
+      for (let i = 0; i < P.getCount(); i++) {
+        const p = []; P.getElement(i, p);
+        if (joints && J && W) {
+          const ji = [], wi = []; J.getElement(i, ji); W.getElement(i, wi);
+          let o = [0, 0, 0];
+          for (let k = 0; k < 4; k++) if (wi[k]) o = m4.add(o, m4.point(joints[ji[k]], p), wi[k]);
+          pos.push(o);
+        } else pos.push(m4.point(world, p));
+      }
+      const I = prim.getIndices(), idx = [];
+      for (let i = 0; i < I.getCount(); i++) idx.push(I.getScalar(i));
+      parts.push({ pos, idx, body: !!skin });
+    }
+  }
+  // 3. Neues Dokument: Figur in Kacheln, mittig über dem Podest
+  const all = parts.flatMap(p => p.pos), body = parts.filter(p => p.body).flatMap(p => p.pos);
+  const minY = Math.min(...all.map(p => p[1])), maxY = Math.max(...all.map(p => p[1]));
+  const k = recipe.height / (maxY - minY);
+  const cx = (Math.min(...body.map(p => p[0])) + Math.max(...body.map(p => p[0]))) / 2;
+  const cz = (Math.min(...body.map(p => p[2])) + Math.max(...body.map(p => p[2]))) / 2;
+  const ped = recipe.pedestal;
+  const out = new Document();
+  out.setLogger(new Logger(Logger.Verbosity.WARN));
+  const buf = out.createBuffer();
+  const outScene = out.createScene(id);
+  const color = (hex, name) => out.createMaterial(name).setBaseColorFactor([...hexColor(hex), 1]).setMetallicFactor(0).setRoughnessFactor(0.95);
+  const stone = color(recipe.color, "stein"), pedMat = color(ped.color, "podest");
+  const addMesh = (name, positions, indices, material) => {
+    const prim = out.createPrimitive()
+      .setAttribute("POSITION", out.createAccessor().setType("VEC3").setArray(new Float32Array(positions)).setBuffer(buf))
+      .setIndices(out.createAccessor().setType("SCALAR").setArray(new Uint32Array(indices)).setBuffer(buf))
+      .setMaterial(material);
+    outScene.addChild(out.createNode(name).setMesh(out.createMesh(name).addPrimitive(prim)));
+  };
+  // Figur: alle Teile in ein Mesh
+  const fp = [], fi = [];
+  parts.forEach(p => {
+    const base = fp.length / 3;
+    p.pos.forEach(([x, y, z]) => fp.push((x - cx) * k, (y - minY) * k + ped.height, (z - cz) * k));
+    p.idx.forEach(i => fi.push(base + i));
+  });
+  addMesh("statue", fp, fi, stone);
+  // Podest: Achteck aus einem Quadrat mit gefasten Kanten (Fase c), oben und unten mit flacher Kante
+  const h = ped.width / 2, c = ped.chamfer, H = ped.height;
+  const ring = [[h - c, h], [h, h - c], [h, -(h - c)], [h - c, -h], [-(h - c), -h], [-h, -(h - c)], [-h, h - c], [-(h - c), h]];
+  const pp = [], pi = [];
+  const quad = (a, b, cc, d) => { const n = pp.length / 3; pp.push(...a, ...b, ...cc, ...d); pi.push(n, n + 1, n + 2, n, n + 2, n + 3); };
+  ring.forEach((p, i) => { const q = ring[(i + 1) % 8]; quad([p[0], 0, p[1]], [q[0], 0, q[1]], [q[0], H, q[1]], [p[0], H, p[1]]); });
+  const fan = (y, up) => { const n = pp.length / 3; ring.forEach(p => pp.push(p[0], y, p[1])); for (let i = 1; i < 7; i++) pi.push(...(up ? [n, n + i + 1, n + i] : [n, n + i, n + i + 1])); };
+  fan(H, false); fan(0, true); // Ring läuft von oben gesehen im Uhrzeigersinn: oben umgekehrt verbinden
+  addMesh("podest", pp, pi, pedMat);
+  out.getRoot().setDefaultScene(outScene);
+  await MeshoptSimplifier.ready;
+  await out.transform(weld());
+  let ratio = 1, tris = 0;
+  const count = () => { let t = 0; out.getRoot().listMeshes().forEach(m => m.listPrimitives().forEach(p => { t += p.getIndices().getCount() / 3; })); return t; };
+  tris = count();
+  // Nur die Figur vereinfachen, bis alles unter maxTris liegt
+  const statueDoc = out;
+  for (let step = 0; tris > recipe.maxTris && step < 12; step++) {
+    ratio *= Math.max(0.5, (recipe.maxTris / tris) * 0.97);
+    const stMesh = statueDoc.getRoot().listMeshes().find(m => m.getName() === "statue");
+    const prim = stMesh.listPrimitives()[0];
+    await statueDoc.transform(simplify({ simplifier: MeshoptSimplifier, ratio: Math.min(1, recipe.maxTris / tris * 0.97), error: 0.05 + step * 0.02 }));
+    tris = count();
+  }
+  await out.transform(prune(), dedup());
+  const file = ROOT + "assets/" + recipe.dir + "/" + id + ".glb";
+  await io.write(file, out);
+  const bytes = statSync(file).size;
+  console.log((recipe.dir + "/" + id).padEnd(26) + String(tris).padStart(6) + " Dreiecke " + String(Math.round(bytes / 1024)).padStart(5) + " KB" +
+    (tris > MAX_TRIS ? "  WARNUNG: über " + MAX_TRIS + " Dreiecke" : "") + "  (Figur aus " + parts.reduce((s, p) => s + p.idx.length / 3, 0) + " Dreiecken vereinfacht)");
+}
+
 // Nur einzelne Gruppen bauen: npm run build:assets -- weapons figures (ohne Angabe alle)
 const only = process.argv.slice(2);
 const want = (group) => !only.length || only.includes(group);
@@ -330,4 +454,5 @@ if (want("parts")) for (const [id, recipe] of Object.entries(recipes.parts)) awa
 if (want("figures")) for (const [id, recipe] of Object.entries(recipes.figures || {})) await buildFigure(id, recipe);
 if (want("extracts")) for (const [id, recipe] of Object.entries(recipes.extracts || {})) await buildExtract(id, recipe);
 if (want("weapons")) for (const [id, recipe] of Object.entries(recipes.weapons || {})) await buildWeapon(id, recipe);
+if (want("statues")) for (const [id, recipe] of Object.entries(recipes.statues || {})) await buildStatue(id, recipe);
 

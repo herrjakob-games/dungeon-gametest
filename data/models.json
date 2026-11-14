@@ -1023,6 +1023,28 @@
       }
     ]
   },
+  "kerzenstummel": {
+    "file": "assets/props/kerzenstummel.glb",
+    "scale": 0.5,
+    "palette": true
+  },
+  "schreinstatue": {
+    "file": "assets/props/schreinstatue.glb",
+    "scale": 1,
+    "palette": false,
+    "lights": [
+      {
+        "offset": [
+          0,
+          0.3,
+          0.6
+        ],
+        "color": "#FFB45E",
+        "intensity": 4.5,
+        "distance": 3
+      }
+    ]
+  },
   "boden_unkraut_a": {
     "file": "assets/tiles/boden_unkraut_a.glb",
     "scale": 0.5,
