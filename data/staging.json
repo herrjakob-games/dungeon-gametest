@@ -266,7 +266,7 @@
       ],
       "face": "player",
       "animation": "idle",
-      "_": "Der Schmied steht neben dem Amboss (Schmiede der Zwergenminen); ohne Amboss gilt der Standard"
+      "_": "Schmied oder Eisengolem stehen neben dem Amboss (Schmiede der Zwergenminen); ohne Amboss gilt der Standard"
     }
   },
   "figures": {
@@ -823,7 +823,8 @@
     "schmiede_golem": {
       "figures": [
         {
-          "figure": "eisengolem"
+          "figure": "eisengolem",
+          "anchor": "am_amboss"
         }
       ]
     },

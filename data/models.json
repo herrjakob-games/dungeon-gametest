@@ -1495,6 +1495,40 @@
       "attack": "2H_Melee_Attack_Chop"
     }
   },
+  "steingolem": {
+    "file": "assets/figures/steingolem.glb",
+    "scale": [
+      0.9126,
+      0.7936,
+      0.865
+    ],
+    "palette": false,
+    "animations": {
+      "idle": "Idle",
+      "walk": "Walk",
+      "attack": "Attack",
+      "hit": "Hit",
+      "death": "Death",
+      "interact": "Interact"
+    }
+  },
+  "eisengolem": {
+    "file": "assets/figures/eisengolem.glb",
+    "scale": [
+      1.1733,
+      1.0203,
+      1.1121
+    ],
+    "palette": false,
+    "animations": {
+      "idle": "Idle",
+      "walk": "Walk",
+      "attack": "Attack",
+      "hit": "Hit",
+      "death": "Death",
+      "interact": "Interact"
+    }
+  },
   "zwergenschmied": {
     "file": "assets/figures/zwergenschmied.glb",
     "scale": [

@@ -457,6 +457,153 @@ async function buildStatue(id, recipe) {
     (tris > MAX_TRIS ? "  WARNUNG: über " + MAX_TRIS + " Dreiecke" : "") + "  (Figur aus " + parts.reduce((s, p) => s + p.idx.length / 3, 0) + " Dreiecken vereinfacht)");
 }
 
+// ---------- Golems aus einer Paketfigur (golems: Steingolem, Eisengolem der Zwergenminen) ----------
+// Wie die Schreinstatue (einfarbig, flach schattiert, vereinfacht), aber Skelett und Animationen bleiben: Ausrüstung weg,
+// Kopf über den Kopfknochen kleiner (headScale, Drehpunkt am Halsansatz), der Kopf selbst als dunkles Visier (visor), starre
+// Teile am Kopf (Helm) werden an den Kopfknochen gebunden. Alle Körperteile mit gleichem Material werden zu einem Primitive
+// zusammengeführt und erst dann vereinfacht (einzeln vereinfacht verformt sich der Helm). Danach zwei leuchtende Augen als
+// starre Kinder des Kopfknochens. Animationen werden umbenannt (animations: neuer Name → Name im Paket).
+const quatEuler = ([x, y, z]) => {
+  const [cx, cy, cz, sx, sy, sz] = [Math.cos(x / 2), Math.cos(y / 2), Math.cos(z / 2), Math.sin(x / 2), Math.sin(y / 2), Math.sin(z / 2)];
+  return [sx * cy * cz + cx * sy * sz, cx * sy * cz - sx * cy * sz, cx * cy * sz + sx * sy * cz, cx * cy * cz - sx * sy * sz];
+};
+const m4inv = (m) => { // nur Drehung und Verschiebung (Bind-Matrizen der KayKit-Figuren)
+  const r = [m[0], m[4], m[8], 0, m[1], m[5], m[9], 0, m[2], m[6], m[10], 0, 0, 0, 0, 1];
+  const t = m4.point(r, [m[12], m[13], m[14]]);
+  r[12] = -t[0]; r[13] = -t[1]; r[14] = -t[2];
+  return r;
+};
+const triCount = (root) => root.listNodes().reduce((s, n) => s + (n.getMesh() ? n.getMesh().listPrimitives().reduce((t, p) => t + p.getIndices().getCount() / 3, 0) : 0), 0);
+
+async function buildGolem(id, recipe) {
+  const doc = await io.read(ROOT + recipe.source + recipe.file);
+  doc.setLogger(new Logger(Logger.Verbosity.WARN));
+  const root = doc.getRoot();
+  const byName = (n) => root.listNodes().find(x => x.getName() === n);
+  (recipe.remove || []).concat([recipe.visor, recipe.headBone]).forEach(n => { if (!byName(n)) throw new Error(id + ": Teil " + n + " fehlt"); });
+  root.listNodes().filter(n => (recipe.remove || []).includes(n.getName())).forEach(n => { const m = n.getMesh(); n.dispose(); if (m) m.dispose(); });
+  // Animationen: nur die gewünschten, umbenannt
+  const src = Object.values(recipe.animations);
+  src.forEach(a => { if (!root.listAnimations().some(x => x.getName() === a)) throw new Error(id + ": Animation " + a + " fehlt"); });
+  root.listAnimations().filter(a => !src.includes(a.getName())).forEach(a => { a.listSamplers().forEach(sm => sm.dispose()); a.listChannels().forEach(c => c.dispose()); a.dispose(); });
+  Object.entries(recipe.animations).forEach(([to, from]) => root.listAnimations().find(a => a.getName() === from).setName(to));
+  // Kopf kleiner: feste Skalierung des Kopfknochens, Skalierungsspuren dieses Knochens entfernen
+  const head = byName(recipe.headBone), hs = recipe.headScale;
+  head.setScale([hs, hs, hs]);
+  root.listAnimations().forEach(a => a.listChannels().filter(c => c.getTargetNode() === head && c.getTargetPath() === "scale").forEach(c => { const sm = c.getSampler(); c.dispose(); sm.dispose(); }));
+  // Geometrie im Bind-Raum sammeln
+  const skin = root.listSkins()[0], joints = skin.listJoints(), ibm = skin.getInverseBindMatrices();
+  const bindWorld = joints.map((j, i) => { const b = []; ibm.getElement(i, b); return m4inv(b); });
+  const jointIdx = new Map(joints.map((j, i) => [j, i]));
+  const geo = () => ({ pos: [], jo: [], we: [], idx: [] });
+  const body = geo(), visor = geo();
+  const meshNodes = root.listNodes().filter(n => n.getMesh());
+  for (const node of meshNodes) {
+    const target = node.getName() === recipe.visor ? visor : body;
+    let rigid = null; // starres Teil: Matrix vom Teil in den Bind-Raum, gebunden an den nächsten Knochen darüber
+    if (!node.getSkin()) {
+      let m = node.getMatrix(), p = node.getParentNode();
+      while (p && !jointIdx.has(p)) { m = m4.mul(p.getMatrix(), m); p = p.getParentNode(); }
+      if (!p) throw new Error(id + ": " + node.getName() + " hängt an keinem Knochen");
+      rigid = { m: m4.mul(bindWorld[jointIdx.get(p)], m), j: jointIdx.get(p) };
+    }
+    for (const prim of node.getMesh().listPrimitives()) {
+      const P = prim.getAttribute("POSITION"), J = prim.getAttribute("JOINTS_0"), W = prim.getAttribute("WEIGHTS_0"), I = prim.getIndices();
+      const base = target.pos.length / 3;
+      for (let i = 0; i < P.getCount(); i++) {
+        const v = []; P.getElement(i, v);
+        if (rigid) { target.pos.push(...m4.point(rigid.m, v)); target.jo.push(rigid.j, 0, 0, 0); target.we.push(1, 0, 0, 0); continue; }
+        const j = [], w = []; J.getElement(i, j); W.getElement(i, w);
+        target.pos.push(...v); target.jo.push(...j); target.we.push(...w);
+      }
+      for (let i = 0; i < I.getCount(); i++) target.idx.push(base + I.getScalar(i));
+    }
+  }
+  // Visier: Kopf in x und y um den eigenen Mittelpunkt ziehen, damit er nach dem Vereinfachen nicht durch den Helm sticht
+  const ext = (a, k) => { let lo = Infinity, hi = -Infinity; for (let i = k; i < a.length; i += 3) { lo = Math.min(lo, a[i]); hi = Math.max(hi, a[i]); } return [lo, hi]; };
+  [0, 1].forEach(k => { const [lo, hi] = ext(visor.pos, k), c = (lo + hi) / 2; for (let i = k; i < visor.pos.length; i += 3) visor.pos[i] = c + (visor.pos[i] - c) * recipe.visorScale; });
+  // Alte Meshes weg, neue Primitives mit derselben Haut
+  const parent = meshNodes.find(n => n.getSkin()).getParentNode();
+  meshNodes.forEach(n => { const m = n.getMesh(); n.dispose(); m.dispose(); });
+  root.listMaterials().forEach(m => m.dispose());
+  root.listTextures().forEach(t => t.dispose());
+  const buf = root.listBuffers()[0];
+  const mat = (name, hex, glow) => {
+    const m = doc.createMaterial(name).setBaseColorFactor([...hexColor(hex), 1]).setMetallicFactor(0).setRoughnessFactor(0.95);
+    if (glow) m.setEmissiveFactor(hexColor(hex));
+    return m;
+  };
+  const add = (name, g, material) => {
+    const prim = doc.createPrimitive()
+      .setAttribute("POSITION", doc.createAccessor().setType("VEC3").setArray(new Float32Array(g.pos)).setBuffer(buf))
+      .setAttribute("JOINTS_0", doc.createAccessor().setType("VEC4").setArray(new Uint16Array(g.jo)).setBuffer(buf))
+      .setAttribute("WEIGHTS_0", doc.createAccessor().setType("VEC4").setArray(new Float32Array(g.we)).setBuffer(buf))
+      .setIndices(doc.createAccessor().setType("SCALAR").setArray(new Uint32Array(g.idx)).setBuffer(buf))
+      .setMaterial(material);
+    parent.addChild(doc.createNode(name).setMesh(doc.createMesh(name).addPrimitive(prim)).setSkin(skin));
+  };
+  add(id + "_koerper", body, mat("koerper", recipe.color));
+  add(id + "_visier", visor, mat("visier", recipe.visorColor));
+  const before = triCount(root);
+  await doc.transform(prune(), dedup(), weld());
+  // Vereinfachen bis etwa maxTris (wie die Schreinstatue)
+  await MeshoptSimplifier.ready;
+  let tris = triCount(root);
+  for (let step = 0; tris > recipe.maxTris && step < 12; step++) {
+    await doc.transform(simplify({ simplifier: MeshoptSimplifier, ratio: Math.min(1, recipe.maxTris / tris * 0.97), error: 0.05 + step * 0.02 }));
+    tris = triCount(root);
+  }
+  // Augen: zwei schmale Quader am Kopfknochen, vorn im Visier (Maße relativ zum Kopf, im Raum des Kopfknochens)
+  const hb = bindWorld[jointIdx.get(head)];
+  const local = [];
+  for (let i = 0; i < visor.pos.length; i += 3) local.push(m4.point(m4inv(hb), visor.pos.slice(i, i + 3)));
+  const [x0, x1] = [Math.min(...local.map(p => p[0])), Math.max(...local.map(p => p[0]))];
+  const [y0, y1] = [Math.min(...local.map(p => p[1])), Math.max(...local.map(p => p[1]))];
+  const z1 = Math.max(...local.map(p => p[2]));
+  const E = recipe.eyes, w = (x1 - x0) * E.width, h = w * E.height, d = w * E.depth;
+  const eyeMat = mat("augen", recipe.eyeColor, true);
+  const box = [];
+  for (const sx of [-1, 1]) for (const sy of [-1, 1]) for (const sz of [-1, 1]) box.push(sx * w / 2, sy * h / 2, sz * d / 2);
+  const faces = [0, 1, 3, 0, 3, 2, 4, 6, 7, 4, 7, 5, 0, 4, 5, 0, 5, 1, 2, 3, 7, 2, 7, 6, 0, 2, 6, 0, 6, 4, 1, 5, 7, 1, 7, 3];
+  const eyeMesh = doc.createMesh("auge").addPrimitive(doc.createPrimitive()
+    .setAttribute("POSITION", doc.createAccessor().setType("VEC3").setArray(new Float32Array(box)).setBuffer(buf))
+    .setIndices(doc.createAccessor().setType("SCALAR").setArray(new Uint16Array(faces)).setBuffer(buf)).setMaterial(eyeMat));
+  const cxh = (x0 + x1) / 2;
+  [-1, 1].forEach(side => head.addChild(doc.createNode(side < 0 ? "auge_r" : "auge_l").setMesh(eyeMesh)
+    .setTranslation([cxh + side * (x1 - x0) * E.side, y0 + (y1 - y0) * E.y, z1 + E.forward * (x1 - x0)])
+    .setRotation(quatEuler([0, 0, side * E.tilt]))));
+  await doc.transform(prune({ keepAttributes: true }), dedup());
+  const out = ROOT + "assets/figures/" + id + ".glb";
+  await io.write(out, doc);
+  tris = triCount(root);
+  const bytes = statSync(out).size;
+  // Höhe in der Idle-Pose (erster Frame) messen: für den Maßstab in data/models.json
+  const check = await io.read(out), cr = check.getRoot();
+  const idle = cr.listAnimations().find(a => a.getName() === "Idle");
+  idle.listChannels().forEach(ch => { const n = ch.getTargetNode(), v = sampleAt(ch.getSampler(), 0), pth = ch.getTargetPath(); if (pth === "translation") n.setTranslation(v); else if (pth === "rotation") n.setRotation(v); else if (pth === "scale") n.setScale(v); });
+  let lo = Infinity, hi = -Infinity;
+  cr.listNodes().filter(n => n.getMesh()).forEach(n => {
+    const sk = n.getSkin();
+    const mats = sk ? sk.listJoints().map((j, i) => { const b = []; sk.getInverseBindMatrices().getElement(i, b); return m4.mul(j.getWorldMatrix(), b); }) : null;
+    n.getMesh().listPrimitives().forEach(p => {
+      const P = p.getAttribute("POSITION"), J = p.getAttribute("JOINTS_0"), W = p.getAttribute("WEIGHTS_0");
+      for (let i = 0; i < P.getCount(); i++) {
+        const v = []; P.getElement(i, v);
+        let o;
+        if (mats) { const j = [], ww = []; J.getElement(i, j); W.getElement(i, ww); o = [0, 0, 0]; for (let k = 0; k < 4; k++) if (ww[k]) o = m4.add(o, m4.point(mats[j[k]], v), ww[k]); }
+        else o = m4.point(n.getWorldMatrix(), v);
+        lo = Math.min(lo, o[1]); hi = Math.max(hi, o[1]);
+      }
+    });
+  });
+  const warn = [];
+  if (tris > MAX_FIGURE_TRIS) warn.push("über " + MAX_FIGURE_TRIS + " Dreiecke");
+  if (bytes > MAX_BYTES) warn.push("über 1 MB");
+  console.log(("figures/" + id).padEnd(26) + String(tris).padStart(6) + " Dreiecke " + String(Math.round(bytes / 1024)).padStart(5) + " KB" +
+    (warn.length ? "  WARNUNG: " + warn.join(", ") : "") + "  (aus " + before + " vereinfacht; Höhe in Idle " + (hi - lo).toFixed(3) +
+    " Paket-Einheiten, Maßstab für " + recipe.height + " Kacheln: " + (recipe.height / (hi - lo)).toFixed(4) + ")");
+}
+
 // Nur einzelne Gruppen bauen: npm run build:assets -- weapons figures (ohne Angabe alle)
 const only = process.argv.slice(2);
 const want = (group) => !only.length || only.includes(group);
@@ -465,4 +612,5 @@ if (want("figures")) for (const [id, recipe] of Object.entries(recipes.figures |
 if (want("extracts")) for (const [id, recipe] of Object.entries(recipes.extracts || {})) await buildExtract(id, recipe);
 if (want("weapons")) for (const [id, recipe] of Object.entries(recipes.weapons || {})) await buildWeapon(id, recipe);
 if (want("statues")) for (const [id, recipe] of Object.entries(recipes.statues || {})) await buildStatue(id, recipe);
+if (want("golems")) for (const [id, recipe] of Object.entries(recipes.golems || {})) await buildGolem(id, recipe);
 

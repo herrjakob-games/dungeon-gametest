@@ -1546,5 +1546,88 @@
         "color": "#8A847D"
       }
     }
+  },
+  "golemNotes": "Golems aus einer Paketfigur mit Skelett und Animationen (docs/GDD.md, Figurenliste): remove (Ausrüstung), headBone und headScale (Kopf kleiner, Drehpunkt am Halsansatz), visor (Kopf als dunkles Visier, visorScale in x und y), color (Körper und Helm, einfarbig matt, flach schattiert), eyes (Augen am Kopfknochen: y Höhe ab Unterkante, side Abstand von der Mitte, width Breite, alles relativ zur Kopfbreite bzw. -höhe; height relativ zur Breite; tilt in rad, innen tiefer), eyeColor (leuchtend, ohne Punktlicht), maxTris, animations (neuer Name: Name im Paket), height (Zielhöhe in Kacheln, nur für die Ausgabe des Maßstabs).",
+  "golems": {
+    "steingolem": {
+      "source": "assets/source/kaykit-adventurers/",
+      "file": "Knight.glb",
+      "remove": [
+        "1H_Sword",
+        "1H_Sword_Offhand",
+        "2H_Sword",
+        "Badge_Shield",
+        "Rectangle_Shield",
+        "Round_Shield",
+        "Spike_Shield",
+        "Knight_Cape"
+      ],
+      "headBone": "head",
+      "headScale": 0.45,
+      "visor": "Knight_Head",
+      "visorScale": 0.9,
+      "visorColor": "#16121A",
+      "eyes": {
+        "y": 0.27,
+        "side": 0.19,
+        "width": 0.17,
+        "height": 0.36,
+        "depth": 0.12,
+        "tilt": 0.3,
+        "forward": 0.01
+      },
+      "maxTris": 1500,
+      "animations": {
+        "Idle": "Unarmed_Idle",
+        "Walk": "Walking_A",
+        "Attack": "Unarmed_Melee_Attack_Punch_A",
+        "Hit": "Hit_A",
+        "Death": "Death_A",
+        "Interact": "Interact"
+      },
+      "color": "#8A847D",
+      "eyeColor": "#FFB347",
+      "height": 1.4
+    },
+    "eisengolem": {
+      "source": "assets/source/kaykit-adventurers/",
+      "file": "Knight.glb",
+      "remove": [
+        "1H_Sword",
+        "1H_Sword_Offhand",
+        "2H_Sword",
+        "Badge_Shield",
+        "Rectangle_Shield",
+        "Round_Shield",
+        "Spike_Shield",
+        "Knight_Cape"
+      ],
+      "headBone": "head",
+      "headScale": 0.45,
+      "visor": "Knight_Head",
+      "visorScale": 0.9,
+      "visorColor": "#16121A",
+      "eyes": {
+        "y": 0.27,
+        "side": 0.19,
+        "width": 0.17,
+        "height": 0.36,
+        "depth": 0.12,
+        "tilt": 0.3,
+        "forward": 0.01
+      },
+      "maxTris": 1500,
+      "animations": {
+        "Idle": "Unarmed_Idle",
+        "Walk": "Walking_A",
+        "Attack": "Unarmed_Melee_Attack_Punch_A",
+        "Hit": "Hit_A",
+        "Death": "Death_A",
+        "Interact": "Interact"
+      },
+      "color": "#5E6168",
+      "eyeColor": "#FF6A2A",
+      "height": 1.8
+    }
   }
 }

@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.74 · Nov 14, 2026 · @Christian
+Version 2.75 · Nov 14, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.75 | 14.11.2026 | Stein- und Eisengolem als animierte Figuren: KayKit `Knight` ohne Ausrüstung, Kopf auf 45 %, dunkles Visier, leuchtende Augen, einfarbig und flach schattiert wie die Schreinstatue (Steingolem `#8A847D`, Augen `#FFB347`, 1,4 Kacheln; Eisengolem `#5E6168`, Augen `#FF6A2A`, 1,8 Kacheln); neue Build-Gruppe `golems`; der Eisengolem steht im Event am Amboss |
 | 2.74 | 14.11.2026 | Schmiede der Zwergenminen: eigene Einrichtung mit Esse (Schmiedeofen aus Grundformen, Hauptlicht), Amboss, Schleifstein, Eisenlager unter einer Wandfackel, Kohle, Kohlekiste, Zangentisch und Waffentisch (KayKit RPG Tools Bits 1.0 FREE und Resource Bits 1.0 FREE, CC0); neue Platzierungen `wall-mid`, `area:`, `torch`, `within:`; Felder `rubble: false` und `fill` (Zonenraster als allgemeine Regel); Grundlicht der Schmiede 1,4; Schmied steht am Amboss |
 | 2.73 | 14.11.2026 | Schreinstatue: Podest im selben Stein wie die Statue (`#8A847D`, aus einem Guss) statt Wandfarbe |
 | 2.72 | 14.11.2026 | Schrein der Zwergenminen: eigene Einrichtung mit Steinstatue (`schreinstatue`) als Lichtinsel, Kerzenkranz mit Kerzenstummeln (`kerzenstummel`, nur dort), vier Säulen ohne Fackeln, nur 2 Wandfackeln, Grundlicht 1,7; `around:` an der Statue auch schräg (`ring`); Pflichtstück mit `around:` erlaubt, wenn das Bezugsrequisit Pflicht ist |
@@ -616,6 +617,7 @@ Gilt für alle Modelle. Bei Paketteilen gilt sie für das Ergebnis im Spiel; Abw
 - **Schriftrollen an der Figur:** Beim „Gegenstand nutzen“ hält die Figur die Schriftrolle während der Animation kurz in der Hand, danach verschwindet sie. Die Rolle ist eine Grundform (Papier `#DEC896`, Stäbe `#5A3A24`) mit einem Siegelband in der Farbe des Zaubers: Feuerpfeil `#E87828`, Schild `#466EAA`, Eis `#8CCDEB`, Feuerball `#BE281E`.
 - **Quellen der Figuren im Keller:** Mensch KayKit `Mage`, Elf `Rogue_Hooded`, Zwerg `Knight` ohne Helm, Haare und Augenbrauen in der Bartfarbe (Textur `assets/textures/figures/zwerg/zwerg_texture.png`), ungleich skaliert (Maßstab `[0,429, 0,2805, 0,429]`: breiter und kleiner), mit Bart, Händler `Rogue` ohne Kapuze und Waffen, Outfit dunkelblau statt grün (KayKit Adventurers); Skelett aus KayKit Skeletons 1.0 (Minion, Warrior, Rogue, Mage; die Fassung 1.1 FREE hat kein Sitzen, Liegen und Angreifen, Textur gleich) mit der auf die Palette umgefärbten Textur `assets/textures/figures/skeleton/skeleton_keller.png`; Goblin aus Goblin Lowpoly Assets (standout7, itch.io); Mimik aus der Truhe des KayKit Dungeon Pack (itch.io); Riesenratte, Küchenchef und Monsterratte aus `Rat`, Kröte aus `Frog` (Easy Animated Enemy Pack, Quaternius). Höhlenspinne (Zwergenminen) aus `Spider` desselben Pakets, Körper `#5A5058`, Augen im Gefahr-Rot `#C8432F`, etwa eine Kachel breit; Clips `Spider_Idle`, `Spider_Walk`, `Spider_Attack`, `Spider_Death`. Goblin: `Basic_Goblin` mit `Rusty Shiv` an der rechten Hand; die kostenlose Fassung hat keine Animationen, deshalb sitzt er auf dem Rig `Rig_Medium` aus KayKit Character Animations 1.1 (dasselbe Rig wie Adventurers und Skeletons; `tools/goblin-rig.py` schiebt die Gelenke auf die des Goblins und übernimmt seine Gewichte). Clips: `Idle_A`, `Walking_A`, `Melee_1H_Attack_Stab`, `Hit_A`, `Death_A`, `Interact`, `Sit_Chair_Idle`, `Sit_Floor_Idle`, `Lie_Idle`.
 - **Quellen der Figuren in den Katakomben:** Skelettkrieger aus KayKit Skeletons `Warrior` mit der Skelett-Textur; Geister (Geist, Poltergeist) aus KayKit Adventurers `Rogue` ohne Kapuze und Waffen, Outfit hellblau, Haut weiß, Haare grau, ohne Handschuhe (Hände in Hautfarbe), mit kaltem blauem Licht an der Figur (Lichtpunkt ohne Schatten). Geister sind als ganze Figur durchscheinend (Deckkraft 0,6, `opacity` in `data/models.json`); innere Teile bleiben dabei verborgen. Skelett-König aus KayKit Skeletons `Warrior` mit der Skelett-Textur, 1,3-fach so groß wie die anderen Skelette, mit goldener Krone aus Grundformen auf dem Helm (`accessories`, Form `krone` am Kopfknochen).
+- **Quellen der Figuren in den Zwergenminen (Golems):** Stein- und Eisengolem aus KayKit Adventurers `Knight` mit Skelett und Animationen, ohne Ausrüstung (Schwerter, Schilde, Umhang). Kopf und Helm sind über den Kopfknochen auf 45 % verkleinert (Drehpunkt am Halsansatz), der Helm sitzt tief zwischen den Schultern. Der Kopf ist ein dunkles Visier `#16121A` (in Breite und Höhe auf 90 %, damit er nicht durch den Helm sticht), davor zwei schmale, leicht schräge Augen (innen tiefer) mit Eigenleuchten, ohne Punktlicht. Körper und Helm einfarbig matt, flach schattiert und wie die Schreinstatue auf etwa 1.500 Dreiecke vereinfacht (alle Körperteile als ein Teil, damit der Helm seine Form behält). Animationen: Idle (`Unarmed_Idle`), Walk (`Walking_A`), Attack (`Unarmed_Melee_Attack_Punch_A`), Hit (`Hit_A`), Death (`Death_A`), Interact (`Interact`). Breiter Körper wie beim Zwerg: Breite × 1,15, Tiefe × 1,09 gegenüber der Höhe. Gebaut mit `npm run build:assets -- golems`.
 - **Lizenzen:** Quelle und Lizenz jeder fremden Datei in `assets/CREDITS.md`.
 
 **Waffen der Spielfiguren**
@@ -771,8 +773,8 @@ Die Teile `zange`, `tisch_mittel` und die liegenden Waffen (`deko_<waffe>`) geh�
 | zwergenschmied | Dunkelzwerg-Schmied, Modell `Barbarian`, mit Hammer | Monster | 1 | – |
 | zwergenvermesser | Vermesser, Dunkelzwerg mit Helm und Messlatte | Figur ohne Kampfwerte | 1 | – |
 | hoehlenspinne | Höhlenspinne, Modell `Spider` (Quaternius), dunkelgrau mit roten Augen | Monster | 1 | – |
-| steingolem | Steingolem, sieht aus wie eine Säule | Monster | 1 | – |
-| eisengolem | Eisengolem | Monster | 1 | – |
+| steingolem | Steingolem, KayKit `Knight` ohne Ausrüstung, Kopf auf 45 %, einfarbig Stein `#8A847D`, dunkles Visier, Augen Bernstein `#FFB347`, 1,4 Kacheln | Monster | 1 | – |
+| eisengolem | Eisengolem, KayKit `Knight` ohne Ausrüstung, Kopf auf 45 %, einfarbig Metall `#5E6168`, dunkles Visier, Augen Glutorange `#FF6A2A`, 1,8 Kacheln | Monster | 1 | – |
 | monsterratte_rache | Die Monsterratte auf Rachefeldzug, Modell der Monsterratte | Monster | 2×2 | – |
 | ausbrecher_ork | Entflohener Ork | Monster | 1 | – |
 | ausbrecher_goblin | Entflohener Goblin, Goblin-Modell | Monster | 1 | – |
@@ -1085,4 +1087,5 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Schrein der Zwergenminen: Steinstatue als Lichtinsel mit Kerzenkranz (auch Kerzenstummel, nur hier), vier Säulen ohne Fackeln, nur 2 Wandfackeln; Statue blickt zur Kamera
 - [x] Podest der Schreinstatue im selben Stein wie die Statue (`#8A847D`), aus einem Guss
 - [x] Schmiede der Zwergenminen: Esse auf Zwergenhöhe als Hauptlicht mittig an einer Wand ohne Tür (sonst neben dem Türrahmen), Amboss und Schleifstein im Raum, Eisenlager unter einer Wandfackel, Kohle, Kohlekiste, Zangentisch und Waffentisch; Teile aus KayKit RPG Tools Bits und Resource Bits mit eigener Textur; nur 2 Wandfackeln, Grundlicht 1,4, kein verstreutes Geröll, keine Fahnen
+- [x] Stein- und Eisengolem als animierte Figuren im Stil der Schreinstatue (Ritter-Körper ohne Ausrüstung, kleiner Helm tief zwischen den Schultern, dunkles Visier, glimmende Augen); Kampfwerte und Texte unverändert
 - [x] Zonenraster als allgemeine Regel für Raumtypen mit Füllerliste (`fill`): jede der 9 Zonen zu 3×3 Kacheln bekommt ein Bodenrequisit; Säulenhalle, Brunnenraum und Kerker bewusst ohne; heute nur die Schmiede der Zwergenminen
