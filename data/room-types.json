@@ -2312,6 +2312,110 @@
     },
     "themeRating": {
       "zwergenminen": "mixed"
+    },
+    "themeDecor": {
+      "zwergenminen": {
+        "torchCount": 2,
+        "rubble": false,
+        "fill": {
+          "rule": "zones",
+          "wall": [
+            "fass",
+            "kiste"
+          ],
+          "floor": [
+            "eisenbarren",
+            "wassereimer"
+          ]
+        },
+        "layouts": [
+          {
+            "id": "A",
+            "props": [
+              {
+                "prop": "esse",
+                "place": "wall-mid",
+                "required": true
+              },
+              {
+                "prop": "amboss",
+                "place": "area:3|3-7|7",
+                "required": true
+              },
+              {
+                "prop": "schleifstein",
+                "place": "area:3|3-7|7",
+                "required": true
+              },
+              {
+                "prop": "eisenlager",
+                "place": "torch",
+                "required": true
+              },
+              {
+                "prop": "wassereimer",
+                "place": "around:amboss"
+              },
+              {
+                "prop": "kohle",
+                "place": "around:esse",
+                "count": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "prop": "kohle",
+                "variant": "gross",
+                "place": "around:esse",
+                "count": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "prop": "kohle",
+                "variant": "klein",
+                "place": "around:esse",
+                "count": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "prop": "eisenbarren",
+                "place": "around:eisenlager",
+                "count": [
+                  2,
+                  3
+                ]
+              },
+              {
+                "prop": "kohlekiste",
+                "place": "within:esse:2"
+              },
+              {
+                "prop": "kohle",
+                "variant": "klein",
+                "place": "around:kohlekiste",
+                "count": [
+                  2,
+                  3
+                ]
+              },
+              {
+                "prop": "zangentisch",
+                "place": "within:esse:2"
+              },
+              {
+                "prop": "waffentisch",
+                "place": "wall-back",
+                "clear": 1
+              }
+            ]
+          }
+        ]
+      }
     }
   },
   {

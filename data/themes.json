@@ -173,6 +173,9 @@
     "roomPalettes": {
       "schrein": {
         "brightness": 1.7
+      },
+      "schmiede": {
+        "brightness": 1.4
       }
     },
     "bannerColor": "blau",

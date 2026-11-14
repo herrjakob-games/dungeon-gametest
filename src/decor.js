@@ -67,13 +67,24 @@ export const PROPS = {
   regal_gross: { w: 1, d: 1, blocks: false, wall: true, floor: false },
   regal_klein: { w: 1, d: 1, blocks: false, wall: true, floor: false },
   regal_kerzen: { w: 1, d: 1, blocks: false, wall: true, floor: false },
-  wandregal: { w: 2, d: 1, blocks: true, wall: true }
+  wandregal: { w: 2, d: 1, blocks: true, wall: true },
+  // Schmiede der Zwergenminen (docs/GDD.md, Requisitenliste)
+  esse: { w: 3, d: 1, blocks: true, wall: true, light: true },
+  amboss: { w: 1, d: 1, blocks: true },
+  schleifstein: { w: 1, d: 1, blocks: true },
+  wassereimer: { w: 1, d: 1, blocks: false },
+  eisenlager: { w: 2, d: 1, blocks: true }, // steht mit place "torch" unter einer Wandfackel, ist aber kein Wandrequisit
+  eisenbarren: { w: 1, d: 1, blocks: false },
+  kohle: { w: 1, d: 1, blocks: false },
+  kohlekiste: { w: 1, d: 1, blocks: true },
+  zangentisch: { w: 1, d: 1, blocks: true },
+  waffentisch: { w: 2, d: 1, blocks: true, wall: true }
 };
 
 // Abwandlungen, die es pro Requisit gibt
 export const VARIANTS = {
   tisch: ["kueche"], fass: ["gruppe", "gross"], stuhl: ["umgekippt"], kiste: ["angenagt", "flaschen"],
-  flaschen: ["b"], fahne: ["wappen"], muenzen: ["klein", "einzeln"], kerze_duenn: ["an"]
+  flaschen: ["b"], fahne: ["wappen"], muenzen: ["klein", "einzeln"], kerze_duenn: ["an"], kohle: ["gross", "klein"]
 };
 
 // Fahnen (docs/GDD.md, Requisitenliste und Platzierung): Farbe nach dem Thema (bannerColor in data/themes.json)
@@ -121,7 +132,8 @@ export function chosenLayout(spec, seed, layoutIndex, doors) {
 
 /**
  * Fackeln an den hohen Wänden (Stilguide: neben jeder Tür eine, Wände ohne Tür zwei): Kachel entlang Nord- und Westwand.
- * Wand ohne Tür mit einer mittigen Fahne (wall-center): Fackeln auf den Kacheln 2 und 8 statt 3 und 7 (docs/GDD.md).
+ * Wand ohne Tür mit einer mittigen Fahne (wall-center) oder einem mittigen Requisit (wall-mid, Esse): Fackeln auf den Kacheln 2 und 8
+ * statt 3 und 7 (docs/GDD.md).
  * Ergebnis: [{ wall: "N" | "W", t }]. Die vorderen Fackeln (Süd, Ost) sind wie die vorderen Wände ausgeblendet (nur ihr Licht
  * bleibt) und betreffen keine Wandrequisiten. torchCount in der Einrichtung begrenzt die Wandfackeln (Auswahl nach seed).
  * feature (centerFeature): in der Vorkammer ("up") hängt keine Fackel hinter oder neben der Treppe, also nicht auf den
@@ -131,7 +143,7 @@ export function torchSlots(doors, spec, seed, feature, layout) {
   let out = [];
   if (pillarTorches(spec)) return out; // Fackeln an den Säulen statt an den Wänden (Schatzkammer, Säulenhalle)
   const lay = layout || chosenLayout(spec, seed, undefined, doors);
-  const centered = !!lay && lay.props.some(p => p.place === WALL_CENTER);
+  const centered = !!lay && lay.props.some(p => p.place === WALL_CENTER || p.place === WALL_MID);
   ["N", "W"].forEach(w => ((doors & DIR[w].bit) ? [MID + 2] : centered ? [1, N - 2] : [2, N - 3]).forEach(t => out.push({ wall: w, t })));
   if (feature === "up") out = out.filter(f => f.t > STAIRS_SIZE);
   if (spec && spec.torchCount !== undefined) {
@@ -170,6 +182,26 @@ export const PLACES = ["center", "wall-back", "corner", "free"];
 export const DOOR_SIDES = "door-sides";
 // Mittig an einer Nord- oder Westwand ohne Tür (fahne_dreifach): optisch über Kachel 5, reserviert die Kacheln 4 bis 6
 export const WALL_CENTER = "wall-center";
+// Mittig an einer Nord- oder Westwand ohne Tür (Esse, 3 Kacheln: 4 bis 6). Haben Nord und West eine Tür: so nah wie möglich an
+// der Wandmitte neben dem Türrahmen. Ohne Korrekturablauf.
+export const WALL_MID = "wall-mid";
+// Zwei Bodenkacheln unter einer Wandfackel: die Fackelkachel und eine Nachbarkachel entlang der Wand (Eisenlager); kein Wandrequisit
+export const TORCH_PLACE = "torch";
+// Freie Kachel in einem Rechteck "area:x1|y1-x2|y2" (wie im GDD ab 1 gezählt)
+export const AREA_PLACE = /^area:(\d+)\|(\d+)-(\d+)\|(\d+)$/;
+// Kachel höchstens r Kacheln (auch schräg gezählt) von einem Requisit entfernt: "within:<prop>:<r>"
+export const WITHIN_PLACE = /^within:(\w+):(\d+)$/;
+// Zonenraster (fill, rule "zones"): 9 Zonen zu 3×3 Kacheln, Liste der Kacheln jeder Zone (Zeile für Zeile von Nordwest)
+export const ZONE = 3;
+export function zones() {
+  const out = [];
+  for (let zz = 0; zz < N / ZONE; zz++) for (let zx = 0; zx < N / ZONE; zx++) {
+    const tiles = [];
+    for (let z = zz * ZONE; z < zz * ZONE + ZONE; z++) for (let x = zx * ZONE; x < zx * ZONE + ZONE; x++) tiles.push([x, z]);
+    out.push(tiles);
+  }
+  return out;
+}
 // Truhen mit "mimics": true in der Einrichtung: eine Truhe ist echt (nach Raum-Seed), alle anderen sind Mimiken.
 // Ergebnis: Liste mit true für jede Mimik, in der Reihenfolge der Truhen im Plan
 export function mimicChests(spec, n, seed) {
@@ -484,6 +516,50 @@ export function planDecor(spec, opts) {
       }
       return shuffle(out);
     }
+    const quarter = () => Math.floor(R() * 4) * Math.PI / 2;
+    if (place === WALL_MID) {
+      const def = PROPS[p], half = Math.floor((def.w - 1) / 2);
+      const mk = (wl, t0) => (wl === "N" ? { tiles: rect(t0, 0, def.w, def.d), rot: 0, wall: "N" } : { tiles: rect(0, t0, def.d, def.w), rot: Math.PI / 2, wall: "W" });
+      const free = ["N", "W"].filter(wl => !(doors & DIR[wl].bit));
+      if (free.length) return shuffle(free).map(wl => mk(wl, MID - half));
+      // Türen an Nord und West: neben dem Türrahmen (Kacheln 4 bis 6 bleiben frei), so nah wie möglich an der Wandmitte
+      ["N", "W"].forEach(wl => {
+        for (let t0 = 0; t0 + def.w <= N; t0++) {
+          if (t0 <= MID + 1 && t0 + def.w - 1 >= MID - 1) continue;
+          out.push(Object.assign(mk(wl, t0), { dist: Math.abs(t0 + (def.w - 1) / 2 - MID) + R() * 0.01 }));
+        }
+      });
+      return out.sort((a, b) => a.dist - b.dist);
+    }
+    if (place === TORCH_PLACE) {
+      torchList.forEach(f => [f.t - 1, f.t + 1].forEach(u => {
+        const ts = [f.t, u].sort((a, b) => a - b);
+        if (ts[0] < 0 || ts[1] >= N) return;
+        out.push({ tiles: f.wall === "N" ? ts.map(t => [t, 0]) : ts.map(t => [0, t]), rot: f.wall === "N" ? 0 : Math.PI / 2 }); // Rückseite zur Wand
+      }));
+      return shuffle(out);
+    }
+    const fa = AREA_PLACE.exec(place || "");
+    if (fa) {
+      const [x1, z1, x2, z2] = fa.slice(1).map(v => +v - 1);
+      ["h", "v"].forEach(o => {
+        const [w, d] = dims(p, o);
+        for (let z0 = z1; z0 + d - 1 <= z2; z0++) for (let x0 = x1; x0 + w - 1 <= x2; x0++) out.push({ tiles: shape(p, v, x0, z0, o), rot: (o === "v" ? Math.PI / 2 : 0) + (R() < 0.5 ? 0 : Math.PI) });
+      });
+      return shuffle(out);
+    }
+    const fw = WITHIN_PLACE.exec(place || "");
+    if (fw) {
+      const r = +fw[2];
+      placements.filter(t => t.prop === fw[1]).forEach(t => {
+        for (let z0 = 0; z0 < N; z0++) for (let x0 = 0; x0 < N; x0++) {
+          const tiles = shape(p, v, x0, z0, "h");
+          const d = gap(tiles, t.tiles);
+          if (d >= 1 && d <= r) out.push({ tiles, rot: quarter(), target: fw[1] });
+        }
+      });
+      return shuffle(out);
+    }
     const ft = TILE_PLACE.exec(place || "");
     // faceCamera (Schreinstatue): Blick zur Kamera, nach Raum-Seed nach Süden (+z) oder Osten (+x), nie zur Wand
     if (ft) return [{ tiles: shape(p, v, +ft[1] - 1, +ft[2] - 1, "h", 1, 1), rot: PROPS[p].faceCamera ? (R() < 0.5 ? 0 : Math.PI / 2) : 0 }];
@@ -627,6 +703,33 @@ export function planDecor(spec, opts) {
       put(item, c);
     }
   }
+  // Zonenraster (spec.fill, rule "zones", docs/GDD.md): 9 Zonen zu 3×3 Kacheln, jede bekommt mindestens ein Bodenrequisit (damit
+  // ist kein leeres Quadrat größer als 4×4). Zuerst eine Kachel an der Raumkante mit einem Füller aus wall, sonst eine Kachel der
+  // Zone mit einem Füller aus floor; erste passende Kachel und erster passender Füller gewinnen (fits wie bei allen Requisiten).
+  // Zonen, die sich nicht füllen lassen, bleiben leer und stehen in unfilled.
+  const unfilled = [];
+  if (spec.fill && spec.fill.rule === "zones") {
+    const F = spec.fill;
+    const edge = ([x, z]) => x === 0 || z === 0 || x === N - 1 || z === N - 1;
+    const floorTiles = () => {
+      const o = new Set();
+      placements.forEach(pl => { if (PROPS[pl.prop].floor !== false) pl.tiles.forEach(t => o.add(key(...t))); });
+      return o;
+    };
+    zones().forEach((tiles, zi) => {
+      const o = floorTiles();
+      if (tiles.some(t => o.has(key(...t)))) return;
+      const order = shuffle(tiles).sort((a, b) => (edge(b) ? 1 : 0) - (edge(a) ? 1 : 0)); // Kanten zuerst
+      for (const t of order) {
+        for (const prop of shuffle((edge(t) ? F.wall : F.floor) || [])) {
+          const item = { prop, place: "fill" };
+          const c = { tiles: [t], rot: Math.floor(R() * 4) * Math.PI / 2 };
+          if (PROPS[prop] && fits(item, c)) { put(item, c); return; }
+        }
+      }
+      unfilled.push(zi);
+    });
+  }
   // Zelleinrichtung: je Zelle entweder ein Strohlager (eine Kachel Abstand zum Durchgang) oder Knochen, nie beides
   if (cellPlan) {
     cellPlan.cells.forEach(cell => {
@@ -662,7 +765,7 @@ export function planDecor(spec, opts) {
     }
   }
   return { layout: layout.id, placements, corrected, dropped, missingRequired, blocked, torchColor: spec.torchColor || null, torchSpots, torches: torchList, clickables, extra,
-    edges, cells: cellPlan };
+    edges, cells: cellPlan, unfilled };
 }
 
 // Datenprüfung der Einrichtung (für validateData)
@@ -678,6 +781,15 @@ export function checkDecor(spec, where, err) {
   if (spec.floorTiles !== undefined) checkFloorTiles(spec.floorTiles, where, err);
   if (spec.torches !== undefined && spec.torches !== "saeulen") err(where, "torches kennt nur \"saeulen\"");
   if (spec.torchColor !== undefined && !/^#[0-9a-fA-F]{6}$/.test(spec.torchColor)) err(where, "torchColor muss eine Farbe wie #ff8a30 sein");
+  if (spec.rubble !== undefined && spec.rubble !== false) err(where, "rubble kennt nur false (kein verstreutes Geröll)");
+  if (spec.fill !== undefined) {
+    const f = spec.fill;
+    if (!f || f.rule !== "zones") err(where, "fill braucht rule \"zones\"");
+    ["wall", "floor"].forEach(k => {
+      if (!Array.isArray(f && f[k]) || !f[k].length) err(where, "fill." + k + " braucht eine Liste von Requisiten");
+      else f[k].forEach(id => { if (!PROPS[id]) err(where, "fill." + k + ": unbekanntes Requisit " + id); else if (PROPS[id].floor === false || PROPS[id].wall) err(where, "fill." + k + ": " + id + " ist kein Bodenrequisit"); });
+    });
+  }
   const ids = new Set();
   spec.layouts.forEach((l, i) => {
     const w = where + " Variante " + (l.id || i + 1);
@@ -688,14 +800,18 @@ export function checkDecor(spec, where, err) {
     const before = new Set();
     (l.props || []).forEach(p => {
       if (!PROPS[p.prop]) err(w, "unbekanntes Requisit " + p.prop);
-      const m = /^(around|above):(\w+)$/.exec(p.place || "");
+      const m = /^(around|above):(\w+)$/.exec(p.place || "") || (WITHIN_PLACE.exec(p.place || "") && ["", "within", WITHIN_PLACE.exec(p.place)[1]]);
       const ft = TILE_PLACE.exec(p.place || "");
+      const fa = AREA_PLACE.exec(p.place || "");
+      if (fa && !(inBounds(+fa[1] - 1, +fa[2] - 1) && inBounds(+fa[3] - 1, +fa[4] - 1) && +fa[1] <= +fa[3] && +fa[2] <= +fa[4])) err(w, p.prop + ": Rechteck " + p.place.slice(5) + " ungültig");
+      if (p.place === WALL_MID && !(PROPS[p.prop] && PROPS[p.prop].wall && PROPS[p.prop].floor !== false)) err(w, p.prop + ": wall-mid passt nur für Wandrequisiten am Boden");
+      if (p.place === TORCH_PLACE && PROPS[p.prop] && PROPS[p.prop].wall) err(w, p.prop + ": torch passt nur für Bodenrequisiten (kein Wandrequisit)");
       if (ft && !inBounds(+ft[1] - 1, +ft[2] - 1)) err(w, p.prop + ": Kachel " + p.place.slice(5) + " liegt außerhalb des Raums");
       if (p.place === DOOR_SIDES && !(PROPS[p.prop] && PROPS[p.prop].wall)) err(w, p.prop + ": door-sides passt nur für Wandrequisiten");
       if (p.place === WALL_CENTER && !(PROPS[p.prop] && PROPS[p.prop].wall && PROPS[p.prop].floor === false)) err(w, p.prop + ": wall-center passt nur für Wandschmuck");
       if (p.prop === "fahne" && p.place !== DOOR_SIDES) err(w, "fahne hängt nur neben Türen (door-sides)");
       if (p.prop === "fahne_dreifach" && p.place !== WALL_CENTER) err(w, "fahne_dreifach hängt nur mittig an Wänden ohne Tür (wall-center)");
-      if (!PLACES.includes(p.place) && !m && !ft && p.place !== DOOR_SIDES && p.place !== WALL_CENTER) err(w, p.prop + ": unbekannte Platzierung " + p.place);
+      if (!PLACES.includes(p.place) && !m && !ft && !fa && ![DOOR_SIDES, WALL_CENTER, WALL_MID, TORCH_PLACE].includes(p.place)) err(w, p.prop + ": unbekannte Platzierung " + p.place);
       if (m && !before.has(m[2])) err(w, p.prop + ": " + m[2] + " muss vorher in der Liste stehen");
       if (m && m[1] === "above" && p.prop !== "kronleuchter") err(w, p.prop + ": above passt nur für hängende Requisiten");
       const okCount = (c) => Number.isInteger(c) && c > 0;

@@ -3,6 +3,7 @@
 // Wand-Requisiten lehnen mit der Rückseite an -z (die Wand). Die Größen stehen in decor.js (PROPS).
 import { rnd } from "./rng.js";
 import { mat, box, stone, WOOD } from "./materials.js";
+import { makeModel } from "./models.js";
 const THREE = window.THREE;
 
 const cyl = (rt, rb, h, seg, material, x, y, z) => {
@@ -416,5 +417,110 @@ export function kaeseberg(pl, ctx) {
   throne.position.set(0, 0.2, -0.45);
   g.add(throne);
   addLight(g, ctx, 0xffd060, 0.8, 5, 0, 1.6, 0.6, null);
+  return g;
+}
+
+// ---------- Schmiede der Zwergenminen (docs/GDD.md, Requisitenliste) ----------
+// Esse: Schmiedeofen auf Zwergenhöhe, 3×1 an der Wand (Rückseite an -z). Sockel und Feuerkasten auf den ersten zwei Kacheln,
+// Blasebalg auf der dritten; die Glut liegt auf etwa 0,5 Kacheln (Hüfthöhe des Zwergs). Hauptlicht des Raums, flackert mit den Flammen.
+export function esse(pl, ctx) {
+  const g = new THREE.Group();
+  const st = mat(0x6a625b), stDark = mat(0x4a433e);
+  const iron = mat(0x34363b, { metalness: 0.35, roughness: 0.6 }), copper = mat(0xb06a3a, { metalness: 0.3, roughness: 0.5 });
+  // Sockel mit abgesetzter Kante
+  g.add(box(2.0, 0.36, 0.9, st, 0, 0.18, -0.05));
+  g.add(box(2.1, 0.1, 1.0, stDark, 0, 0.41, -0.05));
+  // Feuerkasten: Rückwand und niedrige Seitenwangen
+  g.add(box(1.7, 0.4, 0.14, stDark, 0, 0.66, -0.42));
+  [-0.82, 0.82].forEach(x => g.add(box(0.16, 0.22, 0.55, st, x, 0.57, -0.22)));
+  // Glutbett mit Glutstücken, die selbst leuchten (ohne Licht berechnet), und drei kleinen Flammen
+  g.add(box(1.45, 0.05, 0.62, mat(0x1a1210), 0, 0.48, -0.08));
+  const hot = [0xff4a10, 0xff7a20, 0xffb040];
+  for (let i = 0; i < 26; i++) {
+    const c = new THREE.Mesh(new THREE.DodecahedronGeometry(0.06 + rnd() * 0.05), new THREE.MeshBasicMaterial({ color: hot[i % 3] }));
+    c.position.set((rnd() - 0.5) * 1.3, 0.52 + rnd() * 0.04, -0.08 + (rnd() - 0.5) * 0.5);
+    c.rotation.set(rnd() * 3, rnd() * 3, 0);
+    g.add(c);
+  }
+  const flames = [];
+  [-0.4, 0.05, 0.45].forEach((x, i) => {
+    const f = flameMesh(0.13 + i * 0.02, i === 1 ? 0xffc060 : 0xff8a30);
+    f.position.set(x, 0.64, 0.0); f.scale.set(1, 1.6, 1);
+    g.add(f); flames.push(f);
+  });
+  // Haube (flache vierseitige Pyramide aus Eisen), Kupferband am unteren Rand, Kamin bis zur Wandoberkante
+  const hood = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 1.15, 0.4, 4, 1), iron);
+  hood.rotation.y = Math.PI / 4; hood.scale.set(1, 1, 0.55); hood.position.set(0, 1.12, -0.25);
+  hood.castShadow = true; g.add(hood);
+  g.add(box(1.66, 0.07, 0.9, copper, 0, 0.92, -0.25));
+  g.add(box(0.56, 0.75, 0.42, iron, 0, 1.68, -0.29));
+  g.add(box(0.62, 0.06, 0.48, copper, 0, 1.42, -0.29));
+  // Blasebalg aus Holz und Leder neben dem Sockel
+  const bel = new THREE.Group();
+  bel.add(box(0.4, 0.05, 0.65, mat(WOOD), 0, 0.06, 0));
+  bel.add(box(0.4, 0.05, 0.65, mat(WOOD), 0, 0.3, 0.02));
+  bel.add(box(0.36, 0.2, 0.55, mat(0x5a3a28), 0, 0.18, 0));
+  bel.add(box(0.06, 0.06, 0.3, mat(0x2a2a2a), -0.22, 0.18, -0.2));
+  bel.rotation.y = -0.2;
+  bel.position.set(1.25, 0, -0.02);
+  g.add(bel);
+  // Licht: warmes Hauptlicht vor der Glut, schwaches Bodenlicht
+  addLight(g, ctx, 0xff7a30, 5, 13, 0, 0.9, 0.6, flames[1]);
+  addLight(g, ctx, 0xff9a40, 1.5, 4, 0, 0.35, 1.0, flames[0]);
+  return g;
+}
+
+// Oberkante eines Teils (für Gegenstände, die auf einem anderen liegen)
+const topOf = (o) => new THREE.Box3().setFromObject(o).max.y;
+// Gegenstand flach hinlegen (längste Achse waagerecht) und auf Länge len bringen; Ursprung mittig am Boden
+function lay(o, len) {
+  const b = new THREE.Box3().setFromObject(o), sz = b.getSize(new THREE.Vector3());
+  if (sz.y >= sz.x && sz.y >= sz.z) o.rotation.x = Math.PI / 2;
+  const w = new THREE.Group(); w.add(o);
+  const s2 = new THREE.Box3().setFromObject(w).getSize(new THREE.Vector3());
+  const k = len / Math.max(s2.x, s2.z); w.scale.setScalar(k);
+  const b3 = new THREE.Box3().setFromObject(w), c = b3.getCenter(new THREE.Vector3());
+  o.position.x -= c.x / k; o.position.z -= c.z / k; o.position.y -= b3.min.y / k;
+  return w;
+}
+
+// Kohlekiste: Holzkiste, oben ein Kohlehaufen (leicht in den Deckel gesenkt)
+export function kohlekiste(pl) {
+  const g = new THREE.Group();
+  const k = makeModel("kiste");
+  if (!k) return kiste(pl);
+  k.rotation.y = (rnd() - 0.5) * 0.3; g.add(k);
+  const c = makeModel("kohle");
+  if (c) { c.position.y = topOf(k) - 0.05; c.rotation.y = rnd() * 6; g.add(c); }
+  return g;
+}
+
+// Zangentisch: kleiner Holztisch (1,2-fach) mit einer schräg liegenden Eisenzange
+export function zangentisch() {
+  const g = new THREE.Group();
+  const t = makeModel("tisch_klein");
+  if (!t) { g.add(box(0.7, 0.5, 0.7, mat(WOOD), 0, 0.25, 0)); return g; }
+  t.scale.multiplyScalar(1.2); g.add(t);
+  const zm = makeModel("zange");
+  if (zm) { const z = lay(zm, 0.55); z.position.y = topOf(t); z.rotation.y = 0.5 + rnd() * 0.6; g.add(z); }
+  return g;
+}
+
+// Waffentisch: mittlerer Tisch (2×1) mit 2 bis 3 flach liegenden Waffen nach Raum-Seed, quer zur Tischlänge nebeneinander
+export function waffentisch() {
+  const g = new THREE.Group();
+  const t = makeModel("tisch_mittel");
+  if (!t) { g.add(box(1.6, 0.5, 0.8, mat(WOOD), 0, 0.25, 0)); return g; }
+  g.add(t);
+  const all = ["deko_streitaxt", "deko_kriegshammer", "deko_kurzschwert", "deko_kriegsaxt"].sort(() => rnd() - 0.5);
+  const n = 2 + (rnd() < 0.5 ? 1 : 0), y = topOf(t);
+  for (let i = 0; i < n; i++) {
+    const w = makeModel(all[i]);
+    if (!w) continue;
+    const l = lay(w, 0.62);
+    l.position.set(-0.45 + i * (0.9 / Math.max(1, n - 1)), y, (rnd() - 0.5) * 0.12);
+    l.rotation.y = (rnd() - 0.5) * 0.4; // lay legt die Klinge entlang z, quer zur Tischlänge (x)
+    g.add(l);
+  }
   return g;
 }

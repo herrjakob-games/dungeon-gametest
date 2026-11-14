@@ -1495,6 +1495,40 @@
       "attack": "2H_Melee_Attack_Chop"
     }
   },
+  "steingolem": {
+    "file": "assets/figures/steingolem.glb",
+    "scale": [
+      0.9126,
+      0.7936,
+      0.865
+    ],
+    "palette": false,
+    "animations": {
+      "idle": "Idle",
+      "walk": "Walk",
+      "attack": "Attack",
+      "hit": "Hit",
+      "death": "Death",
+      "interact": "Interact"
+    }
+  },
+  "eisengolem": {
+    "file": "assets/figures/eisengolem.glb",
+    "scale": [
+      1.1733,
+      1.0203,
+      1.1121
+    ],
+    "palette": false,
+    "animations": {
+      "idle": "Idle",
+      "walk": "Walk",
+      "attack": "Attack",
+      "hit": "Hit",
+      "death": "Death",
+      "interact": "Interact"
+    }
+  },
   "zwergenschmied": {
     "file": "assets/figures/zwergenschmied.glb",
     "scale": [
@@ -1648,6 +1682,79 @@
       "attack": "HumanArmature|Spider_Attack",
       "death": "HumanArmature|Spider_Death"
     }
+  },
+  "amboss": {
+    "file": "assets/props/amboss.glb",
+    "scale": 0.6,
+    "palette": false
+  },
+  "schleifstein": {
+    "file": "assets/props/schleifstein.glb",
+    "scale": 0.44,
+    "palette": false
+  },
+  "wassereimer": {
+    "file": "assets/props/wassereimer.glb",
+    "scale": 0.5,
+    "palette": false
+  },
+  "eisenlager": {
+    "file": "assets/props/eisenlager.glb",
+    "scale": 0.5,
+    "palette": false
+  },
+  "eisenbarren": {
+    "file": "assets/props/eisenbarren.glb",
+    "scale": 0.5,
+    "palette": false
+  },
+  "kohle": {
+    "file": "assets/props/kohle.glb",
+    "scale": 0.75,
+    "palette": false,
+    "color": "#24201F"
+  },
+  "kohle_gross": {
+    "file": "assets/props/kohle_gross.glb",
+    "scale": 1.0,
+    "palette": false,
+    "color": "#24201F"
+  },
+  "kohle_klein": {
+    "file": "assets/props/kohle_klein.glb",
+    "scale": 1.0,
+    "palette": false,
+    "color": "#24201F"
+  },
+  "zange": {
+    "file": "assets/props/zange.glb",
+    "scale": 0.4,
+    "palette": false
+  },
+  "tisch_mittel": {
+    "file": "assets/props/tisch_mittel.glb",
+    "scale": [
+      0.8,
+      0.5,
+      0.5
+    ],
+    "palette": true
+  },
+  "deko_streitaxt": {
+    "file": "assets/weapons/streitaxt.glb",
+    "palette": false
+  },
+  "deko_kriegshammer": {
+    "file": "assets/weapons/kriegshammer.glb",
+    "palette": false
+  },
+  "deko_kurzschwert": {
+    "file": "assets/weapons/kurzschwert.glb",
+    "palette": false
+  },
+  "deko_kriegsaxt": {
+    "file": "assets/weapons/kriegsaxt.glb",
+    "palette": false
   },
   "weapons": {
     "knueppel": {

@@ -53,6 +53,22 @@ Quelle und Lizenz jeder fremden Datei (docs/GDD.md, Asset-Spezifikation).
 - `textures/ui/handbuch_texture.png` ist die Mage-Textur mit braunem Einband und Pergamentseiten (`tools/weapon-texture.py`)
 - `textures/weapons/eismesser_texture.png` ist die Paket-Textur mit eisblauem Metall (`tools/weapon-texture.py`)
 
+## KayKit RPG Tools Bits 1.0 FREE
+
+- Autor: Kay Lousberg (www.kaylousberg.com)
+- Lizenz: CC0 1.0 (Creative Commons Zero), siehe `source/kaykit-rpg-tools-bits/License.txt` (aus dem Paket, 26.11.2025)
+- Quelle: itch.io-Seite von Kay Lousberg, Fassung 1.0 FREE (hochgeladen von Christian)
+- Übernommene Dateien (in `source/kaykit-rpg-tools-bits/`, aus `Assets/gltf/`): anvil, hammer, grindstone, bucket_metal, tongs (je `.gltf` und `.bin`), tools_bits_texture.png
+- Daraus gebaut (`npm run build:assets`): `props/amboss.glb` (anvil mit liegendem hammer), `props/schleifstein.glb`, `props/wassereimer.glb`, `props/zange.glb` (Teil des Zangentischs)
+
+## KayKit Resource Bits 1.0 FREE
+
+- Autor: Kay Lousberg (www.kaylousberg.com)
+- Lizenz: CC0 1.0 (Creative Commons Zero), siehe `source/kaykit-resource-bits/License.txt` (aus dem Paket, 03.04.2025)
+- Quelle: itch.io-Seite von Kay Lousberg, Fassung 1.0 FREE (hochgeladen von Christian)
+- Übernommene Dateien (in `source/kaykit-resource-bits/`, aus `Assets/gltf/`): Iron_Bar, Iron_Bars_Stack_Small, Iron_Nuggets, Iron_Nugget_Large, Iron_Nugget_Medium (je `.gltf` und `.bin`), resource_bits_texture.png (im Paket unter `Textures/`)
+- Daraus gebaut (`npm run build:assets`): `props/eisenlager.glb` (zwei Barrenstapel), `props/eisenbarren.glb`, `props/kohle.glb`, `props/kohle_gross.glb`, `props/kohle_klein.glb` (einfarbig als Kohle)
+
 ## KayKit Character Pack: Skeletons 1.0 (und 1.1 FREE)
 
 - Autor: Kay Lousberg (www.kaylousberg.com)

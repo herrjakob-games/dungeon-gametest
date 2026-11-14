@@ -73,7 +73,7 @@ export function buildRoom(id) {
   state.decorPlan = null;
   if (spec) placeDecor(spec, room, feature, id, torch);
   else furnish(type.layout, id);
-  scatterRubble(!!feature);
+  if (!spec || spec.rubble !== false) scatterRubble(!!feature); // rubble: false (Schmiede der Zwergenminen): kein verstreutes Geröll
   refreshLocks();
   (state.roomState[id].eventProps || []).forEach(p => placeEventProp(p)); // Event-Requisiten, die schon aufgestellt wurden
   syncRoom(id); // Figuren im Raum (roomFigures.js)

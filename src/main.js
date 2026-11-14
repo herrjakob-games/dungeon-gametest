@@ -334,7 +334,7 @@ if (new URLSearchParams(location.search).get("grid") === "1") showGrid(); // Tes
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawMinimap);
 
 // ---------- Testmodus (lokal und auf GitHub Pages) ----------
-// ?event=<id> startet das Event im ersten passenden Raum, ?fight=<monster-id> einen Kampf in der Vorkammer,
+// ?event=<id> startet das Event im ersten passenden Raum, ?fight=<monster-id> einen Kampf in der Vorkammer (mit &thema=<id> in diesem Thema),
 // ?room=<raumtyp-id> betritt den ersten passenden Raum ohne Event (im Bossraum mit &sieg=1 nach dem Sieg, mit &thema=<id> in diesem Thema),
 // ?grid=1 zeigt die Kachelnamen x|y, ?wurf=<satz> (etwa 4W6): Taste W würfelt diesen Satz in der Vorkammer mit
 // zufälligen Werten. Optional &volk=zwerg|elf|mensch.
@@ -363,7 +363,10 @@ function devStart() {
       showRoll(wurf, Array.from({ length: count }, () => 1 + Math.floor(Math.random() * sides)));
     });
   } else if (monster) {
+    // &thema=<id>: Kampf in der Vorkammer der ersten Ebene dieses Themas (Licht und Palette des Themas)
+    const th = q.get("thema");
     state.depth = 1;
+    if (th) for (let d = 1; d <= DATA.themes.length * 3; d++) if (themeFor(DATA.themes, d).id === th) { state.depth = d; break; }
     startDungeon(randomSeed(), true);
     startFight(monster);
   } else if (room) {
