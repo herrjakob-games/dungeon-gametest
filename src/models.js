@@ -4,6 +4,7 @@
 // Grundformen. Die id wird dann einmal in der Konsole gemeldet.
 import { ACCESSORIES } from "./monsterFigures.js";
 import { weaponKey, weaponFile, scrollSeal } from "./weapons.js";
+import { modelIdFor } from "./world.js";
 const THREE = window.THREE;
 
 let MODELS = {};
@@ -84,10 +85,13 @@ export async function loadModels() {
   paletteMaterial(themeId);
 }
 
-export function setModelTheme(theme) { themeId = theme || "keller"; }
+// theme: id des Themas; propModels: Modelle anderer Requisiten in diesem Thema (data/themes.json, etwa saeule → pfeiler)
+let themeModels = null;
+export function setModelTheme(theme, propModels) { themeId = theme || "keller"; themeModels = propModels ? { propModels } : null; }
 
 // Zuordnung einer id, mit Variante: zuerst <id>_<variante>, sonst die Grunddatei
 export function modelEntry(id, variant) {
+  id = modelIdFor(themeModels, id); // Modell des Themas (propModels), die id des Requisits bleibt beim Aufrufer
   if (variant && MODELS[id + "_" + variant] && scenes.has(MODELS[id + "_" + variant].file)) return MODELS[id + "_" + variant];
   const m = MODELS[id];
   if (m && scenes.has(m.file)) return m;

@@ -346,6 +346,7 @@ export function validateData(data) {
     if (th.seeThroughOpacity !== undefined && !(typeof th.seeThroughOpacity === "number" && th.seeThroughOpacity >= 0 && th.seeThroughOpacity <= 1)) err(w, "seeThroughOpacity muss zwischen 0 und 1 liegen");
     if (th.wandRiss !== undefined && !(typeof th.wandRiss === "number" && th.wandRiss >= 0 && th.wandRiss <= 1)) err(w, "wandRiss muss ein Anteil zwischen 0 und 1 sein");
     if (!["gelb", "blau", "gruen"].includes(th.bannerColor)) err(w, "bannerColor muss gelb, blau oder gruen sein (Fahnenfarbe des Themas)");
+    if (th.propModels !== undefined && (typeof th.propModels !== "object" || Object.values(th.propModels).some(v => typeof v !== "string"))) err(w, "propModels: Requisit → Modell-id, etwa {\"saeule\": \"pfeiler\"}");
     if (th.encounters !== undefined) {
       const enc = th.encounters;
       if (!(enc.chance > 0 && enc.chance <= 1)) err(w, "encounters: chance muss zwischen 0 und 1 liegen");

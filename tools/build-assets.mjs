@@ -4,6 +4,7 @@
 // - Einfache Teile: Paketdatei übernehmen und unter der id ablegen.
 // - Zusammengesetzte Teile: mehrere Paketdateien mit Position, Drehung und Skalierung zu einer GLB.
 // - uvShift: Farbe eines Teils über die Paletten-Textur ändern (Fahnen in Farben, die das Paket nicht hat).
+// - source: anderes Paket als Dungeon Remastered; stretchY streckt nur den Schaft, uvRemap setzt die Paletten-Textur auf.
 // - Eingebettete Texturen werden entfernt; das Spiel setzt die gemeinsame Paletten-Textur des Themas.
 // - Figuren (figures): Paketfigur abspecken, schreibt assets/figures/<id>.glb. FBX wird vorher mit FBX2glTF
 //   umgewandelt; optional Materialfarben (colors), Waffe an einem Knochen (attach) und Vereinfachen (simplify).
@@ -51,13 +52,14 @@ function wrap(doc, scene, name, piece) {
 
 async function build(id, recipe) {
   const pieces = recipe.pieces || [{ file: recipe.file }];
-  const doc = await io.read(ROOT + recipes.source + pieces[0].file);
+  const source = recipe.source || recipes.source;
+  const doc = await io.read(ROOT + source + pieces[0].file);
   doc.setLogger(new Logger(Logger.Verbosity.WARN));
   const root = doc.getRoot();
   const main = root.getDefaultScene() || root.listScenes()[0];
   wrap(doc, main, pieces[0].file, pieces[0]);
   for (const piece of pieces.slice(1)) {
-    const other = await io.read(ROOT + recipes.source + piece.file);
+    const other = await io.read(ROOT + source + piece.file);
     const map = mergeDocuments(doc, other);
     const otherScene = other.getRoot().getDefaultScene() || other.getRoot().listScenes()[0];
     const merged = map.get(otherScene);
@@ -69,6 +71,30 @@ async function build(id, recipe) {
   const names = new Set(root.listNodes().map(n => n.getName()));
   (recipe.remove || []).forEach(name => { if (!names.has(name)) throw new Error(id + ": Teil " + name + " fehlt"); });
   root.listNodes().filter(n => (recipe.remove || []).includes(n.getName())).forEach(n => n.dispose());
+  // Nur den Schaft strecken (stretchY): Ecken über split wandern nach oben, bis das Teil height hoch ist; Fuß und Kopf
+  // behalten ihre Höhe (etwa der Pfeiler der Zwergenminen auf Raumhöhe)
+  if (recipe.stretchY) {
+    const { split, height } = recipe.stretchY;
+    const seen = new Set();
+    root.listMeshes().forEach(m => m.listPrimitives().forEach(p => {
+      const pos = p.getAttribute("POSITION");
+      if (seen.has(pos)) return;
+      seen.add(pos);
+      const top = pos.getMax([])[1], a = [0, 0, 0];
+      for (let i = 0; i < pos.getCount(); i++) { pos.getElement(i, a); if (a[1] > split) pos.setElement(i, [a[0], a[1] + height - top, a[2]]); }
+    }));
+  }
+  // Texturkoordinaten neu setzen (uvRemap): Teile aus einem Paket mit anderer Textur bekommen eine Fläche der Paletten-Textur,
+  // u fest, v von unten (v[0]) nach oben (v[1]) wie der Verlauf der Wand
+  if (recipe.uvRemap) {
+    const { u, v } = recipe.uvRemap;
+    root.listMeshes().forEach(m => m.listPrimitives().forEach(p => {
+      const pos = p.getAttribute("POSITION"), uv = p.getAttribute("TEXCOORD_0");
+      const top = pos.getMax([])[1], a = [0, 0, 0];
+      for (let i = 0; i < pos.getCount(); i++) { pos.getElement(i, a); uv.setElement(i, [u, v[0] + (v[1] - v[0]) * a[1] / top]); }
+    }));
+    root.listMaterials().forEach(m => { m.setMetallicFactor(0); m.setRoughnessFactor(0.9); });
+  }
   // Farbe über die Paletten-Textur ändern (uvShift): Texturkoordinaten im Bereich area [u0, v0, u1, v1] wandern um u
   // (etwa der rote Stoff einer Fahne auf das Farbfeld Grün). So unterscheiden sich auch die Paketfarben voneinander.
   if (recipe.uvShift) {

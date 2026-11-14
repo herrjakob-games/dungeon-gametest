@@ -1,5 +1,5 @@
 {
-  "_info": "Zuordnung der Modelle (docs/GDD.md, Asset-Spezifikation). Pro id: file, scale (Zahl oder [x, y, z]), rotation (Grad [x, y, z]), offset ([x, y, z] in Kacheln, vor der Drehung), palette (true = Paletten-Textur des Themas), texture (eigene angepasste Textur einer Figur), tint (Farbe, die das Modell einfärbt), color (eine Farbe statt Textur, etwa der Knochenthron), lights (offset, color, intensity, distance), animations (Figuren: Name im Spiel → Name im Paket: idle, walk, attack, hit, death, interact), accessories (Zubehör aus Grundformen an einem Knochen: shape, bone, offset und size in Kacheln, size auch als [x, y, z]; color beim Bart; hand: true hängt ein Werkzeug wie gehalten an den Knochen, etwa handslot.r). Varianten heißen <id>_<variante>. weaponScale (Spielfiguren: Maßstab der Waffe in der Hand). Abschnitt weapons (Waffen der Spielfiguren, Schlüssel = Gegenstands-id aus data/items.json): file, size (Verhältnis zur Paketgröße; in der Hand mal weaponScale der Figur), offset, rotation (Grad [x, y, z]) am Knochen handslot.r, optional armedAnimations (andere Clips, solange die Figur sie hält) und combatFile (andere Datei im Kampf, das offene Buch). Abschnitt scrolls: Farben der Schriftrollen beim Benutzen (paper, rods, seals pro Gegenstands-id).",
+  "_info": "Zuordnung der Modelle (docs/GDD.md, Asset-Spezifikation). Pro id: file, scale (Zahl oder [x, y, z]), rotation (Grad [x, y, z]), offset ([x, y, z] in Kacheln, vor der Drehung), palette (true = Paletten-Textur des Themas), texture (eigene angepasste Textur einer Figur), tint (Farbe, die das Modell einfärbt), color (eine Farbe statt Textur, etwa der Knochenthron), lights (offset, color, intensity, distance), animations (Figuren: Name im Spiel → Name im Paket: idle, walk, attack, hit, death, interact), accessories (Zubehör aus Grundformen an einem Knochen: shape, bone, offset und size in Kacheln, size auch als [x, y, z]; color beim Bart; hand: true hängt ein Werkzeug wie gehalten an den Knochen, etwa handslot.r). Varianten heißen <id>_<variante>. weaponScale (Spielfiguren: Maßstab der Waffe in der Hand). Abschnitt weapons (Waffen der Spielfiguren, Schlüssel = Gegenstands-id aus data/items.json): file, size (Verhältnis zur Paketgröße; in der Hand mal weaponScale der Figur), offset, rotation (Grad [x, y, z]) am Knochen handslot.r, optional armedAnimations (andere Clips, solange die Figur sie hält) und combatFile (andere Datei im Kampf, das offene Buch). Abschnitt scrolls: Farben der Schriftrollen beim Benutzen (paper, rods, seals pro Gegenstands-id). pillarTorch: Abstand der Säulenfackel von der Mitte (Halterung auf der Fläche, halbe Breite in Fackelhöhe).",
   "boden": {
     "file": "assets/tiles/boden.glb",
     "scale": 0.5,
@@ -109,7 +109,14 @@
   "saeule": {
     "file": "assets/props/saeule.glb",
     "scale": 0.5,
-    "palette": true
+    "palette": true,
+    "pillarTorch": 0.3
+  },
+  "pfeiler": {
+    "file": "assets/props/pfeiler.glb",
+    "scale": 1.0714,
+    "palette": true,
+    "pillarTorch": 0.295
   },
   "saeule_liegend": {
     "file": "assets/props/saeule_liegend.glb",

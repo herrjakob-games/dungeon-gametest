@@ -171,6 +171,9 @@
       "ambient": "#2A2228"
     },
     "bannerColor": "blau",
+    "propModels": {
+      "saeule": "pfeiler"
+    },
     "seeThroughOpacity": 0.4,
     "overrides": {
       "wache": {

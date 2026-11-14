@@ -62,7 +62,7 @@ export function buildRoom(id) {
   const pal = roomPalette(room.type);
   const torch = spec && spec.torchColor ? spec.torchColor : (pal && pal.torch) || "#" + type.torch.toString(16).padStart(6, "0");
   setAmbient(pal && pal.ambient, pal && pal.brightness);
-  setModelTheme(state.theme ? state.theme.id : null);
+  setModelTheme(state.theme ? state.theme.id : null, state.theme && state.theme.propModels); // etwa Pfeiler statt Säulen
 
   buildFloor(type, hasHole(feature), floorTilesFor(spec, state.theme));
   buildWalls(room, crackedWalls(room.doors, spec, room.seed, feature, state.theme && state.theme.wandRiss));
@@ -284,9 +284,12 @@ function placeTorches(room, color, spec, feature) {
 }
 
 // Fackel an einer Säule (Plan aus decor.js: Seite zur Raummitte), mit eigenem Licht
-const PILLAR_TORCH = 0.3; // Abstand der Halterung von der Säulenmitte
+// Abstand der Halterung von der Säulenmitte: pillarTorch des Modells (halbe Breite in Fackelhöhe, beim Pfeiler der
+// Zwergenminen die Fläche des Schafts), sonst 0,3
 function makePillarTorch(s, color) {
-  makeTorch(tw(s.cx) + s.dx * PILLAR_TORCH, tw(s.cz) + s.dz * PILLAR_TORCH, s.rot, color);
+  const e = modelEntry("saeule");
+  const d = (e && e.pillarTorch) || 0.3;
+  makeTorch(tw(s.cx) + s.dx * d, tw(s.cz) + s.dz * d, s.rot, color);
 }
 
 // Nur das Licht einer Fackel, ohne Modell (vordere Fackeln, ausgeblendet wie die vorderen Wände)

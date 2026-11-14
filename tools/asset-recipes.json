@@ -1,6 +1,6 @@
 {
   "source": "assets/source/kaykit-dungeon-remastered/gltf/",
-  "notes": "Positionen, Drehungen (Grad um y) und Skalierungen in KayKit-Einheiten. Den Faktor 0,5 und die Lage im Raum setzt data/models.json. uvShift: Texturkoordinaten im Bereich area [u0, v0, u1, v1] um u verschieben (Farbe aus der Paletten-Textur; Fahnen: Rot 0, Gelb +0,125, Blau +0,375, Grün −0,25).",
+  "notes": "Positionen, Drehungen (Grad um y) und Skalierungen in KayKit-Einheiten. Den Faktor 0,5 und die Lage im Raum setzt data/models.json. uvShift: Texturkoordinaten im Bereich area [u0, v0, u1, v1] um u verschieben (Farbe aus der Paletten-Textur; Fahnen: Rot 0, Gelb +0,125, Blau +0,375, Grün −0,25). source: Ordner eines anderen Pakets (etwa kaykit-dungeon-pack). stretchY {split, height}: nur Ecken über split wandern nach oben, bis das Teil height hoch ist (Schaft strecken, Fuß und Kopf bleiben). uvRemap {u, v: [unten, oben]}: Texturkoordinaten auf eine Fläche der Paletten-Textur (Wandstein).",
   "parts": {
     "boden": {
       "dir": "tiles",
@@ -902,6 +902,22 @@
     "kiste_klein_verziert": {
       "dir": "props",
       "file": "box_small_decorated.gltf.glb"
+    },
+    "pfeiler": {
+      "dir": "props",
+      "source": "assets/source/kaykit-dungeon-pack/",
+      "file": "column.gltf",
+      "stretchY": {
+        "split": 0.6,
+        "height": 1.8667
+      },
+      "uvRemap": {
+        "u": 0.175,
+        "v": [
+          0.19,
+          0.1
+        ]
+      }
     }
   },
   "figureSource": "assets/source/kaykit-adventurers/",
