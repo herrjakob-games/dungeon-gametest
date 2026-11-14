@@ -3,6 +3,7 @@
 // Liest tools/asset-recipes.json und schreibt assets/<dir>/<id>.glb.
 // - Einfache Teile: Paketdatei übernehmen und unter der id ablegen.
 // - Zusammengesetzte Teile: mehrere Paketdateien mit Position, Drehung und Skalierung zu einer GLB.
+// - uvShift: Farbe eines Teils über die Paletten-Textur ändern (Fahnen in Farben, die das Paket nicht hat).
 // - Eingebettete Texturen werden entfernt; das Spiel setzt die gemeinsame Paletten-Textur des Themas.
 // - Figuren (figures): Paketfigur abspecken, schreibt assets/figures/<id>.glb. FBX wird vorher mit FBX2glTF
 //   umgewandelt; optional Materialfarben (colors), Waffe an einem Knochen (attach) und Vereinfachen (simplify).
@@ -68,6 +69,24 @@ async function build(id, recipe) {
   const names = new Set(root.listNodes().map(n => n.getName()));
   (recipe.remove || []).forEach(name => { if (!names.has(name)) throw new Error(id + ": Teil " + name + " fehlt"); });
   root.listNodes().filter(n => (recipe.remove || []).includes(n.getName())).forEach(n => n.dispose());
+  // Farbe über die Paletten-Textur ändern (uvShift): Texturkoordinaten im Bereich area [u0, v0, u1, v1] wandern um u
+  // (etwa der rote Stoff einer Fahne auf das Farbfeld Grün). So unterscheiden sich auch die Paketfarben voneinander.
+  if (recipe.uvShift) {
+    const [u0, v0, u1, v1] = recipe.uvShift.area;
+    let moved = 0;
+    const seen = new Set();
+    root.listMeshes().forEach(m => m.listPrimitives().forEach(p => {
+      const uv = p.getAttribute("TEXCOORD_0");
+      if (!uv || seen.has(uv)) return;
+      seen.add(uv);
+      const a = [0, 0];
+      for (let i = 0; i < uv.getCount(); i++) {
+        uv.getElement(i, a);
+        if (a[0] >= u0 && a[0] <= u1 && a[1] >= v0 && a[1] <= v1) { uv.setElement(i, [a[0] + recipe.uvShift.u, a[1]]); moved++; }
+      }
+    }));
+    if (!moved) throw new Error(id + ": uvShift trifft keine Texturkoordinaten");
+  }
   // Texturen entfernen: der Lader setzt die Paletten-Textur des Themas
   root.listMaterials().forEach(m => m.setBaseColorTexture(null));
   root.listTextures().forEach(t => t.dispose());

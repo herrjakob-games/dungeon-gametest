@@ -785,8 +785,28 @@
     ],
     "palette": true
   },
-  "fahne_wappen": {
-    "file": "assets/props/fahne_wappen.glb",
+  "fahne_wappen_gelb": {
+    "file": "assets/props/fahne_wappen_gelb.glb",
+    "scale": 0.5,
+    "offset": [
+      0,
+      0,
+      -0.5
+    ],
+    "palette": true
+  },
+  "fahne_wappen_blau": {
+    "file": "assets/props/fahne_wappen_blau.glb",
+    "scale": 0.5,
+    "offset": [
+      0,
+      0,
+      -0.5
+    ],
+    "palette": true
+  },
+  "fahne_wappen_gruen": {
+    "file": "assets/props/fahne_wappen_gruen.glb",
     "scale": 0.5,
     "offset": [
       0,
@@ -817,6 +837,16 @@
   },
   "fahne_dreifach_gelb": {
     "file": "assets/props/fahne_dreifach_gelb.glb",
+    "scale": 0.5,
+    "offset": [
+      0,
+      0,
+      -0.5
+    ],
+    "palette": true
+  },
+  "fahne_dreifach_gruen": {
+    "file": "assets/props/fahne_dreifach_gruen.glb",
     "scale": 0.5,
     "offset": [
       0,

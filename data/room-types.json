@@ -124,6 +124,15 @@
               "prop": "fass",
               "place": "corner",
               "variant": "gruppe"
+            },
+            {
+              "prop": "fahne",
+              "place": "door-sides",
+              "variant": "wappen"
+            },
+            {
+              "prop": "fahne_dreifach",
+              "place": "wall-center"
             }
           ]
         },
@@ -142,6 +151,15 @@
             {
               "prop": "kiste",
               "place": "corner"
+            },
+            {
+              "prop": "fahne",
+              "place": "door-sides",
+              "variant": "wappen"
+            },
+            {
+              "prop": "fahne_dreifach",
+              "place": "wall-center"
             }
           ]
         }
@@ -212,6 +230,15 @@
                 "prop": "saeule",
                 "place": "corner",
                 "count": 2
+              },
+              {
+                "prop": "fahne",
+                "place": "door-sides",
+                "variant": "wappen"
+              },
+              {
+                "prop": "fahne_dreifach",
+                "place": "wall-center"
               }
             ]
           },
@@ -231,6 +258,15 @@
               {
                 "prop": "fass",
                 "place": "corner"
+              },
+              {
+                "prop": "fahne",
+                "place": "door-sides",
+                "variant": "wappen"
+              },
+              {
+                "prop": "fahne_dreifach",
+                "place": "wall-center"
               }
             ]
           }
@@ -260,6 +296,15 @@
                 "prop": "saeule",
                 "place": "corner",
                 "count": 2
+              },
+              {
+                "prop": "fahne",
+                "place": "door-sides",
+                "variant": "wappen"
+              },
+              {
+                "prop": "fahne_dreifach",
+                "place": "wall-center"
               }
             ]
           },
@@ -290,6 +335,15 @@
                 "prop": "saeule",
                 "place": "corner",
                 "count": 2
+              },
+              {
+                "prop": "fahne",
+                "place": "door-sides",
+                "variant": "wappen"
+              },
+              {
+                "prop": "fahne_dreifach",
+                "place": "wall-center"
               }
             ]
           }
@@ -412,9 +466,8 @@
               "count": 2
             },
             {
-              "prop": "fahne",
-              "place": "door-sides",
-              "variant": "gelb"
+              "prop": "fahne_dreifach",
+              "place": "wall-center"
             }
           ]
         },
@@ -476,9 +529,8 @@
               "variant": "einzeln"
             },
             {
-              "prop": "fahne",
-              "place": "door-sides",
-              "variant": "gelb"
+              "prop": "fahne_dreifach",
+              "place": "wall-center"
             }
           ]
         }
@@ -773,11 +825,6 @@
               "variant": "gruppe"
             },
             {
-              "prop": "fahne",
-              "place": "wall-back",
-              "count": 2
-            },
-            {
               "prop": "schluesselbund",
               "place": "wall-back"
             },
@@ -785,6 +832,11 @@
               "prop": "strohlager",
               "place": "wall-back",
               "count": 2
+            },
+            {
+              "prop": "fahne",
+              "place": "door-sides",
+              "variant": "wappen"
             }
           ]
         },
@@ -815,16 +867,6 @@
               "place": "corner"
             },
             {
-              "prop": "fahne",
-              "place": "wall-back",
-              "variant": "wappen"
-            },
-            {
-              "prop": "fahne",
-              "place": "wall-back",
-              "variant": "blau"
-            },
-            {
               "prop": "schluesselbund",
               "place": "wall-back"
             },
@@ -832,6 +874,11 @@
               "prop": "strohlager",
               "place": "wall-back",
               "count": 2
+            },
+            {
+              "prop": "fahne",
+              "place": "door-sides",
+              "variant": "wappen"
             }
           ]
         }
@@ -1154,18 +1201,18 @@
               "variant": "gruppe"
             },
             {
-              "prop": "fahne_dreifach",
-              "place": "wall-back"
-            },
-            {
               "prop": "waffenstaender",
               "place": "wall-back",
               "count": 2
             },
             {
+              "prop": "fahne",
+              "place": "door-sides",
+              "variant": "wappen"
+            },
+            {
               "prop": "fahne_dreifach",
-              "place": "wall-back",
-              "variant": "blau"
+              "place": "wall-center"
             }
           ]
         },
@@ -1184,20 +1231,18 @@
               "count": 3
             },
             {
-              "prop": "fahne_dreifach",
-              "place": "wall-back",
-              "variant": "gelb"
-            },
-            {
               "prop": "waffenstaender",
               "place": "wall-back",
               "count": 2
             },
             {
               "prop": "fahne",
-              "place": "wall-back",
-              "variant": "wappen",
-              "count": 2
+              "place": "door-sides",
+              "variant": "wappen"
+            },
+            {
+              "prop": "fahne_dreifach",
+              "place": "wall-center"
             }
           ]
         }
@@ -1649,21 +1694,12 @@
               "place": "free"
             },
             {
+              "prop": "fahne",
+              "place": "door-sides"
+            },
+            {
               "prop": "fahne_dreifach",
-              "place": "wall-back",
-              "variant": "blau"
-            },
-            {
-              "prop": "fahne",
-              "place": "wall-back",
-              "variant": "wappen",
-              "count": 2
-            },
-            {
-              "prop": "fahne",
-              "place": "wall-back",
-              "variant": "blau",
-              "count": 2
+              "place": "wall-center"
             }
           ]
         },
@@ -1703,21 +1739,12 @@
               "count": 2
             },
             {
+              "prop": "fahne",
+              "place": "door-sides"
+            },
+            {
               "prop": "fahne_dreifach",
-              "place": "wall-back",
-              "variant": "blau"
-            },
-            {
-              "prop": "fahne",
-              "place": "wall-back",
-              "variant": "wappen",
-              "count": 2
-            },
-            {
-              "prop": "fahne",
-              "place": "wall-back",
-              "variant": "blau",
-              "count": 2
+              "place": "wall-center"
             }
           ]
         }

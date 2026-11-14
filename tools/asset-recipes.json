@@ -1,6 +1,6 @@
 {
   "source": "assets/source/kaykit-dungeon-remastered/gltf/",
-  "notes": "Positionen, Drehungen (Grad um y) und Skalierungen in KayKit-Einheiten. Den Faktor 0,5 und die Lage im Raum setzt data/models.json.",
+  "notes": "Positionen, Drehungen (Grad um y) und Skalierungen in KayKit-Einheiten. Den Faktor 0,5 und die Lage im Raum setzt data/models.json. uvShift: Texturkoordinaten im Bereich area [u0, v0, u1, v1] um u verschieben (Farbe aus der Paletten-Textur; Fahnen: Rot 0, Gelb +0,125, Blau +0,375, Grün −0,25).",
   "parts": {
     "boden": {
       "dir": "tiles",
@@ -550,9 +550,44 @@
       "dir": "props",
       "file": "banner_yellow.gltf.glb"
     },
-    "fahne_wappen": {
+    "fahne_wappen_gelb": {
       "dir": "props",
-      "file": "banner_shield_red.gltf.glb"
+      "file": "banner_shield_red.gltf.glb",
+      "uvShift": {
+        "area": [
+          0.4,
+          0.5,
+          0.48,
+          0.75
+        ],
+        "u": 0.125
+      }
+    },
+    "fahne_wappen_blau": {
+      "dir": "props",
+      "file": "banner_shield_red.gltf.glb",
+      "uvShift": {
+        "area": [
+          0.4,
+          0.5,
+          0.48,
+          0.75
+        ],
+        "u": 0.375
+      }
+    },
+    "fahne_wappen_gruen": {
+      "dir": "props",
+      "file": "banner_shield_red.gltf.glb",
+      "uvShift": {
+        "area": [
+          0.4,
+          0.5,
+          0.48,
+          0.75
+        ],
+        "u": -0.25
+      }
     },
     "fahne_dreifach": {
       "dir": "props",
@@ -565,6 +600,19 @@
     "fahne_dreifach_gelb": {
       "dir": "props",
       "file": "banner_triple_yellow.gltf.glb"
+    },
+    "fahne_dreifach_gruen": {
+      "dir": "props",
+      "file": "banner_triple_red.gltf.glb",
+      "uvShift": {
+        "area": [
+          0.4,
+          0.5,
+          0.48,
+          0.75
+        ],
+        "u": -0.25
+      }
     },
     "schluesselbund": {
       "dir": "props",
