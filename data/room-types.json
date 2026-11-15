@@ -399,6 +399,12 @@
     "sound": {
       "mood": "spooky",
       "floor": "stone"
+    },
+    "themeSound": {
+      "zwergenminen": {
+        "mood": "schmiede",
+        "floor": "stone"
+      }
     }
   },
   {
@@ -2340,6 +2346,10 @@
           }
         ]
       }
+    },
+    "sound": {
+      "mood": "empty",
+      "floor": "stone"
     }
   },
   {
@@ -2511,6 +2521,10 @@
           }
         ]
       }
+    },
+    "sound": {
+      "mood": "schmiede",
+      "floor": "stone"
     }
   },
   {

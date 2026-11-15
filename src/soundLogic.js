@@ -1,7 +1,7 @@
 // Regeln für Sounds (docs/GDD.md, Abschnitt Sound): welche Sound-id wann spielt und Datenprüfung. Rein logisch, testbar.
 
 export const ATTACK_SOUNDS = ["holz", "schwert", "axt", "hammer", "faust", "biss", "kralle"];
-export const MOODS = ["cozy", "wet", "spooky", "empty", "kitchen", "kerker", "schrein"];
+export const MOODS = ["cozy", "wet", "spooky", "empty", "kitchen", "kerker", "schrein", "schmiede"];
 export const FLOORS = ["wood", "hall", "mud", "gravel", "stone"];
 export const GAME_SOUNDS = ["tuer", "tuer_verschlossen", "tuer_riegel", "truhe", "gold", "gold_zahlen", "stufe", "treppe", "wuerfel_rollen", "wuerfel_landen", "treffer", "tod", "tod_spieler"];
 

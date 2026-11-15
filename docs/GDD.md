@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.78 · Nov 15, 2026 · @Christian
+Version 2.79 · Nov 15, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.79 | 15.11.2026 | Sounds der Zwergenminen: neue Stimmung `schmiede` (Loop wie `cozy`, Zufallsgeräusche wie `kerker`) für Schmiede und Bossraum der Zwergenminen (`themeSound`); Bibliothek mit `empty` und `stone`; Schmiedemeister mit Angriffsklang `hammer`; Höhlenspinne und Rache-Monsterratte mit Schritten `trippeln` |
 | 2.78 | 15.11.2026 | Versionsprüfung beim Start: Passt das Programm im Zwischenspeicher des Browsers nicht zu den Daten, holt das Spiel die Programmdateien neu und lädt sich einmal selbst neu (Ursache der leeren Bibliothek direkt nach dem Update) |
 | 2.77 | 15.11.2026 | Bibliothek der Zwergenminen: eigene Einrichtung mit vier Bücherregalen (`buecherregal`, eigenes Modell aus Grundformen, Füllungen a, `b`, `c` nach Raum-Seed) an West- und Nordwand und 2 bis 3 Lesetischen (`lesetisch`) mit Kerze und Leselicht; neue Platzierung `span:x1|y1-x2|y2` (feste Wandstrecke, darf unter einer Fackel stehen); Grundlicht der Bibliothek 1,5 |
 | 2.76 | 15.11.2026 | Boss der Zwergenminen `schmiedemeister` als Figur (Dunkelzwerg-Schmied 1,3-fach, Helm des Skelett-Kriegers, Kriegshammer einhändig); Bossraum der Zwergenminen mit Esse und Amboss, ohne Säulen; der Boss steht beim Betreten am Amboss (Standard-Inszenierung `bosses` in `data/staging.json`); Schlackehaufen `schlacke` als Event-Requisit im Event `schmiede_schlacke` (neue Platzierung `around:<requisit>` für Event-Requisiten); Türen an Nord und West im Bossraum: Esse rechts neben der Tür, die Türfackel dieser Wand fällt weg |
@@ -828,11 +829,12 @@ Waffen in `data/items.json` und Monster in `data/monsters.json` nennen im Feld `
 
 | Monster | Klang |
 | --- | --- |
-| Riesenratte, Küchenchef, Monsterratte | biss |
+| Riesenratte, Küchenchef, Monsterratte (auch auf Rachefeldzug), Höhlenspinne | biss |
 | Mimik | mimik (Treffer wie `biss`, eigener Fehlschlag) |
 | Skelett, Skelettkrieger, Skelett-König | schwert |
 | Geist, Poltergeist | geist |
 | Goblin-Wache | schwert |
+| Dunkelzwerg-Schmied, Dunkelzwerg-Schmiedemeister | hammer |
 
 ### Verbrauchsgegenstände
 
@@ -850,7 +852,7 @@ Verbrauchsgegenstände nennen im Feld `sound` eine Sound-id, die beim Benutzen s
 
 Jeder Raumtyp hat in `data/room-types.json` das Feld `sound` mit `mood` und `floor`. Für einzelne Themen ersetzt `themeSound` es, etwa `"themeSound": { "katakomben": { "mood": "spooky", "floor": "gravel" } }`. Raumtypen ohne beides bleiben still, auch ohne Schritte.
 
-- **`mood`:** `cozy`, `wet`, `spooky`, `empty`, `kitchen`, `kerker` oder `schrein`. Gespielt werden der Loop `raum_<mood>_loop` und Zufallsgeräusche `raum_<mood>_zufall` im Abstand von 8 bis 20 Sekunden, mit leicht wechselnder Lautstärke und Richtung.
+- **`mood`:** `cozy`, `wet`, `spooky`, `empty`, `kitchen`, `kerker`, `schrein` oder `schmiede`. Gespielt werden der Loop `raum_<mood>_loop` und Zufallsgeräusche `raum_<mood>_zufall` im Abstand von 8 bis 20 Sekunden, mit leicht wechselnder Lautstärke und Richtung.
 - **`floor`:** `wood`, `hall`, `mud`, `gravel` oder `stone` (trockener Stein), bestimmt die Schritte.
 - **Raumwechsel:** Der Hintergrund blendet mit dem Bild über, etwa 1 Sekunde, auch bei der Schnellreise.
 - **Events und Kämpfe:** Der Hintergrund läuft mit halber Lautstärke weiter.
@@ -867,12 +869,14 @@ Jeder Raumtyp hat in `data/room-types.json` das Feld `sound` mit `mood` und `flo
 
 Kerker (`kerker`, `stone`) und Schrein (`schrein`, `hall`) haben eigene Stimmungen, in jedem Thema: im Kerker Tropfen und Ketten, im Schrein leises Summen.
 
+In den Zwergenminen: Bibliothek `empty` mit `stone` (Hintergrund wie die Säulenhalle), Schmiede `schmiede` mit `stone`, Bossraum über `themeSound` ebenfalls `schmiede` mit `stone`. Die Stimmung `schmiede` hat keine eigenen Dateien: `raum_schmiede_loop` nutzt den Loop von `cozy` (prasselndes Feuer), `raum_schmiede_zufall` die Zufallsgeräusche von `kerker`.
+
 Im Keller (Ebene 1 bis 3) ist der Boden einheitlich `stone`, nur Gruft, Brunnenraum und Säulenhalle klingen mit Hall (`hall`).
 
 ### Schritte
 
 - Läuft eine Figur, spielt `schritt_<floor>` des aktuellen Raums, für Spielfigur, Gegner und friedliche Figuren.
-- Eine Figur kann in `data/staging.json` unter `figures` einen eigenen Schritt nennen (`steps`), dann spielt `schritt_<steps>`. Heute: Riesenratte, Küchenchef und Monsterratte mit `trippeln`, der Geist mit `schweben` (er läuft nicht, er schwebt).
+- Eine Figur kann in `data/staging.json` unter `figures` einen eigenen Schritt nennen (`steps`), dann spielt `schritt_<steps>`. Heute: Riesenratte, Küchenchef, Monsterratte (auch auf Rachefeldzug) und Höhlenspinne mit `trippeln`, der Geist mit `schweben` (er läuft nicht, er schwebt).
 - **Takt:** Schritte folgen der Laufanimation. Figuren ohne Laufanimation (Goblin, Platzhalter) machen alle 0,35 Sekunden einen Schritt.
 - **Variation:** Jeder Schritt bekommt eine um bis zu 5 % andere Tonhöhe.
 - **Lautstärke:** Gegner leiser als die Spielfigur, Figuren der Größe 2×2 tiefer. Höchstens zwei Gegner-Schritte gleichzeitig.
@@ -1108,3 +1112,4 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Bibliothek der Zwergenminen: vier Bücherregale (drei Füllungen) an West- und Nordwand, 2 bis 3 Lesetische mit Kerze und Leselicht, Grundlicht 1,5
 - [x] Versionsprüfung beim Start: bei altem Programm und neuen Daten einmal selbst neu laden (Option 1 von 3, statt Daten zwischenzuspeichern oder nach Updates von Hand hart neu zu laden)
 - [x] Zonenraster als allgemeine Regel für Raumtypen mit Füllerliste (`fill`): jede der 9 Zonen zu 3×3 Kacheln bekommt ein Bodenrequisit; Säulenhalle, Brunnenraum und Kerker bewusst ohne; heute nur die Schmiede der Zwergenminen
+- [x] Sounds der Zwergenminen: Stimmung `schmiede` aus vorhandenen Dateien (Loop `cozy`, Zufall `kerker`) für Schmiede und Bossraum der Zwergenminen; Bibliothek `empty`/`stone`; Schmiedemeister klingt wie der Schmied (`hammer`); Höhlenspinne und Rache-Monsterratte trippeln
