@@ -164,7 +164,7 @@ test("Einrichtung: Platzierungen center, wall-back, corner, around und above", (
     { prop: "stuhl", place: "around:tafel", count: 4 },
     { prop: "kronleuchter", place: "above:tafel" },
     { prop: "regal", place: "wall-back" },
-    { prop: "sack", place: "corner", count: 3 },
+    { prop: "moos", place: "corner", count: 3 },
     { prop: "fass", place: "free", variant: "gruppe" }
   ] }] };
   const plan = planDecor(spec, { seed: 5, doors: 5 });
@@ -177,7 +177,7 @@ test("Einrichtung: Platzierungen center, wall-back, corner, around und above", (
   assert.equal(by("stuhl").length, 4);
   assert.deepEqual([by("kronleuchter")[0].cx, by("kronleuchter")[0].cz], [tafel.cx, tafel.cz], "Kronleuchter über der Tafel");
   assert.ok(by("regal")[0].wall, "Regal an der Wand");
-  const corners = by("sack").map(s => key(...s.tiles[0]));
+  const corners = by("moos").map(s => key(...s.tiles[0]));
   assert.equal(new Set(corners).size, 3, "drei verschiedene Ecken");
   corners.forEach(c => assert.ok(["0,0", (N - 1) + ",0", "0," + (N - 1), (N - 1) + "," + (N - 1)].includes(c)));
   assert.equal(by("fass")[0].tiles.length, 3, "Fass-Gruppe aus drei Fässern");
@@ -408,7 +408,6 @@ test("Rastplatz: zwei Kacheln frei um das Feuer, 2 bis 3 Schlaflager nie neben T
       pl.filter(p => p !== fire).forEach(p => assert.ok(gap(p.tiles, fire.tiles) > 2, where + ": " + p.prop + " zu nah am Feuer"));
       pl.filter(p => p.prop === "strohlager").forEach(p => assert.ok(!doors || gap(p.tiles, doorTiles(doors)) > 1, where + ": Schlaflager neben einer Tür"));
       [["strohlager", 2, 3], ["flaschen", 2, 3], ["fass", 2, 3]].forEach(([id, lo, hi]) => assert.ok(count(id) >= lo && count(id) <= hi, where + ": " + count(id) + "× " + id));
-      assert.equal(count("sack"), 0);
     }
   });
 });
@@ -513,4 +512,12 @@ test("Kerzenstummel nur rund um die Statue im Schrein der Zwergenminen", () => {
     if (name === "schrein/zwergenminen") assert.ok(stubs.length && stubs.every(p => p.place === "around:schreinstatue"), name);
     else assert.deepEqual(stubs, [], name + ": Kerzenstummel");
   }
+});
+
+test("Sack ist entfernt: unbekanntes Requisit, in keinem Raumtyp", () => {
+  assert.equal(PROPS.sack, undefined);
+  const errs = [];
+  checkDecor({ layouts: [{ id: "A", props: [{ prop: "sack", place: "corner", count: 2 }] }] }, "Test", (w, m) => errs.push(m));
+  assert.ok(errs.some(m => m.includes("unbekanntes Requisit sack")), errs.join("; "));
+  assert.ok(!JSON.stringify(ROOM_TYPES).includes('"prop":"sack"') && !/"prop":\s*"sack"/.test(readFileSync(new URL("../data/room-types.json", import.meta.url), "utf8")));
 });

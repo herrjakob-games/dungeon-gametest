@@ -5,7 +5,7 @@
 
 export const DEFAULT_LIFT = { figureLift: 0.45, propLift: 0.22 };
 // Bodendeko laut GDD flach und dunkel (Sack, Moos, Pfütze, Geröll) und Treppen (Verlauf zur Schattenfarbe)
-export const NO_LIFT = ["sack", "moos", "pfuetze", "geroell", "treppe_hoch", "treppe_runter"];
+export const NO_LIFT = ["moos", "pfuetze", "geroell", "treppe_hoch", "treppe_runter"];
 
 /** Stufen im Thema: globale Werte (data/models.json, lift) überschrieben durch figureLift/propLift des Themas. */
 export function liftLevels(global, theme) {

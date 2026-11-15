@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.82 · Nov 15, 2026 · @Christian
+Version 2.83 · Nov 15, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.83 | 15.11.2026 | Sack als Deko-Requisit entfernt (Vorratskammer und Küche ohne Ersatz, Requisitentabelle, Beispiel `kueche`, Bodendeko); Anker „im Mehlsack“ entfällt, die Ratte im Event `vorrat_ratte` steht an der Standardstelle; von Christian so entschieden |
 | 2.82 | 15.11.2026 | Kritischer Schaden: Eine gewürfelte 20 beim Angriff trifft immer und verdoppelt den Wert der Schadenswürfel (Boni nicht); gilt für Spielfigur und Gegner; Textfenster meldet „Kritischer Treffer!“ |
 | 2.81 | 15.11.2026 | Markierung unter dem Mauszeiger: begehbare Kachel als blassgelber, leicht pulsierender Kreis (`#F7E08A`, 0,3 Kacheln) statt gelber Kachel; nicht begehbare Kacheln ohne Markierung (rote Kachel entfällt); Werte in `hoverMarker` (`data/themes.json`); von Christian so entschieden |
 | 2.80 | 15.11.2026 | Licht: Mindesthelligkeit für Figuren und Requisiten aus ihrer eigenen Textur (Figuren und ihre Waffen 0,45, Requisiten 0,22, `figureLift`/`propLift`), damit sie im Schatten nie schwarz wirken; Boden, Wände, Bodendeko und Treppen ohne; Grundlicht und Fackeln unverändert; Hervorheben beim Überfahren setzt auf die Grundstufe auf |
@@ -498,7 +499,7 @@ Spielerwürfe rollen als 3D-Würfel. Die Anzeige ändert keine Regel: Der Regelc
 Figuren aus Events stehen sichtbar im Raum. Wo sie stehen, wohin sie blicken und welche Animation sie zeigen, steht in `data/staging.json`, getrennt von den Events; Spielregeln, Texte und Ergebnisse ändert die Inszenierung nicht.
 
 - **Standard:** freie Kachel, Blick zur Spielfigur, Idle. Welche Figuren ein Event zeigt: zuerst eine eigene Inszenierung (`events`), sonst das Feld `figures` des Events, sonst der Gegner aus dem Kampf. Nennt das Event keine Anzahl, sind es 1 bis 3 Figuren nach Raum-Seed.
-- **Anker an Requisiten (`anchors`):** Requisiten-ids (`props`), Versatz in Kacheln (gedreht wie das Requisit, `world`: ungedreht), Blickrichtung (`player`, `target` = der Tisch zum Sitz, `prop`, `random`, `forward` = wie das Requisit, etwa vom Thron in den Raum), Animation (`idle`, `sit`, `sit_floor`, `lie`, `awaken`). `seat`: die Figur sitzt auf dem Hocker oder Stuhl (`seatY`: Höhe der Sitzfläche in Kacheln; die Hüfte liegt mittig darauf, die Beine hängen nach vorn), `onProp`: sie steht auf dem Requisit (Monsterratte auf dem Käseberg, Kröte auf dem Brunnenrand). Anker heute: am Tisch sitzend, auf dem Hocker schlafend, am Herd, am Sarkophag (Skelett steht auf), am Lagerfeuer, zwischen Knochen liegend, auf dem Käseberg, im Mehlsack, vor der Treppe, mitten im Raum, am Brunnen.
+- **Anker an Requisiten (`anchors`):** Requisiten-ids (`props`), Versatz in Kacheln (gedreht wie das Requisit, `world`: ungedreht), Blickrichtung (`player`, `target` = der Tisch zum Sitz, `prop`, `random`, `forward` = wie das Requisit, etwa vom Thron in den Raum), Animation (`idle`, `sit`, `sit_floor`, `lie`, `awaken`). `seat`: die Figur sitzt auf dem Hocker oder Stuhl (`seatY`: Höhe der Sitzfläche in Kacheln; die Hüfte liegt mittig darauf, die Beine hängen nach vorn), `onProp`: sie steht auf dem Requisit (Monsterratte auf dem Käseberg, Kröte auf dem Brunnenrand). Anker heute: am Tisch sitzend, auf dem Hocker schlafend, am Herd, am Sarkophag (Skelett steht auf), am Lagerfeuer, zwischen Knochen liegend, auf dem Käseberg, vor der Treppe, mitten im Raum, am Brunnen.
 - **Rückfall:** Fehlt die Requisite im Raum, steht die Figur auf einer freien Kachel, nie in Wänden, Türen oder auf Requisiten. Hat das Modell die Animation nicht (etwa der Goblin kein Sitzen), steht die Figur mit Idle neben dem Anker.
 - **Liegen ohne Animation:** Ein Anker mit `flat` legt eine Figur ohne Liege-Animation starr auf den Rücken, statt sie stehen zu lassen (heute keine Figur, seit der Goblin die Liege-Animation hat). `front` wählt zuerst die Kachel auf der Seite zur Kamera, damit das Requisit die Figur nicht verdeckt.
 - **Figuren (`figures`):** Modell-Varianten (Skelett: Minion, Warrior, Rogue, Mage; ohne Festlegung immer Minion; ein Event kann eine festlegen) und `stays` (bleibt nach dem Event stehen). Eine Event-Inszenierung kann `stay` auch für einzelne Figuren setzen. Eigene Skelett-Monster haben ihre eigene Figur, etwa der Skelettkrieger als Warrior.
@@ -596,7 +597,7 @@ Gruft und Brunnen sind im Keller die düsteren Räume mit kälterem Grundlicht. 
 - Fackeln als warme Punktlichter mit 5 bis 6 Kacheln Reichweite und leichtem Flackern. Höchstens zwei schattenwerfende Lichter pro Raum.
 - Requisiten mit eigenem Licht (Herd, Kerzen, Kronleuchter, Lagerfeuer) leuchten ohne Schatten.
 - Die Spielfigur trägt einen kleinen, schwachen Lichtschein.
-- Figuren und Requisiten haben eine Mindesthelligkeit aus ihrer eigenen Textur (Figuren 0,45, Requisiten 0,22, `figureLift`/`propLift`) und wirken nie schwarz. Boden, Wände und Bodendeko bleiben ohne. Die Werte stehen global in `data/models.json` (`lift`) und lassen sich pro Thema in `data/themes.json` überschreiben; beide liegen zwischen 0 und 1. Figuren schließen ihre Waffen, Schriftrollen und ihr Zubehör ein. Ohne Mindesthelligkeit bleiben Boden, Wände, Sockel, Türrahmen und Fackeln (`assets/tiles/`), die Bodendeko (Sack, Moos, Pfütze, Geröll) und die Treppen, die zum Loch hin in die Schattenfarbe verlaufen. Requisiten aus Grundformen (etwa Esse und Lesetisch) bekommen dieselbe Stufe, leuchtende Teile wie Glut und Flammen behalten ihr eigenes Leuchten. Figuren und Requisiten nutzen dafür eigene Materialkopien, damit Boden und Wände nicht mitleuchten. Grundlicht (0,32) und Fackeln bleiben unverändert. (Von Christian freigegeben: Eigenhelligkeit statt mehr Raumlicht; bei 0,35 wirkten Säulen grau und Gold zu leuchtend.)
+- Figuren und Requisiten haben eine Mindesthelligkeit aus ihrer eigenen Textur (Figuren 0,45, Requisiten 0,22, `figureLift`/`propLift`) und wirken nie schwarz. Boden, Wände und Bodendeko bleiben ohne. Die Werte stehen global in `data/models.json` (`lift`) und lassen sich pro Thema in `data/themes.json` überschreiben; beide liegen zwischen 0 und 1. Figuren schließen ihre Waffen, Schriftrollen und ihr Zubehör ein. Ohne Mindesthelligkeit bleiben Boden, Wände, Sockel, Türrahmen und Fackeln (`assets/tiles/`), die Bodendeko (Moos, Pfütze, Geröll) und die Treppen, die zum Loch hin in die Schattenfarbe verlaufen. Requisiten aus Grundformen (etwa Esse und Lesetisch) bekommen dieselbe Stufe, leuchtende Teile wie Glut und Flammen behalten ihr eigenes Leuchten. Figuren und Requisiten nutzen dafür eigene Materialkopien, damit Boden und Wände nicht mitleuchten. Grundlicht (0,32) und Fackeln bleiben unverändert. (Von Christian freigegeben: Eigenhelligkeit statt mehr Raumlicht; bei 0,35 wirkten Säulen grau und Gold zu leuchtend.)
 - Einzelne Raumtypen dürfen heller sein: `brightness` in `roomPalettes` (`data/themes.json`) verstärkt das Grundlicht, im Keller der Händlerraum (1,8), in den Zwergenminen der Schrein (1,7, damit die Ecken trotz nur 2 Fackeln bei etwa 15 bis 20 % der hellsten Stelle liegen), die Schmiede (1,4) und die Bibliothek (1,5, mit dem Leselicht der Tische ist die Raummitte gut ausgeleuchtet).
 
 **Lesbarkeit**
@@ -606,7 +607,7 @@ Gruft und Brunnen sind im Keller die düsteren Räume mit kälterem Grundlicht. 
 - Türrahmen eine Stufe heller als die Wand, neben jeder Tür eine Fackel (Ausnahme: In Schatzkammer und Brunnenraum hängt an jeder Säule eine Fackel). Verschlossene Tür: rotes Schloss.
 - Anklickbare Objekte (Truhe, Lagerfeuer, Händler, Treppe nach unten): goldene Umrisslinie beim Überfahren mit der Maus, leichtes goldenes Aufhellen auf der Mindesthelligkeit; beim Verlassen zurück zur Mindesthelligkeit.
   - Türen: Beim Überfahren mit der Maus bekommt nur das Türblatt die goldene Umrisslinie, nicht der Türrahmen. Anklickbar bleibt die ganze Tür mit Rahmen und Türkachel. An den vorderen Türen (Süd, Ost), die nur Sockel haben, leuchtet stattdessen die Türkachel am Boden mit goldener Umrisslinie auf. Auch verschlossene Türen werden hervorgehoben; ihr Schloss bleibt rot und wird nicht mit umrandet. Wo der Rahmen das Türblatt verdeckt, ist keine Linie zu sehen.
-- Bodendeko (Sack, Moos, Pfütze, Geröll) flach und dunkel, damit sie nie wie ein Hindernis wirkt.
+- Bodendeko (Moos, Pfütze, Geröll) flach und dunkel, damit sie nie wie ein Hindernis wirkt.
 
 ### Asset-Spezifikation
 
@@ -663,8 +664,7 @@ Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kan
       { "id": "A", "props": [
         { "prop": "herd", "place": "wall-back" },
         { "prop": "tisch", "place": "center", "variant": "kueche" },
-        { "prop": "regal", "place": "wall-back" },
-        { "prop": "sack", "place": "corner", "count": 2 }
+        { "prop": "regal", "place": "wall-back" }
       ] }
     ]
   }
@@ -705,7 +705,6 @@ Was in einem Raum steht, legen die Daten fest, nicht der Code. Jeder Raumtyp kan
 | saeule_liegend | Umgestürzte Säule | 2×1 | ja | nein | nein | Säulenhalle |
 | fass | Fass, meist als Gruppe aus 3 (`variant: gruppe`) | 1 | ja | nein | nein | mehrere |
 | kiste | Kiste | 1 | ja | nein | nein | mehrere |
-| sack | Sack | Deko | nein | nein | nein | Vorratskammer, Küche |
 | regal | Regal mit Krügen | 2×1, Wand | ja | nein | nein | Vorratskammer, Küche, Händler |
 | herd | Herd mit Kessel und Glut | 2×1, Wand | ja | nein | ja | Küche |
 | tisch | Tisch | 3×1 | ja | nein | nein | Wachstube, Küche |
@@ -1123,3 +1122,4 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Licht: Mindesthelligkeit aus der eigenen Textur für Figuren (0,45) und Requisiten (0,22) statt mehr Raumlicht oder Fülllicht (Variante E); Boden, Wände und Bodendeko ohne
 - [x] Markierung unter dem Mauszeiger: blassgelber, leicht pulsierender Kreis auf begehbaren Kacheln, keine Markierung auf nicht begehbaren (von Christian so entschieden)
 - [x] Kritischer Schaden: Eine 20 beim Angriff trifft immer und verdoppelt die Schadenswürfel (ohne Boni), für Spielfigur und Gegner
+- [x] Sack als Deko-Requisit entfernt, Vorratskammer und Küche ohne Ersatz.
