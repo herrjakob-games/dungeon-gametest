@@ -52,6 +52,7 @@ Die Liste aller Meilensteine steht im GDD.
   MP3s `npm run sounds` ausführen: Das schreibt `assets/sounds/files.json`, und das Spiel lädt nur Dateien aus dieser Liste.
   `npm test` listet fehlende MP3s auf (kein Fehler). Gelieferte Rohdateien liegen in `assets/source/sounds-freepik/`;
   `python3 tools/sound-prepare.py` (braucht ffmpeg) schneidet Stille ab, teilt Schritt-Aufnahmen in einzelne Schritte und schneidet feste Ausschnitte (`SECTION`, etwa `treppe`).
+- Versionsprüfung: Nach jeder Änderung an `src/` oder `vendor/three/` `npm run stempel` ausführen (schreibt `src/version.js` und `data/version.json`, `npm test` prüft es). Beim Start lädt das Spiel sich einmal neu, wenn der Browser noch altes Programm zu neuen Daten hat (`src/versionCheck.js`).
 - Lokal starten: `npm start` und dann http://localhost:8000 öffnen (Module brauchen einen Server).
 - Testmodus, lokal und auf GitHub Pages: `?event=<id>` startet das Event im ersten passenden Raum, `?room=<raumtyp-id>` betritt
   den ersten passenden Raum (Bossraum mit `&sieg=1` nach dem Sieg, `&thema=<id>` in diesem Thema, etwa `zwergenminen`), `?grid=1` zeigt die Kachelnamen x|y, `?fight=<monster-id>` einen Kampf
@@ -81,6 +82,7 @@ Die Liste aller Meilensteine steht im GDD.
 | `data/gegenstaende.csv` | Gegenstandsliste als Tabelle (Quelle für `items.json`) |
 | `data/texts.json` | Sätze zur Todesursache bei Events, eigene Sätze pro Event unter `death.events`, Text des Kellerhandbuchs unter `tutorial` |
 | `src/data.js` | lädt `data/*.json` und prüft die Daten |
+| `src/versionCheck.js` | Versionsprüfung beim Start: Stempel aus `src/version.js` gegen `data/version.json`, bei Abweichung Programmdateien neu holen und einmal neu laden (`versionAction` rein logisch); Stempel von `tools/version.mjs` (`npm run stempel`) |
 | `src/sound.js` | Sound über die Web Audio API: Kanäle, Raum-Stimmung mit Überblendung und Zufallsgeräuschen, Schritte, Dämpfen bei Events, Vorladen (`preload`, etwa `treppe` im Raum mit der Treppe nach unten); fehlende Sounds bleiben still |
 | `src/soundLogic.js` | Sound-Regeln: Angriffsklang, Treffer und Tod, Raum-Sound (`themeSound` vor `sound`), Schritte, Datenprüfung; rein logisch |
 | `src/eventLogic.js` | Event-Regeln: Proben-Kategorien, Tabelle und Bewertung pro Thema (`inTheme`, mit Ebene im Thema für `themeLevel`), Auswahl, Begegnungen (`pickEncounter`), Effekte, Beute, Bedingungen, Datenprüfung; rein logisch |

@@ -8,7 +8,8 @@
     "start": "python3 -m http.server 8000",
     "build:assets": "node tools/build-assets.mjs",
     "sounds": "node tools/sound-index.mjs",
-    "build:dice": "node tools/record-dice.mjs"
+    "build:dice": "node tools/record-dice.mjs",
+    "stempel": "node tools/version.mjs"
   },
   "devDependencies": {
     "@gltf-transform/core": "^4.5.1",
