@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.81 · Nov 15, 2026 · @Christian
+Version 2.82 · Nov 15, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.82 | 15.11.2026 | Kritischer Schaden: Eine gewürfelte 20 beim Angriff trifft immer und verdoppelt den Wert der Schadenswürfel (Boni nicht); gilt für Spielfigur und Gegner; Textfenster meldet „Kritischer Treffer!“ |
 | 2.81 | 15.11.2026 | Markierung unter dem Mauszeiger: begehbare Kachel als blassgelber, leicht pulsierender Kreis (`#F7E08A`, 0,3 Kacheln) statt gelber Kachel; nicht begehbare Kacheln ohne Markierung (rote Kachel entfällt); Werte in `hoverMarker` (`data/themes.json`); von Christian so entschieden |
 | 2.80 | 15.11.2026 | Licht: Mindesthelligkeit für Figuren und Requisiten aus ihrer eigenen Textur (Figuren und ihre Waffen 0,45, Requisiten 0,22, `figureLift`/`propLift`), damit sie im Schatten nie schwarz wirken; Boden, Wände, Bodendeko und Treppen ohne; Grundlicht und Fackeln unverändert; Hervorheben beim Überfahren setzt auf die Grundstufe auf |
 | 2.79 | 15.11.2026 | Sounds der Zwergenminen: neue Stimmung `schmiede` (Loop wie `cozy`, Zufallsgeräusche wie `kerker`) für Schmiede und Bossraum der Zwergenminen (`themeSound`); Bibliothek mit `empty` und `stone`; Schmiedemeister mit Angriffsklang `hammer`; Höhlenspinne und Rache-Monsterratte mit Schritten `trippeln` |
@@ -212,6 +213,7 @@ Der Spieler wählt vor dem ersten Dungeon ein Volk. Das Volk legt Attribute, Leb
 - **Kampfrunde:** Der Spieler wählt Angreifen, Verteidigen (Rüstung +2 bis zur nächsten Runde), Gegenstand nutzen oder Fliehen. Danach handelt der Gegner.
 - **Angreifen:** W20 + Trefferattribut der Waffe gegen die Rüstung des Gegners (Kategorie Nahkampf). Schwere Waffen treffen mit Kraft, leichte (Dolch, Kurzschwert, Rapier, Elfenklinge) mit Geschick, magische (Eismesser, Buch des Feuers) mit Verstand. Welches Attribut gilt, steht beim Gegenstand im Feld `hit`. Ein Treffer macht den Schaden der Waffe, ohne Waffe 1.
 - **Gegnerzug:** W20 + Angriffsbonus des Gegners gegen die Rüstung der Spielfigur: 10 plus Bonus der angelegten Rüstung, plus 2 beim Verteidigen, plus Schild-Schriftrolle. Ein Treffer macht den Schaden des Gegners.
+- **Kritischer Schaden:** Zeigt der W20 eines Angriffs eine 20, trifft der Angriff immer, egal wie hoch die Rüstung ist. Der Wert der Schadenswürfel wird verdoppelt, feste Boni nicht: Bei `W10+2` und einer gewürfelten 7 macht der Treffer 7 × 2 + 2 = 16 Schaden, bei `2W6` zählen beide Würfel doppelt. Das gilt für die Spielfigur und für Gegner, auch für Bosse. Ohne Waffe bleibt es bei 1 Schaden, weil kein Würfel fällt. Schriftrollen und andere Verbrauchsgegenstände sind keine Angriffe und können nicht kritisch treffen. Eine 1 hat keine eigene Wirkung.
 - **Gegenstand nutzen:** Heiltrank oder Schriftrolle aus dem Rucksack, kostet die Runde.
 - **Einfrieren:** Eine Schriftrolle mit dem Nutzen `freeze` lässt den Gegner die angegebene Zahl an Runden aussetzen. Er greift in dieser Zeit nicht an, Angriffe auf ihn laufen normal. Ein neuer `freeze` verlängert nicht, sondern setzt die Runden neu.
 - **Fliehen:** Probe Flucht gegen SG 12. Erfolg: Rückzug durch die Tür, durch die der Raum betreten wurde (im Startraum endet nur der Kampf). Das Event ist dann vorbei, ohne Beute und ohne Folge-Event. Fehlschlag: Der Gegner handelt normal.
@@ -477,6 +479,7 @@ Spielerwürfe rollen als 3D-Würfel. Die Anzeige ändert keine Regel: Der Regelc
 - **Was Text bleibt:** Würfe der Gegner (Angriff und Schaden) sowie die Würfel aus Event-Effekten (`damage`, `heal`, `gold`, `loot`). Feste Zahlen ohne Würfel, etwa der Schaden ohne Waffe, rollen nicht.
 - **Boni:** Ein Würfel zeigt nur den Würfelwert. Boni wie bei `W10+2` und Attribute stehen in der Würfelzeile im Textfenster.
 - **Gedeckelte Werte:** Der Würfel zeigt den gewürfelten Wert, der Text die tatsächlich abgezogenen oder geheilten Lebenspunkte. Bleiben dem Gegner 3 LP, zeigt eine gewürfelte 6 also die 6, der Text „−3 LP“.
+- **Kritische Treffer in der Anzeige:** Die Schadenswürfel zeigen den gewürfelten Wert, die Würfelzeile im Textfenster die Verdopplung (etwa `W10: 7 × 2 + 2 = 16`). Darüber steht „Kritischer Treffer!“. Die Schadenszahl über der Figur nennt wie immer den tatsächlich abgezogenen Wert. Bei Gegnern, deren Würfe Text bleiben, erscheinen Meldung und Rechnung nur im Text.
 - **Ablauf:** Option wählen, das Textfenster bleibt ohne Optionen stehen, die Würfel rollen und landen. Nach 0,4 Sekunden Haltezeit erscheint das Ergebnis im Textfenster. Bei einem Treffer folgt zuerst der Schadenswurf. Die Figur schlägt zu, wenn der W20 gelandet ist, und der Gegner reagiert, wenn der Schaden gelandet ist.
 - **Volks-Fähigkeit:** Das Angebot, eine misslungene Probe zu retten, erscheint nach der Landung. Der Würfel bleibt dabei auf dem gewürfelten Wert liegen.
 - **Überspringen:** Ein Klick in den Raum oder eine beliebige Taste setzt die Würfel sofort auf die Endlage. Mit `prefers-reduced-motion` liegen sie ohne Flug gleich dort.
@@ -485,7 +488,7 @@ Spielerwürfe rollen als 3D-Würfel. Die Anzeige ändert keine Regel: Der Regelc
 - **Größe und Blick:** 200 Pixel pro Einheit, ein W20 ist also rund 200 Pixel groß; in schmalen Browserfenstern wird das kleiner (Breite durch 4). Die Kamera schaut mit 78° steiler als die Raumkamera, damit die obere Seite klar zur Kamera zeigt.
 - **Schatten:** Die Würfel werfen einen weichen Schatten auf die unsichtbare Ebene. Er liegt auch über Figuren und Möbeln. Würfelfeld und Licht sind eine eigene Szene und zählen nicht zu den höchstens zwei schattenwerfenden Lichtern des Raums.
 - **Mehrere Würfel:** Jeder Würfel fliegt einzeln und berührt die anderen nicht. Zwei Würfel liegen nebeneinander, vier als Quadrat, damit sie die Infokästen nicht berühren.
-- **Aussehen:** Würfelkörper aus Grundformen mit flacher Schattierung in `#F0E5D3`, Ziffern in `#2A2230`. Gold und Gefahr-Rot werden nicht benutzt. 6 und 9 sind unterstrichen. Der W10 zeigt 1 bis 10. Der W4 trägt drei Zahlen pro Seite, es gilt die Zahl an der oberen Spitze. Eine gewürfelte 20 oder 1 hat keine eigene Darstellung, weil es keine Regel für kritische Treffer gibt.
+- **Aussehen:** Würfelkörper aus Grundformen mit flacher Schattierung in `#F0E5D3`, Ziffern in `#2A2230`. Gold und Gefahr-Rot werden nicht benutzt. 6 und 9 sind unterstrichen. Der W10 zeigt 1 bis 10. Der W4 trägt drei Zahlen pro Seite, es gilt die Zahl an der oberen Spitze. Eine gewürfelte 20 oder 1 hat am Würfel keine eigene Darstellung; einen kritischen Treffer meldet das Textfenster (siehe „Kritische Treffer in der Anzeige“).
 - **Aufzeichnung:** Die Flugbahnen entstehen vorab mit einer Physik-Simulation (`tools/record-dice.mjs`, `npm run build:dice`) und liegen in `data/dice-rolls.json`. Das Spiel braucht zur Laufzeit keine Physik-Engine. Pro Würfelsatz gibt es 8 Aufnahmen, höchstens 1,8 Sekunden lang, das Spiel wählt eine zufällig.
 - **Ergebnis festlegen:** Alle Würfel sind symmetrisch. Der Würfel wird vor dem Abspielen in sich so gedreht, dass die Seite mit dem gewünschten Wert dort liegt, wo die Aufnahme oben endet. Die Flugbahn bleibt dabei gleich. Passen mehrere Drehungen, gilt die, bei der die Zahl am aufrechtesten liegt.
 - **Würfelsätze:** W20, W4, W6, W8, W10 und W12 einzeln, dazu 2W4, 4W4 und 4W6. `npm test` meldet einen Fehler, wenn eine Waffe oder ein Verbrauchsgegenstand einen Würfelsatz ohne Aufnahme nutzt. Fehlt im Spiel eine Aufnahme oder klappt WebGL nicht, bleibt es beim Text, ohne Fehlermeldung.
@@ -1119,3 +1122,4 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Sounds der Zwergenminen: Stimmung `schmiede` aus vorhandenen Dateien (Loop `cozy`, Zufall `kerker`) für Schmiede und Bossraum der Zwergenminen; Bibliothek `empty`/`stone`; Schmiedemeister klingt wie der Schmied (`hammer`); Höhlenspinne und Rache-Monsterratte trippeln
 - [x] Licht: Mindesthelligkeit aus der eigenen Textur für Figuren (0,45) und Requisiten (0,22) statt mehr Raumlicht oder Fülllicht (Variante E); Boden, Wände und Bodendeko ohne
 - [x] Markierung unter dem Mauszeiger: blassgelber, leicht pulsierender Kreis auf begehbaren Kacheln, keine Markierung auf nicht begehbaren (von Christian so entschieden)
+- [x] Kritischer Schaden: Eine 20 beim Angriff trifft immer und verdoppelt die Schadenswürfel (ohne Boni), für Spielfigur und Gegner

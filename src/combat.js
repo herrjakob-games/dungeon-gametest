@@ -1,6 +1,6 @@
 // Rundenkampf (docs/GDD.md, Abschnitt Proben, Kampf und Fortschritt).
 // Reine Logik ohne Grafik und Textfenster. Ablauf einer Runde: Der Spieler handelt, danach der Gegner.
-import { doCheck, rollDice, rollDiceDetail } from "./eventLogic.js";
+import { doCheck, rollDiceDetail } from "./eventLogic.js";
 import { weaponOf, armorBonusOf } from "./character.js";
 
 export const BASE_ARMOR = 10;   // Rüstung der Spielfigur ohne Rüstungsteil
@@ -20,18 +20,41 @@ export function startCombat(def, hpBonus = 0) {
 export const playerArmor = (player, items, c) =>
   BASE_ARMOR + armorBonusOf(player, items) + (c.defending ? DEFEND_BONUS : 0) + c.shield;
 
-// Angreifen: W20 + Trefferattribut der Waffe gegen die Rüstung des Gegners (Kategorie Nahkampf)
+// Kritischer Schaden (docs/GDD.md, Kampf): Eine gewürfelte 20 beim Angriff trifft immer, egal wie hoch die Rüstung ist
+export const CRIT = 20;
+export const isCrit = (d) => d === CRIT;
+
+// Schaden würfeln; bei einem kritischen Treffer zählt der Wert der Schadenswürfel doppelt, feste Boni nicht.
+// Ohne Würfel (fester Schaden, etwa 1 ohne Waffe) bleibt es beim festen Wert. Ergebnis wie rollDiceDetail plus crit.
+export function damageRoll(spec, rand, crit) {
+  const r = rollDiceDetail(spec, rand);
+  if (!crit || !r.values.length) return Object.assign(r, { crit: false });
+  const sum = r.values.reduce((s, v) => s + v, 0);
+  return Object.assign(r, { crit: true, total: Math.max(0, sum * 2 + r.mod) });
+}
+
+// Rechnung für die Würfelzeile, etwa „W10: 7 × 2 + 2 = 16“ oder „2W6: (3 + 5) × 2 = 16“
+export function critText(spec, r) {
+  const dice = String(spec).replace(/[+-]\d+$/, "");
+  const sum = r.values.length > 1 ? "(" + r.values.join(" + ") + ")" : String(r.values[0]);
+  const mod = r.mod > 0 ? " + " + r.mod : r.mod < 0 ? " − " + -r.mod : "";
+  return dice + ": " + sum + " × 2" + mod + " = " + r.total;
+}
+
+// Angreifen: W20 + Trefferattribut der Waffe gegen die Rüstung des Gegners (Kategorie Nahkampf); eine 20 trifft immer
 export function attackRoll(player, items, c, rand) {
   const w = weaponOf(player, items);
-  return doCheck(player, { attr: w.hit, category: "nahkampf", dc: c.monster.armor }, rand);
+  const r = doCheck(player, { attr: w.hit, category: "nahkampf", dc: c.monster.armor }, rand);
+  if (isCrit(r.d)) Object.assign(r, { ok: true, crit: true });
+  return r;
 }
 
 // Treffer: Schaden der Waffe abziehen. Ergebnis: abgezogener Schaden. out (optional) bekommt die Würfel für die
-// Würfelanzeige: { spec, values } (values leer bei festem Schaden ohne Würfel)
-export function hitMonster(player, items, c, rand, out) {
+// Würfelanzeige: { spec, values, crit, total, text } (values leer bei festem Schaden ohne Würfel). crit: kritischer Treffer
+export function hitMonster(player, items, c, rand, out, crit) {
   const spec = weaponOf(player, items).damage;
-  const r = rollDiceDetail(spec, rand);
-  if (out) Object.assign(out, { spec, values: r.values });
+  const r = damageRoll(spec, rand, crit);
+  if (out) Object.assign(out, { spec, values: r.values, crit: r.crit, total: r.total, text: r.crit ? critText(spec, r) : null });
   const n = Math.min(c.monster.hp, r.total);
   c.monster.hp -= n;
   return n;
@@ -79,10 +102,12 @@ export function monsterTurn(player, items, c, rand) {
   const d = 1 + Math.floor(rand() * 20);
   const total = d + c.monster.attack;
   const dc = playerArmor(player, items, c);
-  const hit = total >= dc;
-  const dmg = hit ? Math.min(player.hp, rollDice(c.monster.damage, rand)) : 0;
+  const crit = isCrit(d); // eine 20 trifft immer und verdoppelt die Schadenswürfel
+  const hit = crit || total >= dc;
+  const r = hit ? damageRoll(c.monster.damage, rand, crit) : null;
+  const dmg = hit ? Math.min(player.hp, r.total) : 0;
   player.hp -= dmg;
   c.defending = false;
   c.round += 1;
-  return { d, bonus: c.monster.attack, total, dc, hit, dmg };
+  return { d, bonus: c.monster.attack, total, dc, hit, dmg, crit: !!(r && r.crit), critText: r && r.crit ? critText(c.monster.damage, r) : null };
 }
