@@ -1,5 +1,5 @@
 {
-  "code": "553392421b5a",
+  "code": "418140c93580",
   "files": [
     "src/book.js",
     "src/character.js",
@@ -20,6 +20,7 @@
     "src/figures.js",
     "src/generator.js",
     "src/gridOverlay.js",
+    "src/hoverLogic.js",
     "src/hud.js",
     "src/inventory.js",
     "src/lightLift.js",

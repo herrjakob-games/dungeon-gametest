@@ -5,7 +5,9 @@ import { state, walkable } from "./state.js";
 import { renderer, scene, camera, zoomBy, updateZoom } from "./scene.js";
 import { buildRoom, douseCampfire } from "./roomBuilder.js";
 import { placePlayer, setFigure, player } from "./player.js";
-import { hoverMesh, showHoverTile } from "./markers.js";
+import { showHoverTile, hideHoverTile, updateHoverMarker, setHoverStyle } from "./markers.js";
+import { showMarker } from "./hoverLogic.js";
+import { findPath } from "./pathfinding.js";
 import { moveTo, stopMoving, approachTile, updateMovement } from "./movement.js";
 import { closeDialog, isDialogOpen, isDialogModal, showDialog } from "./dialog.js";
 import { initEvents, startRoomEvent, chestEvent, lockedDoorNote, startBoss, restEvent, runEvent, startFight } from "./events.js";
@@ -47,7 +49,8 @@ function withFade(fn, opts) {
   fade.style.opacity = "1";
   setTimeout(() => {
     fn();
-    hoverMesh.visible = false;
+    pointer.tile = null;
+    hideHoverTile();
     updateHud();
     fade.style.opacity = "0";
     setTimeout(() => {
@@ -257,25 +260,42 @@ const labelFor = (o) => {
   return "Treppe nach unten";
 };
 
+// Markierung unter der Maus (docs/GDD.md, Stilguide, Lesbarkeit): Kreis nur auf begehbaren Kacheln mit Weg von der Figur;
+// nicht begehbare Kacheln bleiben unmarkiert (das Feld „Maus über“ zeigt die Kachel trotzdem). Der Weg wird nur neu
+// gesucht, wenn sich Kachel, Standort der Figur oder die gesperrten Kacheln ändern.
+const pointer = { tile: null, overObject: false, reachKey: null, reach: false };
+function refreshMarker() {
+  const t = pointer.tile;
+  let reach = false;
+  if (t && walkable(t[0], t[1])) {
+    const k = key(...t) + "|" + key(...state.pTile) + "|" + state.blocked.size + "|" + state.current;
+    if (k !== pointer.reachKey) { pointer.reachKey = k; pointer.reach = !!findPath(state.pTile[0], state.pTile[1], t[0], t[1], walkable, state.edges); }
+    reach = pointer.reach;
+  }
+  const on = showMarker({ tile: t, player: state.pTile, walkable: t && walkable(t[0], t[1]), reachable: reach, overObject: pointer.overObject,
+    eventActive: state.eventActive, combat: !!state.combat, transitioning: state.transitioning });
+  if (on) showHoverTile(t[0], t[1]); else hideHoverTile();
+}
 renderer.domElement.addEventListener("pointermove", (ev) => {
   if (state.transitioning) return;
   const h = pick(ev);
+  pointer.tile = null;
+  pointer.overObject = false;
   if (h && h.obj) {
     setHoverObj(h.obj);
-    hoverMesh.visible = false;
+    pointer.overObject = true; // über anklickbaren Objekten nur die goldene Umrisslinie
     setHover(labelFor(h.obj));
   } else if (h && h.tile) {
     setHoverObj(null);
-    const [x, z] = h.tile;
-    showHoverTile(x, z, walkable(x, z));
-    setHover("Kachel " + tileName(x, z));
+    pointer.tile = h.tile;
+    setHover("Kachel " + tileName(h.tile[0], h.tile[1]));
   } else {
     setHoverObj(null);
-    hoverMesh.visible = false;
     setHover(null);
   }
+  refreshMarker();
 });
-renderer.domElement.addEventListener("pointerleave", () => { setHoverObj(null); hoverMesh.visible = false; setHover(null); });
+renderer.domElement.addEventListener("pointerleave", () => { setHoverObj(null); pointer.tile = null; pointer.overObject = false; hideHoverTile(); setHover(null); });
 
 let downAt = null;
 renderer.domElement.addEventListener("pointerdown", (ev) => { downAt = [ev.clientX, ev.clientY]; });
@@ -439,6 +459,10 @@ function loop() {
   updateZoom(dt, !!state.combat, reduceMotion);  // im Kampf 30 % näher, weicher Übergang
 
   if (state.merchantAnim) state.merchantAnim.update(dt); // Händler steht mit Idle-Animation
+  // Kreis unter der Maus: Werte des Themas, sichtbar nur, wenn erlaubt (Event, Kampf, Figur steht darauf …), pulsiert
+  setHoverStyle(state.theme);
+  refreshMarker();
+  updateHoverMarker(t);
 
   if (state.openLid && state.lidPivot) {
     if (state.lidPivot.rotation.x > -1.9) state.lidPivot.rotation.x -= dt * 4;

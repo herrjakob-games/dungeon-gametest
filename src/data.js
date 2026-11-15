@@ -6,6 +6,7 @@ import { PROPS } from "./decor.js";
 import { checkSounds } from "./soundLogic.js";
 import { checkDiceRolls } from "./diceLogic.js";
 import { checkTutorial } from "./tutorialText.js";
+import { checkHoverMarker } from "./hoverLogic.js";
 
 export let DATA = null;
 
@@ -27,6 +28,7 @@ export async function loadData() {
   checkSounds(DATA, sounds, (w, t) => errors.push(w + ": " + t));
   checkDiceRolls(DATA.diceRolls, DATA.items, (w, t) => errors.push(w + ": " + t));
   checkTutorial(texts.tutorial, (w, t) => errors.push(w + ": " + t));
+  checkHoverMarker(themes, (w, t) => errors.push(w + ": " + t)); // Kreis unter der Maus (hoverMarker)
   if (errors.length) console.error("Fehler in data/:\n" + errors.join("\n"));
   for (const rt of roomTypes) {
     TYPES[rt.id] = Object.assign({}, rt, { torch: parseInt(rt.torch.slice(1), 16) });
