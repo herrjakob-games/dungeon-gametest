@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.80 · Nov 15, 2026 · @Christian
+Version 2.81 · Nov 15, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.81 | 15.11.2026 | Markierung unter dem Mauszeiger: begehbare Kachel als blassgelber, leicht pulsierender Kreis (`#F7E08A`, 0,3 Kacheln) statt gelber Kachel; nicht begehbare Kacheln ohne Markierung (rote Kachel entfällt); Werte in `hoverMarker` (`data/themes.json`); von Christian so entschieden |
 | 2.80 | 15.11.2026 | Licht: Mindesthelligkeit für Figuren und Requisiten aus ihrer eigenen Textur (Figuren und ihre Waffen 0,45, Requisiten 0,22, `figureLift`/`propLift`), damit sie im Schatten nie schwarz wirken; Boden, Wände, Bodendeko und Treppen ohne; Grundlicht und Fackeln unverändert; Hervorheben beim Überfahren setzt auf die Grundstufe auf |
 | 2.79 | 15.11.2026 | Sounds der Zwergenminen: neue Stimmung `schmiede` (Loop wie `cozy`, Zufallsgeräusche wie `kerker`) für Schmiede und Bossraum der Zwergenminen (`themeSound`); Bibliothek mit `empty` und `stone`; Schmiedemeister mit Angriffsklang `hammer`; Höhlenspinne und Rache-Monsterratte mit Schritten `trippeln` |
 | 2.78 | 15.11.2026 | Versionsprüfung beim Start: Passt das Programm im Zwischenspeicher des Browsers nicht zu den Daten, holt das Spiel die Programmdateien neu und lädt sich einmal selbst neu (Ursache der leeren Bibliothek direkt nach dem Update) |
@@ -143,7 +144,7 @@ Der Dungeon ist ein Gitter aus Raumplätzen, jeder Raum ein Gitter aus Kacheln. 
 
 Das Spiel kennt zwei Modi: freie Erkundung in Echtzeit und rundenbasierte Events im Textfenster.
 
-- **Klick zum Bewegen:** Der Spieler klickt auf eine Kachel, die Figur läuft per Wegfindung (A\*) dorthin. Säulen, Truhen und Möbel blockieren Kacheln.
+- **Klick zum Bewegen:** Der Spieler klickt auf eine Kachel, die Figur läuft per Wegfindung (A\*) dorthin. Säulen, Truhen und Möbel blockieren Kacheln. Begehbare Kacheln zeigt unter der Maus ein blassgelber Kreis (siehe Stilguide, Lesbarkeit).
 - **Interaktion:** Klick auf ein Objekt lässt die Figur hinlaufen und interagieren, etwa eine Truhe öffnen.
 - **Raumwechsel:** Klick auf eine Tür. Das Bild blendet kurz ab, die Figur steht im neuen Raum an der gegenüberliegenden Tür.
 - **Startposition:** Zu Beginn jedes Dungeons, auch nach jedem Abstieg, steht die Figur in der Vorkammer am Fuß der Treppe nach oben, auf Kachel 2|4.
@@ -598,6 +599,7 @@ Gruft und Brunnen sind im Keller die düsteren Räume mit kälterem Grundlicht. 
 **Lesbarkeit**
 
 - Spielfigur mit hellem Bodenring, Gegner mit rotem Akzent und im Kampf rotem Ring.
+- Begehbare Kachel unter der Maus: blassgelber Kreis (`#F7E08A`) in der Kachelmitte, 0,3 Kacheln, pulsiert leicht. Nicht begehbare Kacheln werden nicht markiert. Einzelheiten: Deckkraft 0,8, weicher Rand, 0,02 über dem Boden, Größe pulsiert per Sinus zwischen 0,85 und 1,0 (eine Runde 1,2 s, bei reduzierter Bewegung fest); nicht begehbar heißt blockiert (Requisit, Säule, Wand, Zellwand) oder ohne Weg von der Figur. Kein Kreis über anklickbaren Objekten (dort nur die goldene Umrisslinie), bei Events, im Kampf, während der Abblende und auf der Kachel der Figur. Werte in `hoverMarker` (`data/themes.json`: `color`, `opacity`, `size`, `pulseMin`, `pulseSeconds`). Das Feld „Maus über“ im Kasten Entwicklung zeigt die Kachel weiter an.
 - Türrahmen eine Stufe heller als die Wand, neben jeder Tür eine Fackel (Ausnahme: In Schatzkammer und Brunnenraum hängt an jeder Säule eine Fackel). Verschlossene Tür: rotes Schloss.
 - Anklickbare Objekte (Truhe, Lagerfeuer, Händler, Treppe nach unten): goldene Umrisslinie beim Überfahren mit der Maus, leichtes goldenes Aufhellen auf der Mindesthelligkeit; beim Verlassen zurück zur Mindesthelligkeit.
   - Türen: Beim Überfahren mit der Maus bekommt nur das Türblatt die goldene Umrisslinie, nicht der Türrahmen. Anklickbar bleibt die ganze Tür mit Rahmen und Türkachel. An den vorderen Türen (Süd, Ost), die nur Sockel haben, leuchtet stattdessen die Türkachel am Boden mit goldener Umrisslinie auf. Auch verschlossene Türen werden hervorgehoben; ihr Schloss bleibt rot und wird nicht mit umrandet. Wo der Rahmen das Türblatt verdeckt, ist keine Linie zu sehen.
@@ -1116,3 +1118,4 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Zonenraster als allgemeine Regel für Raumtypen mit Füllerliste (`fill`): jede der 9 Zonen zu 3×3 Kacheln bekommt ein Bodenrequisit; Säulenhalle, Brunnenraum und Kerker bewusst ohne; heute nur die Schmiede der Zwergenminen
 - [x] Sounds der Zwergenminen: Stimmung `schmiede` aus vorhandenen Dateien (Loop `cozy`, Zufall `kerker`) für Schmiede und Bossraum der Zwergenminen; Bibliothek `empty`/`stone`; Schmiedemeister klingt wie der Schmied (`hammer`); Höhlenspinne und Rache-Monsterratte trippeln
 - [x] Licht: Mindesthelligkeit aus der eigenen Textur für Figuren (0,45) und Requisiten (0,22) statt mehr Raumlicht oder Fülllicht (Variante E); Boden, Wände und Bodendeko ohne
+- [x] Markierung unter dem Mauszeiger: blassgelber, leicht pulsierender Kreis auf begehbaren Kacheln, keine Markierung auf nicht begehbaren (von Christian so entschieden)

@@ -60,7 +60,14 @@
         "weight": 7
       }
     ],
-    "seeThroughOpacity": 0.4
+    "seeThroughOpacity": 0.4,
+    "hoverMarker": {
+      "color": "#F7E08A",
+      "opacity": 0.8,
+      "size": 0.3,
+      "pulseMin": 0.85,
+      "pulseSeconds": 1.2
+    }
   },
   {
     "id": "katakomben",
@@ -137,7 +144,14 @@
         }
       ]
     },
-    "seeThroughOpacity": 0.4
+    "seeThroughOpacity": 0.4,
+    "hoverMarker": {
+      "color": "#F7E08A",
+      "opacity": 0.8,
+      "size": 0.3,
+      "pulseMin": 0.85,
+      "pulseSeconds": 1.2
+    }
   },
   {
     "id": "zwergenminen",
@@ -222,6 +236,13 @@
           "gainXp": 3
         }
       ]
+    },
+    "hoverMarker": {
+      "color": "#F7E08A",
+      "opacity": 0.8,
+      "size": 0.3,
+      "pulseMin": 0.85,
+      "pulseSeconds": 1.2
     }
   },
   {
@@ -251,7 +272,14 @@
       "ambient": "#22301E"
     },
     "bannerColor": "gruen",
-    "seeThroughOpacity": 0.4
+    "seeThroughOpacity": 0.4,
+    "hoverMarker": {
+      "color": "#F7E08A",
+      "opacity": 0.8,
+      "size": 0.3,
+      "pulseMin": 0.85,
+      "pulseSeconds": 1.2
+    }
   },
   {
     "id": "orklager",
@@ -284,6 +312,13 @@
       "ambient": "#3A2420"
     },
     "bannerColor": "gruen",
-    "seeThroughOpacity": 0.4
+    "seeThroughOpacity": 0.4,
+    "hoverMarker": {
+      "color": "#F7E08A",
+      "opacity": 0.8,
+      "size": 0.3,
+      "pulseMin": 0.85,
+      "pulseSeconds": 1.2
+    }
   }
 ]
