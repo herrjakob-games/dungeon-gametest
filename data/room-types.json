@@ -755,10 +755,6 @@
             {
               "prop": "regal",
               "place": "wall-back"
-            },
-            {
-              "prop": "sack",
-              "place": "free"
             }
           ]
         },
@@ -792,10 +788,6 @@
             {
               "prop": "flaschen",
               "place": "around:fassstapel"
-            },
-            {
-              "prop": "sack",
-              "place": "free"
             }
           ]
         }
@@ -1472,11 +1464,6 @@
               "required": true
             },
             {
-              "prop": "sack",
-              "place": "free",
-              "count": 2
-            },
-            {
               "prop": "wandregal",
               "place": "wall-back"
             },
@@ -1524,11 +1511,6 @@
               "prop": "kiste",
               "place": "free",
               "variant": "angenagt",
-              "count": 2
-            },
-            {
-              "prop": "sack",
-              "place": "corner",
               "count": 2
             },
             {
@@ -1670,11 +1652,6 @@
               "place": "wall-back"
             },
             {
-              "prop": "sack",
-              "place": "corner",
-              "count": 2
-            },
-            {
               "prop": "zapffass",
               "place": "corner"
             },
@@ -1709,10 +1686,6 @@
             {
               "prop": "kiste",
               "place": "corner"
-            },
-            {
-              "prop": "sack",
-              "place": "free"
             },
             {
               "prop": "zapffass_verziert",

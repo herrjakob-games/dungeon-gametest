@@ -32,7 +32,7 @@ test("Kachelteile und Bodendeko ohne Eigenleuchten, Figuren und Requisiten mit d
     else if (m.file.startsWith("assets/figures/") || m.file.startsWith("assets/weapons/")) assert.equal(got, 0.45, id);
     else if (m.file.startsWith("assets/props/")) assert.equal(got, 0.22, id);
   }
-  ["sack", "moos", "pfuetze", "geroell"].forEach(id => assert.equal(liftFor(id, "assets/props/", lv), 0, id + " (Grundformen)"));
+  ["moos", "pfuetze", "geroell"].forEach(id => assert.equal(liftFor(id, "assets/props/", lv), 0, id + " (Grundformen)"));
   assert.equal(liftFor("esse", "assets/props/", lv), 0.22, "Esse aus Grundformen");
   assert.equal(liftFor("boden", "assets/tiles/boden.glb", lv), 0);
   assert.equal(liftFor("wand", "assets/tiles/wand.glb", lv), 0);

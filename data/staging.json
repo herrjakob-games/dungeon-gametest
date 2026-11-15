@@ -106,18 +106,6 @@
       "animation": "sit",
       "_": "Schlafende Wache; ohne Sitzen (Goblin) stehend neben dem Hocker"
     },
-    "im_mehlsack": {
-      "props": [
-        "sack"
-      ],
-      "offset": [
-        0,
-        0,
-        0.6
-      ],
-      "face": "player",
-      "animation": "idle"
-    },
     "vor_der_treppe": {
       "props": [
         "treppe_runter"
@@ -356,8 +344,7 @@
     "vorrat_ratte": {
       "figures": [
         {
-          "figure": "rat",
-          "anchor": "im_mehlsack"
+          "figure": "rat"
         }
       ],
       "ends": [

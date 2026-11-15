@@ -16,7 +16,6 @@ export const PROPS = {
   saeule_liegend: { w: 2, d: 1, blocks: true },
   fass: { w: 1, d: 1, blocks: true },
   kiste: { w: 1, d: 1, blocks: true },
-  sack: { w: 1, d: 1, blocks: false },
   regal: { w: 2, d: 1, blocks: true, wall: true },
   herd: { w: 2, d: 1, blocks: true, wall: true, light: true },
   tisch: { w: 3, d: 1, blocks: true },

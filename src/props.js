@@ -158,18 +158,6 @@ export function saeule_liegend() {
   return g;
 }
 
-export function sack() {
-  const g = new THREE.Group();
-  const body = new THREE.Mesh(new THREE.DodecahedronGeometry(0.3), mat(0xb09468));
-  body.scale.set(1, 1.15, 0.85); body.position.y = 0.32; body.castShadow = true;
-  g.add(body);
-  g.add(cyl(0.08, 0.1, 0.12, 6, mat(0x8a7350), 0, 0.68, 0));
-  g.position.set((rnd() - 0.5) * 0.3, 0, (rnd() - 0.5) * 0.3);
-  g.rotation.y = rnd() * Math.PI;
-  const outer = new THREE.Group(); outer.add(g);
-  return outer;
-}
-
 // Regal an der Wand mit Krügen
 export function regal() {
   const g = new THREE.Group();
