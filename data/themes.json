@@ -176,6 +176,9 @@
       },
       "schmiede": {
         "brightness": 1.4
+      },
+      "bibliothek": {
+        "brightness": 1.5
       }
     },
     "bannerColor": "blau",

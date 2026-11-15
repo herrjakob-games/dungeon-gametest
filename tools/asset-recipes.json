@@ -1060,7 +1060,7 @@
     }
   },
   "figureSource": "assets/source/kaykit-adventurers/",
-  "figureNotes": "Figuren: Paketdatei mit eigener Textur. remove nennt Zubehörteile, die wegfallen (Waffen und Schilde, die das Volk nicht trägt); animations die Animationen, die bleiben. source: anderer Paketordner; FBX wird umgewandelt; colors: Material → Palettenfarbe; attach: Datei an Knochen (Position, Drehung in Grad, Maßstab); simplify: Anteil der Dreiecke, der bleibt. flat: Normalen vor dem Vereinfachen entfernen (flach schattierte Pakete); stripTexture: eigene Textur entfernen, data/models.json setzt eine angepasste (texture); maxTris: Grenze für die Warnung.",
+  "figureNotes": "Figuren: Paketdatei mit eigener Textur. remove nennt Zubehörteile, die wegfallen (Waffen und Schilde, die das Volk nicht trägt); animations die Animationen, die bleiben. source: anderer Paketordner; FBX wird umgewandelt; colors: Material → Palettenfarbe; attach: Datei an Knochen (Position, Drehung in Grad, Maßstab); simplify: Anteil der Dreiecke, der bleibt. flat: Normalen vor dem Vereinfachen entfernen (flach schattierte Pakete); stripTexture: eigene Textur entfernen, data/models.json setzt eine angepasste (texture); maxTris: Grenze für die Warnung. texture: eigene Textur der Figur in der Datei ersetzen (vor attachNodes); attachNodes: Teil (node) einer anderen Paketfigur (source, file) an einen Knochen (bone) hängen, Lage und Größe wie im Paket, eigene Textur bleibt.",
   "figures": {
     "zwerg": {
       "file": "Knight.glb",
@@ -1383,6 +1383,36 @@
         "Sit_Floor_Idle"
       ],
       "maxTris": 4000
+    },
+    "schmiedemeister": {
+      "file": "Barbarian.glb",
+      "remove": [
+        "1H_Axe_Offhand",
+        "Barbarian_Round_Shield",
+        "1H_Axe",
+        "2H_Axe",
+        "Mug",
+        "Barbarian_Hat"
+      ],
+      "animations": [
+        "Idle",
+        "Walking_A",
+        "1H_Melee_Attack_Chop",
+        "Hit_A",
+        "Death_A",
+        "Interact"
+      ],
+      "texture": "assets/textures/figures/dunkelzwerg/dunkelschmied_texture.png",
+      "attachNodes": [
+        {
+          "source": "assets/source/kaykit-skeletons/",
+          "file": "Skeleton_Warrior.glb",
+          "node": "Skeleton_Warrior_Helmet",
+          "bone": "head"
+        }
+      ],
+      "maxTris": 3000,
+      "simplify": 0.45
     }
   },
   "extractNotes": "Requisiten aus Teilen einer Paketfigur: pieces mit node (Name des Teils), position (KayKit-Einheiten, Unterseite des Teils), rotation (Grad [x, y, z]). keepTexture: eigene Textur bleibt; keepTransform: Teil behält seine Lage aus dem Paket (Griff am Ursprung, für Waffen in der Hand). texture: eigene Textur statt der Paket-Textur (mit keepTexture).",
@@ -1628,6 +1658,24 @@
       "color": "#5E6168",
       "eyeColor": "#FF6A2A",
       "height": 1.8
+    }
+  },
+  "shelfNotes": "Bücherregale aus Grundformen (eigenes Modell, docs/GDD.md, Requisitenliste): fill a (dicht), b (Lücken und liegende Stapel), c (locker, schräg gelehnt); seed: fester Zufall, damit jede Füllung immer gleich aussieht. Ergebnis in Kacheln (Maßstab 1).",
+  "shelves": {
+    "buecherregal": {
+      "dir": "props",
+      "fill": "a",
+      "seed": 101
+    },
+    "buecherregal_b": {
+      "dir": "props",
+      "fill": "b",
+      "seed": 202
+    },
+    "buecherregal_c": {
+      "dir": "props",
+      "fill": "c",
+      "seed": 303
     }
   }
 }

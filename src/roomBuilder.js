@@ -67,12 +67,12 @@ export function buildRoom(id) {
   buildFloor(type, hasHole(feature), floorTilesFor(spec, state.theme));
   buildWalls(room, crackedWalls(room.doors, spec, room.seed, feature, state.theme && state.theme.wandRiss));
   DIRKEYS.forEach(d => { if (room.doors & DIR[d].bit) makeDoor(d); });
-  placeTorches(room, torch, spec, feature);
   if (feature) makeStairs(feature);
   if (feature === "down") preload("treppe"); // Abstieg: das Geräusch startet sofort mit der Abblende
   state.decorPlan = null;
   if (spec) placeDecor(spec, room, feature, id, torch);
   else furnish(type.layout, id);
+  placeTorches(room, torch, spec, feature); // nach der Einrichtung: eine Fackel kann wegfallen (Esse über der Türfackel)
   if (!spec || spec.rubble !== false) scatterRubble(!!feature); // rubble: false (Schmiede der Zwergenminen): kein verstreutes Geröll
   refreshLocks();
   (state.roomState[id].eventProps || []).forEach(p => placeEventProp(p)); // Event-Requisiten, die schon aufgestellt wurden
@@ -276,7 +276,7 @@ function placeTorches(room, color, spec, feature) {
   const has = (d) => (room.doors & DIR[d].bit) !== 0;
   const inner = -E + 0.25; // Innenseite der hohen Wände
   // Plätze an Nord- und Westwand aus decor.js (dieselben, die Wandrequisiten freilassen)
-  torchSlots(room.doors, spec, room.seed, feature).forEach(({ wall, t }) => (wall === "N" ? makeTorch(tw(t), inner, 0, color, flame) : makeTorch(inner, tw(t), Math.PI / 2, color, flame)));
+  (state.decorPlan ? state.decorPlan.torches : torchSlots(room.doors, spec, room.seed, feature)).forEach(({ wall, t }) => (wall === "N" ? makeTorch(tw(t), inner, 0, color, flame) : makeTorch(inner, tw(t), Math.PI / 2, color, flame)));
   // Vordere Fackeln (Süd, Ost): wie die vorderen Wände ausgeblendet, ohne Pfosten; nur ihr Licht bleibt
   if (!frontTorchLights(spec)) return;
   if (has("S")) makeTorchLight(tw(MID + 1), E - 0.3, color);

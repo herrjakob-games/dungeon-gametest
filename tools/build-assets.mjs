@@ -199,6 +199,37 @@ async function buildFigure(id, recipe) {
     bone.addChild(holder);
     root.listScenes().filter(x => x !== root.listScenes()[0]).forEach(x => x.dispose());
   }
+  // Eigene Textur der Figur ersetzen (texture: etwa die Textur des Dunkelzwerg-Schmieds beim Schmiedemeister), bevor
+  // fremde Teile mit eigener Textur dazukommen (attachNodes)
+  if (recipe.texture) {
+    if (!existsSync(ROOT + recipe.texture)) throw new Error(id + ": " + recipe.texture + " fehlt");
+    const textures = root.listTextures();
+    if (textures.length !== 1) throw new Error(id + ": erwartet genau eine Textur, gefunden " + textures.length);
+    textures[0].setImage(new Uint8Array(readFileSync(ROOT + recipe.texture))).setMimeType("image/png");
+  }
+  // Teil einer anderen Paketfigur an einen Knochen hängen (attachNodes: etwa der Helm des Skelett-Kriegers am Kopf des
+  // Schmiedemeisters): Lage wie im anderen Paket am gleichnamigen Knochen, Größe des Pakets, eigene Textur bleibt
+  for (const a of recipe.attachNodes || []) {
+    const bone = root.listNodes().find(n => n.getName() === a.bone);
+    if (!bone) throw new Error(id + ": Knochen " + a.bone + " fehlt");
+    const other = await io.read(ROOT + a.source + a.file);
+    const or = other.getRoot();
+    const part = or.listNodes().find(n => n.getName() === a.node);
+    if (!part || !part.getMesh()) throw new Error(id + ": Teil " + a.node + " fehlt in " + a.file);
+    const holder = other.createNode(a.node).setMesh(part.getMesh())
+      .setTranslation(part.getTranslation()).setRotation(part.getRotation()).setScale(part.getScale());
+    or.listAnimations().forEach(x => { x.listSamplers().forEach(sm => sm.dispose()); x.listChannels().forEach(c => c.dispose()); x.dispose(); });
+    or.listNodes().filter(n => n !== holder).forEach(n => n.dispose());
+    or.listSkins().forEach(sk => sk.dispose());
+    or.listScenes().forEach(sc => sc.dispose());
+    const scene = other.createScene("teil").addChild(holder);
+    await other.transform(prune({ keepAttributes: true }));
+    const map = mergeDocuments(doc, other);
+    const merged = map.get(scene), node = map.get(holder);
+    merged.removeChild(node);
+    bone.addChild(node);
+    merged.dispose();
+  }
   // Eigene Textur entfernen, wenn data/models.json eine angepasste Textur setzt (texture)
   if (recipe.stripTexture) {
     root.listMaterials().forEach(m => m.setBaseColorTexture(null));
@@ -604,13 +635,108 @@ async function buildGolem(id, recipe) {
     " Paket-Einheiten, Maßstab für " + recipe.height + " Kacheln: " + (recipe.height / (hi - lo)).toFixed(4) + ")");
 }
 
+// ---------- Bücherregale aus Grundformen (shelves, Bibliothek der Zwergenminen) ----------
+// Holzregal mit Seitenwänden, Mittelsteg, Böden, Deckplatte, Sockelblende und Rückwand; Bücher als Quader mit hellem
+// Seitenblock oben und Goldband am Rücken. Füllung nach festem Zufall (seed): a dicht, b mit Lücken und liegenden Stapeln,
+// c locker mit schräg gelehnten Büchern. Rückseite an -z (Wand), Ursprung mittig auf der Kachelkante der zwei Kacheln.
+// Ein Primitive pro Farbe, ohne Normalen (flach schattiert), Maße in Kacheln (Maßstab 1).
+function rng(seed) { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+
+async function buildShelf(id, recipe) {
+  const R = rng(recipe.seed);
+  const groups = new Map(); // Farbe → { pos, idx }
+  const quadsOf = (hex) => { if (!groups.has(hex)) groups.set(hex, { pos: [], idx: [] }); return groups.get(hex); };
+  // Quader (Mitte, Größe, Drehung um z), optional nur einzelne Seiten
+  const box = (hex, [cx, cy, cz], [sx, sy, sz], rz = 0, faces = "all") => {
+    const g = quadsOf(hex), base = g.pos.length / 3;
+    const c = Math.cos(rz), sn = Math.sin(rz);
+    for (const x of [-1, 1]) for (const y of [-1, 1]) for (const z of [-1, 1]) {
+      const px = x * sx / 2, py = y * sy / 2;
+      g.pos.push(cx + px * c - py * sn, cy + px * sn + py * c, cz + z * sz / 2);
+    }
+    const all = { nx: [0, 1, 3, 0, 3, 2], px: [4, 6, 7, 4, 7, 5], ny: [0, 4, 5, 0, 5, 1], py: [2, 3, 7, 2, 7, 6], nz: [0, 2, 6, 0, 6, 4], pz: [1, 5, 7, 1, 7, 3] };
+    (faces === "all" ? Object.keys(all) : faces).forEach(f => all[f].forEach(i => g.idx.push(base + i)));
+  };
+  const W = 1.9, H = 1.12, D = 0.42, z0 = -0.5 + D / 2, t = 0.04;
+  const wood = "#7A4A26", dark = "#5A3620", pages = "#E2D3AC", gold = "#C8A050";
+  const colors = ["#8A3A2E", "#4E6B3A", "#3E5A7A", "#B08A3A", "#6A4A30", "#5A4060", "#9A5A2A", "#2F4A4A"];
+  // Regal
+  box(dark, [0, H / 2, -0.5 + 0.01], [W, H, 0.02]); // Rückwand
+  [-1, 1].forEach(sd => box(wood, [sd * (W / 2 - t / 2), H / 2, z0], [t, H, D])); // Seitenwände
+  box(wood, [0, H - t / 2, z0 + 0.015], [W + 0.04, t, D + 0.03]); // Deckplatte (vorn überstehend, hinten bündig an der Wand)
+  box(wood, [0, (0.06 + H) / 2, z0], [t, H - 0.06, D]); // Mittelsteg
+  box(dark, [0, 0.03, z0 + D / 2 - 0.01], [W, 0.06, 0.02]); // Sockelblende
+  const boards = [0.06, 0.42, 0.78];
+  boards.forEach(y => box(wood, [0, y - t / 2, z0], [W - 2 * t, t, D]));
+  // Bücher
+  const tops = boards.map((y, i) => [y, (i + 1 < boards.length ? boards[i + 1] - t : H - t) - y]);
+  const pick = () => colors[Math.floor(R() * colors.length)];
+  const book = (x, y, w, h, d, rz) => {
+    const col = pick(), cz = z0 + (D - d) / 2 - 0.02;
+    // Mitte so hoch, dass die untere Ecke eines schräg gelehnten Buchs auf dem Boden steht
+    const cy = y + (h / 2) * Math.cos(rz) + (w / 2) * Math.abs(Math.sin(rz));
+    box(col, [x, cy, cz], [w, h, d], rz, ["nx", "px", "py", "pz", "nz"]);
+    box(pages, [x - Math.sin(rz) * h / 2, cy + Math.cos(rz) * h / 2 + 0.003, cz], [w * 0.8, 0.006, d * 0.9], rz, ["py"]);
+    if (h > 0.18) box(gold, [x - Math.sin(rz) * h * 0.3, cy + Math.cos(rz) * h * 0.3, cz + d / 2 + 0.002], [w * 0.9, 0.02, 0.002], rz, ["pz"]);
+  };
+  const fill = recipe.fill;
+  for (const [y, room] of tops) for (const side of [-1, 1]) {
+    const left = side < 0 ? -W / 2 + t : t / 2, right = side < 0 ? -t / 2 : W / 2 - t;
+    let x = left + 0.01;
+    while (x < right - 0.05) {
+      const w = 0.05 + R() * 0.045, h = room * (0.62 + R() * 0.3), d = 0.24 + R() * 0.1;
+      const r = R();
+      if (fill === "a" ? r < 0.04 : fill === "b" ? r < 0.22 : r < 0.3) { x += 0.06 + R() * 0.12; continue; } // Lücke
+      if (fill === "b" && r < 0.34 && x + 0.3 < right) { // liegender Stapel aus 2 bis 4 Büchern
+        const n = 2 + Math.floor(R() * 3), lw = 0.22 + R() * 0.06;
+        let yy = y;
+        for (let i = 0; i < n; i++) { const th = 0.035 + R() * 0.02; book(x + lw / 2 + (R() - 0.5) * 0.02, yy, lw, th, 0.22 + R() * 0.05, 0); yy += th; }
+        x += lw + 0.03;
+        continue;
+      }
+      if (fill === "c" && r < 0.62 && x + w + 0.12 < right) { // schräg gelehnt
+        const a = (0.18 + R() * 0.25) * (R() < 0.5 ? -1 : 1);
+        book(x + w / 2 + Math.abs(Math.sin(a)) * h / 2, y, w, h, d, a);
+        x += w + Math.abs(Math.sin(a)) * h + 0.02;
+        continue;
+      }
+      if (x + w > right) break;
+      book(x + w / 2, y, w, h, d, 0);
+      x += w + (fill === "a" ? 0.003 : 0.01 + R() * 0.02);
+    }
+  }
+  const doc = new Document();
+  doc.setLogger(new Logger(Logger.Verbosity.WARN));
+  const buf = doc.createBuffer(), scene = doc.createScene(id), mesh = doc.createMesh(id);
+  let tris = 0;
+  groups.forEach((g, hex) => {
+    const mat = doc.createMaterial(hex).setBaseColorFactor([...hexColor(hex), 1]).setMetallicFactor(0).setRoughnessFactor(0.95);
+    mesh.addPrimitive(doc.createPrimitive().setMaterial(mat)
+      .setAttribute("POSITION", doc.createAccessor().setType("VEC3").setArray(new Float32Array(g.pos)).setBuffer(buf))
+      .setIndices(doc.createAccessor().setType("SCALAR").setArray(new Uint32Array(g.idx)).setBuffer(buf)));
+    tris += g.idx.length / 3;
+  });
+  scene.addChild(doc.createNode(id).setMesh(mesh));
+  doc.getRoot().setDefaultScene(scene);
+  const out = ROOT + "assets/" + recipe.dir + "/" + id + ".glb";
+  await io.write(out, doc);
+  const bytes = statSync(out).size;
+  console.log((recipe.dir + "/" + id).padEnd(26) + String(tris).padStart(6) + " Dreiecke " + String(Math.round(bytes / 1024)).padStart(5) + " KB" +
+    (tris > MAX_TRIS ? "  WARNUNG: über " + MAX_TRIS + " Dreiecke" : ""));
+}
+
 // Nur einzelne Gruppen bauen: npm run build:assets -- weapons figures (ohne Angabe alle)
+// oder einzelne Teile: npm run build:assets -- schmiedemeister (id aus einer Gruppe)
 const only = process.argv.slice(2);
-const want = (group) => !only.length || only.includes(group);
-if (want("parts")) for (const [id, recipe] of Object.entries(recipes.parts)) await build(id, recipe);
-if (want("figures")) for (const [id, recipe] of Object.entries(recipes.figures || {})) await buildFigure(id, recipe);
-if (want("extracts")) for (const [id, recipe] of Object.entries(recipes.extracts || {})) await buildExtract(id, recipe);
-if (want("weapons")) for (const [id, recipe] of Object.entries(recipes.weapons || {})) await buildWeapon(id, recipe);
-if (want("statues")) for (const [id, recipe] of Object.entries(recipes.statues || {})) await buildStatue(id, recipe);
-if (want("golems")) for (const [id, recipe] of Object.entries(recipes.golems || {})) await buildGolem(id, recipe);
+const ids = new Set(only.filter(a => !["parts", "figures", "extracts", "weapons", "statues", "golems", "shelves"].includes(a)));
+const groupOf = (group) => recipes[group] || {};
+const want = (group) => !only.length || only.includes(group) || Object.keys(groupOf(group)).some(id => ids.has(id));
+const pick = (group) => Object.entries(groupOf(group)).filter(([id]) => !ids.size || only.includes(group) || ids.has(id));
+if (want("parts")) for (const [id, recipe] of pick("parts")) await build(id, recipe);
+if (want("figures")) for (const [id, recipe] of pick("figures")) await buildFigure(id, recipe);
+if (want("extracts")) for (const [id, recipe] of pick("extracts")) await buildExtract(id, recipe);
+if (want("weapons")) for (const [id, recipe] of pick("weapons")) await buildWeapon(id, recipe);
+if (want("statues")) for (const [id, recipe] of pick("statues")) await buildStatue(id, recipe);
+if (want("golems")) for (const [id, recipe] of pick("golems")) await buildGolem(id, recipe);
+if (want("shelves")) for (const [id, recipe] of pick("shelves")) await buildShelf(id, recipe);
 

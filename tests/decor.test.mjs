@@ -124,7 +124,8 @@ test("Einrichtung: alle Varianten mit allen 16 Türkombinationen; Liste der Korr
             // Pflichtstücke: immer da, in voller Anzahl
             assert.deepEqual(plan.missingRequired, [], where + ": Pflichtstück fehlt");
             l.props.filter(p => p.required).forEach(p => {
-              const n = plan.placements.filter(x => x.prop === p.prop && x.variant === (p.variant || null)).length;
+              // seedVariant (Bücherregal): die Variante wählt der Raum-Seed
+              const n = plan.placements.filter(x => x.prop === p.prop && (x.variant === (p.variant || null) || (PROPS[p.prop].seedVariant && !p.variant))).length;
               assert.ok(n >= [].concat(p.count || 1)[0], where + ": " + p.prop + " nur " + n + "×");
             });
             l.props.forEach(p => { row(name, l, p).wanted += [].concat(p.count || 1)[0]; });
@@ -234,7 +235,8 @@ test("Raumtypen ohne Einrichtung behalten das bisherige Muster", () => {
   const boss = ROOM_TYPES.find(r => r.id === "boss");
   assert.ok(decorFor(boss, "keller"), "Bossraum im Keller mit Käseberg");
   assert.ok(decorFor(boss, "katakomben").layouts.every(l => l.props.some(p => p.prop === "knochenthron" && p.required)), "Katakomben mit Knochenthron");
-  assert.equal(decorFor(boss, "zwergenminen"), null);
+  assert.ok(decorFor(boss, "zwergenminen").layouts.every(l => l.props.some(p => p.prop === "esse" && p.required)), "Zwergenminen mit Esse");
+  assert.equal(decorFor(boss, "goblinhoehlen"), null);
   assert.ok(decorFor(boss, "keller").layouts.every(l => l.props.some(p => p.prop === "kaeseberg")));
   assert.equal(N, 9);
 });
@@ -245,7 +247,8 @@ test("Wandrequisiten (Regale, Fahnen, Herd …) verdecken oder überlagern keine
     for (const spec of specs) layoutsOf(spec).forEach((layout, li) => {
       for (let doors = 0; doors < 16; doors++) for (let s = 1; s <= 10; s++) {
         const plan = planDecor(spec, { seed: s * 7919, doors, feature: centerFeature(rt.id, false), layoutIndex: li });
-        const torches = new Set(torchSlots(doors, spec, s * 7919).map(f => f.wall + (f.wall === "N" ? key(f.t, 0) : key(0, f.t))));
+        // Fackeln des Plans (ohne die Türfackel, die wegfällt, wenn die Esse im Bossraum der Zwergenminen darüber steht)
+        const torches = new Set(plan.torches.map(f => f.wall + (f.wall === "N" ? key(f.t, 0) : key(0, f.t))));
         plan.placements.filter(p => PROPS[p.prop].wall && p.wall).forEach(p => p.tiles.forEach(t =>
           assert.ok(!torches.has(p.wall + key(...t)), rt.id + " " + layout.id + ": " + p.prop + " auf " + tileName(...t) + " verdeckt eine Fackel (Türen " + doors + ")")));
       }

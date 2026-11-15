@@ -45,6 +45,9 @@ export function endFor(staging, eventId, choice) {
 
 // Event-Requisiten (props): erscheinen nur, wenn das Event auslöst; place bezieht sich auf die erste Figur des Events
 export const PROP_PLACES = ["vor_figur", "neben_figur"];
+// around:<prop>: Nachbarkachel eines Requisits der Einrichtung (etwa die Schlacke an der Esse), auch ohne Figur
+export const PROP_AROUND = /^around:(\w+)$/;
+export const isPropPlace = (place) => PROP_PLACES.includes(place) || PROP_AROUND.test(place || "");
 export const eventProps = (staging, eventId) => ((((staging || {}).events || {})[eventId] || {}).props) || [];
 
 // Verborgen (hidden): Figuren erscheinen erst beim Kampfbeginn
@@ -58,7 +61,8 @@ export const isHidden = (staging, eventId) => !!(((staging || {}).events || {})[
  */
 export function eventFigures(ev, staging, seed) {
   const st = staging || {};
-  const own = (st.events || {})[ev.id];
+  // Standard-Inszenierung des Bosses im Thema (staging.bosses), solange das Thema keine Boss-Events hat
+  const own = (st.events || {})[ev.id] || (ev.bossTheme && (st.bosses || {})[ev.bossTheme]) || null;
   let list;
   if (own && own.figures) list = own.figures.map(f => Object.assign({}, f)); // ohne figures gilt die Liste des Event
   else if (ev.figures) list = ev.figures.map(f => ({ figure: f.figure, count: f.count, place: f.place, stay: f.stay }));
@@ -116,6 +120,14 @@ export function checkStaging(staging, data, props, err) {
     if (f.default !== undefined && !(f.variants || []).includes(f.default)) err(w, id + ": Standard-Variante " + f.default + " fehlt in variants");
     if (f.steps !== undefined && typeof f.steps !== "string") err(w, id + ": steps muss ein Name sein (Sound schritt_<steps>)");
   }
+  for (const [th, b] of Object.entries(staging.bosses || {})) {
+    if (data.themes && !(Array.isArray(data.themes) ? data.themes.some(t => t.id === th) : data.themes[th])) err(w, "bosses: unbekanntes Thema " + th);
+    if (!b || !Array.isArray(b.figures) || !b.figures.length) { err(w, "bosses " + th + ": figures fehlt"); continue; }
+    b.figures.forEach(f => {
+      if (!isFigure(f.figure, data.monsters)) err(w, "bosses " + th + ": unbekannte Figur " + f.figure);
+      if (f.anchor !== undefined && !anchors[f.anchor]) err(w, "bosses " + th + ": unbekannter Anker " + f.anchor);
+    });
+  }
   for (const [id, e] of Object.entries(staging.events || {})) {
     if (e.procession !== undefined && typeof e.procession !== "boolean") err(w, id + ": procession muss true oder false sein");
     if (e.hidden !== undefined && typeof e.hidden !== "boolean") err(w, id + ": hidden muss true oder false sein");
@@ -123,7 +135,8 @@ export function checkStaging(staging, data, props, err) {
       if (!Array.isArray(e.props)) err(w, id + ": props muss eine Liste sein");
       else e.props.forEach(x => {
         if (!x || !props.includes(x.prop)) err(w, id + ": unbekannte Requisite " + (x && x.prop));
-        if (!x || !PROP_PLACES.includes(x.place)) err(w, id + ": props " + (x && x.prop) + ": place muss vor_figur oder neben_figur sein");
+        if (!x || !isPropPlace(x.place)) err(w, id + ": props " + (x && x.prop) + ": place muss vor_figur, neben_figur oder around:<requisit> sein");
+        else if (PROP_AROUND.test(x.place) && !props.includes(PROP_AROUND.exec(x.place)[1])) err(w, id + ": props " + x.prop + ": unbekanntes Bezugsrequisit in " + x.place);
       });
     }
     const ev = data.events[id];
@@ -137,6 +150,14 @@ export function checkStaging(staging, data, props, err) {
       if (!o.check && x.result !== undefined) err(w, id + ": ends „" + x.option + "“: die Option hat keine Probe, result fällt weg");
       const outcome = o.check ? o[x.result] : o;
       if (outcome && combatMonsterOf({ options: [outcome] })) err(w, id + ": ends „" + x.option + "“ endet mit einem Kampf und gehört nicht in ends");
+    });
+  }
+  for (const [th, b] of Object.entries(staging.bosses || {})) {
+    if (data.themes && !(Array.isArray(data.themes) ? data.themes.some(t => t.id === th) : data.themes[th])) err(w, "bosses: unbekanntes Thema " + th);
+    if (!b || !Array.isArray(b.figures) || !b.figures.length) { err(w, "bosses " + th + ": figures fehlt"); continue; }
+    b.figures.forEach(f => {
+      if (!isFigure(f.figure, data.monsters)) err(w, "bosses " + th + ": unbekannte Figur " + f.figure);
+      if (f.anchor !== undefined && !anchors[f.anchor]) err(w, "bosses " + th + ": unbekannter Anker " + f.anchor);
     });
   }
   for (const [id, e] of Object.entries(staging.events || {})) {

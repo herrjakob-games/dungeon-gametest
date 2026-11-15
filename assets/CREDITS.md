@@ -39,7 +39,7 @@ Quelle und Lizenz jeder fremden Datei (docs/GDD.md, Asset-Spezifikation).
 - Lizenz: CC0 1.0 (Creative Commons Zero), siehe `source/kaykit-adventurers/LICENSE.txt`
 - Quelle: https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0, Commit `672074b73ba276876a19e8816ecdc5241817ab47`
 - Übernommene Dateien (in `source/kaykit-adventurers/`, aus `Characters/gltf/`): Knight, Mage, Rogue_Hooded, Rogue, Barbarian, rogue_texture.png
-- Daraus gebaut (`npm run build:assets`): `weapons/langschwert.glb` (`1H_Sword` aus Knight), `weapons/feuerbuch.glb` und `weapons/feuerbuch_offen.glb` (`Spellbook` und `Spellbook_open` aus Mage, Einband umgefärbt mit `tools/weapon-texture.py`), `figures/zwerg.glb`, `figures/elf.glb`, `figures/mensch.glb` (ohne eingebaute Waffe), `figures/haendlerfigur.glb` (Händler), `figures/knight.glb` (Ritter ohne Waffen), `figures/dunkelzwerg.glb`, `figures/zwergenkoch.glb`, `figures/zwergenschmied.glb` (Dunkelzwerge), `props/grossaxt.glb` (große Axt, `2H_Axe` aus Barbarian), `ui/handbuch.glb` (Kellerhandbuch, `Spellbook_open` aus Mage, Einband braun, Seiten Pergament mit `tools/weapon-texture.py`)
+- Daraus gebaut (`npm run build:assets`): `weapons/langschwert.glb` (`1H_Sword` aus Knight), `weapons/feuerbuch.glb` und `weapons/feuerbuch_offen.glb` (`Spellbook` und `Spellbook_open` aus Mage, Einband umgefärbt mit `tools/weapon-texture.py`), `figures/zwerg.glb`, `figures/elf.glb`, `figures/mensch.glb` (ohne eingebaute Waffe), `figures/haendlerfigur.glb` (Händler), `figures/knight.glb` (Ritter ohne Waffen), `figures/dunkelzwerg.glb`, `figures/zwergenkoch.glb`, `figures/zwergenschmied.glb` (Dunkelzwerge), `props/grossaxt.glb` (große Axt, `2H_Axe` aus Barbarian), `ui/handbuch.glb` (Kellerhandbuch, `Spellbook_open` aus Mage, Einband braun, Seiten Pergament mit `tools/weapon-texture.py`); `figures/schmiedemeister.glb` (Boss der Zwergenminen: Barbarian mit der Textur des Dunkelzwerg-Schmieds und dem Helm des Skelett-Kriegers)
 - `textures/figures/dunkelzwerg/dunkelzwerg_texture.png` und `dunkelschmied_texture.png` sind umgefärbte Fassungen der Knight- und Barbarian-Textur (`tools/dunkelzwerg-texture.py`)
 - `textures/figures/haendler/haendler_texture.png` ist die Rogue-Textur mit dunkelblauem statt grünem Outfit (`tools/merchant-texture.py`)
 
@@ -67,7 +67,7 @@ Quelle und Lizenz jeder fremden Datei (docs/GDD.md, Asset-Spezifikation).
 - Lizenz: CC0 1.0 (Creative Commons Zero), siehe `source/kaykit-resource-bits/License.txt` (aus dem Paket, 03.04.2025)
 - Quelle: itch.io-Seite von Kay Lousberg, Fassung 1.0 FREE (hochgeladen von Christian)
 - Übernommene Dateien (in `source/kaykit-resource-bits/`, aus `Assets/gltf/`): Iron_Bar, Iron_Bars_Stack_Small, Iron_Nuggets, Iron_Nugget_Large, Iron_Nugget_Medium (je `.gltf` und `.bin`), resource_bits_texture.png (im Paket unter `Textures/`)
-- Daraus gebaut (`npm run build:assets`): `props/eisenlager.glb` (zwei Barrenstapel), `props/eisenbarren.glb`, `props/kohle.glb`, `props/kohle_gross.glb`, `props/kohle_klein.glb` (einfarbig als Kohle)
+- Daraus gebaut (`npm run build:assets`): `props/eisenlager.glb` (zwei Barrenstapel), `props/eisenbarren.glb`, `props/kohle.glb`, `props/kohle_gross.glb`, `props/kohle_klein.glb` (einfarbig als Kohle); `props/kohle_gross.glb` dient auch als Schlackehaufen (`schlacke`, andere Farbe in `data/models.json`)
 
 ## KayKit Character Pack: Skeletons 1.0 (und 1.1 FREE)
 
@@ -76,7 +76,7 @@ Quelle und Lizenz jeder fremden Datei (docs/GDD.md, Asset-Spezifikation).
 - Quelle: https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0, Commit `15b62b9bad122f72926c10fb14d622c73819fa54`;
   Fassung 1.1 FREE von der itch.io-Seite von Kay Lousberg (hochgeladen von Christian; Textur Pixel für Pixel gleich)
 - Übernommene Dateien (in `source/kaykit-skeletons/`): Skeleton_Minion.glb, Skeleton_Warrior.glb, Skeleton_Rogue.glb, Skeleton_Mage.glb (1.0, mit Animationen), skeleton_texture.png (1.1)
-- Daraus gebaut (`npm run build:assets`): `figures/skeleton_minion.glb`, `figures/skeleton_warrior.glb`, `figures/skeleton_rogue.glb`, `figures/skeleton_mage.glb`; aus Schädel, Kiefer und Armen des Skeleton_Minion das Requisit `props/knochen.glb`
+- Daraus gebaut (`npm run build:assets`): `figures/skeleton_minion.glb`, `figures/skeleton_warrior.glb`, `figures/skeleton_rogue.glb`, `figures/skeleton_mage.glb`; aus Schädel, Kiefer und Armen des Skeleton_Minion das Requisit `props/knochen.glb`; der Helm `Skeleton_Warrior_Helmet` sitzt am Kopf von `figures/schmiedemeister.glb`
 - `textures/figures/skeleton/skeleton_keller.png` ist eine umgefärbte Fassung der Textur (`tools/skeleton-texture.py`)
 
 ## Easy Animated Enemy Pack (Jan 2019)
@@ -177,3 +177,7 @@ Rohdateien in `source/sounds-freepik/`; geschnitten (Stille, einzelne Schritte) 
 | `sounds/zauber/feuerpfeil.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
 | `sounds/zauber/schild.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
 | `sounds/zauber/trank.mp3` | Freepik, KI-Sound-Generator (freepik.com), erzeugt von Christian | Freepik-Lizenz für bezahlte Konten |
+
+## Eigene Modelle
+
+- `props/buecherregal.glb`, `props/buecherregal_b.glb`, `props/buecherregal_c.glb`: Bücherregale aus Grundformen, gebaut von `tools/build-assets.mjs` (`npm run build:assets -- shelves`), ohne fremde Dateien.
