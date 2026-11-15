@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.77 · Nov 15, 2026 · @Christian
+Version 2.78 · Nov 15, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.78 | 15.11.2026 | Versionsprüfung beim Start: Passt das Programm im Zwischenspeicher des Browsers nicht zu den Daten, holt das Spiel die Programmdateien neu und lädt sich einmal selbst neu (Ursache der leeren Bibliothek direkt nach dem Update) |
 | 2.77 | 15.11.2026 | Bibliothek der Zwergenminen: eigene Einrichtung mit vier Bücherregalen (`buecherregal`, eigenes Modell aus Grundformen, Füllungen a, `b`, `c` nach Raum-Seed) an West- und Nordwand und 2 bis 3 Lesetischen (`lesetisch`) mit Kerze und Leselicht; neue Platzierung `span:x1|y1-x2|y2` (feste Wandstrecke, darf unter einer Fackel stehen); Grundlicht der Bibliothek 1,5 |
 | 2.76 | 15.11.2026 | Boss der Zwergenminen `schmiedemeister` als Figur (Dunkelzwerg-Schmied 1,3-fach, Helm des Skelett-Kriegers, Kriegshammer einhändig); Bossraum der Zwergenminen mit Esse und Amboss, ohne Säulen; der Boss steht beim Betreten am Amboss (Standard-Inszenierung `bosses` in `data/staging.json`); Schlackehaufen `schlacke` als Event-Requisit im Event `schmiede_schlacke` (neue Platzierung `around:<requisit>` für Event-Requisiten); Türen an Nord und West im Bossraum: Esse rechts neben der Tür, die Türfackel dieser Wand fällt weg |
 | 2.75 | 14.11.2026 | Stein- und Eisengolem als animierte Figuren: KayKit `Knight` ohne Ausrüstung, Kopf auf 45 %, dunkles Visier, leuchtende Augen, einfarbig und flach schattiert wie die Schreinstatue (Steingolem `#8A847D`, Augen `#FFB347`, 1,4 Kacheln; Eisengolem `#5E6168`, Augen `#FF6A2A`, 1,8 Kacheln); neue Build-Gruppe `golems`; der Eisengolem steht im Event am Amboss |
@@ -120,6 +121,7 @@ Das Spiel läuft im Browser auf Basis von Three.js. Claude schreibt den Code, Ch
 | Sound | MP3 über die Web Audio API, Zuordnung in `data/sounds.json`; ohne festgelegten Sound bleibt es still |
 | Entwicklung | Claude Code mit GitHub-Repository |
 | Veröffentlichung | GitHub Pages oder itch.io |
+| Versionsprüfung | Die Daten (`data/*.json`) lädt das Spiel immer frisch, die Programmdateien hält der Browser nach einem Update bis zu 10 Minuten im Zwischenspeicher. Beim Start vergleicht das Spiel den Stempel im Programm (`src/version.js`) mit `data/version.json`; passen sie nicht, holt es alle Programmdateien am Zwischenspeicher vorbei neu und lädt die Seite einmal neu. Hilft das nicht, startet es trotzdem (Warnung in der Konsole), nie in einer Schleife. Den Stempel schreibt `npm run stempel` (Prüfsumme über `src/` und `vendor/three/`); `npm test` schlägt fehl, wenn er veraltet ist. |
 
 Grundregel: Inhalte stehen in den JSON-Dateien, nicht im Code. Neue Räume und Events brauchen dadurch keine Programmierung.
 
@@ -1104,4 +1106,5 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Bossraum der Zwergenminen mit Esse und Amboss, ohne Säulen; bei Türen an Nord und West fällt die Türfackel über der Esse weg
 - [x] Schlackehaufen nur als Event-Requisit im Event `schmiede_schlacke`, an der Esse
 - [x] Bibliothek der Zwergenminen: vier Bücherregale (drei Füllungen) an West- und Nordwand, 2 bis 3 Lesetische mit Kerze und Leselicht, Grundlicht 1,5
+- [x] Versionsprüfung beim Start: bei altem Programm und neuen Daten einmal selbst neu laden (Option 1 von 3, statt Daten zwischenzuspeichern oder nach Updates von Hand hart neu zu laden)
 - [x] Zonenraster als allgemeine Regel für Raumtypen mit Füllerliste (`fill`): jede der 9 Zonen zu 3×3 Kacheln bekommt ein Bodenrequisit; Säulenhalle, Brunnenraum und Kerker bewusst ohne; heute nur die Schmiede der Zwergenminen

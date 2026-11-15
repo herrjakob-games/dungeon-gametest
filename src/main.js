@@ -22,6 +22,7 @@ import { STAIRS_FOOT } from "./decor.js";
 import { openShop } from "./shopUI.js";
 import { themeFor } from "./world.js";
 import { loadData, DATA } from "./data.js";
+import { checkVersion } from "./versionCheck.js";
 import { newRun } from "./eventLogic.js";
 import { newCharacter } from "./character.js";
 import { renderInventory } from "./inventory.js";
@@ -315,6 +316,8 @@ initPanels(() => isScreenOpen() || isBookOpen());
 
 // ---------- Start ----------
 // Spieldaten aus data/ laden, dann den ersten Dungeon bauen
+// Versionsprüfung: alter Code im Zwischenspeicher des Browsers, aber neue Daten? Dann einmal neu laden.
+if (await checkVersion()) await new Promise(() => {}); // die Seite lädt neu, nicht weiter starten
 try {
   await loadData();
   await loadModels(); // Modelle aus data/models.json; was fehlt, bleibt Platzhalter
