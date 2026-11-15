@@ -347,6 +347,8 @@ export function makeFigureModel(id, variant) {
     if (held) held.visible = armed;
   }
   loop("idle");
+  // Steht die Figur gerade in der Standhaltung? (Messung der Höhe für die Lebenspunkte, combatHud.js)
+  object.userData.standing = () => loopName === "idle" && !busy && !dead;
   // Stand der Dauerschleife von 0 bis 1 (für Schritte im Takt der Laufanimation), sonst null
   const phase = (name) => (loopName === name && !busy && current ? (current.time % current.getClip().duration) / current.getClip().duration : null);
   return {
