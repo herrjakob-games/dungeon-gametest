@@ -12,7 +12,7 @@ import { eventFigures, endFor, isHidden, eventProps } from "./staging.js";
 import { STAIRS_FOOT, STAIRS_TILES, PROPS } from "./decor.js";
 import { placeEventProp } from "./roomBuilder.js";
 import { buildMonsterFigure } from "./monsterFigures.js";
-import { makeFigureModel, hasAnimation, seatOffset } from "./models.js";
+import { makeFigureModel, hasAnimation, seatOffset, liftObject, currentLift } from "./models.js";
 import { findPath } from "./pathfinding.js";
 import { moveTo } from "./movement.js";
 import { player, turnToward } from "./player.js";
@@ -47,7 +47,7 @@ function make(pl, eventId, popIn, dead) {
   const mid = new THREE.Group();
   const animated = figs.filter(f => f.anim).length < MAX_ANIMATED;
   const anim = makeFigureModel(pl.figure, pl.variant);
-  mid.add(anim ? anim.object : buildMonsterFigure(pl.figure, pl.variant));
+  mid.add(anim ? anim.object : liftObject(buildMonsterFigure(pl.figure, pl.variant), currentLift().figure)); // Mindesthelligkeit
   outer.add(mid);
   outer.position.set(tw(pl.cx), pl.y || 0, tw(pl.cz));
   outer.rotation.y = pl.rot || 0;

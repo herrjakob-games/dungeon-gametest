@@ -4,14 +4,13 @@
 // Loch im Boden mit Steinkante, dunklen Innenwänden und kühlem Schimmer von unten. Im Bossraum liegt bis zum Sieg ein
 // Metallgitter über dem Loch. Fehlt das Modell, entsteht die Treppe aus Grundformen.
 import { mat, box, stone } from "./materials.js";
-import { makeModel } from "./models.js";
+import { makeModel, hoverPrep } from "./models.js";
 const THREE = window.THREE;
 
 export const SHADOW = 0x2a2230;  // Schattenfarbe aus dem Stilguide
 const HALF = 1.5;                // halbe Breite der 3×3-Fläche (Kacheln)
 const DEPTH = 2.5;               // Tiefe des Lochs
 const GLOW = 0x6a8ea0;           // kühler Schimmer von unten (zwischen #4E6670 und #7FA6B8)
-const HOVER = 0xe9a640;          // Aufhellen beim Überfahren (wie Truhe und Türen)
 
 /**
  * Material, das je nach Höhe in der Welt in die Schattenfarbe übergeht: bei y = from noch unverändert, bei y = to ganz
@@ -54,8 +53,7 @@ function stairsMesh(id, down, fade) {
   g.traverse(n => {
     if (!n.isMesh) return;
     n.material = fadeToShadow(n.material.clone(), fade[0], fade[1], !down);
-    n.material.emissive = new THREE.Color(HOVER);
-    n.material.emissiveIntensity = 0;
+    hoverPrep(n.material); // Treppen ohne Mindesthelligkeit (Verlauf zur Schattenfarbe), Hervorheben golden
     mats.push(n.material);
   });
   return { g, mats };
@@ -84,8 +82,7 @@ function hole(g, lightOn) {
   g.add(floor);
   // Steinkante an den offenen Rändern zum Raum (Süden, Osten); Nord- und Westrand liegen unter den Wänden
   const rimMat = stone();
-  rimMat.emissive = new THREE.Color(HOVER);
-  rimMat.emissiveIntensity = 0;
+  hoverPrep(rimMat);
   g.add(box(2 * HALF + 0.2, 0.12, 0.2, rimMat, 0.1, 0.04, HALF));
   g.add(box(0.2, 0.12, 2 * HALF, rimMat, HALF, 0.04, 0));
   if (lightOn) {
