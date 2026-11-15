@@ -16,7 +16,7 @@ const enemyLabel = label("enemy");
 let numbers = [];      // { el, target: "player" | "enemy", obj, slot, born }
 let lastEnemy = null;  // Figur des Gegners, über der zuletzt etwas stand (Zahl beim Sieg, wenn der Kampf schon vorbei ist)
 const heights = new WeakMap();
-const box = new THREE.Box3(), v = new THREE.Vector3();
+const v = new THREE.Vector3();
 const now = () => performance.now() / 1000;
 const HEAD = 0.2;  // Abstand über dem Kopf (Kacheln)
 let frozen = null;     // angehaltene Werte, solange ein Würfel rollt: { p, m }
@@ -30,16 +30,44 @@ export function holdHp(on) {
   frozen = on && c && p ? { p: p.hp, m: c.monster.hp } : null;
 }
 
-// Höhe des Modells über seinem Fußpunkt (einmal pro Figur gemessen, auch für große Figuren wie die Monsterratte)
+// Höhe des Modells über seinem Fußpunkt (auch für große Figuren wie die Monsterratte): der höchste sichtbare Punkt in der
+// aktuellen Haltung. Bei Figuren mit Skelett zählen die verformten Punkte, nicht der Rahmen der Ausgangsform (der liegt bei
+// Goblin, Ork und Golems deutlich daneben). Festgeschrieben wird die Höhe erst, wenn die Figur fertig aufgeploppt ist und
+// in der Standhaltung steht (nicht beim Aufstehen, Anlaufen oder Angreifen); bis dahin wird jedes Bild neu gemessen.
+function measureTop(obj) {
+  obj.updateWorldMatrix(true, true);
+  obj.getWorldPosition(v);
+  const baseY = v.y;
+  let top = -Infinity;
+  obj.traverse(n => {
+    if (!n.isMesh || !n.geometry || !n.geometry.attributes.position) return;
+    for (let p = n; p && p !== obj; p = p.parent) if (!p.visible) return;
+    const pos = n.geometry.attributes.position;
+    for (let i = 0; i < pos.count; i++) {
+      v.fromBufferAttribute(pos, i);
+      if (n.isSkinnedMesh) n.boneTransform(i, v);
+      v.applyMatrix4(n.matrixWorld);
+      if (v.y > top) top = v.y;
+    }
+  });
+  return top === -Infinity ? null : top - baseY;
+}
+
+const SETTLE = 0.5;  // so lange muss die Figur in der Standhaltung stehen (Überblendung aus dem Anlaufen ist dann vorbei)
 function heightOf(obj) {
   let h = heights.get(obj);
-  if (h) return h;
-  obj.updateWorldMatrix(true, true);
-  box.setFromObject(obj);
-  obj.getWorldPosition(v);
-  h = box.isEmpty() ? 1 : Math.max(0.3, box.max.y - v.y);
-  heights.set(obj, h);
-  return h;
+  if (!h) { h = { value: 1, since: null, fixed: false }; heights.set(obj, h); }
+  if (h.fixed || obj.scale.y < 0.99) return h.value;  // ploppt die Figur gerade auf, gilt vorläufig der alte Wert
+  const top = measureTop(obj);
+  if (top === null) return h.value;
+  h.value = Math.max(0.3, top);
+  let model = null;
+  obj.traverse(n => { if (!model && n.userData.standing) model = n; });
+  // Figuren ohne Animation (Platzhalter) stehen immer
+  if (model && !model.userData.standing()) h.since = null;
+  else if (h.since === null) h.since = now();
+  else if (now() - h.since >= SETTLE) h.fixed = true;
+  return h.value;
 }
 
 // Bildschirmlage (CSS-Pixel) eines Punkts lift Kacheln über dem Kopf der Figur; null hinter der Kamera
