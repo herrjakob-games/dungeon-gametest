@@ -15,7 +15,7 @@ import { updateCombatHud } from "./combatHud.js";
 import { showRoll, isRolling } from "./diceView.js";
 import { rollKey, sidesOf } from "./diceLogic.js";
 import { showGrid } from "./gridOverlay.js";
-import { loadModels } from "./models.js";
+import { loadModels, hoverOn, hoverOff, checkModelLift } from "./models.js";
 import { loadSounds, play, setDuck } from "./sound.js";
 import { setOutline, setSilhouette, drawSilhouette } from "./outline.js";
 import { STAIRS_FOOT } from "./decor.js";
@@ -230,7 +230,7 @@ function setHoverObj(o) {
   if (state.hovered === o) return;
   const prev = state.hovered;
   if (prev) {
-    prev.userData.hoverMats.forEach(m => { m.emissiveIntensity = m === prev.userData.baseGlow ? 0.25 : 0; });
+    prev.userData.hoverMats.forEach(hoverOff); // zurück zur Grundstufe (Mindesthelligkeit, Türleuchten), nicht zu 0
     setOutline(prev, false);
     setSilhouette(null);
   }
@@ -240,7 +240,7 @@ function setHoverObj(o) {
   // Füllung; das Schloss gehört nicht dazu. Ohne Teil für die Linie (Modell oder Knoten fehlt) bleibt das alte Aufhellen.
   if (o.userData.kind === "door" && o.userData.outlineTarget) { setSilhouette(o.userData.outlineTarget); return; }
   // Andere anklickbare Objekte: leicht aufhellen und goldene Umrisslinie
-  o.userData.hoverMats.forEach(m => { m.emissiveIntensity = m.map ? 0.18 : 0.45; });
+  o.userData.hoverMats.forEach(hoverOn);
   if (o.userData.kind !== "door") setOutline(o, true);
 }
 
@@ -321,6 +321,10 @@ if (await checkVersion()) await new Promise(() => {}); // die Seite lädt neu, n
 try {
   await loadData();
   await loadModels(); // Modelle aus data/models.json; was fehlt, bleibt Platzhalter
+  // Mindesthelligkeit: figureLift/propLift global (data/models.json) und pro Thema (data/themes.json) zwischen 0 und 1
+  const liftErrors = [];
+  checkModelLift([].concat(Object.values(DATA.themes || {})), (w, t) => liftErrors.push(w + ": " + t));
+  if (liftErrors.length) console.error("Fehler in data/:\n" + liftErrors.join("\n"));
   await loadSounds(); // Sounds aus data/sounds.json; was fehlt, bleibt still
 } catch (e) {
   console.error(e);

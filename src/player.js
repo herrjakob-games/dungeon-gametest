@@ -3,7 +3,7 @@
 // Die Gruppe "figure" schaut in Richtung +z.
 import { tw } from "./config.js";
 import { buildFigure } from "./figures.js";
-import { makeFigureModel } from "./models.js";
+import { makeFigureModel, liftObject, currentLift } from "./models.js";
 import { step } from "./sound.js";
 import { scene } from "./scene.js";
 import { state } from "./state.js";
@@ -13,14 +13,14 @@ export const player = new THREE.Group();
 export const figure = new THREE.Group();
 
 let anim = null; // Modell mit Animationen, null beim Platzhalter
-figure.add(buildFigure("zwerg"));
+figure.add(liftObject(buildFigure("zwerg"), currentLift().figure)); // Mindesthelligkeit auch für den Platzhalter
 
 // Figur auf ein anderes Volk umstellen ("zwerg", "elf", "mensch"), z. B. nach der Volkswahl
 export function setFigure(volk) {
   while (figure.children.length) figure.remove(figure.children[0]);
   figure.position.set(0, 0, 0); figure.rotation.set(0, 0, 0); figure.scale.set(1, 1, 1);
   anim = makeFigureModel(volk);
-  figure.add(anim ? anim.object : buildFigure(volk));
+  figure.add(anim ? anim.object : liftObject(buildFigure(volk), currentLift().figure));
 }
 
 // Pro Frame: Laufen oder Stehen. true, wenn das Modell selbst animiert ist (dann kein Wippen der Grundformen)

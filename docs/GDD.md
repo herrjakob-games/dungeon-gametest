@@ -1,6 +1,6 @@
 # Dungeon-Spiel – Game Design Document
 
-Version 2.79 · Nov 15, 2026 · @Christian
+Version 2.80 · Nov 15, 2026 · @Christian
 
 ## Versionen
 
@@ -8,6 +8,7 @@ Jede Änderung am GDD erhöht die Version. Kleine Ergänzungen und Umbenennungen
 
 | Version | Datum | Änderungen |
 | --- | --- | --- |
+| 2.80 | 15.11.2026 | Licht: Mindesthelligkeit für Figuren und Requisiten aus ihrer eigenen Textur (Figuren und ihre Waffen 0,45, Requisiten 0,22, `figureLift`/`propLift`), damit sie im Schatten nie schwarz wirken; Boden, Wände, Bodendeko und Treppen ohne; Grundlicht und Fackeln unverändert; Hervorheben beim Überfahren setzt auf die Grundstufe auf |
 | 2.79 | 15.11.2026 | Sounds der Zwergenminen: neue Stimmung `schmiede` (Loop wie `cozy`, Zufallsgeräusche wie `kerker`) für Schmiede und Bossraum der Zwergenminen (`themeSound`); Bibliothek mit `empty` und `stone`; Schmiedemeister mit Angriffsklang `hammer`; Höhlenspinne und Rache-Monsterratte mit Schritten `trippeln` |
 | 2.78 | 15.11.2026 | Versionsprüfung beim Start: Passt das Programm im Zwischenspeicher des Browsers nicht zu den Daten, holt das Spiel die Programmdateien neu und lädt sich einmal selbst neu (Ursache der leeren Bibliothek direkt nach dem Update) |
 | 2.77 | 15.11.2026 | Bibliothek der Zwergenminen: eigene Einrichtung mit vier Bücherregalen (`buecherregal`, eigenes Modell aus Grundformen, Füllungen a, `b`, `c` nach Raum-Seed) an West- und Nordwand und 2 bis 3 Lesetischen (`lesetisch`) mit Kerze und Leselicht; neue Platzierung `span:x1|y1-x2|y2` (feste Wandstrecke, darf unter einer Fackel stehen); Grundlicht der Bibliothek 1,5 |
@@ -591,13 +592,14 @@ Gruft und Brunnen sind im Keller die düsteren Räume mit kälterem Grundlicht. 
 - Fackeln als warme Punktlichter mit 5 bis 6 Kacheln Reichweite und leichtem Flackern. Höchstens zwei schattenwerfende Lichter pro Raum.
 - Requisiten mit eigenem Licht (Herd, Kerzen, Kronleuchter, Lagerfeuer) leuchten ohne Schatten.
 - Die Spielfigur trägt einen kleinen, schwachen Lichtschein.
+- Figuren und Requisiten haben eine Mindesthelligkeit aus ihrer eigenen Textur (Figuren 0,45, Requisiten 0,22, `figureLift`/`propLift`) und wirken nie schwarz. Boden, Wände und Bodendeko bleiben ohne. Die Werte stehen global in `data/models.json` (`lift`) und lassen sich pro Thema in `data/themes.json` überschreiben; beide liegen zwischen 0 und 1. Figuren schließen ihre Waffen, Schriftrollen und ihr Zubehör ein. Ohne Mindesthelligkeit bleiben Boden, Wände, Sockel, Türrahmen und Fackeln (`assets/tiles/`), die Bodendeko (Sack, Moos, Pfütze, Geröll) und die Treppen, die zum Loch hin in die Schattenfarbe verlaufen. Requisiten aus Grundformen (etwa Esse und Lesetisch) bekommen dieselbe Stufe, leuchtende Teile wie Glut und Flammen behalten ihr eigenes Leuchten. Figuren und Requisiten nutzen dafür eigene Materialkopien, damit Boden und Wände nicht mitleuchten. Grundlicht (0,32) und Fackeln bleiben unverändert. (Von Christian freigegeben: Eigenhelligkeit statt mehr Raumlicht; bei 0,35 wirkten Säulen grau und Gold zu leuchtend.)
 - Einzelne Raumtypen dürfen heller sein: `brightness` in `roomPalettes` (`data/themes.json`) verstärkt das Grundlicht, im Keller der Händlerraum (1,8), in den Zwergenminen der Schrein (1,7, damit die Ecken trotz nur 2 Fackeln bei etwa 15 bis 20 % der hellsten Stelle liegen), die Schmiede (1,4) und die Bibliothek (1,5, mit dem Leselicht der Tische ist die Raummitte gut ausgeleuchtet).
 
 **Lesbarkeit**
 
 - Spielfigur mit hellem Bodenring, Gegner mit rotem Akzent und im Kampf rotem Ring.
 - Türrahmen eine Stufe heller als die Wand, neben jeder Tür eine Fackel (Ausnahme: In Schatzkammer und Brunnenraum hängt an jeder Säule eine Fackel). Verschlossene Tür: rotes Schloss.
-- Anklickbare Objekte (Truhe, Lagerfeuer, Händler, Treppe nach unten): goldene Umrisslinie beim Überfahren mit der Maus, leichtes Aufhellen.
+- Anklickbare Objekte (Truhe, Lagerfeuer, Händler, Treppe nach unten): goldene Umrisslinie beim Überfahren mit der Maus, leichtes goldenes Aufhellen auf der Mindesthelligkeit; beim Verlassen zurück zur Mindesthelligkeit.
   - Türen: Beim Überfahren mit der Maus bekommt nur das Türblatt die goldene Umrisslinie, nicht der Türrahmen. Anklickbar bleibt die ganze Tür mit Rahmen und Türkachel. An den vorderen Türen (Süd, Ost), die nur Sockel haben, leuchtet stattdessen die Türkachel am Boden mit goldener Umrisslinie auf. Auch verschlossene Türen werden hervorgehoben; ihr Schloss bleibt rot und wird nicht mit umrandet. Wo der Rahmen das Türblatt verdeckt, ist keine Linie zu sehen.
 - Bodendeko (Sack, Moos, Pfütze, Geröll) flach und dunkel, damit sie nie wie ein Hindernis wirkt.
 
@@ -1113,3 +1115,4 @@ Sieben Schritte, Meilenstein 6 in drei Teilen; jeder endet mit etwas Spielbarem,
 - [x] Versionsprüfung beim Start: bei altem Programm und neuen Daten einmal selbst neu laden (Option 1 von 3, statt Daten zwischenzuspeichern oder nach Updates von Hand hart neu zu laden)
 - [x] Zonenraster als allgemeine Regel für Raumtypen mit Füllerliste (`fill`): jede der 9 Zonen zu 3×3 Kacheln bekommt ein Bodenrequisit; Säulenhalle, Brunnenraum und Kerker bewusst ohne; heute nur die Schmiede der Zwergenminen
 - [x] Sounds der Zwergenminen: Stimmung `schmiede` aus vorhandenen Dateien (Loop `cozy`, Zufall `kerker`) für Schmiede und Bossraum der Zwergenminen; Bibliothek `empty`/`stone`; Schmiedemeister klingt wie der Schmied (`hammer`); Höhlenspinne und Rache-Monsterratte trippeln
+- [x] Licht: Mindesthelligkeit aus der eigenen Textur für Figuren (0,45) und Requisiten (0,22) statt mehr Raumlicht oder Fülllicht (Variante E); Boden, Wände und Bodendeko ohne

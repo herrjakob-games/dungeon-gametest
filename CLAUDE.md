@@ -94,6 +94,7 @@ Die Liste aller Meilensteine steht im GDD.
 | `src/stairs.js` | Treppen in der Nordwest-Ecke: KayKit `stairs` (`treppe_hoch`, `treppe_runter`), Loch mit Steinkante und kühlem Licht, Gitter im Bossraum, Verlauf zur Schattenfarbe; Rückfall aus Grundformen |
 | `src/models.js` | Modell-Lader: `data/models.json`, Paletten-Textur des Themas, Klone pro Instanz, Figuren mit Animationen (`makeFigureModel`, dort `setWeapon` für die Waffe in `handslot.r` und `holdScroll` für die Schriftrolle), Rückfall auf Platzhalter |
 | `src/weapons.js` | Waffen an den Spielfiguren: Modell zur angelegten Waffe (`weaponKey`, `weaponFile`, Buch des Feuers im Kampf offen), Siegelfarbe der Schriftrollen, Datenprüfung; rein logisch |
+| `src/lightLift.js` | Mindesthelligkeit: Stufe pro Modell nach Ordner der Datei (`liftFor`), Ausnahmen (`NO_LIFT`: Bodendeko, Treppen), Standardwerte, Datenprüfung; rein logisch |
 | `src/seeThrough.js` | Durchblick: Innenwände (Zellwände, auch Gitter mit ganzer Fläche) und Säulen werden im Kreis um eine verdeckte Spielfigur oder einen Gegner durchsichtig |
 | `src/outline.js` | goldene Umrisslinie für anklickbare Objekte beim Überfahren mit der Maus; Türen: Silhouette per OutlinePass (`setSilhouette`, `drawSilhouette` nach dem Zeichnen des Raums), nur das Türblatt (`highlight`), an Süd- und Osttüren die Türkachel, ohne Füllung, nie das Schloss, verdeckte Kanten unsichtbar |
 | `data/models.json` | Zuordnung der Modelle: Datei, Maßstab, Drehung, Versatz, Einfärbung (`tint`), eine Farbe statt Textur (`color`), Lichtpunkte, Deckkraft (`opacity`, durchscheinende Figur), Animationen, Zubehör an Knochen (`accessories`, `size` auch `[x, y, z]`, `color` beim Bart, `hand` für Werkzeuge in der Hand), Knoten mit Umrisslinie beim Überfahren (`highlight`, etwa das Türblatt im `tuerrahmen`), Abstand der Säulenfackel (`pillarTorch`); `weaponScale` der Spielfiguren (Maßstab der Waffe in der Hand); Abschnitt `weapons` (Waffen der Spielfiguren pro Gegenstands-id: Datei, `size` als Verhältnis zur Paketgröße, `offset`, `rotation`, `armedAnimations`, `combatFile`) und `scrolls` (Farben der Schriftrollen) |
@@ -144,6 +145,7 @@ Die Liste aller Meilensteine steht im GDD.
 - Licht: Halbkugellicht mit dem Grundlicht der Palette (`data/themes.json`, `palette`, `roomPalettes`), Fackeln neben
   jeder Tür (an Süd- und Ostwand ausgeblendet, nur Licht; Schatzkammer, Brunnenraum und Säulenhalle: an den Säulen; Gruft: zwei blaue), höchstens zwei schattenwerfende Lichter pro Raum (heute nur das schwache Licht von oben). Werte heute: Halbkugellicht 0,32, Licht von oben 0,12,
   Fackeln 1,8 mit 6 Kacheln Reichweite; die Ecken liegen damit bei etwa 15 bis 35 % der hellsten Stelle am Boden.
+  Mindesthelligkeit: Figuren und Requisiten leuchten schwach aus ihrer eigenen Textur (`figureLift` 0,45, `propLift` 0,22 in `data/models.json`, `lift`, pro Thema in `data/themes.json` überschreibbar; Regeln in `src/lightLift.js`, Materialkopien in `liftObject`, `src/models.js`), Boden, Wände, Bodendeko und Treppen nicht. Hervorheben nur über `hoverPrep`/`hoverOn`/`hoverOff`, die zur Grundstufe zurückkehren.
 
 ## Zusammenarbeit mit Christian
 

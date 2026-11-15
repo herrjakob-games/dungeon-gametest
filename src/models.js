@@ -5,6 +5,7 @@
 import { ACCESSORIES } from "./monsterFigures.js";
 import { weaponKey, weaponFile, scrollSeal } from "./weapons.js";
 import { modelIdFor } from "./world.js";
+import { liftLevels, liftFor, checkLift } from "./lightLift.js";
 const THREE = window.THREE;
 
 let MODELS = {};
@@ -69,8 +70,10 @@ export async function loadModels() {
     delete MODELS._info;
     WEAPONS = MODELS.weapons || {};
     SCROLLS = MODELS.scrolls || {};
+    LIFT = MODELS.lift || {};
     delete MODELS.weapons;
     delete MODELS.scrolls;
+    delete MODELS.lift;
   } catch (e) {
     console.warn("data/models.json fehlt, alle Teile bleiben Platzhalter");
     return;
@@ -85,9 +88,74 @@ export async function loadModels() {
   paletteMaterial(themeId);
 }
 
-// theme: id des Themas; propModels: Modelle anderer Requisiten in diesem Thema (data/themes.json, etwa saeule → pfeiler)
-let themeModels = null;
-export function setModelTheme(theme, propModels) { themeId = theme || "keller"; themeModels = propModels ? { propModels } : null; }
+// theme: id des Themas; propModels: Modelle anderer Requisiten in diesem Thema (data/themes.json, etwa saeule → pfeiler);
+// lift: figureLift/propLift des Themas (überschreiben die globalen Werte aus data/models.json)
+let themeModels = null, themeLift = null;
+export function setModelTheme(theme, propModels, lift) { themeId = theme || "keller"; themeModels = propModels ? { propModels } : null; themeLift = lift || null; }
+
+// ---------- Mindesthelligkeit (docs/GDD.md, Licht) ----------
+// Figuren und Requisiten leuchten schwach aus ihrer eigenen Textur (emissiveMap = map, emissive = Materialfarbe, Stärke =
+// Stufe). Sie bekommen dafür eigene Materialkopien, damit Boden und Wände mit demselben Paletten-Material nicht mitleuchten.
+let LIFT = {};
+export const currentLift = () => liftLevels(LIFT, themeLift);
+export const liftOf = (id, file) => liftFor(id, file, currentLift());
+export const checkModelLift = (themes, err) => checkLift(LIFT, themes, err);
+function applyLift(m, level) {
+  m.emissive = m.color.clone();
+  m.emissiveMap = m.map || null;
+  m.emissiveIntensity = level;
+  m.userData.lift = level;
+  m.userData.liftColor = m.emissive.getHex();
+  m.needsUpdate = true;
+  return m;
+}
+const lifted = new Map(); // Ausgangsmaterial und Stufe → Kopie mit Eigenleuchten
+const glowing = (m) => m.isMeshBasicMaterial || (m.emissiveIntensity > 0 && m.emissive && m.emissive.getHex() !== 0);
+/**
+ * Eigenleuchten für alle Meshes eines Objekts. Leuchtende Teile (Glut, Flammen, Augen, Basic-Materialien) bleiben, wie sie
+ * sind, ebenso Materialien, die schon eine Stufe haben. inPlace: Materialien gehören nur diesem Objekt (opts.unique).
+ */
+export function liftObject(obj, level, inPlace) {
+  if (!level || !obj) return obj;
+  const one = (m) => {
+    if (!m || !m.isMeshStandardMaterial || m.userData.lift !== undefined || glowing(m)) return m;
+    if (inPlace) return applyLift(m, level);
+    const k = m.uuid + ":" + level;
+    if (!lifted.has(k)) lifted.set(k, applyLift(m.clone(), level));
+    return lifted.get(k);
+  };
+  obj.traverse(n => { if (n.isMesh && !n.userData.noLift) n.material = Array.isArray(n.material) ? n.material.map(one) : one(n.material); });
+  return obj;
+}
+
+// Ein einzelnes, eigenes Material anheben (Grundformen, die nur einem Objekt gehören); Stufe 0: goldenes Hervorheben vorbereiten
+export function applyLiftTo(m, level) {
+  if (level) applyLift(m, level); else hoverPrep(m);
+  return m;
+}
+
+// ---------- Hervorheben beim Überfahren (goldenes Aufhellen auf der Grundstufe) ----------
+export const HOVER_GOLD = 0xe9a640;
+// Material vorbereiten: ohne Grundstufe goldenes Eigenleuchten mit Stärke 0, mit Grundstufe bleibt sie
+export function hoverPrep(m) {
+  if (!m || !m.emissive) return;
+  if (m.userData.lift === undefined) { m.emissive.setHex(HOVER_GOLD); m.emissiveIntensity = 0; }
+}
+// An: einfarbig golden aufhellen (deutlich sichtbar, auch auf dunkler Textur); die Grundstufe bleibt darunter erhalten
+export function hoverOn(m) {
+  if (!m || !m.emissive) return;
+  m.emissive.setHex(HOVER_GOLD);
+  if (m.emissiveMap) { m.emissiveMap = null; m.needsUpdate = true; }
+  m.emissiveIntensity = (m.map ? 0.18 : 0.45) + (m.userData.lift || 0) * 0.5;
+}
+// Aus: zurück zur Grundstufe, nicht zu 0
+export function hoverOff(m) {
+  if (!m || !m.emissive) return;
+  if (m.userData.lift === undefined) { m.emissiveIntensity = 0; return; }
+  m.emissive.setHex(m.userData.liftColor);
+  if (m.userData.liftMap !== false && m.map && m.emissiveMap !== m.map) { m.emissiveMap = m.map; m.needsUpdate = true; }
+  m.emissiveIntensity = m.userData.lift;
+}
 
 // Zuordnung einer id, mit Variante: zuerst <id>_<variante>, sonst die Grunddatei
 export function modelEntry(id, variant) {
@@ -187,10 +255,12 @@ export function makeModel(id, variant, opts) {
     n.receiveShadow = true;
     if (n.isSkinnedMesh) n.frustumCulled = false; // Grenzen stammen aus der Grundhaltung, beim Laufen sonst Flackern
   });
-  if (entry.opacity !== undefined && entry.opacity < 1) seeThrough(inner, entry.opacity);
   const g = new THREE.Group();
   g.add(inner);
   if (entry.accessories) attachAccessories(g, inner, entry.accessories);
+  // Mindesthelligkeit nach Ordner der Datei (Figuren, Waffen, Requisiten), auch für das Zubehör der Figur
+  liftObject(g, liftOf(id, entry.file), !!opts.unique);
+  if (entry.opacity !== undefined && entry.opacity < 1) seeThrough(inner, entry.opacity);
   (entry.lights || []).forEach(l => {
     const light = new THREE.PointLight(new THREE.Color(l.color), l.intensity, l.distance, 2);
     light.position.set(...l.offset);
@@ -321,7 +391,7 @@ export function makeFigureModel(id, variant) {
     // den Platzhalter, wenn die Datei fehlt
     const w = WEAPONS[id] || {};
     const size = (w.size === undefined ? 1 : w.size) * (entry.weaponScale || 0.28);
-    if (key) held = holdInHand(object, "handslot.r", weaponModel(key), { size, offset: w.offset, rotation: w.rotation });
+    if (key) held = holdInHand(object, "handslot.r", liftObject(weaponModel(key), currentLift().figure), { size, offset: w.offset, rotation: w.rotation });
     if (held) { held.userData.weaponModel = key; held.visible = armed && !scroll; }
     if (loopName === "idle" || loopName === "walk") loopName = null; // Standhaltung wechselt beim nächsten loop()
   }
@@ -333,7 +403,7 @@ export function makeFigureModel(id, variant) {
     if (!seal) return false;
     dropScroll();
     const left = !!findBone(object, "handslot.l");
-    scroll = holdInHand(object, left ? "handslot.l" : "handslot.r", makeScroll(seal), { size: 1 });
+    scroll = holdInHand(object, left ? "handslot.l" : "handslot.r", liftObject(makeScroll(seal), currentLift().figure), { size: 1 });
     if (!scroll) return false;
     if (!left && held) held.visible = false;
     once("interact");

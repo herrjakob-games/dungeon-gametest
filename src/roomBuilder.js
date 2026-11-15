@@ -8,7 +8,7 @@ import { setRoomSeed, rnd, pickOne, shuffled } from "./rng.js";
 import { mat, box, stone, WOOD } from "./materials.js";
 import { TYPES } from "./roomTypes.js";
 import { scene, setAmbient } from "./scene.js";
-import { makeModel, hasModel, setModelTheme, findPart, makeFigureModel, modelEntry } from "./models.js";
+import { makeModel, hasModel, setModelTheme, findPart, makeFigureModel, modelEntry, liftObject, liftOf, currentLift, hoverPrep, applyLiftTo } from "./models.js";
 import { state } from "./state.js";
 import { buildFigure } from "./figures.js";
 import * as P from "./props.js";
@@ -62,7 +62,8 @@ export function buildRoom(id) {
   const pal = roomPalette(room.type);
   const torch = spec && spec.torchColor ? spec.torchColor : (pal && pal.torch) || "#" + type.torch.toString(16).padStart(6, "0");
   setAmbient(pal && pal.ambient, pal && pal.brightness);
-  setModelTheme(state.theme ? state.theme.id : null, state.theme && state.theme.propModels); // etwa Pfeiler statt Säulen
+  // Modelle des Themas (etwa Pfeiler statt Säulen) und Mindesthelligkeit des Themas (figureLift/propLift, docs/GDD.md, Licht)
+  setModelTheme(state.theme ? state.theme.id : null, state.theme && state.theme.propModels, state.theme);
 
   buildFloor(type, hasHole(feature), floorTilesFor(spec, state.theme));
   buildWalls(room, crackedWalls(room.doors, spec, room.seed, feature, state.theme && state.theme.wandRiss));
@@ -203,6 +204,7 @@ function makeDoor(d) {
   const g = new THREE.Group();
   const tall = d === "N" || d === "W";
   const glowMat = mat(0xe9a640, { emissive: 0xe9a640, emissiveIntensity: 0.25 });
+  Object.assign(glowMat.userData, { lift: 0.25, liftColor: 0xe9a640 }); // Grundleuchten der Türkachel, Hervorheben setzt darauf auf
   const hoverMats = [glowMat];
   const frameMat = mat(0x8a7562); // Türrahmen eine Stufe heller als die Wand
   const model = tall ? makeModel("tuerrahmen", null, { unique: true }) : null;
@@ -211,8 +213,7 @@ function makeDoor(d) {
     model.traverse(n => {
       if (!n.isMesh) return;
       n.material.color.setScalar(1.18);
-      n.material.emissive.setHex(0xe9a640);
-      n.material.emissiveIntensity = 0;
+      hoverPrep(n.material);
       hoverMats.push(n.material);
     });
     g.add(model);
@@ -388,10 +389,12 @@ function propMesh(id, pl) {
   }
   const model = makeModel(id, pl.variant);
   if (model) return model;
-  if (P[id]) return P[id](pl, lightCtx());
+  // Requisiten aus Grundformen: Mindesthelligkeit wie Modelle aus assets/props/ (Glut, Flammen und Bodendeko ausgenommen)
+  const level = liftOf(id, "assets/props/");
+  if (P[id]) return liftObject(P[id](pl, lightCtx()), level);
   // Requisit ohne Platzhalter (nur als Modell gedacht): einfache Kiste in Holzfarbe, damit nichts fehlt
   const d = PROPS[id] || { w: 1, d: 1 };
-  return box(Math.max(0.3, d.w * 0.8), 0.5, Math.max(0.3, d.d * 0.8), mat(0x7a5a3a), 0, 0.25, 0);
+  return liftObject(box(Math.max(0.3, d.w * 0.8), 0.5, Math.max(0.3, d.d * 0.8), mat(0x7a5a3a), 0, 0.25, 0), level);
 }
 
 // ---------- Einrichtung aus den Daten ----------
@@ -545,7 +548,7 @@ function makeChest(pos, id, rot, mimic) {
   if (model) {
     // Truhe aus dem Modell: der Deckel (chest_lid) klappt beim Öffnen per Code auf
     const hoverMats = [];
-    model.traverse(n => { if (n.isMesh) { n.material.emissive.setHex(0xe9a640); n.material.emissiveIntensity = 0; hoverMats.push(n.material); } });
+    model.traverse(n => { if (n.isMesh) { hoverPrep(n.material); hoverMats.push(n.material); } });
     const lid = findPart(model, "chest_lid");
     model.position.set(tw(pos[0]), 0, tw(pos[1]));
     model.rotation.y = (rot || 0) + (rnd() - 0.5) * 0.4;
@@ -555,8 +558,7 @@ function makeChest(pos, id, rot, mimic) {
     state.interactables.push(model);
     return;
   }
-  const bodyMat = mat(WOOD, { emissive: 0xe9a640, emissiveIntensity: 0 });
-  const lidMat = mat(0x6a3e20, { emissive: 0xe9a640, emissiveIntensity: 0 });
+  const bodyMat = mat(WOOD), lidMat = mat(0x6a3e20);
   const chest = new THREE.Group();
   chest.add(box(0.8, 0.45, 0.55, bodyMat, 0, 0.23, 0));
   const lidPivot = new THREE.Group();
@@ -565,6 +567,8 @@ function makeChest(pos, id, rot, mimic) {
   lidPivot.add(box(0.84, 0.06, 0.08, mat(0xc9a24f), 0, 0.12, 0.5));
   chest.add(lidPivot);
   chest.add(box(0.12, 0.14, 0.04, mat(0xd8b56a), 0, 0.42, 0.29));
+  liftObject(chest, liftOf("truhe", "assets/props/"), true); // Mindesthelligkeit wie ein Requisit
+  [bodyMat, lidMat].forEach(hoverPrep);
   chest.position.set(tw(pos[0]), 0, tw(pos[1]));
   chest.rotation.y = (rot || 0) + (rnd() - 0.5) * 0.4;
   chest.userData = { kind: "chest", tile: pos, hoverMats: [bodyMat, lidMat], lid: lidPivot, mimic: !!mimic };
@@ -579,8 +583,7 @@ function makeLectern(o, tile) {
   o.traverse(n => {
     if (!n.isMesh || !n.material || !n.material.emissive) return;
     n.material = n.material.clone();
-    n.material.emissive.setHex(0xe9a640);
-    n.material.emissiveIntensity = 0;
+    hoverPrep(n.material);
     hoverMats.push(n.material);
   });
   o.userData = { kind: "lectern", tile, hoverMats };
@@ -599,7 +602,7 @@ function makeCampfire(pos, id) {
   if (!free(pos[0], pos[1])) return;
   block(pos[0], pos[1]);
   const g = new THREE.Group();
-  const logMat = mat(0x5e3d22, { emissive: 0xe9a640, emissiveIntensity: 0 });
+  const logMat = applyLiftTo(mat(0x5e3d22), liftOf("lagerfeuer", "assets/props/")); // Holz mit Mindesthelligkeit, Hervorheben golden
   [0, 1, 2].forEach(i => {
     const log = box(0.8, 0.14, 0.14, logMat, 0, 0.08, 0);
     log.rotation.y = i * Math.PI / 3;
@@ -635,7 +638,8 @@ function makeMerchant(pos, front, rot) {
   const fig = anim ? anim.object : buildFigure("mensch");
   state.merchantAnim = anim && anim.animated ? anim : null;
   const hoverMats = [];
-  fig.traverse(o => { if (o.material && o.material.emissive) { o.material = o.material.clone(); hoverMats.push(o.material); } });
+  if (!anim) liftObject(fig, currentLift().figure);
+  fig.traverse(o => { if (o.material && o.material.emissive) { o.material = o.material.clone(); hoverPrep(o.material); hoverMats.push(o.material); } });
   g.add(fig);
   if (!anim) {
     const hat = new THREE.Mesh(new THREE.ConeGeometry(0.28, 0.45, 8), mat(0x6a3a8a));
