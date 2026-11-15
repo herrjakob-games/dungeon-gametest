@@ -299,6 +299,12 @@
     },
     "poltergeist": {
       "steps": "schweben"
+    },
+    "monsterratte_rache": {
+      "steps": "trippeln"
+    },
+    "hoehlenspinne": {
+      "steps": "trippeln"
     }
   },
   "events": {

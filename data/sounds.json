@@ -490,5 +490,22 @@
       "raum/schrein_zufall_3.mp3"
     ],
     "volume": 0.4
+  },
+  "raum_schmiede_loop": {
+    "files": [
+      "raum/cozy_loop.mp3"
+    ],
+    "volume": 0.5,
+    "loopStart": 0.03,
+    "loopEnd": 5.01
+  },
+  "raum_schmiede_zufall": {
+    "files": [
+      "raum/kerker_zufall_1.mp3",
+      "raum/kerker_zufall_2.mp3",
+      "raum/kerker_zufall_3.mp3",
+      "raum/kerker_zufall_4.mp3"
+    ],
+    "volume": 0.4
   }
 }
