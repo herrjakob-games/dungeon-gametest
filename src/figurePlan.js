@@ -31,6 +31,7 @@ export const FIGURE_INFO = {
   hoehlenspinne: { size: 1, blocks: true, variants: [] },
   steingolem: { size: 1, blocks: true, variants: [] },
   eisengolem: { size: 1, blocks: true, variants: [] },
+  schmiedemeister: { size: 1, blocks: true, variants: [] },
   monsterratte_rache: { size: 2, blocks: true, variants: [] }              // Modell der Monsterratte, normaler Gegner
 };
 const FALLBACK = { size: 1, blocks: true, variants: [] };
@@ -277,7 +278,9 @@ export function stepAsideTile(from, ctx) {
  * Ergebnis: [{ prop, tile: [x, z], rot }]; rot: Blickrichtung der Figur auf 90° gerundet.
  */
 export function placeEventProps(list, fig, ctx) {
-  if (!fig || !fig.tiles || !fig.tiles.length) return [];
+  const around = (p) => /^around:(\w+)$/.exec(p.place || "");
+  if ((!fig || !fig.tiles || !fig.tiles.length) && !list.every(around)) return [];
+  if (!fig || !fig.tiles || !fig.tiles.length) fig = { tiles: [], rot: 0 };
   const blocked = new Set(ctx.blocked || []);
   const occupied = new Set(ctx.occupied || []);
   const no = new Set(doorTiles(ctx.doors).map(t => key(...t)));
@@ -285,7 +288,7 @@ export function placeEventProps(list, fig, ctx) {
   if (ctx.player) no.add(key(...ctx.player));
   fig.tiles.forEach(t => no.add(key(...t)));
   const clickables = ctx.clickables || [], extra = (ctx.extra || []).concat(ctx.player ? [ctx.player] : []);
-  const [fx, fz] = centerOf(fig.tiles);
+  const [fx, fz] = fig.tiles.length ? centerOf(fig.tiles) : [MID, MID];
   // Blickrichtung auf eine der vier Achsen
   const sx = Math.sin(fig.rot || 0), sz = Math.cos(fig.rot || 0);
   const fwd = Math.abs(sx) > Math.abs(sz) ? [Math.sign(sx), 0] : [0, Math.sign(sz) || 1];
@@ -294,6 +297,28 @@ export function placeEventProps(list, fig, ctx) {
   const base = fig.tiles[0];
   const out = [];
   for (const p of list) {
+    // around:<prop>: Nachbarkacheln des Requisits (erst gerade, dann schräg), Blick zum Requisit
+    const m = around(p);
+    if (m) {
+      const targets = (ctx.placements || []).filter(t => t.prop === m[1]);
+      const cands = [];
+      targets.forEach(t => [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]].forEach(([dx, dz]) =>
+        t.tiles.forEach(([x, z]) => { if (!t.tiles.some(q => q[0] === x + dx && q[1] === z + dz)) cands.push({ t: [x + dx, z + dz], r: Math.atan2(t.cx - x - dx, t.cz - z - dz) }); })));
+      const isBlocking = ctx.blocks ? ctx.blocks(p.prop) : true;
+      const c = cands.find(({ t }) => {
+        const k = key(...t);
+        if (!inBounds(...t) || blocked.has(k) || occupied.has(k) || no.has(k)) return false;
+        if (!isBlocking) return true;
+        const test = new Set(blocked);
+        test.add(k);
+        return reachable(test, ctx.doors, clickables, extra, ctx.edges);
+      });
+      if (!c) continue;
+      (isBlocking ? blocked : occupied).add(key(...c.t));
+      out.push({ prop: p.prop, tile: c.t, rot: c.r });
+      continue;
+    }
+    if (!base) continue;
     const firsts = p.place === "vor_figur"
       ? [[base[0] + fwd[0], base[1] + fwd[1]]]
       : [[base[0] + right[0], base[1] + right[1]], [base[0] - right[0], base[1] - right[1]]];

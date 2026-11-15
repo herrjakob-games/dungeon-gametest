@@ -183,8 +183,10 @@ test("Zonenraster: jede der 9 Zonen hat ein Bodenrequisit, kein leeres Quadrat g
 test("Kein verstreutes Geröll in der Schmiede der Zwergenminen, in anderen Räumen weiter", () => {
   const src = readFileSync(new URL("../src/roomBuilder.js", import.meta.url), "utf8");
   assert.match(src, /if \(!spec \|\| spec\.rubble !== false\) scatterRubble\(/);
-  const others = ROOM_TYPES.flatMap(rt => [rt.decor, ...Object.values(rt.themeDecor || {})]).filter(Boolean).filter(s => s !== SPEC);
-  assert.ok(others.every(s => s.rubble === undefined), "nur die Schmiede der Zwergenminen schaltet das Geröll ab");
+  // Geröll fehlt nur dort, wo die Einrichtung es abschaltet (Schmiede, Bossraum und Bibliothek der Zwergenminen)
+  const off = ROOM_TYPES.flatMap(rt => [["", rt.decor], ...Object.entries(rt.themeDecor || {})].filter(([, s]) => s && s.rubble === false).map(([th]) => rt.id + "/" + th));
+  assert.ok(off.includes("schmiede/zwergenminen"));
+  assert.ok(off.every(w => w.endsWith("/zwergenminen")), "Geröll aus außerhalb der Zwergenminen: " + off.join(", "));
 });
 
 test("Der Schmied steht am Amboss (Anker am_amboss); ohne Amboss gilt der Standard", () => {

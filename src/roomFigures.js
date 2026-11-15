@@ -142,7 +142,7 @@ export function showEventFigures(ev, opts) {
   if (isHidden(DATA.staging, ev.id) && !(opts && opts.reveal)) return 0;
   const room = state.dungeon.rooms[state.current];
   const list = eventFigures(ev, DATA.staging, room.seed);
-  if (!list.length) return 0;
+  if (!list.length) { showEventProps(ev, null, room); return 0; } // Event-Requisiten an Requisiten (around:) auch ohne Figur
   let h = room.seed;
   for (const c of ev.id) h = (h * 31 + c.charCodeAt(0)) >>> 0;
   const plan = planFigures(list, {
@@ -184,8 +184,9 @@ function showEventProps(ev, first, room) {
   const reserved = feature ? STAIRS_TILES.slice() : [];
   if (feature === "up") reserved.push(STAIRS_FOOT);
   // Figur auf einem Requisit (onProp, etwa der Kobold auf dem Goldhaufen) hat keine eigene Kachel: die Kachel darunter
-  const tiles = first.tiles.length ? first.tiles : [[Math.round(first.pl.cx), Math.round(first.pl.cz)]];
-  const placed = placeEventProps(list, { tiles, rot: first.pl.rot || 0 }, {
+  const tiles = !first ? [] : first.tiles.length ? first.tiles : [[Math.round(first.pl.cx), Math.round(first.pl.cz)]];
+  const placed = placeEventProps(list, { tiles, rot: first ? first.pl.rot || 0 : 0 }, {
+    placements: dp ? dp.placements : [],
     blocked: state.blocked, occupied, edges: state.edges, doors: room.doors, player: state.pTile,
     clickables: dp ? dp.clickables : (feature === "down" || feature === "arena" ? [STAIRS_TILES] : []),
     extra: dp ? dp.extra : (feature === "up" ? [STAIRS_FOOT] : []),

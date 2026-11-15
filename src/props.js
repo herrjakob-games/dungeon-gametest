@@ -524,3 +524,54 @@ export function waffentisch() {
   }
   return g;
 }
+
+// ---------- Bibliothek der Zwergenminen ----------
+const BOOK_COLORS = [0x8a3a2e, 0x4e6b3a, 0x3e5a7a, 0xb08a3a, 0x6a4a30, 0x5a4060, 0x9a5a2a, 0x2f4a4a];
+// Lesetisch: kleiner Holztisch (1,25-fach), brennende dünne Kerze und nach Raum-Seed Karte, Bücher oder Schriftrollen;
+// warmes Leselicht über dem Tisch (ohne Schatten), flackert mit
+export function lesetisch(pl, ctx) {
+  const g = new THREE.Group();
+  const t = makeModel("tisch_klein");
+  if (t) { t.scale.multiplyScalar(1.25); g.add(t); } else g.add(box(0.8, 0.6, 0.8, mat(WOOD), 0, 0.3, 0));
+  const y = t ? topOf(t) : 0.6;
+  const candle = makeModel("kerze_duenn", "an");
+  if (candle) { candle.position.set(0.24, y, -0.22); g.add(candle); }
+  else { g.add(cyl(0.03, 0.03, 0.2, 6, mat(0xe8dcc0), 0.24, y + 0.1, -0.22)); const f = flameMesh(0.03, 0xffc060); f.position.set(0.24, y + 0.24, -0.22); g.add(f); }
+  const item = new THREE.Group();
+  const kind = Math.floor(rnd() * 3);
+  if (kind === 0) {
+    // Karte: Pergament mit eingerollten Enden, ein paar Linien und ein rotes Kreuz
+    const paper = mat(0xd9c49a);
+    item.add(box(0.46, 0.006, 0.34, paper, 0, 0.003, 0));
+    [-0.24, 0.24].forEach(x => { const r = cyl(0.025, 0.025, 0.36, 8, paper, x, 0.025, 0); r.rotation.x = Math.PI / 2; item.add(r); });
+    const ink = mat(0x6a4a30);
+    [[-0.1, -0.06, 0.2, 0.3], [0.05, 0.04, 0.16, -0.5], [-0.02, 0.09, 0.22, 0.1]].forEach(([x, z, l, a]) => { const ln = box(l, 0.002, 0.012, ink, x, 0.008, z); ln.rotation.y = a; item.add(ln); });
+    const red = mat(0xb03a2a);
+    [0.7, -0.7].forEach(a => { const c = box(0.07, 0.003, 0.014, red, 0.1, 0.009, -0.06); c.rotation.y = a; item.add(c); });
+  } else if (kind === 1) {
+    // offenes Buch und ein geschlossenes daneben
+    const cover = mat(BOOK_COLORS[Math.floor(rnd() * BOOK_COLORS.length)]), pages = mat(0xe2d3ac);
+    item.add(box(0.36, 0.015, 0.25, cover, -0.06, 0.008, 0.02));
+    [-1, 1].forEach(s => { const p = box(0.16, 0.025, 0.22, pages, -0.06 + s * 0.085, 0.025, 0.02); p.rotation.z = -s * 0.08; item.add(p); });
+    item.add(box(0.2, 0.06, 0.26, mat(BOOK_COLORS[Math.floor(rnd() * BOOK_COLORS.length)]), 0.2, 0.03, 0.12));
+    item.add(box(0.18, 0.05, 0.24, pages, 0.2, 0.03, 0.12));
+  } else {
+    // 2 bis 3 Schriftrollen
+    const n = 2 + (rnd() < 0.5 ? 1 : 0);
+    for (let i = 0; i < n; i++) {
+      const r = new THREE.Group();
+      const body = cyl(0.04, 0.04, 0.3, 8, mat(0xe2d3ac), 0, 0, 0); body.rotation.z = Math.PI / 2; r.add(body);
+      [-0.17, 0.17].forEach(x => { const s = cyl(0.015, 0.015, 0.06, 6, mat(0x5a3a24), x, 0, 0); s.rotation.z = Math.PI / 2; r.add(s); });
+      const band = cyl(0.043, 0.043, 0.04, 8, mat(0x8a3a2e), 0, 0, 0); band.rotation.z = Math.PI / 2; r.add(band);
+      r.position.set(-0.05 + (rnd() - 0.5) * 0.1, 0.04 + (i === 2 ? 0.07 : 0), -0.08 + i * 0.1);
+      r.rotation.y = (rnd() - 0.5) * 0.6;
+      item.add(r);
+    }
+  }
+  item.position.set(-0.08, y, 0.06);
+  item.rotation.y = (rnd() - 0.5) * 0.4;
+  g.add(item);
+  // Leselicht auf Kerzenhöhe, flackert mit (eigenes Objekt statt einer Flamme, wie die Lichter der vorderen Fackeln)
+  addLight(g, ctx, 0xffb060, 1.5, 5, 0.1, y + 0.55, 0, new THREE.Object3D());
+  return g;
+}

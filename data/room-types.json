@@ -348,6 +348,52 @@
             ]
           }
         ]
+      },
+      "zwergenminen": {
+        "rubble": false,
+        "layouts": [
+          {
+            "id": "A",
+            "props": [
+              {
+                "prop": "esse",
+                "place": "wall-mid",
+                "required": true
+              },
+              {
+                "prop": "amboss",
+                "place": "within:esse:2",
+                "required": true
+              },
+              {
+                "prop": "kohle",
+                "place": "around:esse",
+                "count": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "prop": "kohle",
+                "variant": "gross",
+                "place": "around:esse",
+                "count": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "prop": "fahne",
+                "place": "door-sides",
+                "variant": "wappen"
+              },
+              {
+                "prop": "fahne_dreifach",
+                "place": "wall-center"
+              }
+            ]
+          }
+        ]
       }
     },
     "sound": {
@@ -2245,6 +2291,55 @@
     },
     "themeRating": {
       "zwergenminen": "neutral"
+    },
+    "themeDecor": {
+      "zwergenminen": {
+        "rubble": false,
+        "layouts": [
+          {
+            "id": "A",
+            "props": [
+              {
+                "prop": "buecherregal",
+                "place": "span:1|2-1|3",
+                "required": true
+              },
+              {
+                "prop": "buecherregal",
+                "place": "span:1|7-1|8",
+                "required": true
+              },
+              {
+                "prop": "buecherregal",
+                "place": "span:2|1-3|1",
+                "required": true
+              },
+              {
+                "prop": "buecherregal",
+                "place": "span:7|1-8|1",
+                "required": true
+              },
+              {
+                "prop": "lesetisch",
+                "place": "area:3|3-7|7",
+                "count": [
+                  2,
+                  3
+                ],
+                "required": true
+              },
+              {
+                "prop": "hocker",
+                "place": "around:lesetisch",
+                "count": [
+                  2,
+                  4
+                ]
+              }
+            ]
+          }
+        ]
+      }
     }
   },
   {

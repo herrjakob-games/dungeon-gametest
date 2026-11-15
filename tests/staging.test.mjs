@@ -282,7 +282,7 @@ test("Datenprüfung der Event-Requisiten (props)", () => {
   const has = (s) => assert.ok(errs.some(e => e.includes(s)), s + " fehlt in: " + errs.join(" / "));
   has("halle_saeule: props muss eine Liste sein");
   has("unbekannte Requisite gibtsnicht");
-  has("place muss vor_figur oder neben_figur sein");
+  has("place muss vor_figur, neben_figur oder around:<requisit> sein");
 });
 
 test("Neue Figuren: Ritter und Kobold ohne Kampfwerte, der Kobold ist keine Goblin-Variante", async () => {

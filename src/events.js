@@ -243,10 +243,14 @@ export function startBoss() {
   if (id) { runEvent(id); return; }
   const boss = DATA.monsters[state.dungeon.boss];
   state.eventActive = true;
-  showDialog(boss.name, boss.intro, [{
+  // Ohne Boss-Event: Standard-Inszenierung des Themas (staging.bosses, etwa der Schmiedemeister am Amboss)
+  const ev = { id: "boss_" + state.theme.id, title: boss.name, bossTheme: state.theme.id, options: [{ effects: [{ combat: boss.id }] }] };
+  const shown = ((DATA.staging || {}).bosses || {})[state.theme.id] ? showEventFigures(ev) : 0;
+  const open = () => showDialog(boss.name, boss.intro, [{
     label: "Kämpfen",
-    pick: () => fight({ title: boss.name }, {}, { monster: boss.id, rest: [] })
+    pick: () => fight(ev, {}, { monster: boss.id, rest: [] })
   }], { modal: true });
+  if (shown && !reduceMotion) setTimeout(open, FIGURE_DELAY); else open();
 }
 
 // Begegnung (docs/GDD.md, Begegnungen): Die Figuren stehen schon im Raum, mindestens drei Kacheln von der Eingangstür,

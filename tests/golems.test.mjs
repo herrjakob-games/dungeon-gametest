@@ -51,7 +51,7 @@ test("Golems: Datei vorhanden, sechs Animationen, höchstens 3.000 Dreiecke, unt
   assert.deepEqual([col("eisengolem", "color"), col("eisengolem", "eyeColor"), col("eisengolem", "height")], ["#5E6168", "#FF6A2A", 1.8]);
 });
 
-test("Jede Monster-id der Zwergenminen hat eine Figur in data/models.json (Boss gemeldet)", (t) => {
+test("Jede Monster-id der Zwergenminen hat eine Figur in data/models.json, auch der Boss", () => {
   const th = THEMES.find(x => x.id === "zwergenminen");
   const ids = new Set(th.monsters.concat((th.encounters ? th.encounters.monsters : []).map(m => m.monster)));
   const byId = Object.fromEntries(EVENTS.map(e => [e.id, e]));
@@ -60,5 +60,5 @@ test("Jede Monster-id der Zwergenminen hat eine Figur in data/models.json (Boss 
   ROOM_TYPES.forEach(rt => ((rt.themeEvents || {}).zwergenminen || []).forEach(e => { if (byId[e.id]) combats(byId[e.id]).forEach(m => ids.add(m)); }));
   const missing = [...ids].filter(id => !MODELS[id]);
   assert.deepEqual(missing, [], "ohne Figur: " + missing.join(", "));
-  if (!MODELS[th.boss]) t.diagnostic("Boss " + th.boss + " hat noch keine Figur (Platzhalter aus Grundformen)");
+  assert.ok(MODELS[th.boss], "Boss " + th.boss + " ohne Figur");
 });

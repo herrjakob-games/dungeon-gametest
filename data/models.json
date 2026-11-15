@@ -1575,6 +1575,51 @@
       }
     ]
   },
+  "schmiedemeister": {
+    "file": "assets/figures/schmiedemeister.glb",
+    "scale": [
+      0.5577,
+      0.3647,
+      0.5577
+    ],
+    "palette": false,
+    "animations": {
+      "idle": "Idle",
+      "walk": "Walking_A",
+      "attack": "1H_Melee_Attack_Chop",
+      "hit": "Hit_A",
+      "death": "Death_A",
+      "interact": "Interact"
+    },
+    "accessories": [
+      {
+        "shape": "bart",
+        "part": "keil",
+        "bone": "chest",
+        "offset": [
+          0,
+          0,
+          0.17
+        ],
+        "size": 1,
+        "color": "#A0A8AB",
+        "depth": 1.5
+      },
+      {
+        "model": "deko_kriegshammer",
+        "weapon": true,
+        "bone": "handslot.r",
+        "hand": true,
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "size": 0.45
+      }
+    ],
+    "weaponWhen": "always"
+  },
   "zwergenvermesser": {
     "file": "assets/figures/dunkelzwerg.glb",
     "scale": [
@@ -1725,6 +1770,27 @@
     "scale": 1.0,
     "palette": false,
     "color": "#24201F"
+  },
+  "schlacke": {
+    "file": "assets/props/kohle_gross.glb",
+    "scale": 1.6,
+    "palette": false,
+    "color": "#5E5048"
+  },
+  "buecherregal": {
+    "file": "assets/props/buecherregal.glb",
+    "scale": 1,
+    "palette": false
+  },
+  "buecherregal_b": {
+    "file": "assets/props/buecherregal_b.glb",
+    "scale": 1,
+    "palette": false
+  },
+  "buecherregal_c": {
+    "file": "assets/props/buecherregal_c.glb",
+    "scale": 1,
+    "palette": false
   },
   "zange": {
     "file": "assets/props/zange.glb",
