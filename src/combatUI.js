@@ -72,7 +72,9 @@ function attack() {
       if (!r.ok) { lines.push("Daneben."); afterPlayer(lines, roll); return; }
       const before = c.monster.hp, dice = {};
       holdHp(true);
-      const n = hitMonster(state.player, DATA.items, c, Math.random, dice);
+      const n = hitMonster(state.player, DATA.items, c, Math.random, dice, !!r.crit);
+      // Kritischer Treffer (docs/GDD.md, Würfelanzeige): Meldung und Rechnung in der Würfelzeile, der Würfel zeigt den Wurf
+      if (dice.crit) lines.push('<strong class="ok">Kritischer Treffer!</strong>', dice.text);
       lines.push('Treffer: <span class="good">−' + n + " LP</span> für " + c.monster.name);
       holdDialog();
       showRoll(dice.spec, dice.values).then(() => {
@@ -160,7 +162,8 @@ function afterPlayer(lines, roll) {
     ? c.monster.name + " ist eingefroren und greift nicht an" + (t.left ? " (noch " + t.left + " Runde" + (t.left > 1 ? "n" : "") + ")" : "")
     : c.monster.name + " greift an · W20: " + t.d + " + " + t.bonus + " = " + t.total + " gegen Rüstung " + t.dc +
       " · " + (t.hit ? '<strong class="fail">Treffer</strong>' : '<strong class="ok">Verfehlt</strong>');
-  const all = lines.concat([enemyRoll + (t.hit ? ' · <span class="bad">−' + t.dmg + " LP</span>" : "")]);
+  const crit = t.crit ? ['<strong class="fail">Kritischer Treffer!</strong>', t.critText] : [];
+  const all = lines.concat(crit, [enemyRoll + (t.hit ? ' · <span class="bad">−' + t.dmg + " LP</span>" : "")]);
   if (p.hp <= 0) {
     const monster = c.monster;
     showDialog(title(), "Das war ein Treffer zu viel.", [{ label: "Weiter", pick: () => end(() => h.onDeath(monster)) }],
